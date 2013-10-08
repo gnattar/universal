@@ -1,0 +1,5 @@
+#!/bin/bash
+. ~/.bash_profile
+. /sge/8.0.1p4/default/common/settings.sh
+/usr/bin/python /groups/svoboda/wdbp/perons/tree/anal/par/imreg_run.py > /groups/svoboda/wdbp/imreg/logs/most_recent_imreg_run_py_call.log
+

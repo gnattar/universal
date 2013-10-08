@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# how many daemons 
+wdir="/groups/svoboda/wdbp/perons/tree/anal/par/\%wc\{parout_imreg_\*\}/";
+for (( d=1; $d <=200 ; d++ ))
+do
+  echo qsub -pe batch 1 -j y -o /dev/null -b y -cwd -V \"/groups/svoboda/wdbp/perons/tree/anal/par/par_execute_cluster $wdir \> /groups/svoboda/wdbp/perons/par/imreg/logs/imreg-$d.log\"
+  echo sleep 1
+done

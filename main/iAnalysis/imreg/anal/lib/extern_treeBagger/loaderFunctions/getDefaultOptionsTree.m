@@ -1,0 +1,25 @@
+function optionsTree = getDefaultOptionsTree
+optionsTree.zscore             = 1;
+optionsTree.featuresAll        = 0;
+optionsTree.featuresCross      = 0;
+optionsTree.nFold              = 5;
+optionsTree.storeTree          = 0;
+optionsTree.verbose            = 1;
+optionsTree.minLeaf            = 5;
+optionsTree.N_bagging          = 32;
+optionsTree.save               = 'onlyTree';
+optionsTree.path                 = 'F:\Diego\Matlab\temp\Daniel\Results\encoderRF\';
+optionsTree.rootPath             = optionsTree.path;
+optionsTree.pathAllFeatures      = 'allFeatures\';
+optionsTree.pathTrees            = 'onlyTrees\';
+optionsTree.pathSingleFeatures   = 'singleFeatures\';
+optionsTree.pathSingleCategories = 'singleCategories\';
+optionsTree.pathPairCategories   = 'pairCategories\';
+optionsTree.baseFilename         = '';
+warning ('off');
+mkdir (optionsTree.rootPath,optionsTree.pathAllFeatures);
+mkdir (optionsTree.rootPath,optionsTree.pathSingleFeatures);
+mkdir (optionsTree.rootPath,optionsTree.pathSingleCategories);
+mkdir (optionsTree.rootPath,optionsTree.pathPairCategories);
+mkdir (sprintf('%s%s',optionsTree.rootPath,optionsTree.pathAllFeatures),optionsTree.pathTrees);
+warning ('on');

@@ -1,0 +1,343 @@
+% 
+% S Peron Jan. 2010
+%
+% This is a processor IMREG_SESSION_STATS. 
+%
+% It will generate statistics for an ENTIRE SESSION of imreg-processed data.
+%
+% "func" is the *string* name of the function you wish to call below, with 
+%        params always getting passed thereto.
+%
+% "params" is a structure, with params.value carrying content.  This allows us 
+%          type independence obviating need for a huge number of variables. 
+% 
+% I would love to use MATLAB objects, but this allows us backwards compatability ...
+%
+function retparams = imreg_session_stats(func, params)
+  % --- DO NOT EDIT THIS FUNCTION AT ALL -- it should not talk to glovars, etc.
+  retparams = eval([func '(params);']);
+
+% =============================================================================
+% --- Generic processor functions (these are required for every processor)
+% =============================================================================
+
+%
+% Intialize imreg_session_stats processor -- called by fluo_display_control when added to
+%  processor sequence.  Basically a constructor.
+%
+%  params: 
+%    1: process ID -- id within processor sequence.  Allows you to talk to 
+%                     glovars, as this is glovars.processor_step(params(1).value)
+%    
+function retparams = init(params)
+  global glovars;
+  retparams = [];
+
+	disp('imreg_session_stats processor init start ...');
+
+	% --- start the gui
+  [winhan handles_struct] = imreg_session_stats_control();
+
+	% --- connect to glovars.processor_step(params(1).value).gui_handle
+	glovars.processor_step(params(1).value).gui_handle = handles_struct;
+
+	disp('imreg_session_stats processor init end ...');
+
+%
+% Closes the imreg_session_stats processor -- basically destructor.
+%
+%  params:
+%    1: process ID -- id within processor sequence.  Allows you to talk to 
+%                     glovars, as this is glovars.processor_step(params(1).value)
+%
+function retparams = shutdown(params)
+  retparams = [];
+
+%
+% The core of the processor -- this guy is *not* allowed to talk to glovars.
+%
+%  params:
+%    1: path of image file to process -- infers path to go over from this
+%    2: source file wildcard
+%    3: 1 if you are to delete other (non-3-matching) tif files; 0 if not
+%
+%  retparams: either -1 if fail, or a struct with the following:
+%    1: image path if this is an outputting processor
+%
+function retparams = process(params)
+  retparams = [];
+
+  % assign meaningful names to params
+  src_path = params(1).value;
+	src_wc = params(2).value;
+	delete_other_tifs = params(3).value;
+
+  % break up src_path
+	[src_rootpath] = fileparts(src_path);
+
+	% new src_path
+	src_path = [src_rootpath filesep src_wc];
+	out_path = [src_rootpath filesep 'imreg_session_stats.mat'];
+	lock_path = [src_rootpath filesep 'imreg_session_stats_lock.m'];
+
+  % --- prelims
+  disp(['Starting processor imreg_session_stats on source file ' src_path ' and output file ' out_path]);
+
+  % --- is this already done?  check for lockdown, and if done, nothing to do!
+	done = 1;
+	while(exist(lock_path, 'file') == 2)
+		disp(['Lock ' lock_path ' exists -- waiting 1 s']);
+		pause(1);
+	end
+
+	% if the MAT file does not exist, then you must create it -- lock down dir and go
+	if (exist(out_path,'file') == 0)
+		fid = fopen(lock_path, 'w');
+		fclose(fid);
+  
+		% --- run evaluate_registered_imaging_data
+    [accept im_file_data master_target_idx] = evaluate_registered_imaging_data(src_rootpath, src_wc);
+
+		% --- generate summary images 
+    master_target_im = load_image(im_file_data(master_target_idx).fullpath);
+    master_target_im = mean(master_target_im,3);
+		S = size(master_target_im);
+		session_mean_im = zeros(S(1),S(2)); % mean image over all accepted trials
+		session_sdmean_im = zeros(S(1),S(2)); % mean of SD images across ALL trials
+		session_sdmax_im = zeros(S(1),S(2)); % max of SD images across all trials
+		tmp_im = zeros(S(1),S(2),2); 
+		session_maxproj_im = zeros(S(1),S(2)); % maximal projection across all trials
+		session_sd_pertrial_im = zeros(S(1),S(2),length(find(accept == 1)));
+		session_mean_pertrial_im = zeros(S(1),S(2),length(find(accept == 1)));
+
+		% loop over accepted images and populate
+		N = 1;
+		for f=1:length(accept)
+		  im_file_data(f).accept = accept(f);
+		  if (accept(f))
+			  disp(['imreg_session_stats::processing ' im_file_data(f).fullpath]);
+        current_im = load_image(im_file_data(f).fullpath);
+				session_mean_im = session_mean_im + mean(current_im,3);
+				
+				% convert stripes, invalid pixels to NaN
+				ncurrent_im = current_im;
+				ncurrent_im(find(current_im == 0)) = NaN;
+
+				sd_im = nanstd(ncurrent_im,[],3);
+				session_sdmean_im = session_sdmean_im + sd_im;
+				
+				tmp_im(:,:,1) = session_sdmax_im;
+				tmp_im(:,:,2) = sd_im;
+				session_sdmax_im = max(tmp_im,[],3);
+
+				session_sd_pertrial_im(:,:,N) = sd_im;
+				session_mean_pertrial_im(:,:,N) = mean(current_im,3);
+    
+  			tmp_im(:,:,1) = session_maxproj_im;
+				tmp_im(:,:,2) = max(current_im,[],3);
+				session_maxproj_im = max(tmp_im,[],3);
+				
+				N = N+1;
+			end
+		end
+
+		% divide mean images 
+		session_mean_im = session_mean_im/N;
+		session_sdmean_im = session_sdmean_im/N;
+
+		% --- save everything to .mat file (including summary image copies) [out_path]
+		save(out_path, 'accept', 'im_file_data', 'master_target_idx', 'master_target_im', ...
+		     'session_mean_im', 'session_sdmean_im', 'session_sdmax_im', 'session_maxproj_im', '-mat');
+		disp(['imreg_session_stats::saved to ' out_path]);
+
+		% --- save images to .tif files
+		save_image(master_target_im, [src_rootpath filesep 'master_imreg_image.tif'], '');
+		save_image(session_mean_im, [src_rootpath filesep 'session_mean.tif'], '');
+		save_image(session_sdmean_im, [src_rootpath filesep 'session_sdmean.tif'], '');
+		save_image(session_sdmax_im, [src_rootpath filesep 'session_sdmax.tif'], '');
+		save_image(session_maxproj_im, [src_rootpath filesep 'session_maxproj.tif'], '');
+		save_image(session_sd_pertrial_im, [src_rootpath filesep 'session_pertrial_sd.tif'], '');
+		save_image(session_mean_pertrial_im, [src_rootpath filesep 'session_pertrial_mean.tif'], '');
+		disp(['imreg_session_stats::saved various useful summary .tif files in ' src_rootpath]);
+	
+		% --- unlock the directory
+		delete(lock_path);
+	else
+		disp(['imreg_session_stats::doing nothing; already found existing ' out_path]);
+	end
+
+	% --- delete extraneous tif files
+	if (delete_other_tifs)
+    alltif = dir([src_rootpath filesep '*tif']);
+    gtif = dir([src_rootpath filesep src_wc]);
+    for a=1:length(alltif) ; fa{a} = alltif(a).name ; end
+    for a=1:length(gtif) ; fg{a} = gtif(a).name ; end
+  
+	  % add ones you want to keep that you built!
+		good_list = {'master_imreg_image','session_mean','session_sdmean','session_sdmax', ...
+		  'session_maxproj','session_pertrial_sd','session_pertrial_mean'};
+    for a=1:length(good_list) ; fg{length(fg)+1} = [good_list{a} '.tif'] ; end
+
+    del_idx = find(~ismember(fa,fg));
+
+		for d=1:length(del_idx)
+		  delete ([src_rootpath filesep fa{del_idx(d)}]);
+		end
+  end
+
+  % --- return 1  
+	retparams(1).value = 1;
+
+%
+% Processor wrapper for single instance mode ; should setup params and make a 
+%  single process() call.
+%
+%  params:
+%    1: process ID -- id within processor sequence.  Allows you to talk to 
+%                     glovars, as this is glovars.processor_step(params(1).value)
+%    2: path of image file to process 
+%    3: output file path (if not an outputting processor, will be ignored)
+%    4: progress ; progres(1): current call index ; progress(2): total number of calls
+%
+%  retparams: either -1 if fail, or a struct with the following:
+%    1: image path if this is an outputting processor
+%
+%  glovars used:
+%
+function retparams = process_single(params)
+  global glovars;
+  retparams = [];
+
+	% 1) get gui-defined parameters
+	pr_params = construct_params_from_gui(params);
+
+	% 2) call process()
+  retparams = process(pr_params);
+
+
+%
+% Processor wrapper for batch mode ; should generate .mat files containing params
+%  for process that a parallel agent can then call. Handle any glovars/gui communication 
+%  and setup a glovars/gui independent params structure for process() itself.
+%
+%  params:
+%    1: process ID -- id within processor sequence.  Allows you to talk to 
+%                     glovars, as this is glovars.processor_step(params(1).value)
+%    2: path(s) of source images -- cell array
+%    3: output path 
+%    4: progress ; progres(1): current call index ; progress(2): total number of calls
+%    5: .mat file path -- filename for mat file that parallel processor will use
+%    6: .mat dependency file(s) -- filename(s) that must be executed before this one
+%                                  can include standard 'ls' wildcards
+%
+%  retparams: 
+%    1: cell ARRAY with path(s) of .mat file(s) generated
+%
+function retparams = process_batch (params)
+  global glovars;
+  retparams = [];
+
+	% 1) get gui-defined parameters 
+	pr_params = construct_params_from_gui(params);
+
+	% 2) call process()
+  retparams(1).value = par_generate('imreg_session_stats','process',pr_params, params(5).value, params(6).value);
+
+%
+% Processor wrapper for batch mode  with no gui; should generate .mat files containing params
+%  for process that a parallel agent can then call.  You must pass the parameters, as  #7
+%
+%  params:
+%    1: process ID -- id within processor sequence.  Allows you to talk to 
+%                     glovars, as this is glovars.processor_step(params(1).value)
+%    2: path(s) of source images -- cell array
+%    3: output path 
+%    4: progress ; progres(1): current call index ; progress(2): total number of calls
+%    5: .mat file path -- filename for mat file that parallel processor will use
+%    6: .mat dependency file(s) -- filename(s) that must be executed before this one
+%                                  can include standard 'ls' wildcards
+%    7: params usually obtained from gui -- structure
+%
+%  retparams: 
+%    1: cell ARRAY with path(s) of .mat file(s) generated
+%
+function retparams = process_batch_nogui (params)
+  global glovars;
+  retparams = [];
+
+	% 1) get gui-defined parameters 
+	pr_params = construct_params_from_structure(params);
+
+	% 2) call process()
+  retparams(1).value = par_generate('imreg_session_stats','process',pr_params, params(5).value, params(6).value);
+
+
+
+%
+% Return values for saving in case gui is saved
+%
+%  params:
+%    1: process ID -- id within processor sequence.  Allows you to talk to 
+%                     glovars, as this is glovars.processor_step(params(1).value)
+%
+function retparams = get_saveable_settings(params)
+  global glovars;
+  retparams = [];
+
+%
+% Pass saved values for assigning to gui in case gui was saved
+%
+%  params:
+%    1: process ID -- id within processor sequence.  Allows you to talk to 
+%                     glovars, as this is glovars.processor_step(params(1).value)
+%
+function retparams = set_saveable_settings(params)
+  global glovars;
+  retparams = [];
+
+% =============================================================================
+% --- Processor-specific functions
+% =============================================================================
+
+%
+% constructs a params structure that can be passed to process based on GUI 
+% assigned properties
+%
+% assigns source file wildcard.
+%
+function pr_params = construct_params_from_gui(params)
+  global glovars;
+
+	si = params(1).value;
+	step = glovars.processor_step(si);
+	han = step.gui_handle;
+
+  % 1) the only gui variable is the path of z stack
+	src_wc = get(han.source_wildcard_edit, 'String');
+	if (get(han.cleanup_tif_checkbox, 'Value') == get(han.cleanup_tif_checkbox, 'Value'))
+	  delete_other_tifs = 1;
+	else
+	  delete_other_tifs = 0;
+	end
+
+  % 2) construct params for process()
+  pr_params(1).value = params(2).value; % path of image file to process -- infers directory from this
+  pr_params(2).value = src_wc;
+  pr_params(3).value = delete_other_tifs;
+
+
+
+%
+% constructs a params structure that can be passed to process based on passed
+% properties.  params(7).value has the following fields:
+%   source_wildcard: 'Image_Registration_5_*' or something
+%   delete_other_tifs: if set to 1, it will delete anything not matching source_wildcard
+%
+function pr_params = construct_params_from_structure(params)
+  p_struct = params(7).value;
+
+  % 2) construct params for process()
+  pr_params(1).value = params(2).value; % path of image file to process -- infers directory from this
+  pr_params(2).value = p_struct.source_wildcard;
+  pr_params(3).value = p_struct.delete_other_tifs;
+

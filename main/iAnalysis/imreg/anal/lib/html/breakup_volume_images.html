@@ -1,0 +1,1137 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>breakup_volume_images</title><meta name="generator" content="MATLAB 7.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-10-11"><meta name="DC.source" content="breakup_volume_images.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%</span>
+<span class="comment">% SP Aug 2011</span>
+<span class="comment">%</span>
+<span class="comment">% This function will breakup a series of volume images into individual planes</span>
+<span class="comment">%  in subdirectories.  Subdirectories are named fov_vvppp, where vv is volume</span>
+<span class="comment">%  id (vol_id) and ppp is plane id (fov_id usually; e.g., 01001). These are</span>
+<span class="comment">%  subdirectories of fpath.  Ensures that each file starts with fov 1, so some</span>
+<span class="comment">%  files are broken up, asjusting triggerFrameStartTime and triggerTime</span>
+<span class="comment">%  accordingly.  Assumes standard SI4 header.</span>
+<span class="comment">%</span>
+<span class="comment">% USAGE:</span>
+<span class="comment">%</span>
+<span class="comment">%   breakup_volume_images(fpath, flist, n_planes, mode, reference_image,</span>
+<span class="comment">%     reference_image_offset, reference_image_frames, preview_or_xml,</span>
+<span class="comment">%     frames_correlated, cluster_fpath, fov_ids, vol_id, imreg_wc, do_warp)</span>
+<span class="comment">%</span>
+<span class="comment">% PARAMS:</span>
+<span class="comment">%</span>
+<span class="comment">%   fpath: directory where data is, output will be</span>
+<span class="comment">%   flist: either a wildcard (string) or list of files (cell-array -- RELATIVE</span>
+<span class="comment">%          path).  You can also pass comma-separated list with NO WHITESPACE!</span>
+<span class="comment">%   n_planes: how many planes?  fov output will be to 001:n_planes, unless</span>
+<span class="comment">%             you give fov_ids</span>
+<span class="comment">%   mode: 1 - use reference image ; 2 - use header to infer plane #</span>
+<span class="comment">%         (triggerFrameNumber)</span>
+<span class="comment">%   reference_image: which image stack to use as reference (will use mean) --</span>
+<span class="comment">%                    either FULL path, or image stack.  Or pass a SINGLE digit,</span>
+<span class="comment">%                    in which case it will use flist{reference_image} or file</span>
+<span class="comment">%                    # reference_image that matches flist wildcard.</span>
+<span class="comment">%   reference_image_offset: use an offset? (e.g., to use frame 2 as 1st fov, pass 1)</span>
+<span class="comment">%                           default is 0.</span>
+<span class="comment">%   reference_image_frames: which frames to use to generate averages? default all.</span>
+<span class="comment">%                           VECTOR of frame #s.</span>
+<span class="comment">%   preview_or_xml: if 1, will preview reference image; if blank or 0, it will</span>
+<span class="comment">%                   go ahead and do the breakup.  If 2, it will generate a</span>
+<span class="comment">%                   cluster-compatible xml in the directory with the images.</span>
+<span class="comment">%   frames_correlated: if mode 1, this tells which frames to correlate.  If 0</span>
+<span class="comment">%                      (default), it will ONLY check 1st frame, then assume the</span>
+<span class="comment">%                      rest are in sequence m...n,1 2 ... n,1 2 ... n.  If a value</span>
+<span class="comment">%                      above 0, it will check every frames_correlated'th frame</span>
+<span class="comment">%                      so a value of 1 means all frames checked.  Use a prime!</span>
+<span class="comment">%   cluster_fpath: if preview_or_xml == 2, this is what path on CLUSTER will be</span>
+<span class="comment">%   fov_ids: if you want to specify names of output dirs, pass this vector of #s</span>
+<span class="comment">%            and it will output to these instead.  Pass a single number and</span>
+<span class="comment">%            fov_ids:fov_ids+n_planes-1 will be used. Must be &lt; 1000.</span>
+<span class="comment">%   vol_id: volume ID ; if not passed, 1 ; must be &lt; 100.</span>
+<span class="comment">%   imreg_wc: if you are generating image registration, wildcard for it; dfeault</span>
+<span class="comment">%             *main*tif</span>
+<span class="comment">%   do_warp: if generating XML, this sets the do_warp flag, telling imreg to</span>
+<span class="comment">%            run warp step.  Eventually should be able to pass a imreg pipeline</span>
+<span class="comment">%            specification via XML. Default 0 (no).</span>
+<span class="comment">%</span>
+<span class="comment">% EXAMPLE: for generating XML for a single volume (no vol_id) with 4 planes</span>
+<span class="comment">%</span>
+<span class="comment">%  offs = 3;</span>
+<span class="comment">%  breakup_volume_images(pwd, '*main*tif', 4, 1, 'an148378_2011_09_13_main_157.tif', ...</span>
+<span class="comment">%    offs, 1:200, 2, 0, strrep(pwd, '/media/an148378', '/groups/svoboda/wdbp/imreg/perons'));</span>
+<span class="comment">%</span>
+<span class="keyword">function</span> breakup_volume_images(fpath, flist, n_planes, mode, reference_image,  <span class="keyword">...</span>
+         reference_image_offset, reference_image_frames, preview_or_xml, <span class="keyword">...</span>
+         frames_correlated, cluster_fpath, fov_ids, vol_id, imreg_wc, do_warp)
+
+	SI_date_format_str = <span class="string">'dd-mm-yyyy HH:MM:SS.FFF'</span>;
+  d2ms = 24*60*60*1000; <span class="comment">% date number from MATLAB to ms conversion factor</span>
+
+  <span class="comment">% --- Input parse</span>
+	<span class="keyword">if</span> (nargin &lt; 4 || (mode == 1 &amp;&amp; nargin &lt; 5))
+	  help(<span class="string">'breakup_volume_images'</span>);
+		error(<span class="string">'breakup_volume_images::insufficient input arguments.'</span>);
+    <span class="keyword">return</span>;
+	<span class="keyword">end</span>
+
+	<span class="keyword">if</span> ((mode == 1 &amp;&amp; nargin &lt; 6) | (mode ~=1 &amp;&amp; length (reference_image_offset) == 0)) ; reference_image_offset = 0; <span class="keyword">end</span>
+	<span class="keyword">if</span> (mode == 1 &amp;&amp; nargin &lt; 7) ; reference_image_frames = []; <span class="keyword">end</span>
+	<span class="keyword">if</span> (nargin &lt; 8 || length(preview_or_xml) == 0) ; preview_or_xml = 0; <span class="keyword">end</span>
+	<span class="keyword">if</span> (nargin &lt; 9 || length(frames_correlated) == 0) ; frames_correlated = 0; <span class="keyword">end</span>
+	<span class="keyword">if</span> (nargin &lt; 11 || length(fov_ids) == 0) ; fov_ids = 1:n_planes ; <span class="keyword">end</span>
+	<span class="keyword">if</span> (nargin &lt; 12 || length(vol_id) == 0) ; vol_id = 1; <span class="keyword">end</span>
+	<span class="keyword">if</span> (nargin &lt; 13 || length(imreg_wc) == 0) ; imreg_wc = <span class="string">'*main*tif'</span>; <span class="keyword">end</span>
+	<span class="keyword">if</span> (nargin &lt; 14 || length(do_warp) == 0) ; do_warp = 0; <span class="keyword">end</span>
+
+	<span class="keyword">if</span> (length(fov_ids) == 1 &amp;&amp; n_planes &gt; 1) ; fov_ids = fov_ids:(fov_ids+n_planes-1); <span class="keyword">end</span>
+
+  <span class="comment">% --- build file list</span>
+	pflist = flist ; <span class="comment">% store passed flist for xml generation</span>
+	<span class="keyword">if</span> (ischar(flist))
+	  commalist = strfind(flist,<span class="string">','</span>);
+	  <span class="keyword">if</span> (length(commalist) == 0)
+			tflist = dir([fpath filesep flist]);
+			<span class="keyword">if</span> (length(tflist) == 0)
+				disp(<span class="string">'breakup_volume_images::no files matching specified pattern.'</span>);
+				<span class="keyword">return</span>;
+			<span class="keyword">end</span>
+			<span class="keyword">for</span> f=1:length(tflist)
+				nflist{f} = tflist(f).name;
+			<span class="keyword">end</span>
+			flist = nflist;
+		<span class="keyword">else</span> <span class="comment">% build flist from coma list</span>
+		  commalist = [0 commalist length(flist)+1];
+		  <span class="keyword">for</span> c=1:length(commalist)-1
+			  nflist{c} = flist(commalist(c)+1:commalist(c+1)-1);
+			<span class="keyword">end</span>
+			flist = nflist;
+		<span class="keyword">end</span>
+	<span class="keyword">end</span>
+
+  <span class="comment">% --- generate reference images if called for ...</span>
+	fov_refims = {};
+	<span class="keyword">if</span> (mode == 1)
+         <span class="keyword">if</span> (ischar(reference_image))
+              <span class="keyword">if</span> (~exist(reference_image, <span class="string">'file'</span>)) <span class="comment">% try with fpath added</span>
+                    rim = load_image_pre([fpath filesep reference_image]);
+              <span class="keyword">else</span>
+                    rim = load_image_pre(reference_image);
+              <span class="keyword">end</span>
+         <span class="keyword">elseif</span> (max(size(reference_image)) == 1) <span class="comment">% it is refering to flist member</span>
+              rim = load_image_pre(flist{reference_image});
+         <span class="keyword">else</span>
+              rim = reference_image;
+         <span class="keyword">end</span>
+
+        <span class="keyword">if</span> (length(reference_image_frames)&gt;0)
+            rim = rim(:,:,reference_image_frames);
+            <span class="keyword">if</span> (rem(min(reference_image_frames), n_planes)-1 ~= reference_image_offset)
+              disp(<span class="string">'breakup_volume_images::your reference_image_frames must start at a multiple of reference_image_offset.'</span>);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="keyword">for</span> n=1:n_planes
+              fov_refims{n} = mean(rim(:,:,reference_image_offset+n:n_planes:end),3);
+            <span class="keyword">end</span>
+
+            <span class="comment">% preview?</span>
+            <span class="keyword">if</span> (preview_or_xml &gt; 0)
+              nf = ceil(sqrt(n_planes));
+          df = 1/nf;
+
+          figure(<span class="string">'Position'</span>, [100 100 800 800]);
+                X = 0;
+                Y = 1-df;
+                Xi = 0;
+                <span class="keyword">for</span> n=1:n_planes
+                  ar = subplot(<span class="string">'Position'</span>, [X Y df df]);
+                    X = X+df; Xi = Xi + 1;
+                    <span class="keyword">if</span> (Xi &gt;= nf) ; X = 0 ; Xi = 0 ; Y = Y-df; <span class="keyword">end</span>
+                    M = 1.5*quantile(reshape(fov_refims{n},[],1),.995);
+    <span class="comment">%				M = roi.roiArray.maxImagePixelValue;</span>
+                    imshow(fov_refims{n}, [0 M], <span class="string">'Parent'</span>, ar, <span class="string">'Border'</span>, <span class="string">'tight'</span>);
+                    text(50,50,num2str(n), <span class="string">'Color'</span>, [1 0 0], <span class="string">'FontSize'</span>, 24);
+                <span class="keyword">end</span>
+                disp(<span class="string">'breakup_volume_images::preview mode skips output.'</span>);
+
+                <span class="keyword">if</span> (preview_or_xml == 2) <span class="comment">% output to XML</span>
+                 generate_xml (fpath, cluster_fpath, n_planes, pflist, imreg_wc, <span class="keyword">...</span>
+                       reference_image,reference_image_frames,reference_image_offset, vol_id, do_warp);
+                <span class="keyword">end</span>
+
+                <span class="keyword">return</span>;
+            <span class="keyword">end</span>
+
+		clear <span class="string">rim</span>;
+		clear <span class="string">reference_image</span>;
+    <span class="keyword">else</span>
+
+    <span class="keyword">end</span>
+
+
+  <span class="comment">% --- prepare output directories</span>
+	<span class="keyword">for</span> n=1:n_planes
+	  fov_dir{n} = sprintf(<span class="string">'%s%sfov_%02d%03d'</span>, fpath, filesep, vol_id, fov_ids(n));
+	  <span class="keyword">if</span> (~exist(fov_dir{n},<span class="string">'dir'</span>)) ; mkdir (fov_dir{n}) ; <span class="keyword">end</span>
+	<span class="keyword">end</span>
+
+	<span class="comment">% --- loop for determining FOV sequence</span>
+  disp(<span class="string">'breakup_volume_images::gathering data from files ... this will take time.'</span>);
+  <span class="keyword">for</span> f=1:length(flist)
+	  [fov_sequence{f} start_time(f) n_frames(f) frame_dt(f) im_size{f}] = <span class="keyword">...</span>
+		  get_file_info(flist{f}, mode, n_planes, fpath, fov_refims, frames_correlated);
+  <span class="keyword">end</span>
+
+  <span class="comment">% remove guys rejected by get_file_info</span>
+  good_files = find(frame_dt ~= -1);
+  flist = flist(good_files);
+  fov_sequence = fov_sequence(good_files);
+  start_time = start_time(good_files);
+  n_frames = n_frames(good_files);
+  frame_dt = frame_dt(good_files);
+  im_size = im_size(good_files);
+
+
+  <span class="comment">% sanity check::aberrant frame dt??</span>
+	<span class="keyword">if</span> (sum(diff(frame_dt)) &gt; 0)
+	  disp(<span class="string">'breakup_volume_images::different frame dt among files; aborting.'</span>);
+    <span class="keyword">return</span>;
+	<span class="keyword">end</span>
+	frame_dt = frame_dt(1);
+
+	<span class="comment">% sanity check::different image size?</span>
+  fim_size = [];
+	<span class="keyword">for</span> f=1:length(flist)
+	  <span class="keyword">if</span> (length(im_size{f}) &gt; 0)
+		  <span class="keyword">if</span> (length(fim_size) == 0)
+			  fim_size = im_size{f};
+			<span class="keyword">elseif</span> (sum(fim_size == im_size{f}) &lt; 2)
+  	    disp(<span class="string">'breakup_volume_images::different frame size among files; aborting.'</span>);
+	  		<span class="keyword">return</span>;
+			<span class="keyword">end</span>
+		<span class="keyword">end</span>
+	<span class="keyword">end</span>
+
+	<span class="comment">% --- process the derived sequence to determine output file mapping</span>
+
+	<span class="comment">% 1) sort by order of timestamp</span>
+  [irr indexing] = sort(start_time);
+	flist = flist(indexing);
+	fov_sequence = fov_sequence(indexing);
+  im_size = im_size(indexing);
+	start_time = start_time(indexing);
+	n_frames = n_frames(indexing);
+	triggerFrameStartTime_offset = zeros(1,length(indexing)); <span class="comment">% in seconds -- how much we will add to triggerFrmeStartTime in hdr</span>
+
+	<span class="comment">% 2) breakup into contiguous blocks -- sequences of files separated by less than 1 frame dt</span>
+	block_membership = ones(1,length(flist));
+	bi = 1;
+  <span class="keyword">for</span> f=1:length(flist)-1
+	  block_membership(f) = bi;
+	  next_start = (n_frames(f)+0.9)*frame_dt + start_time(f);
+		<span class="keyword">if</span> (start_time(f+1) &gt; next_start) ; bi = bi + 1; <span class="keyword">end</span>
+	<span class="keyword">end</span>
+	block_membership(end) = bi;
+
+
+	<span class="comment">% 3) breakup into files that start/end with FOV 1/n_planes</span>
+	<span class="comment">% build up a original_file_membership, (expanded) block_membership,</span>
+	<span class="comment">%  and fov_sequence vector for session</span>
+	total_n_frames = sum(n_frames);
+	original_file_membership = nan*zeros(1,total_n_frames);
+	final_file_membership = nan*zeros(1,total_n_frames);
+	frame_block_membership = nan*zeros(1,total_n_frames);
+	frame_fov_sequence = nan*zeros(1,total_n_frames);
+	frame_within_file_frame_idx = nan*zeros(1,total_n_frames);
+	val_frames = ones(1,total_n_frames);
+
+	<span class="comment">% frame-based vectors</span>
+	fi = 1;
+	<span class="keyword">for</span> f=1:length(flist)
+	  original_file_membership(fi:fi+n_frames(f)-1) = f;
+	  frame_block_membership(fi:fi+n_frames(f)-1) = block_membership(f);
+	  frame_fov_sequence(fi:fi+n_frames(f)-1) = fov_sequence{f};
+		frame_within_file_frame_idx(fi:fi+n_frames(f)-1) = 1:n_frames(f);
+		fi = fi+n_frames(f);
+	<span class="keyword">end</span>
+
+  <span class="comment">% for each block, loop thru its files ...</span>
+	u_blocks = unique(block_membership);
+	<span class="keyword">for</span> b=1:length(u_blocks)
+    bi = find(frame_block_membership == u_blocks(b));
+
+    u_block_files = unique(original_file_membership(bi));
+
+    <span class="keyword">for</span> f=1:length(u_block_files)
+      f_idx = u_block_files(f);
+			fi = find(original_file_membership == f_idx);
+
+			<span class="comment">% ensure file starts will frame 1</span>
+			first_i = min(fi);
+			start_f = first_i;
+      <span class="keyword">if</span> (frame_fov_sequence(first_i) ~= 1) <span class="comment">% block DOES NOT start with one? *discard* those frames</span>
+			  first_1 = fi(min(find(frame_fov_sequence(fi) == 1)));
+				<span class="keyword">if</span> (length(first_1) == 0) <span class="comment">% in this case discard *all* from this file</span>
+          val_frames(fi) = 0;
+					start_f = -1;
+				<span class="keyword">else</span>
+				  df = first_1-first_i; <span class="comment">% how many frames from start is first frame in fov1?</span>
+					start_f = first_1;
+
+					<span class="comment">% increment trggerFrameStartTime_offset --&gt; frame_dt is in ms so convert to seconds</span>
+	        triggerFrameStartTime_offset(f_idx) = frame_dt*df/1000; <span class="comment">% in seconds</span>
+
+					<span class="comment">% if this is FIRST file, discard previous frames ...</span>
+					<span class="keyword">if</span> (f == 1)
+					  val_frames(first_i:first_1-1) = 0;
+					<span class="keyword">end</span>
+        <span class="keyword">end</span>
+			<span class="keyword">end</span>
+
+			<span class="comment">% ensure file ends with frame n_planes --&gt; steal from next file in block if possible, OR</span>
+			<span class="comment">%  discard the frames</span>
+			last_i = max(fi);
+			end_f = last_i;
+			<span class="keyword">if</span> (frame_fov_sequence(last_i) ~= n_planes)
+			  discard = 0;
+
+			  <span class="comment">% possible to steal from next file in block?</span>
+				candi_frames = bi(find(frame_fov_sequence(bi) == n_planes));
+				<span class="keyword">if</span> (length(candi_frames) &gt; 0)
+				  <span class="keyword">if</span> (length(find(candi_frames &gt; last_i)) &gt; 0)
+					  end_f = candi_frames(min(find(candi_frames &gt; last_i)));
+					<span class="keyword">else</span>
+					  discard = 1;
+					<span class="keyword">end</span>
+				<span class="keyword">else</span>
+				  discard = 2;
+				<span class="keyword">end</span>
+
+				<span class="keyword">if</span> (discard == 1) <span class="comment">% move BACK to find previous one</span>
+				  end_f = candi_frames(max(find(candi_frames &lt; last_i)));
+					val_frames(end_f+1:last_i) = 0;
+				<span class="keyword">elseif</span> (discard == 2) <span class="comment">% discard ALL --&gt; NO termination planes</span>
+				  disp(<span class="string">'breakup_volume_images::found a file with NO final-FOV frames.'</span>);
+				  val_frames(bi) = 0;
+				<span class="keyword">end</span>
+			<span class="keyword">end</span>
+
+			<span class="comment">% assign final_file_membership</span>
+      <span class="keyword">if</span> (start_f &gt; 0 )
+			  final_file_membership(start_f:end_f) = f_idx;
+      <span class="keyword">end</span>
+		<span class="keyword">end</span>
+	<span class="keyword">end</span>
+
+	<span class="comment">% 4) actual output based on flist, original&amp;final file_membership</span>
+  disp(<span class="string">'breakup_volume_images::building output files ...'</span>);
+	uf = unique(final_file_membership(find(~isnan(final_file_membership))));
+	<span class="keyword">for</span> f=1:length(uf)
+
+	  <span class="comment">% prebuild tif with ALL FOVs</span>
+		fi = find(final_file_membership == uf(f));
+    <span class="keyword">if</span> (length(fi) == 0) ; disp([<span class="string">'No data for '</span> flist{uf(f)}]); <span class="keyword">continue</span> ; <span class="keyword">end</span>
+		fim = zeros(fim_size(1), fim_size(2), length(fi));
+
+		<span class="comment">% load necessary files</span>
+		u_ofi = unique(original_file_membership(fi));
+		<span class="keyword">for</span> u=1:length(u_ofi)
+		  [im irr] = load_image_pre ([fpath filesep flist{u_ofi(u)}]);
+			ui = find(original_file_membership(fi) == u_ofi(u));
+			fim(:,:,ui) = im(:,:,frame_within_file_frame_idx(fi(ui)));
+    <span class="keyword">end</span>
+
+    <span class="comment">% update header</span>
+		[irr improps] = load_image_pre ([fpath filesep flist{uf(f)}]);
+		ihdr = improps.header;
+		tr_s = strfind(ihdr, <span class="string">'ScanImage.SI4App.triggerFrameStartTime'</span>) +length(<span class="string">'ScanImage.SI4App.triggerFrameStartTime = '</span>);
+    <span class="keyword">if</span> (length(tr_s) == 0)
+   		tr_s = strfind(ihdr, <span class="string">'scanimage.SI4.triggerFrameStartTime'</span>) +length(<span class="string">'scanimage.SI4.triggerFrameStartTime = '</span>);
+    <span class="keyword">end</span>
+
+		newline_idx = find(ihdr == 10);
+		tr_e = newline_idx(min(find(newline_idx &gt; tr_s)))-1;
+		ihdr = [ihdr(1:tr_s-1) num2str(str2num(ihdr(tr_s:tr_e))+triggerFrameStartTime_offset(uf(f))) ihdr(tr_e+1:end)];
+		improps.header = ihdr;
+
+		<span class="comment">% output *individual FOVs*</span>
+	  disp([<span class="string">'breakup_volume_image::outputting '</span> flist{uf(f)}]);
+		<span class="keyword">for</span> n=1:length(fov_dir)
+			used_idx = find(frame_fov_sequence(fi) == n);
+			<span class="keyword">if</span> (length(used_idx) &gt; 0)
+				nim = fim(:,:,used_idx);
+<span class="comment">% IN HEADER, UPDATE START TIME, TRIGGER OFFSET</span>
+				save_image(nim, [fov_dir{n} filesep flist{uf(f)}], improps.header);
+			<span class="keyword">end</span>
+		<span class="keyword">end</span>
+	<span class="keyword">end</span>
+
+<span class="comment">%</span>
+<span class="comment">% Gets the timestamp and FOV sequence for a single file</span>
+<span class="comment">%</span>
+<span class="keyword">function</span> [fov_sequence start_time n_frames frame_dt im_size] = <span class="keyword">...</span>
+  get_file_info(fname, mode, n_planes, fpath, fov_refims, frames_correlated)
+
+  fov_sequence = [];
+	start_time = -1;
+	frame_rate = -1;
+	frame_dt = -1;
+  n_frames = 0;
+	im_size = [];
+
+  <span class="comment">% --- load ; prelims</span>
+	<span class="keyword">try</span>
+		disp([<span class="string">'breakup_volume_image::gathering frame info for '</span> fname]);
+
+		<span class="comment">% skip if &gt; 500 mb</span>
+		fh = fopen([fpath filesep fname]);
+		fseek(fh,0,<span class="string">'eof'</span>);
+		fsize = ftell(fh);
+		fclose(fh);
+		<span class="keyword">if</span> (fsize &gt; 500000000)
+			disp([<span class="string">'breakup_volume_image::found excessively large file ; skipping '</span> fname]);
+			<span class="keyword">return</span>;
+		<span class="keyword">end</span>
+
+		<span class="comment">% load ; get start_time</span>
+		[im improps] = load_image_pre([fpath filesep fname]);
+		n_frames = size(im,3);
+		fov_sequence = zeros(1,n_frames); <span class="comment">% vector for FOV ID for each frame ...</span>
+		start_time = improps.startTimeMS;
+		frame_dt = 1000/improps.frameRate/improps.numPlanes;
+		im_size = [improps.height improps.width];
+
+		<span class="comment">% --- do the breakup --&gt; assign each frame an fov</span>
+		<span class="keyword">if</span> (mode == 1)
+			<span class="keyword">if</span> (frames_correlated == 0 )
+				fc_vec = 1 ;
+			<span class="keyword">else</span>
+				fc_vec = 1:frames_correlated:n_frames;
+			<span class="keyword">end</span>
+
+			<span class="comment">% check all the frames you are supposed to check</span>
+			<span class="keyword">for</span> i=fc_vec
+				disp([<span class="string">'breakup_volume_image::processing frame '</span> num2str(i) <span class="string">' for '</span> fname]);
+				score = zeros(1,n_planes);
+				<span class="keyword">for</span> n=1:n_planes
+					<span class="comment">% for speedup, use downsampled image</span>
+<span class="comment">% 					im1 = im(1:4:end,1:4:end, i);%%GRchange</span>
+<span class="comment">% 					im2 = fov_refims{n}(1:4:end,1:4:end);</span>
+                    im1 = im(1:1:end,1:1:end, i);
+					im2 = fov_refims{n}(1:1:end,1:1:end);
+	<span class="comment">%	  		cim = normxcorr2(im(:,:,i),fov_refims{n});</span>
+					cim = normxcorr2(im1,im2);
+					score(n) = max(max(cim));
+				<span class="keyword">end</span>
+				[irr idx] = max(score);
+				fov_sequence(i) = idx;
+			<span class="keyword">end</span>
+
+			<span class="comment">% build up rest of fov_sequence OR check it if needed -- assumption is</span>
+			<span class="comment">%  that frames are SEQUENTIAL</span>
+			<span class="keyword">if</span> (frames_correlated ~= 1 &amp; n_frames &gt; 0)
+				expected_sequence = repmat(1:n_planes, 1, ceil(n_frames/n_planes)+n_planes);
+				expected_sequence = expected_sequence(fov_sequence(1):fov_sequence(1)+n_frames-1);
+				<span class="keyword">if</span> (frames_correlated == 0)
+					fov_sequence = expected_sequence;
+				<span class="keyword">else</span>
+					<span class="comment">% longer than 1 and frames_correalted &gt; 0?  check if right for ones that were done ...</span>
+					checked = setdiff(find(fov_sequence &gt; 0),1);
+					<span class="keyword">if</span> (length(checked) &gt; 0)
+						<span class="keyword">if</span> (sum(fov_sequence(checked) == expected_sequence(checked)) ~= length(checked))
+							disp([<span class="string">'breakup_volume_image::expected sequence deviated from detected sequence ; skipping '</span> fname]);
+							fov_sequence = []; start_time = -1; frame_rate = -1; frame_dt = -1; n_frames = 0; im_size = [];
+							<span class="keyword">return</span>;
+						<span class="keyword">else</span>
+							fov_sequence = expected_sequence;
+						<span class="keyword">end</span>
+					<span class="keyword">else</span>
+						fov_sequence = expected_sequence;
+					<span class="keyword">end</span>
+				<span class="keyword">end</span>
+			<span class="keyword">end</span>
+		<span class="keyword">elseif</span> (mode == 2) <span class="comment">% simply use the firstFrameNumberRelTrigger field</span>
+			expected_sequence = repmat(1:n_planes, 1, ceil(n_frames/n_planes)+2*n_planes);
+			first_frame_offset = rem(improps.firstFrameNumberRelTrigger, n_planes);
+			<span class="keyword">if</span> (improps.firstFrameNumberRelTrigger == 1) ; first_frame_offset =0 ; <span class="keyword">end</span> <span class="comment">% this is a special bug case -- neg trig time?</span>
+			fov_sequence = expected_sequence(first_frame_offset+(1:n_frames));
+		<span class="keyword">else</span>
+			disp([<span class="string">'Mode '</span> num2str(mode) <span class="string">' not currently supported.'</span>]);
+		<span class="keyword">end</span>
+
+		<span class="comment">% --- check for aberrant orderings</span>
+		dfi = diff(fov_sequence);
+		inval = find(~ismember(dfi, [1 -1*(n_planes-1)]));
+		<span class="keyword">if</span> (length(inval) &gt; 0)
+			disp([<span class="string">'breakup_volume_image::found aberrant ordering ; skipping '</span> fname]);
+			fov_sequence = [];
+			<span class="keyword">return</span>;
+		<span class="keyword">end</span>
+	<span class="keyword">catch</span> <span class="comment">% just set defaults and return</span>
+		disp([<span class="string">'breakup_volume_image::file was corrupt, skipping '</span> fname]);
+		fov_sequence = [];
+		start_time = -1;
+		frame_rate = -1;
+		frame_dt = -1;
+		n_frames = 0;
+		im_size = [];
+	<span class="keyword">end</span>
+
+
+<span class="comment">%</span>
+<span class="comment">% Generates XML file for imreg on cluster</span>
+<span class="comment">%</span>
+<span class="keyword">function</span> generate_xml (data_path, cluster_rawdata_path, num_fovs, prebreakup_image_wc, <span class="keyword">...</span>
+              postbreakup_image_wc, base_image_fname,base_image_frames, offset, vol_id, do_warp)
+
+    cluster_rawdata_path =  strrep(cluster_rawdata_path, <span class="string">'GR_Data01/2PData_proc/BehaviorImaging/'</span>, sprintf(<span class="string">'mageelab/GR_dm11/imreg/'</span>));
+<span class="comment">% 	par_path = strrep(cluster_rawdata_path, 'scanimage', sprintf('parout_imreg_%02d%%###', vol_id));</span>
+    par_path = cluster_rawdata_path; <span class="comment">%%GRchange</span>
+	base_frames = [num2str(base_image_frames(1)) <span class="string">' '</span> num2str(base_image_frames(length(base_image_frames)))];
+
+    outstr = <span class="string">'&lt;?xml version="1.0" encoding="UTF-8" ?&gt;'</span>;
+	outstr = sprintf(<span class="string">'%s\n%s'</span>, outstr, <span class="string">'&lt;imreg_par_data&gt;'</span>);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;rawdata_path&gt;%s&lt;/rawdata_path&gt;'</span>, outstr, cluster_rawdata_path);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;par_path&gt;%s&lt;/par_path&gt;'</span>,outstr, par_path);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;base_image_fname&gt;%s&lt;/base_image_fname&gt;'</span>, outstr, base_image_fname);
+    outstr = sprintf(<span class="string">'%s\n\t&lt;base_image_frames&gt;%s&lt;/base_image_frames&gt;'</span>, outstr, base_frames);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;num_fovs&gt;%d&lt;/num_fovs&gt;'</span>, outstr, num_fovs);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;volume_id&gt;%d&lt;/volume_id&gt;'</span>, outstr, vol_id);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;offset&gt;%d&lt;/offset&gt;'</span>, outstr, offset);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;do_warp&gt;%d&lt;/do_warp&gt;'</span>, outstr, do_warp);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;prebreakup_image_wildcard&gt;%s&lt;/prebreakup_image_wildcard&gt;'</span>, outstr, prebreakup_image_wc);
+	outstr = sprintf(<span class="string">'%s\n\t&lt;postbreakup_image_wildcard&gt;%s&lt;/postbreakup_image_wildcard&gt;'</span>, outstr, postbreakup_image_wc);
+	outstr = sprintf(<span class="string">'%s\n%s\n'</span>, outstr, <span class="string">'&lt;/imreg_par_data&gt; '</span>);
+
+	disp(outstr);
+
+  <span class="comment">% write the file</span>
+	fid = fopen([data_path filesep sprintf(<span class="string">'imreg-%02d.xml'</span>, vol_id)], <span class="string">'w'</span>);
+	fprintf(fid, <span class="string">'%s'</span>, outstr);
+  fclose(fid);
+</pre><pre class="codeoutput">  SP Aug 2011
+ 
+  This function will breakup a series of volume images into individual planes
+   in subdirectories.  Subdirectories are named fov_vvppp, where vv is volume 
+   id (vol_id) and ppp is plane id (fov_id usually; e.g., 01001). These are
+   subdirectories of fpath.  Ensures that each file starts with fov 1, so some
+   files are broken up, asjusting triggerFrameStartTime and triggerTime 
+   accordingly.  Assumes standard SI4 header.
+ 
+  USAGE:
+ 
+    breakup_volume_images(fpath, flist, n_planes, mode, reference_image, 
+      reference_image_offset, reference_image_frames, preview_or_xml,
+      frames_correlated, cluster_fpath, fov_ids, vol_id, imreg_wc, do_warp)
+ 
+  PARAMS:
+ 
+    fpath: directory where data is, output will be
+    flist: either a wildcard (string) or list of files (cell-array -- RELATIVE 
+           path).  You can also pass comma-separated list with NO WHITESPACE!
+    n_planes: how many planes?  fov output will be to 001:n_planes, unless 
+              you give fov_ids
+    mode: 1 - use reference image ; 2 - use header to infer plane # 
+          (triggerFrameNumber)
+    reference_image: which image stack to use as reference (will use mean) --
+                     either FULL path, or image stack.  Or pass a SINGLE digit, 
+                     in which case it will use flist{reference_image} or file 
+                     # reference_image that matches flist wildcard.
+    reference_image_offset: use an offset? (e.g., to use frame 2 as 1st fov, pass 1) 
+                            default is 0.
+    reference_image_frames: which frames to use to generate averages? default all.
+                            VECTOR of frame #s.
+    preview_or_xml: if 1, will preview reference image; if blank or 0, it will 
+                    go ahead and do the breakup.  If 2, it will generate a 
+                    cluster-compatible xml in the directory with the images.
+    frames_correlated: if mode 1, this tells which frames to correlate.  If 0
+                       (default), it will ONLY check 1st frame, then assume the
+                       rest are in sequence m...n,1 2 ... n,1 2 ... n.  If a value
+                       above 0, it will check every frames_correlated'th frame 
+                       so a value of 1 means all frames checked.  Use a prime!
+    cluster_fpath: if preview_or_xml == 2, this is what path on CLUSTER will be
+    fov_ids: if you want to specify names of output dirs, pass this vector of #s
+             and it will output to these instead.  Pass a single number and 
+             fov_ids:fov_ids+n_planes-1 will be used. Must be &lt; 1000.
+    vol_id: volume ID ; if not passed, 1 ; must be &lt; 100.
+    imreg_wc: if you are generating image registration, wildcard for it; dfeault
+              *main*tif
+    do_warp: if generating XML, this sets the do_warp flag, telling imreg to 
+             run warp step.  Eventually should be able to pass a imreg pipeline
+             specification via XML. Default 0 (no).
+   
+  EXAMPLE: for generating XML for a single volume (no vol_id) with 4 planes
+ 
+   offs = 3; 
+   breakup_volume_images(pwd, '*main*tif', 4, 1, 'an148378_2011_09_13_main_157.tif', ...
+     offs, 1:200, 2, 0, strrep(pwd, '/media/an148378', '/groups/svoboda/wdbp/imreg/perons'));
+ 
+
+</pre><pre class="codeoutput">Error using breakup_volume_images (line 69)
+breakup_volume_images::insufficient input arguments.
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.14<br></p></div><!--
+##### SOURCE BEGIN #####
+%
+% SP Aug 2011
+%
+% This function will breakup a series of volume images into individual planes
+%  in subdirectories.  Subdirectories are named fov_vvppp, where vv is volume 
+%  id (vol_id) and ppp is plane id (fov_id usually; e.g., 01001). These are
+%  subdirectories of fpath.  Ensures that each file starts with fov 1, so some
+%  files are broken up, asjusting triggerFrameStartTime and triggerTime 
+%  accordingly.  Assumes standard SI4 header.
+%
+% USAGE:
+%
+%   breakup_volume_images(fpath, flist, n_planes, mode, reference_image, 
+%     reference_image_offset, reference_image_frames, preview_or_xml,
+%     frames_correlated, cluster_fpath, fov_ids, vol_id, imreg_wc, do_warp)
+%
+% PARAMS:
+%
+%   fpath: directory where data is, output will be
+%   flist: either a wildcard (string) or list of files (cell-array REPLACE_WITH_DASH_DASH RELATIVE 
+%          path).  You can also pass comma-separated list with NO WHITESPACE!
+%   n_planes: how many planes?  fov output will be to 001:n_planes, unless 
+%             you give fov_ids
+%   mode: 1 - use reference image ; 2 - use header to infer plane # 
+%         (triggerFrameNumber)
+%   reference_image: which image stack to use as reference (will use mean) REPLACE_WITH_DASH_DASH
+%                    either FULL path, or image stack.  Or pass a SINGLE digit, 
+%                    in which case it will use flist{reference_image} or file 
+%                    # reference_image that matches flist wildcard.
+%   reference_image_offset: use an offset? (e.g., to use frame 2 as 1st fov, pass 1) 
+%                           default is 0.
+%   reference_image_frames: which frames to use to generate averages? default all.
+%                           VECTOR of frame #s.
+%   preview_or_xml: if 1, will preview reference image; if blank or 0, it will 
+%                   go ahead and do the breakup.  If 2, it will generate a 
+%                   cluster-compatible xml in the directory with the images.
+%   frames_correlated: if mode 1, this tells which frames to correlate.  If 0
+%                      (default), it will ONLY check 1st frame, then assume the
+%                      rest are in sequence m...n,1 2 ... n,1 2 ... n.  If a value
+%                      above 0, it will check every frames_correlated'th frame 
+%                      so a value of 1 means all frames checked.  Use a prime!
+%   cluster_fpath: if preview_or_xml == 2, this is what path on CLUSTER will be
+%   fov_ids: if you want to specify names of output dirs, pass this vector of #s
+%            and it will output to these instead.  Pass a single number and 
+%            fov_ids:fov_ids+n_planes-1 will be used. Must be < 1000.
+%   vol_id: volume ID ; if not passed, 1 ; must be < 100.
+%   imreg_wc: if you are generating image registration, wildcard for it; dfeault
+%             *main*tif
+%   do_warp: if generating XML, this sets the do_warp flag, telling imreg to 
+%            run warp step.  Eventually should be able to pass a imreg pipeline
+%            specification via XML. Default 0 (no).
+%  
+% EXAMPLE: for generating XML for a single volume (no vol_id) with 4 planes
+%
+%  offs = 3; 
+%  breakup_volume_images(pwd, '*main*tif', 4, 1, 'an148378_2011_09_13_main_157.tif', ...
+%    offs, 1:200, 2, 0, strrep(pwd, '/media/an148378', '/groups/svoboda/wdbp/imreg/perons'));
+%
+function breakup_volume_images(fpath, flist, n_planes, mode, reference_image,  ...
+         reference_image_offset, reference_image_frames, preview_or_xml, ...
+         frames_correlated, cluster_fpath, fov_ids, vol_id, imreg_wc, do_warp)
+
+	SI_date_format_str = 'dd-mm-yyyy HH:MM:SS.FFF';
+  d2ms = 24*60*60*1000; % date number from MATLAB to ms conversion factor
+
+  % REPLACE_WITH_DASH_DASH- Input parse
+	if (nargin < 4 || (mode == 1 && nargin < 5))
+	  help('breakup_volume_images');
+		error('breakup_volume_images::insufficient input arguments.');
+    return;
+	end
+
+	if ((mode == 1 && nargin < 6) | (mode ~=1 && length (reference_image_offset) == 0)) ; reference_image_offset = 0; end
+	if (mode == 1 && nargin < 7) ; reference_image_frames = []; end
+	if (nargin < 8 || length(preview_or_xml) == 0) ; preview_or_xml = 0; end
+	if (nargin < 9 || length(frames_correlated) == 0) ; frames_correlated = 0; end
+	if (nargin < 11 || length(fov_ids) == 0) ; fov_ids = 1:n_planes ; end
+	if (nargin < 12 || length(vol_id) == 0) ; vol_id = 1; end
+	if (nargin < 13 || length(imreg_wc) == 0) ; imreg_wc = '*main*tif'; end
+	if (nargin < 14 || length(do_warp) == 0) ; do_warp = 0; end
+	
+	if (length(fov_ids) == 1 && n_planes > 1) ; fov_ids = fov_ids:(fov_ids+n_planes-1); end
+
+  % REPLACE_WITH_DASH_DASH- build file list
+	pflist = flist ; % store passed flist for xml generation
+	if (ischar(flist))
+	  commalist = strfind(flist,',');
+	  if (length(commalist) == 0)
+			tflist = dir([fpath filesep flist]);
+			if (length(tflist) == 0)
+				disp('breakup_volume_images::no files matching specified pattern.');
+				return;
+			end
+			for f=1:length(tflist) 
+				nflist{f} = tflist(f).name;
+			end
+			flist = nflist;
+		else % build flist from coma list
+		  commalist = [0 commalist length(flist)+1];
+		  for c=1:length(commalist)-1
+			  nflist{c} = flist(commalist(c)+1:commalist(c+1)-1);
+			end
+			flist = nflist;
+		end
+	end
+
+  % REPLACE_WITH_DASH_DASH- generate reference images if called for ...
+	fov_refims = {};
+	if (mode == 1)
+         if (ischar(reference_image))
+              if (~exist(reference_image, 'file')) % try with fpath added
+                    rim = load_image_pre([fpath filesep reference_image]);
+              else
+                    rim = load_image_pre(reference_image);
+              end
+         elseif (max(size(reference_image)) == 1) % it is refering to flist member
+              rim = load_image_pre(flist{reference_image}); 
+         else
+              rim = reference_image;
+         end
+    
+        if (length(reference_image_frames)>0)
+            rim = rim(:,:,reference_image_frames);
+            if (rem(min(reference_image_frames), n_planes)-1 ~= reference_image_offset)
+              disp('breakup_volume_images::your reference_image_frames must start at a multiple of reference_image_offset.');
+            end
+        end
+
+        for n=1:n_planes
+              fov_refims{n} = mean(rim(:,:,reference_image_offset+n:n_planes:end),3);
+            end
+
+            % preview?
+            if (preview_or_xml > 0)
+              nf = ceil(sqrt(n_planes));
+          df = 1/nf;
+
+          figure('Position', [100 100 800 800]);
+                X = 0;
+                Y = 1-df;
+                Xi = 0;
+                for n=1:n_planes
+                  ar = subplot('Position', [X Y df df]);
+                    X = X+df; Xi = Xi + 1;
+                    if (Xi >= nf) ; X = 0 ; Xi = 0 ; Y = Y-df; end
+                    M = 1.5*quantile(reshape(fov_refims{n},[],1),.995);
+    %				M = roi.roiArray.maxImagePixelValue;
+                    imshow(fov_refims{n}, [0 M], 'Parent', ar, 'Border', 'tight');
+                    text(50,50,num2str(n), 'Color', [1 0 0], 'FontSize', 24);
+                end
+                disp('breakup_volume_images::preview mode skips output.');
+
+                if (preview_or_xml == 2) % output to XML
+                 generate_xml (fpath, cluster_fpath, n_planes, pflist, imreg_wc, ...
+                       reference_image,reference_image_frames,reference_image_offset, vol_id, do_warp);
+                end
+
+                return;
+            end
+
+		clear rim;
+		clear reference_image;
+    else
+
+    end
+    
+ 
+  % REPLACE_WITH_DASH_DASH- prepare output directories
+	for n=1:n_planes
+	  fov_dir{n} = sprintf('%s%sfov_%02d%03d', fpath, filesep, vol_id, fov_ids(n));
+	  if (~exist(fov_dir{n},'dir')) ; mkdir (fov_dir{n}) ; end
+	end
+
+	% REPLACE_WITH_DASH_DASH- loop for determining FOV sequence
+  disp('breakup_volume_images::gathering data from files ... this will take time.');
+  for f=1:length(flist)
+	  [fov_sequence{f} start_time(f) n_frames(f) frame_dt(f) im_size{f}] = ...
+		  get_file_info(flist{f}, mode, n_planes, fpath, fov_refims, frames_correlated);
+  end
+  
+  % remove guys rejected by get_file_info
+  good_files = find(frame_dt ~= -1);
+  flist = flist(good_files);
+  fov_sequence = fov_sequence(good_files);
+  start_time = start_time(good_files);
+  n_frames = n_frames(good_files);
+  frame_dt = frame_dt(good_files);
+  im_size = im_size(good_files);
+
+  
+  % sanity check::aberrant frame dt??
+	if (sum(diff(frame_dt)) > 0) 
+	  disp('breakup_volume_images::different frame dt among files; aborting.');
+    return;
+	end
+	frame_dt = frame_dt(1);
+
+	% sanity check::different image size?
+  fim_size = [];
+	for f=1:length(flist)
+	  if (length(im_size{f}) > 0)
+		  if (length(fim_size) == 0)
+			  fim_size = im_size{f};
+			elseif (sum(fim_size == im_size{f}) < 2)
+  	    disp('breakup_volume_images::different frame size among files; aborting.');
+	  		return;
+			end
+		end
+	end
+
+	% REPLACE_WITH_DASH_DASH- process the derived sequence to determine output file mapping
+
+	% 1) sort by order of timestamp
+  [irr indexing] = sort(start_time);
+	flist = flist(indexing);
+	fov_sequence = fov_sequence(indexing);
+  im_size = im_size(indexing);
+	start_time = start_time(indexing);
+	n_frames = n_frames(indexing);
+	triggerFrameStartTime_offset = zeros(1,length(indexing)); % in seconds REPLACE_WITH_DASH_DASH how much we will add to triggerFrmeStartTime in hdr
+  
+	% 2) breakup into contiguous blocks REPLACE_WITH_DASH_DASH sequences of files separated by less than 1 frame dt
+	block_membership = ones(1,length(flist));
+	bi = 1;
+  for f=1:length(flist)-1
+	  block_membership(f) = bi;
+	  next_start = (n_frames(f)+0.9)*frame_dt + start_time(f);
+		if (start_time(f+1) > next_start) ; bi = bi + 1; end
+	end
+	block_membership(end) = bi;
+
+
+	% 3) breakup into files that start/end with FOV 1/n_planes
+	% build up a original_file_membership, (expanded) block_membership,
+	%  and fov_sequence vector for session 
+	total_n_frames = sum(n_frames);
+	original_file_membership = nan*zeros(1,total_n_frames);
+	final_file_membership = nan*zeros(1,total_n_frames);
+	frame_block_membership = nan*zeros(1,total_n_frames);
+	frame_fov_sequence = nan*zeros(1,total_n_frames);
+	frame_within_file_frame_idx = nan*zeros(1,total_n_frames);
+	val_frames = ones(1,total_n_frames);
+
+	% frame-based vectors 
+	fi = 1;
+	for f=1:length(flist)
+	  original_file_membership(fi:fi+n_frames(f)-1) = f;
+	  frame_block_membership(fi:fi+n_frames(f)-1) = block_membership(f);
+	  frame_fov_sequence(fi:fi+n_frames(f)-1) = fov_sequence{f};
+		frame_within_file_frame_idx(fi:fi+n_frames(f)-1) = 1:n_frames(f);
+		fi = fi+n_frames(f);
+	end
+
+  % for each block, loop thru its files ...
+	u_blocks = unique(block_membership);
+	for b=1:length(u_blocks)
+    bi = find(frame_block_membership == u_blocks(b));
+
+    u_block_files = unique(original_file_membership(bi));
+
+    for f=1:length(u_block_files) 
+      f_idx = u_block_files(f);
+			fi = find(original_file_membership == f_idx);
+
+			% ensure file starts will frame 1 
+			first_i = min(fi);
+			start_f = first_i;
+      if (frame_fov_sequence(first_i) ~= 1) % block DOES NOT start with one? *discard* those frames
+			  first_1 = fi(min(find(frame_fov_sequence(fi) == 1)));
+				if (length(first_1) == 0) % in this case discard *all* from this file
+          val_frames(fi) = 0;
+					start_f = -1;
+				else
+				  df = first_1-first_i; % how many frames from start is first frame in fov1?
+					start_f = first_1;
+          
+					% increment trggerFrameStartTime_offset REPLACE_WITH_DASH_DASH> frame_dt is in ms so convert to seconds
+	        triggerFrameStartTime_offset(f_idx) = frame_dt*df/1000; % in seconds
+
+					% if this is FIRST file, discard previous frames ...
+					if (f == 1)
+					  val_frames(first_i:first_1-1) = 0;
+					end
+        end
+			end
+
+			% ensure file ends with frame n_planes REPLACE_WITH_DASH_DASH> steal from next file in block if possible, OR
+			%  discard the frames
+			last_i = max(fi);
+			end_f = last_i;
+			if (frame_fov_sequence(last_i) ~= n_planes)
+			  discard = 0;
+
+			  % possible to steal from next file in block?
+				candi_frames = bi(find(frame_fov_sequence(bi) == n_planes));
+				if (length(candi_frames) > 0)
+				  if (length(find(candi_frames > last_i)) > 0)
+					  end_f = candi_frames(min(find(candi_frames > last_i)));
+					else
+					  discard = 1;
+					end
+				else
+				  discard = 2;
+				end
+
+				if (discard == 1) % move BACK to find previous one
+				  end_f = candi_frames(max(find(candi_frames < last_i)));
+					val_frames(end_f+1:last_i) = 0;
+				elseif (discard == 2) % discard ALL REPLACE_WITH_DASH_DASH> NO termination planes
+				  disp('breakup_volume_images::found a file with NO final-FOV frames.');
+				  val_frames(bi) = 0;
+				end
+			end
+			
+			% assign final_file_membership
+      if (start_f > 0 )
+			  final_file_membership(start_f:end_f) = f_idx;
+      end
+		end
+	end
+
+	% 4) actual output based on flist, original&final file_membership
+  disp('breakup_volume_images::building output files ...');
+	uf = unique(final_file_membership(find(~isnan(final_file_membership))));
+	for f=1:length(uf)
+
+	  % prebuild tif with ALL FOVs
+		fi = find(final_file_membership == uf(f));
+    if (length(fi) == 0) ; disp(['No data for ' flist{uf(f)}]); continue ; end
+		fim = zeros(fim_size(1), fim_size(2), length(fi));
+
+		% load necessary files 
+		u_ofi = unique(original_file_membership(fi));
+		for u=1:length(u_ofi)
+		  [im irr] = load_image_pre ([fpath filesep flist{u_ofi(u)}]);
+			ui = find(original_file_membership(fi) == u_ofi(u));
+			fim(:,:,ui) = im(:,:,frame_within_file_frame_idx(fi(ui)));
+    end
+    
+    % update header
+		[irr improps] = load_image_pre ([fpath filesep flist{uf(f)}]);
+		ihdr = improps.header;
+		tr_s = strfind(ihdr, 'ScanImage.SI4App.triggerFrameStartTime') +length('ScanImage.SI4App.triggerFrameStartTime = ');
+    if (length(tr_s) == 0)
+   		tr_s = strfind(ihdr, 'scanimage.SI4.triggerFrameStartTime') +length('scanimage.SI4.triggerFrameStartTime = ');
+    end
+
+		newline_idx = find(ihdr == 10);
+		tr_e = newline_idx(min(find(newline_idx > tr_s)))-1;
+		ihdr = [ihdr(1:tr_s-1) num2str(str2num(ihdr(tr_s:tr_e))+triggerFrameStartTime_offset(uf(f))) ihdr(tr_e+1:end)];
+		improps.header = ihdr;
+		
+		% output *individual FOVs*
+	  disp(['breakup_volume_image::outputting ' flist{uf(f)}]);
+		for n=1:length(fov_dir)
+			used_idx = find(frame_fov_sequence(fi) == n);
+			if (length(used_idx) > 0)
+				nim = fim(:,:,used_idx);
+% IN HEADER, UPDATE START TIME, TRIGGER OFFSET
+				save_image(nim, [fov_dir{n} filesep flist{uf(f)}], improps.header);
+			end
+		end
+	end
+
+%
+% Gets the timestamp and FOV sequence for a single file
+%
+function [fov_sequence start_time n_frames frame_dt im_size] = ...
+  get_file_info(fname, mode, n_planes, fpath, fov_refims, frames_correlated)
+  
+  fov_sequence = [];
+	start_time = -1;
+	frame_rate = -1;
+	frame_dt = -1;
+  n_frames = 0;
+	im_size = [];
+	 
+  % REPLACE_WITH_DASH_DASH- load ; prelims
+	try
+		disp(['breakup_volume_image::gathering frame info for ' fname]);
+
+		% skip if > 500 mb
+		fh = fopen([fpath filesep fname]);
+		fseek(fh,0,'eof');
+		fsize = ftell(fh);
+		fclose(fh);
+		if (fsize > 500000000)
+			disp(['breakup_volume_image::found excessively large file ; skipping ' fname]);
+			return;
+		end
+	 
+		% load ; get start_time
+		[im improps] = load_image_pre([fpath filesep fname]);
+		n_frames = size(im,3);
+		fov_sequence = zeros(1,n_frames); % vector for FOV ID for each frame ...
+		start_time = improps.startTimeMS;
+		frame_dt = 1000/improps.frameRate/improps.numPlanes;
+		im_size = [improps.height improps.width];
+
+		% REPLACE_WITH_DASH_DASH- do the breakup REPLACE_WITH_DASH_DASH> assign each frame an fov
+		if (mode == 1)
+			if (frames_correlated == 0 )
+				fc_vec = 1 ;
+			else
+				fc_vec = 1:frames_correlated:n_frames;
+			end
+
+			% check all the frames you are supposed to check
+			for i=fc_vec
+				disp(['breakup_volume_image::processing frame ' num2str(i) ' for ' fname]);
+				score = zeros(1,n_planes);
+				for n=1:n_planes
+					% for speedup, use downsampled image
+% 					im1 = im(1:4:end,1:4:end, i);%%GRchange
+% 					im2 = fov_refims{n}(1:4:end,1:4:end);
+                    im1 = im(1:1:end,1:1:end, i);
+					im2 = fov_refims{n}(1:1:end,1:1:end);
+	%	  		cim = normxcorr2(im(:,:,i),fov_refims{n});
+					cim = normxcorr2(im1,im2);
+					score(n) = max(max(cim));
+				end
+				[irr idx] = max(score);
+				fov_sequence(i) = idx;
+			end
+
+			% build up rest of fov_sequence OR check it if needed REPLACE_WITH_DASH_DASH assumption is
+			%  that frames are SEQUENTIAL
+			if (frames_correlated ~= 1 & n_frames > 0)
+				expected_sequence = repmat(1:n_planes, 1, ceil(n_frames/n_planes)+n_planes);
+				expected_sequence = expected_sequence(fov_sequence(1):fov_sequence(1)+n_frames-1);
+				if (frames_correlated == 0)
+					fov_sequence = expected_sequence;
+				else
+					% longer than 1 and frames_correalted > 0?  check if right for ones that were done ...
+					checked = setdiff(find(fov_sequence > 0),1);
+					if (length(checked) > 0)
+						if (sum(fov_sequence(checked) == expected_sequence(checked)) ~= length(checked))  
+							disp(['breakup_volume_image::expected sequence deviated from detected sequence ; skipping ' fname]);
+							fov_sequence = []; start_time = -1; frame_rate = -1; frame_dt = -1; n_frames = 0; im_size = [];
+							return;
+						else
+							fov_sequence = expected_sequence;
+						end
+					else
+						fov_sequence = expected_sequence;
+					end
+				end
+			end
+		elseif (mode == 2) % simply use the firstFrameNumberRelTrigger field
+			expected_sequence = repmat(1:n_planes, 1, ceil(n_frames/n_planes)+2*n_planes);
+			first_frame_offset = rem(improps.firstFrameNumberRelTrigger, n_planes);
+			if (improps.firstFrameNumberRelTrigger == 1) ; first_frame_offset =0 ; end % this is a special bug case REPLACE_WITH_DASH_DASH neg trig time?
+			fov_sequence = expected_sequence(first_frame_offset+(1:n_frames));
+		else
+			disp(['Mode ' num2str(mode) ' not currently supported.']);
+		end
+
+		% REPLACE_WITH_DASH_DASH- check for aberrant orderings
+		dfi = diff(fov_sequence);
+		inval = find(~ismember(dfi, [1 -1*(n_planes-1)]));
+		if (length(inval) > 0) 
+			disp(['breakup_volume_image::found aberrant ordering ; skipping ' fname]);
+			fov_sequence = [];
+			return;
+		end
+	catch % just set defaults and return 
+		disp(['breakup_volume_image::file was corrupt, skipping ' fname]);
+		fov_sequence = [];
+		start_time = -1;
+		frame_rate = -1;
+		frame_dt = -1;
+		n_frames = 0;
+		im_size = [];
+	end
+	
+
+%
+% Generates XML file for imreg on cluster
+%
+function generate_xml (data_path, cluster_rawdata_path, num_fovs, prebreakup_image_wc, ...
+              postbreakup_image_wc, base_image_fname,base_image_frames, offset, vol_id, do_warp)
+    
+    cluster_rawdata_path =  strrep(cluster_rawdata_path, 'GR_Data01/2PData_proc/BehaviorImaging/', sprintf('mageelab/GR_dm11/imreg/'));
+% 	par_path = strrep(cluster_rawdata_path, 'scanimage', sprintf('parout_imreg_%02d%%###', vol_id));
+    par_path = cluster_rawdata_path; %%GRchange
+	base_frames = [num2str(base_image_frames(1)) ' ' num2str(base_image_frames(length(base_image_frames)))];
+
+    outstr = '<?xml version="1.0" encoding="UTF-8" ?>';
+	outstr = sprintf('%s\n%s', outstr, '<imreg_par_data>');
+	outstr = sprintf('%s\n\t<rawdata_path>%s</rawdata_path>', outstr, cluster_rawdata_path);
+	outstr = sprintf('%s\n\t<par_path>%s</par_path>',outstr, par_path);
+	outstr = sprintf('%s\n\t<base_image_fname>%s</base_image_fname>', outstr, base_image_fname);
+    outstr = sprintf('%s\n\t<base_image_frames>%s</base_image_frames>', outstr, base_frames);
+	outstr = sprintf('%s\n\t<num_fovs>%d</num_fovs>', outstr, num_fovs);
+	outstr = sprintf('%s\n\t<volume_id>%d</volume_id>', outstr, vol_id);
+	outstr = sprintf('%s\n\t<offset>%d</offset>', outstr, offset);
+	outstr = sprintf('%s\n\t<do_warp>%d</do_warp>', outstr, do_warp);
+	outstr = sprintf('%s\n\t<prebreakup_image_wildcard>%s</prebreakup_image_wildcard>', outstr, prebreakup_image_wc);
+	outstr = sprintf('%s\n\t<postbreakup_image_wildcard>%s</postbreakup_image_wildcard>', outstr, postbreakup_image_wc);
+	outstr = sprintf('%s\n%s\n', outstr, '</imreg_par_data> ');
+
+	disp(outstr);
+
+  % write the file
+	fid = fopen([data_path filesep sprintf('imreg-%02d.xml', vol_id)], 'w');
+	fprintf(fid, '%s', outstr);
+  fclose(fid);
+
+##### SOURCE END #####
+--></body></html>

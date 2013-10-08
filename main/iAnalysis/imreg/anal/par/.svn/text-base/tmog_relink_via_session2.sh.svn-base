@@ -1,0 +1,5 @@
+#!/bin/bash
+. ~/.bash_profile
+. /sge/8.0.1p4/default/common/settings.sh
+/usr/bin/python /groups/svoboda/wdbp/perons/tree/anal/par/tmog_relink_via_session2.py
+

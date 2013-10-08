@@ -1,0 +1,18 @@
+#!/bin/bash
+# this will cleanup old files from the cluster
+. ~/.bash_profile
+. /sge/8.0.1p4/default/common/settings.sh
+
+# Whisker data Nathan linker
+cd /groups/svoboda/wdbp/unprocessed
+find . -mtime +7 -exec rm {} \;
+cd /groups/svoboda/wdbp/processed
+find . -mtime +7 -exec rm {} \;
+
+# S Peron linker whisker data
+cd /groups/svoboda/wdbp/reprocessed
+find . -mtime +7 -exec rm {} \;
+
+# Image registration ?
+cd /groups/svoboda/wdbp/imreg
+find . -mtime +7 -exec rm {} \;

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<imreg_par_data>
+	<rawdata_path>/groups/svoboda/wdbp/imreg/perons/an148378/2011_09_15/scanimage</rawdata_path>
+	<par_path>/groups/svoboda/wdbp/imreg/perons/an148378/2011_09_15/parout_imreg_%###</par_path>
+	<base_image_fname>an148378_2011_09_15_main_135.tif</base_image_fname>
+	<num_fovs>4</num_fovs>
+	<offset>1</offset>
+	<image_wildcard>*main*tif</image_wildcard>
+</imreg_par_data>

@@ -1,0 +1,52 @@
+8
+
+dir
+2377
+svn+ssh://speron@chewbacca.no-ip.com/home/speron/svnrepo/anal/+roi/@roiGroupArray
+svn+ssh://speron@chewbacca.no-ip.com/home/speron/svnrepo
+
+
+
+2011-04-01T02:10:15.522852Z
+1456
+speron
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+c5b5c881-6a1a-4919-a266-c3c84f0fc2fb
+
+roiGroupArray.m
+file
+
+
+
+
+2011-04-01T12:52:45.000000Z
+21cf44291fc563bb2b08d4e6b12e0b8a
+2011-04-01T02:10:15.522852Z
+1456
+speron
+
+generateDefaultGroupArray.m
+file
+
+
+
+
+2011-01-18T18:59:37.000000Z
+4405c60f093aa88c9e3fd501841770cf
+2010-05-24T17:55:14.500874Z
+727
+speron
+

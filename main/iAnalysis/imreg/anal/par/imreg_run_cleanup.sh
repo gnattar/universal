@@ -1,0 +1,32 @@
+#!/bin/bash
+# this will cleanup imreg on cluster
+. ~/.bash_profile
+. /sge/8.0.1p4/default/common/settings.sh
+
+# 1) delete stray processes
+qstat | grep imreg- | qdel `awk '{print $1}'`
+
+# 2) 777 directory
+cd /groups/magee/mageelab/GR_dm11/imreg
+chmod -R 777 *
+
+# 3) untmp all directories ; delete lock files ; make 'ready_to_run'
+for s in `find $PWD -type d | grep parout_imreg_`;  do echo $s; cd $s ; ~/untmp.sh ; rm lock.m ; chmod 777 * ; cd /groups/magee/mageelab/GR_dm11/imreg ; done
+for s in `find $PWD -type d | grep fluo_batch_out$`;  do echo $s; cd $s ; rm *lock*.m ; cd /groups/magee/mageelab/GR_dm11/imreg ; done
+cd /groups/magee/mageelab/GR_dm11/imreg
+for s in `find $PWD -type d | grep parout_imreg_`; do if [[ `ls $s/parfile*mat | wc -l` -gt 0  && `find $s -mtime +2 | wc -l` -eq 0 ]] ; then mv $s/ready_to_run.done $s/ready_to_run ; fi ; done
+
+# 4) for completed directories, remove duplicate breakup files in fov_xxx base dir
+cd /groups/magee/mageelab/GR_dm11/imreg
+for s in `find $PWD -type d | grep scanimage$`; do if [[ `ls $s/fov*/*main*tif | wc -l` -gt 0 && `find $s -mmin -240 | wc -l` -eq 0 ]]  ; then if [ `ls $s/fov*/fluo_batch_out/*main*tif | wc -l` -eq `ls $s/fov*/*main*tif | wc -l` ] ; then rm $s/fov*/*main*tif ; fi ; fi ; done
+
+# 5) cleanup the logs (2d old or more GONE!)
+cd /groups/magee/mageelab/GR_dm11/imreg_on_cluster_GR/logs
+find . -name '*' -mtime +2 -type f -print0 | xargs -0 rm -f
+
+touch ~/running_cleanup_6
+
+# 6) output status ...
+cd /groups/magee/mageelab/GR_dm11/imreg
+for s in `find $PWD -type d | grep scanimage$`;  do  echo `date` $s: `find $s | grep -v fov | grep tif | wc -l` fov div 4: $(( `find $s | grep fov | grep Image_Registration_4 | grep tif | wc -l` / 4))  fov div 4 step 2: $(( `find $s | grep fov | grep Image_Registration_2 | grep tif | wc -l` / 4)) session_mean.tif: `find $s | grep session_mean.tif | wc -l` >> logs/cleanup.log ; done
+

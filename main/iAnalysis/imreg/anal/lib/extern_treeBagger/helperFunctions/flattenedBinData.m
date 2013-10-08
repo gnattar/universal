@@ -1,0 +1,35 @@
+function [x_p y_p idx] = flattenedBinData(x,y,N_bins,proportion)
+N_points = length(x);
+binSize = ceil(N_points/N_bins);
+z(:,1) = x;
+z(:,2) = y;
+z(:,3) = [1:N_points];
+vals   = sortrows(z,1);
+maxIdx = floor(proportion*binSize);
+x_p = [];
+y_p = [];
+idx = [];
+targetY = median(y);
+for i=1:N_bins-1,
+    aux_x = vals((i-1)*binSize+1:i*binSize,1);
+    aux_y = vals((i-1)*binSize+1:i*binSize,2);
+    aux_idx = vals((i-1)*binSize+1:i*binSize,3);
+    valid_trials = intersect (find(~isnan(aux_x)),find(~isnan(aux_y)));
+    clear bin_points
+    bin_points(:,1) = aux_x(valid_trials);
+    bin_points(:,2) = aux_y(valid_trials);
+    bin_points(:,3) = abs(aux_y(valid_trials)-targetY);  % Here to get as close as possible to the median
+    bin_points(:,4) = aux_idx(valid_trials);
+    orderBin        = sortrows(bin_points,3);
+    x_p = [x_p orderBin(1:maxIdx,1)'];
+    y_p = [y_p orderBin(1:maxIdx,2)'];
+    idx = [idx orderBin(1:maxIdx,4)'];
+end
+% i=N_bins;
+% aux_x = vals((i-1)*binSize+1:end,1);
+% aux_y = vals((i-1)*binSize+1:end,2);
+% valid_trials = union (~isnan(aux_x),~isnan(aux_y));
+% x_m(i) = mean(aux_x(valid_trials ));
+% y_m(i) = mean(aux_y(valid_trials ));
+% x_s(i) = std(aux_x(valid_trials ))/sqrt(length(valid_trials ));
+% y_s(i) = std(aux_y(valid_trials ))/sqrt(length(valid_trials ));    

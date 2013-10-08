@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<imreg_par_data>
+	<rawdata_path>/groups/magee/mageelab/GR_dm11/imreg</rawdata_path>
+	<par_path>groups/magee/mageelab/GR_dm11/imreg/ranganathang/anm174708/2012_07_05/scanimage/</par_path>
+	<base_image_fname>an174708_2012_07_05_main_7_261.tif</base_image_fname>
+	<num_fovs>4</num_fovs>
+	<offset>0</offset>
+	<image_wildcard>*main*tif</image_wildcard>
+</imreg_par_data>

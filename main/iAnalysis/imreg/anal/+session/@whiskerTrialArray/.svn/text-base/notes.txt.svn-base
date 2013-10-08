@@ -1,0 +1,23 @@
+
+pull:
+-----
+
+whiskerTag
+
+whiskerCurvatureTSA
+whiskerCurvatureChangeTSA
+whiskerAngleTSA
+
+whiskerBarCenterXYTSA
+whiskerBarInReachES
+
+whiskerBarContactESA
+whiskerBarContactClassifiedESA
+
+
+dataSourceParams use:
+---------------------
+
+whiskerTrialIncrement
+whiskerVideoTimeOffsetInMs
+

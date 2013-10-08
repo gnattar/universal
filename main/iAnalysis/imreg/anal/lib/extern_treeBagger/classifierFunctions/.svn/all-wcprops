@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions
+END
+getMetricsEncoder.m
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/getMetricsEncoder.m
+END
+getPSTHDecoderMultipleGo.m
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/getPSTHDecoderMultipleGo.m
+END
+categoryError.m
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/categoryError.m
+END
+encoderRF.m
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/encoderRF.m
+END
+nFoldCrossValidation.m
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/nFoldCrossValidation.m
+END
+getGroupFeatureTree.m
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/getGroupFeatureTree.m
+END
+getMetricsDecoder.m
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/getMetricsDecoder.m
+END
+decoderRF.m
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/decoderRF.m
+END
+decoderRF_twoStages.m
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/decoderRF_twoStages.m
+END
+getPSTHMultipleGo.m
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svobodalab/software/labshare/!svn/ver/2/trunk/+people/+spp/sci/anal/lib/extern_treeBagger/classifierFunctions/getPSTHMultipleGo.m
+END

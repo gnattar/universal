@@ -1,0 +1,52 @@
+8
+
+dir
+2377
+svn+ssh://speron@chewbacca.no-ip.com/home/speron/svnrepo/anal/+session/@calciumEventSeriesArray
+svn+ssh://speron@chewbacca.no-ip.com/home/speron/svnrepo
+
+
+
+2012-07-21T22:27:59.024525Z
+2353
+speron
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+c5b5c881-6a1a-4919-a266-c3c84f0fc2fb
+
+calciumEventSeriesArray.m
+file
+
+
+
+
+2012-04-24T14:43:35.000000Z
+0e7ef949601fb27c7c19c3ab22c582ab
+2012-03-17T16:50:15.680774Z
+2123
+speron
+
+getTrialTypeRestrictedESA.m
+file
+
+
+
+
+2012-07-24T13:36:14.000000Z
+2fadd300bcab88f69eb85c021165ec63
+2012-07-21T22:27:59.024525Z
+2353
+speron
+

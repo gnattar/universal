@@ -1,0 +1,67 @@
+8
+
+dir
+2377
+svn+ssh://speron@chewbacca.no-ip.com/home/speron/svnrepo/anal/+session
+svn+ssh://speron@chewbacca.no-ip.com/home/speron/svnrepo
+
+
+
+2012-07-25T12:58:02.631910Z
+2376
+speron
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+c5b5c881-6a1a-4919-a266-c3c84f0fc2fb
+
+@guiTSABrowser
+dir
+
+@sessionArray
+dir
+
+@session
+dir
+
+@calciumTimeSeriesArray
+dir
+
+@whiskerTrialArray
+dir
+
+@timeSeriesArray
+dir
+
+@whiskerTrial
+dir
+
+@calciumEventSeriesArray
+dir
+
+@timeSeries
+dir
+
+@calciumEventSeries
+dir
+
+@eventSeriesArray
+dir
+
+@trial
+dir
+
+@eventSeries
+dir
+

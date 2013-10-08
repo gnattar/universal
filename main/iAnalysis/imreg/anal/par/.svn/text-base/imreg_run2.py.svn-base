@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+
+####################################################################################
+#
+# S Peron 2011 Sept
+#
+#   1) looks for ready_to_run files, meaking breakup is done and time for meat
+#   2) kicks off a bunch of cluster processes 
+#
+####################################################################################
+import sys, struct, os, re, string, shutil, random, time;
+import xml.dom.minidom;
+
+# definitely (?) fixed -- where you go huntin for dem whiska files
+root_search_path = "/groups/svoboda/wdbp/imreg/";
+ready_filename = "ready_to_run";
+qsub_path = "/sge/8.0.1p4/bin/lx-amd64/qsub";
+par_execute_path = "/groups/svoboda/wdbp/perons/tree/anal/par/par_execute_cluster";
+logs_path = "/groups/svoboda/wdbp/imreg/logs";
+n_jobs_per_pardir = 25;
+
+# path passed?
+if (len(sys.argv) > 1):
+	root_search_path = sys.argv[1];
+
+
+
+#
+# This will take a single drectory of parfiles and generate many jobs for it
+#
+def process_pardir(parpath, f):
+	uid = "%08d" % (random.random()*100000000) # so we don't collide
+	running_file_full = parpath + "/" + ready_filename;
+
+	# qsub 
+	fs = "%d" % (f);
+	jobname = "imreg-" + uid + '-' + fs;
+	dispatch_cmd = qsub_path + ' -N ' + jobname + ' -pe batch 1 -j y -o /dev/null -b y -cwd -V "' + par_execute_path + ' ' + parpath + ' > ' + logs_path  + '/imreg-' + uid + '-' + fs + '.log"';
+	print dispatch_cmd;
+	time.sleep(5); # wait 30 seconds before kickoff of next ... for cluster's sake!
+	os.system(dispatch_cmd);
+
+	# Remove ready file
+	if (f == n_jobs_per_pardir):
+		print "DELETE !!!"
+		shutil.copyfile(running_file_full,running_file_full + ".done");
+		os.remove(running_file_full);
+
+
+####################################################################################
+#
+# "crawls" a single directory going thru its files looking for ready_filename
+#
+####################################################################################
+def parse_directory(arg, dirname, names):
+	try:
+		# --- does the ready_to_run exist?
+		cmd = "ls " + dirname + "/" + ready_filename;
+
+		# --- execute!a
+		if (os.system(cmd) == 0):
+			process_pardir(dirname, int(arg));
+	except:
+		e = sys.exc_info()[0];
+		print "failed to process directory " + dirname + " message: ", e;
+
+
+####################################################################################
+#
+# The actual directory crawler
+#
+####################################################################################
+
+# --- go thru each directory at top
+for f in range(1,n_jobs_per_pardir+1):
+	fs = "%d" % (f);
+	os.path.walk(root_search_path, parse_directory, fs);
+
+

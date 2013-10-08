@@ -1,0 +1,2 @@
+matlab -nojvm -nosplash -r "path(path,'../lib'); path(path,'../lib/extern_treeBagger/runScripts'); path(path,'../lib/extern_treeBagger/classifierFunctions'); path(path,'../lib/extern_treeBagger/graphicalFunctions'); path(path,'../lib/extern_treeBagger/helperFunctions'); path(path,'../lib/extern_treeBagger/loaderFunctions'); path(path,'../lib/extern_treeBagger/par'); path(path,'../');path(path,'../par');pargen_bagger;"
+

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+<<<<<<< .mine
+for (( i=100; $i <= 125; i++ ))
+=======
+# top loop -- how many daemons / directory?
+for (( i=1; $i <= 25; i++ ))
+>>>>>>> .r1370
+do
+<<<<<<< .mine
+# this number will be dictated by how many directories you've created ...
+	for (( d=30; $d >= 1 ; d-- ))
+  do
+		echo qsub -pe batch 1 -j y -o /dev/null -b y -cwd -V \"/groups/svoboda/wdbp/perons/tree/anal/par/par_execute_cluster /groups/svoboda/wdbp/perons/tree/par/38596_$d/parfiles \> /groups/svoboda/wdbp/perons/tree/logs/par_$d-$i.log\"
+		echo sleep 5
+  done
+=======
+  # session loop
+	for s in /groups/svoboda/wdbp/perons/tree/par/an38596*sess
+  	# this number will be dictated by how many SUB directories you've created ...
+ 		for (( d=1; $d <= 20 ; d++ ))
+		do
+			echo qsub -pe batch 1 -j y -o /dev/null -b y -cwd -V \"/groups/svoboda/wdbp/perons/tree/anal/par/par_execute_cluster /groups/svoboda/wdbp/perons/tree/par/38596_$d/parfiles \> /groups/svoboda/wdbp/perons/tree/logs/par_sess_$s-$d-$i.log\"
+			echo sleep 1
+		done
+	done
+>>>>>>> .r1370
+done
