@@ -22,7 +22,7 @@ function varargout = Universal_GR_12(varargin)
 
 % Edit the above text to modify the response to help Universal_GR_12
 
-% Last Modified by GUIDE v2.5 30-Aug-2013 08:49:18
+% Last Modified by GUIDE v2.5 08-Oct-2013 18:29:13
 
 % Begin initialization code - DO NOT EDIT
 
@@ -5303,3 +5303,78 @@ function barTimeWindow_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function soloSigSum_datapath_Callback(hObject, eventdata, handles)
+
+
+% --- Executes during object creation, after setting all properties.
+function soloSigSum_datapath_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in load_sessions_solo.
+function load_sessions_solo_Callback(hObject, eventdata, handles)
+global soloSigSummary
+soloSigSummary = {};
+basedatapath = get(handles.soloSigSum_datapath,'String');
+if(length(basedatapath)<10)
+    basedatapath = '/Volumes/';
+end
+cd (basedatapath);
+count=0;
+
+while(count>=0)
+    [filename,pathName]=uigetfile('solo_data*.mat','Load solo_data*.mat file');
+    if isequal(filename, 0) || isequal(pathName,0)
+        break
+    end
+    count=count+1;
+    load( [pathName filesep filename], '-mat');
+    set(handles.wSigSum_datapath,'String',pathName);
+    cd (pathName);
+    soloSigSummary{count} = solo_data;
+    
+end
+folder = uigetdir;
+cd (folder);
+titl = get(handles.plot_soloSigSum_title,'String');
+save(['soloSigSummary' titl] ,'soloSigSummary');
+
+
+function plot_soloSigSum_title_Callback(hObject, eventdata, handles)
+
+
+% --- Executes during object creation, after setting all properties.
+function plot_soloSigSum_title_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in plot_soloSigSum.
+function plot_soloSigSum_Callback(hObject, eventdata, handles)
+global soloSigSummary
+    fdprime = figure('position',[1000, sc(4)/10-100, sc(3), sc(4)], 'color','w');  %% dprime
+    fpc = figure('position',[1000, sc(4)/10-100, sc(3), sc(4)], 'color','w');  %% pc
+    
+
+for j = 1:numsessions
+   obj =  solo_data;
+   
+    
+end
+
+
+% --- Executes on button press in load_soloSigSummary.
+function load_soloSigSummary_Callback(hObject, eventdata, handles)
+global soloSigSummary
+soloSigSummary ={};
+dir= get(handles.soloSigSum_datapath,'String');
+[fname,datapath] = uigetfile(dir,'Select soloSigSummary data');
+cd (datapath);
+load(fname,'-mat');
+
