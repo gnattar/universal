@@ -3104,93 +3104,18 @@ trialsets = {'nogo','go','hit','miss','CR','FA'};
 
 for sets = [1,2,3,5,6]
     str= [trialsets{sets} 'trialnums']; 
-    [w_thetaenv] =  wdatasummary(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos);
-
+% % % % %     [w_thetaenv] =  wdatasummary(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos);
+    [w_thetaenv] =   wdatasummary_ampepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos);
+    var_set = {'thetaenvtrials','time','dist','bins','amp','mean_thetaenv','mean_thetaenv_binned','mean_whiskamp','mean_whiskamp_binned',  'total_whiskamp', 'total_whiskamp_binned', 'peak_thetaenv', 'peak_thetaenv_binned', ...
+                    'prepole_thetaenv', 'prepole_thetaenv_binned', 'prcoccupancy', 'prcoccupancy_binned', 'pval', 'mean_barpos','biased_barpos','baseline_barpos','occupancy','occupancybins',...
+                        'totalTouchKappa','maxTouchKappa','kappatrials'};
     for i=1:numblocks
-
-        blocks.([trialsets{sets} '_thetaenv_trials']){i} = w_thetaenv.trials{i};
-        blocks.([trialsets{sets} '_thetaenv_time']){i} = w_thetaenv.time{i};
-        blocks.([trialsets{sets} '_thetaenv_dist']){i} = w_thetaenv.dist{i};
-        blocks.([trialsets{sets} '_thetaenv_bins']){i} = w_thetaenv.bins{i};
-        blocks.([trialsets{sets} '_thetaenv_med']){i} = w_thetaenv.med{i};
-        blocks.([trialsets{sets} '_thetaenv_medbinned']){i} = w_thetaenv.medbinned{i};
-
-%         blocks.nogo_thetaenv_meanbarcross{i} = w_thetaenv.meanbarcross{i};
-%         blocks.nogo_thetaenv_meanbarcrossbinned{i} =w_thetaenv.meanbarcrossbinned{i};
-% 
-%         blocks.nogo_thetaenv_prcpastmeanbar{i} = w_thetaenv.prcpastmeanbar{i};
-%         blocks.nogo_thetaenv_prcpastmeanbarbinned{i} =w_thetaenv.prcpastmeanbarbinned{i};
-%         blocks.nogo_thetaenv_peak{i} = w_thetaenv.peak{i};
-%         blocks.nogo_thetaenv_peakbinned{i} =w_thetaenv.peakbinned{i};
-%         blocks.nogo_thetaenv_prepole{i} =w_thetaenv.prepole{i};
-%         blocks.nogo_thetaenv_prepolebinned{i} =w_thetaenv.prepolebinned{i};
-%         blocks.nogo_thetaenv_pval{i}= w_thetaenv.pval{i};
-%         blocks.nogo_thetaenv_biased_barpos{i} =  w_thetaenv.biased_barpos{i};
-%         blocks.nogo_thetaenv_baseline_barpos{i} =  w_thetaenv.baseline_barpos{i};
-%         blocks.nogo_thetaenv_mean_barpos{1} =  w_thetaenv.mean_barpos{i};
-%         blocks.nogo_totalTouchKappa{i} =  w_thetaenv.totalTouchKappa{i};
-%         blocks.nogo_maxTouchKappa{i} =  w_thetaenv.maxTouchKappa{i};
-%         blocks.nogo_kappa_trials{i} = w_thetaenv.kappatrials{i};
+        for v = 1:length(var_set)
+            blocks.([trialsets{sets} '_' var_set{v}]){i} = w_thetaenv.(var_set{v}){i};
+        end
 
     end
     
-%     
-%     [w_thetaenv] =  wdatasummary(sessionInfo,wSigTrials,blocks.tag,str,avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,'nogo',timewindowtag,min_meanbarpos,baseline_barpos);
-% 
-%     for i=1:numblocks
-% 
-%         blocks.nogo_thetaenv_trials{i} = w_thetaenv.trials{i};
-%         blocks.nogo_thetaenv_time{i} = w_thetaenv.time{i};
-%         blocks.nogo_thetaenv_dist{i} = w_thetaenv.dist{i};
-%         blocks.nogo_thetaenv_bins{i} = w_thetaenv.bins{i};
-%         blocks.nogo_thetaenv_med{i} = w_thetaenv.med{i};
-%         blocks.nogo_thetaenv_medbinned{i} = w_thetaenv.medbinned{i};
-% 
-%         blocks.nogo_thetaenv_meanbarcross{i} = w_thetaenv.meanbarcross{i};
-%         blocks.nogo_thetaenv_meanbarcrossbinned{i} =w_thetaenv.meanbarcrossbinned{i};
-% 
-%         blocks.nogo_thetaenv_prcpastmeanbar{i} = w_thetaenv.prcpastmeanbar{i};
-%         blocks.nogo_thetaenv_prcpastmeanbarbinned{i} =w_thetaenv.prcpastmeanbarbinned{i};
-%         blocks.nogo_thetaenv_peak{i} = w_thetaenv.peak{i};
-%         blocks.nogo_thetaenv_peakbinned{i} =w_thetaenv.peakbinned{i};
-%         blocks.nogo_thetaenv_prepole{i} =w_thetaenv.prepole{i};
-%         blocks.nogo_thetaenv_prepolebinned{i} =w_thetaenv.prepolebinned{i};
-%         blocks.nogo_thetaenv_pval{i}= w_thetaenv.pval{i};
-%         blocks.nogo_thetaenv_biased_barpos{i} =  w_thetaenv.biased_barpos{i};
-%         blocks.nogo_thetaenv_baseline_barpos{i} =  w_thetaenv.baseline_barpos{i};
-%         blocks.nogo_thetaenv_mean_barpos{1} =  w_thetaenv.mean_barpos{i};
-%         blocks.nogo_totalTouchKappa{i} =  w_thetaenv.totalTouchKappa{i};
-%         blocks.nogo_maxTouchKappa{i} =  w_thetaenv.maxTouchKappa{i};
-%         blocks.nogo_kappa_trials{i} = w_thetaenv.kappatrials{i};
-% 
-%     end
-%     [w_thetaenv] =  wdatasummary(sessionInfo,wSigTrials,blocks.tag,blocks.gotrialnums,avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,'go',timewindowtag,min_meanbarpos,baseline_barpos);
-% 
-%     for i=1:numblocks
-%         blocks.go_thetaenv_trials{i} = w_thetaenv.trials{i};
-%         blocks.go_thetaenv_time{i} = w_thetaenv.time{i};
-%         blocks.go_thetaenv_dist{i} = w_thetaenv.dist{i};
-%         blocks.go_thetaenv_bins{i} = w_thetaenv.bins{i};
-%         blocks.go_thetaenv_med{i} = w_thetaenv.med{i};
-%         blocks.go_thetaenv_medbinned{i} = w_thetaenv.medbinned{i};
-% 
-%         blocks.go_thetaenv_meanbarcross{i} = w_thetaenv.meanbarcross{i};
-%         blocks.go_thetaenv_meanbarcrossbinned{i} =w_thetaenv.meanbarcrossbinned{i};
-% 
-%         blocks.go_thetaenv_prcpastmeanbar{i} = w_thetaenv.prcpastmeanbar{i};
-%         blocks.go_thetaenv_prcpastmeanbarbinned{i} =w_thetaenv.prcpastmeanbarbinned{i};
-%         blocks.go_thetaenv_peak{i} = w_thetaenv.peak{i};
-%         blocks.go_thetaenv_peakbinned{i} =w_thetaenv.peakbinned{i};
-%         blocks.go_thetaenv_prepole{i} =w_thetaenv.prepole{i};
-%         blocks.go_thetaenv_prepolebinned{i} =w_thetaenv.prepolebinned{i};
-%         blocks.go_thetaenv_pval{i}= w_thetaenv.pval{i};
-%         blocks.go_thetaenv_biased_barpos{i} =  w_thetaenv.biased_barpos{i};
-%         blocks.go_thetaenv_baseline_barpos{i} =  w_thetaenv.baseline_barpos{i};
-%         blocks.go_thetaenv_mean_barpos{1} =  w_thetaenv.mean_barpos{i};
-%         blocks.go_totalTouchKappa{i} =  w_thetaenv.totalTouchKappa{i};
-%         blocks.go_maxTouchKappa{i} =  w_thetaenv.maxTouchKappa{i};
-%         blocks.go_kappa_trials{i} = w_thetaenv.kappatrials{i};
-%     end
 end
 fpath = pwd;
 fpath = [fpath filesep 'plots' filesep timewindowtag];
@@ -3983,7 +3908,8 @@ wSig_trialnums =str2num(char(names));
         wsArray.ws_trials{i}.mThetaNearBar =mean(wsArray.ws_trials{i}.theta{1}(inds));
         wsArray.ws_trials{i}.mKappaNearBar =mean(wsArray.ws_trials{i}.kappa{1}(inds));
         wsArray.ws_trials{i}.trialNum = wSig_trialnums(i);
-        switch solo_data.trialTypes(i)
+        n=wSig_trialnums(i);
+        switch solo_data.trialTypes(n)
             case 1
                 if solo_data.trialCorrects(i)
                      wsArray.ws_trials{i}.trialType = 1; %Hit
@@ -3997,21 +3923,11 @@ wSig_trialnums =str2num(char(names));
                     wsArray.ws_trials{i}.trialType = 4; %FA
                 end
         end
-        
-
-        % % %         if ~isempty(wsArray.ws_trials{i}.contacts{1})
-        % % %             inds = wsArray.ws_trials{i}.contacts{1};
-        % % %             inds = inds -1;
-        % % %             mean_bartheta = nanmean(wsArray.ws_trials{i}.theta{i}(inds));
-        % % % %             wsArray.ws_trials{i}.meantheta
-        % % %         end
-        
 
     end
 
 
     wSigTrials =wsArray.ws_trials;
-    %     save(sprintf('SessionInfo_%s.mat', sessionName{kk}), 'sessionInfo');
     save(filename1, 'wsArray');
 
     save (filename2,'wSigTrials');
@@ -5358,16 +5274,41 @@ end
 % --- Executes on button press in plot_soloSigSum.
 function plot_soloSigSum_Callback(hObject, eventdata, handles)
 global soloSigSummary
-    fdprime = figure('position',[1000, sc(4)/10-100, sc(3), sc(4)], 'color','w');  %% dprime
-    fpc = figure('position',[1000, sc(4)/10-100, sc(3), sc(4)], 'color','w');  %% pc
+    mousename = get(handles.plot_soloSigSum_title,'String');
+    sc = get(0,'ScreenSize');
+    fdprime = figure('position',[1000, sc(4)/10-100, sc(3)/2, sc(4)/2], 'color','w');  %% dprime
+    ah1=axes('Parent',fdprime);
+    suptitle([mousename 'Dprime']);
+    fpc = figure('position',[1000, sc(4)/10-100, sc(3)/2, sc(4)/2], 'color','w');  %% pc
+    ah2=axes('Parent',fpc);
+    suptitle([mousename 'PC']);
+    numsessions  =  size(soloSigSummary,2);
+    count =0 ;
     
-
-for j = 1:numsessions
-   obj =  solo_data;
-   
-    
-end
-
+    for j = 1:numsessions
+       obj =  soloSigSummary{j};
+      dprime = getfield(obj,'Dprime');
+      dprime_corrected = getfield(obj,'Dprime_contact');
+      pc = getfield(obj,'PercentCorrect');
+      pc_corrected = getfield(obj,'PC_contact');
+      numtrials = size(dprime,2);
+      axes(ah1);
+      plot([count+1:count+numtrials], dprime,'color','b','Marker','o','MarkerSize',6,'MarkerFaceColor','b');
+      hold on;
+      plot([count+1:count+numtrials], dprime_corrected,'color','b--','Marker','o','MarkerSize',6,'MarkerFaceColor','b');
+      hline (1,{'r--','linewidth',1.5});
+      axes(ah2);
+      plot([count+1:count+numtrials], pc,'color','g','Marker','o','MarkerSize',6,'MarkerFaceColor','g');
+      hold on;
+      plot([count+1:count+numtrials], pc_corrected,'color','g--','Marker','o','MarkerSize',6,'MarkerFaceColor','g');
+      hline (.65,{'r--','linewidth',1.5});
+      count = count + numtrials +10;
+      
+    end
+axes(ah1);
+saveas(gcf,[mousename 'Dprime_sessions'] ,'jpg');
+axes(ah2);
+saveas(gcf,[mousename 'PC_sessions'] ,'jpg');
 
 % --- Executes on button press in load_soloSigSummary.
 function load_soloSigSummary_Callback(hObject, eventdata, handles)
