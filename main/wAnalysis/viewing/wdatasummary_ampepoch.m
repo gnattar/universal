@@ -101,6 +101,7 @@ for(blk=1:numblocks)
             poleinds =  find((restrictTime(1)< xt) & (xt<=restrictTime(2)));
             poleinds_explore = find(amp(poleinds)>0); 
             prepoleinds = find( (xt>restrictTime(1)-.2) & (xt<=restrictTime(1)));
+            prepoleinds_explore = find(amp(prepoleinds)>0); 
             if(isempty(poleinds))
                trialnums(i);
                obj{i}.trackerFileName
@@ -119,11 +120,11 @@ for(blk=1:numblocks)
             local.mean_thetaenv(i,2) =  std(thetaenv_explore);
             
             prc = prctile(thetaenv_explore,90);
-            temp = thetaenv_pole(thetaenv_explore>prc);
+            temp = thetaenv_explore(thetaenv_explore>prc);
             local.peak_thetaenv(i,1) = mean(temp); %% 
             local.peak_thetaenv(i,2) = std(temp);
             
-            temp = thetaenv(prepoleinds);
+            temp = thetaenv(prepoleinds_explore);
             local.prepole_thetaenv(i,1) = mean(temp);
             local.prepole_thetaenv(i,2) = std(temp);
             
@@ -211,111 +212,6 @@ for(blk=1:numblocks)
         close(h1a);   
         
     end
-        
-% % % % %         data = thetaenv_mean(:,1);
-% % % % %         binned= arrayfun( @(x) mean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned=cat(1,binned{:});
-% % % % %         data = thetaenv_med(:,2);
-% % % % %         binned_sdev = arrayfun( @(x) mean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned_sdev=cat(1,binned_sdev{:});
-% % % % %         xbins = arrayfun( @(x) mean(x:min(x+windowSize-1,size(data,1))), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         xbins=floor(cat(1,xbins{:}));
-% % % % %         %        plot(trialnums(xbins),binned,'linewidth',1.5,'color','k','Marker','o');hold on;
-% % % % %         errorbar(trialnums(xbins),binned,binned_sdev,'linewidth',1,'color','k','Marker','o');hold on;
-% % % % %         grid on;
-% % % % %         hline(biased_bartheta,{'r-','linewidth',1.5},{['bb ' num2str(biased_bartheta)]},[0 .1]);
-% % % % %         hline(mean_bartheta,{'r--','linewidth',1},{['mb ' num2str(mean_bartheta)]},[.75 -.1]);
-% % % % %         if(length(binned)>5)
-% % % % %             s = regstats(binned,trialnums(xbins),'linear','tstat');
-% % % % %             pval(1)  = s.tstat.pval(2); % test for non-zero slope of med
-% % % % %             s = regstats(binned_sdev,trialnums(xbins),'linear','tstat');
-% % % % %             pval(2) = s.tstat.pval(2);
-% % % % %         end
-% % % % %         w_thetaenv.med{blk} = {horzcat(trialnums,thetaenv_med(:,1),thetaenv_med(:,2))}; %%median for restricted time window
-% % % % %         w_thetaenv.medbinned{blk} = {horzcat(trialnums(xbins),binned,binned_sdev)}; %%median binned withi n restricted time window
-% % % % % 
-% % % % % 
-% % % % %         data = thetaenv_prepole(:,1);
-% % % % %         %             plot(trialnums,thetaenv_prepole(:,1),'linewidth',.25,'color',[.5 .5 .8]); hold on;
-% % % % %         binned = arrayfun( @(x) nanmean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned=cat(1,binned{:});
-% % % % %         data =thetaenv_prepole(:,2);
-% % % % %         binned_sdev = arrayfun( @(x) nanmean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned_sdev=cat(1,binned_sdev{:});
-% % % % % 
-% % % % %         errorbar(trialnums(xbins),binned,binned_sdev,'color',[.5 .5 1],'linewidth',1,'Marker','o');  grid on;
-% % % % %         if(length(binned)>5)
-% % % % %             s = regstats(binned,trialnums(xbins),'linear','tstat');
-% % % % %             pval(3)  = s.tstat.pval(2); % test for non-zero slope of prepole
-% % % % %             s = regstats(binned_sdev,trialnums(xbins),'linear','tstat');
-% % % % %             pval(4) = s.tstat.pval(2);
-% % % % %         end
-% % % % %         w_thetaenv.prepole{blk}= {horzcat(trialnums,thetaenv_prepole(:,1),thetaenv_prepole(:,2))};
-% % % % %         w_thetaenv.prepolebinned{blk}= {horzcat(trialnums(xbins),binned,binned_sdev)};
-% % % % % 
-% % % % %         data = thetaenv_peak(:,1);
-% % % % %         %             plot(trialnums,thetaenv_peak(:,1),'linewidth',.25,'color',[.8 .5 .5]); hold on;
-% % % % %         binned = arrayfun( @(x) mean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned=cat(1,binned{:});
-% % % % %         data =thetaenv_peak(:,2);
-% % % % %         binned_sdev = arrayfun( @(x) mean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned_sdev=cat(1,binned_sdev{:});
-% % % % %         errorbar(trialnums(xbins),binned,binned_sdev,'color',[1 .5 .5],'linewidth',1,'Marker','o');  grid on;
-% % % % % 
-% % % % %         axis([min(trialnums) max(trialnums) -35  35]);
-% % % % %         s = regstats(binned,trialnums(xbins),'linear','tstat');
-% % % % %         pval(5)  = s.tstat.pval(2); % test for non-zero slope of peak
-% % % % %         s = regstats(binned_sdev,trialnums(xbins),'linear','tstat');
-% % % % %         pval(6) = s.tstat.pval(2);
-% % % % %         title('Thetaenv Med stdev,  Prepole ,Peak,(K.B.R) ');
-% % % % %         ylabel('Theta Env (deg)');xlabel('Trials');
-% % % % % 
-% % % % %         %             text(.5,.02,'Thetaenv Med stdev,  Prepole ,Peak,(K.B.R) ','VerticalAlignment','bottom','HorizontalAlignment','center');
-% % % % % 
-% % % % %         w_thetaenv.peak{blk}= {horzcat(trialnums,thetaenv_peak(:,1),thetaenv_peak(:,2))};
-% % % % %         w_thetaenv.peakbinned{blk}= {horzcat(trialnums(xbins),binned,binned_sdev)};
-% % % % % 
-% % % % %         saveas(gcf,[fpath,filesep,fnam],'jpg');
-% % % % %         close(h1a);
-% % % % %         %% plot Dist 
-% % % % %         fnam=[str 'thetaEnv.jpg'];
-% % % % %         h1b=figure('Name','Theta Envelope Distribution');
-% % % % %         set(0,'CurrentFigure',h1b);
-% % % % %         suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName ' B: ' str ' Whisker occupancy plots near mean barpos, Dist' ]);
-% % % % % 
-% % % % %         subplot(numblocks*2,2,(blk-1)*2+1);
-% % % % %         data = thetaenv_meanbarcross(:,1);
-% % % % % 
-% % % % %         up = thetaenv_meanbarcross(:,1)+thetaenv_meanbarcross(:,2);
-% % % % %         low=thetaenv_meanbarcross(:,1)-thetaenv_meanbarcross(:,2);
-% % % % % 
-% % % % %         windowSize=10;
-% % % % %         %              plot(trialnums,data,'linewidth',.5,'color', [.8 , .5,.5]);hold on;
-% % % % %         binned = arrayfun( @(x) nanmean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned=cat(1,binned{:});
-% % % % %         data =thetaenv_meanbarcross(:,2);
-% % % % %         binned_sdev = arrayfun( @(x) nanmean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned_sdev=cat(1,binned_sdev{:});
-% % % % %         %        plot(trialnums(xbins),binned,'color','r','linewidth',1,'Marker','o');  grid on;
-% % % % % 
-% % % % %         jbfill(trialnums',up',low', [.5 , .5,.5], [.5 , .5,.5],1,.3);hold on;
-% % % % %         plot(trialnums,thetaenv_meanbarcross(:,1),'linewidth',1,'color', [.5 , .5,.5]); hold on;
-% % % % %         hline(biased_bartheta,{'r','linewidth',1.5},{['bb ' num2str(biased_bartheta)]},[0 .1]);
-% % % % %         hline(mean_bartheta,{'r--','linewidth',1},{['mb ' num2str(mean_bartheta)]},[.75 -.1]);
-% % % % %         errorbar(trialnums(xbins),binned,binned_sdev,'linewidth',1.5,'color','k','Marker','o');hold on;
-% % % % %         %              title('Mean theta beyond bartheta');
-% % % % %         ylabel('mThetaEnv beyond mbarpos (deg)');xlabel('Trials');
-% % % % %         %                  axis([min(trialnums) max(trialnums) -40 40]);
-% % % % %         if(length(binned)>5)
-% % % % %             s = regstats(binned,trialnums(xbins),'linear','tstat');
-% % % % %             pval(7)  = s.tstat.pval(2); % test for non-zero slope of meanbarthetacross
-% % % % %             s = regstats(binned_sdev,trialnums(xbins),'linear','tstat');
-% % % % %             pval(8) = s.tstat.pval(2);
-% % % % %         end
-        %['Theta envelope pval ' num2str(pvalsetpoint)
-% % % % %         w_thetaenv.meanbarcross{blk}= {horzcat(trialnums,thetaenv_meanbarcross(:,1),thetaenv_meanbarcross(:,2))};
-% % % % %         w_thetaenv.meanbarcrossbinned{blk}= {horzcat(trialnums(xbins),binned,binned_sdev)};
-
         w_thetaenv.amp{blk} = {thetaenv_amp};
         w_thetaenv.thetaenvtrials{blk} = {thetaenv_trials};
         w_thetaenv.time {blk}= {thetaenv_time};
@@ -329,9 +225,6 @@ for(blk=1:numblocks)
         subplot(numblocks*2,1,(blk-1)*2+(1));
         set(gcf,'DefaultAxesColorOrder',jet(size(thetaenv_dist,1)));
         plot(thetaenv_bins',thetaenv_dist','linewidth',0.25);hold on; grid on;
-% % % % %         set(gcf,'DefaultAxesColorOrder',jet(size(thetaenv_meanbarcross,1)));
-% % % % %         line([thetaenv_meanbarcross(:,1)'; thetaenv_meanbarcross(:,1)'], [ones(1,length(thetaenv_meanbarcross(:,1)'))*.9; ones(1,length(thetaenv_meanbarcross(:,1)))*.95],'linewidth',1);
-% % % % %         line([thetaenv_med(:,1)'; thetaenv_med(:,1)'], [ones(1,length(thetaenv_med(:,1)))*.8; ones(1,length(thetaenv_med(:,1)))*.85],'linewidth',1);
         vline(biased_bartheta,{'r-','linewidth',1.5});
         vline(mean_bartheta,{'r--','linewidth',0.5});
         axis ([-35 35 0 1]);grid on;
@@ -350,38 +243,10 @@ for(blk=1:numblocks)
         saveas(gcf,[fpath,filesep,fnam],'jpg');
         close(h1a);
 
-% % % % %         %% plot prc dist past mean bartheta
-% % % % %         subplot(numblocks*2,2,(blk-1)*2+2);
-% % % % %         % % %         temp= [thetaenv_med(:,1) thetaenv_meanbarcross(:,1) ];
-% % % % %         % % %         set(gcf,'DefaultAxesColorOrder',copper(size(temp,1)));
-% % % % %         % % %         plot(temp','linewidth',1); axis ([0 3 -50 50]);
-% % % % % 
-% % % % %         plot(trialnums,thetaenv_prcpastmeanbar(:,1),'linewidth',1,'color',[.5 .5 .5]); hold on;
-% % % % %         windowSize=10;
-% % % % %         grid on;
-% % % % % 
-% % % % %         data = thetaenv_prcpastmeanbar(:,1);
-% % % % %         binned = arrayfun( @(x) mean(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned=cat(1,binned{:});
-% % % % % 
-% % % % %         binned_sdev = arrayfun( @(x) std(data(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data,1), 'UniformOutput', false);
-% % % % %         binned_sdev=cat(1,binned_sdev{:});
-% % % % % 
-% % % % %         errorbar(trialnums(xbins),binned,binned_sdev,'linewidth',1.5,'color','k','Marker','o');hold on;
-% % % % %         ylabel('% Theat Env Dist within mbarpos(shoulder 10 deg)');xlabel('Trials');
-% % % % %         s = regstats(binned,trialnums(xbins),'linear','tstat');
-% % % % %         pval(9)  = s.tstat.pval(2); % test for non-zero slope of prc tiem spent beyond mean bar theta
-% % % % % 
-% % % % %         saveas(gcf,[fpath,filesep,fnam],'jpg');
-% % % % %         close(h1b);
-
         w_thetaenv.dist {blk}= {thetaenv_dist};
         w_thetaenv.bins {blk}= {thetaenv_bins};
         w_thetaenv.occupancy = {thetaenv_occupancy};
         w_thetaenv.occupancybins = {occupancy_bins};
-
-% % % % %         w_thetaenv.prcpastmeanbar{blk}= {horzcat(trialnums,thetaenv_prcpastmeanbar)};
-% % % % %         w_thetaenv.prcpastmeanbarbinned{blk}= {horzcat(trialnums(xbins),binned)};
 
         w_thetaenv.pval {blk}={pval};
         w_thetaenv.biased_barpos{blk} = {biased_bartheta};

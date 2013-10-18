@@ -2948,6 +2948,9 @@ save(filename, 'sessionInfo');
 function plotwSigData_Callback(hObject, eventdata, handles)
 global sessionInfo
 global wSigTrials
+
+plot_SetAmp();
+
 set = {};
 gopix = sessionInfo.gopix;
 nogopix =  sessionInfo.nogopix;
@@ -4727,7 +4730,7 @@ for k = 1:length(fieldnames)
         end
     end
     set(gcf,'PaperPositionMode','auto');
-    saveas(gcf,propname,'tif');
+    saveas(gcf,propname,'jpg');
      wSigSessSum_anm.mat.(propname) = tempmat;
 end
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
@@ -5293,15 +5296,19 @@ global soloSigSummary
       pc_corrected = getfield(obj,'PC_contact');
       numtrials = size(dprime,2);
       axes(ah1);
-      plot([count+1:count+numtrials], dprime,'color','b','Marker','o','MarkerSize',6,'MarkerFaceColor','b');
+      plot([count+1:count+numtrials], dprime,'color','b','Linestyle','-','Marker','o','MarkerSize',6,'MarkerFaceColor','b');
       hold on;
-      plot([count+1:count+numtrials], dprime_corrected,'color','b--','Marker','o','MarkerSize',6,'MarkerFaceColor','b');
+      numtrials = size(dprime_corrected,2);
+      plot([count+1:count+numtrials], dprime_corrected,'color',[.1 .5 .75],'Linestyle','--','Marker','o','MarkerSize',6,'MarkerFaceColor','b');
       hline (1,{'r--','linewidth',1.5});
       axes(ah2);
-      plot([count+1:count+numtrials], pc,'color','g','Marker','o','MarkerSize',6,'MarkerFaceColor','g');
+      numtrials = size(dprime,2);
+      plot([count+1:count+numtrials], pc,'color','g','Linestyle','-','Marker','o','MarkerSize',6,'MarkerFaceColor','g');
       hold on;
-      plot([count+1:count+numtrials], pc_corrected,'color','g--','Marker','o','MarkerSize',6,'MarkerFaceColor','g');
+      numtrials = size(dprime_corrected,2);
+      plot([count+1:count+numtrials], pc_corrected,'color',[.1 .75 .5],'Linestyle','--','Marker','o','MarkerSize',6,'MarkerFaceColor','g');
       hline (.65,{'r--','linewidth',1.5});
+      numtrials = max( size(dprime_corrected,2),size(dprime,2));
       count = count + numtrials +10;
       
     end

@@ -36,7 +36,7 @@ else
     [filename1,path]= uigetfile('wsArray*.mat', 'Load wsArray.mat file');
     load([path filesep filename1]);    
 end
-name = strrep(filename1,'wsArray','');
+name = strrep(filename1,'wsArray_','');
 wSigTrials = wsArray.ws_trials;
 trialtypes = cellfun(@(x) x.trialType,wSigTrials);
 CRtrials = find(trialtypes==3);

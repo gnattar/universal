@@ -1,8 +1,6 @@
 %% add trialtype and trialnum to wsArray and wSigTrials
 %% 
 
-function plot_SetAmp()
-
 [filename1,path]= uigetfile('wsArray*.mat', 'Load wsArray.mat file');
 load([path filesep filename1]);
 [filename2,path]= uigetfile('solo_data*.mat', 'Load solo_data.mat file');
@@ -31,12 +29,7 @@ end
 save(filename1,'wsArray');
 
 %% plot CR trials whisker data
-if(exist('wsArray'))
-else
-    [filename1,path]= uigetfile('wsArray*.mat', 'Load wsArray.mat file');
-    load([path filesep filename1]);    
-end
-name = strrep(filename1,'wsArray','');
+filename1 =
 wSigTrials = wsArray.ws_trials;
 trialtypes = cellfun(@(x) x.trialType,wSigTrials);
 CRtrials = find(trialtypes==3);
@@ -48,48 +41,48 @@ theta = cellfun(@(x) x.theta{1}, wSigTrials(CRtrials),'Uniformoutput',false);
 
 sc = get(0,'ScreenSize');
 h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
-suptitle([name 'CR 11:30']);
+suptitle([filename1 'CR 11:30']);
 for i = 11:30
     [tuenv, tlenv]  =  envelope(theta{i});
     subplot(10,2,i-10);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');axis([.8 2.5 -30 30]);
     text(2.25,10,['T' num2str(CRtrials(i))]);
 end
 set(gcf,'PaperPositionMode','auto');
-saveas(gcf,[name 'CR 11_30'],'jpg');
+saveas(gcf,[filename1 'CR 11_30'],'jpg');
 close(h1b);
 
 h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
-suptitle([name 'CR 31:50']);
+suptitle([filename1 'CR 31:50']);
 for i = 31:50
     [tuenv, tlenv]  =  envelope(theta{i});
     subplot(10,2,i-30);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');axis([.8 2.5 -30 30]);
     text(2.25,10,['T' num2str(CRtrials(i))]);
 end
 set(gcf,'PaperPositionMode','auto');
-saveas(gcf,['name CR 31_50'],'jpg');
+saveas(gcf,['filename1 CR 31_50'],'jpg');
 close(h1b);
 
 h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
-suptitle([name 'CR 51:70']); 
+suptitle([filename1 'CR 51:70']); 
 for i = 51:70
     [tuenv, tlenv]  =  envelope(theta{i});
     subplot(10,2,i-50);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');axis([.8 2.5 -30 30]);
     text(2.25,10,['T' num2str(CRtrials(i))]);
 end
 set(gcf,'PaperPositionMode','auto');
-saveas(gcf,[name 'CR 51_70'],'jpg');
+saveas(gcf,[filename1 'CR 51_70'],'jpg');
 close(h1b);
 
 if(length(theta) > i) 
     h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
-    suptitle([name 'CR 71:90']); 
+    suptitle([filename1 'CR 71:90']); 
     for i = 71:90
         [tuenv, tlenv]  =  envelope(theta{i});
         subplot(10,2,i-70);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');axis([.8 2.5 -30 30]);
         text(2.25,10,['T' num2str(CRtrials(i))]);
     end
     set(gcf,'PaperPositionMode','auto');
-    saveas(gcf,[name 'CR 71_90'],'jpg');
+    saveas(gcf,[filename1 'CR 71_90'],'jpg');
     close(h1b);
 end
 
