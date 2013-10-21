@@ -151,6 +151,7 @@ for(blk=1:numblocks)
      
     var_set = {'mean_thetaenv','peak_thetaenv','prepole_thetaenv','prcoccupancy','mean_whiskamp','total_whiskamp'};
     col_set = {'k','r','b','k','k','m'};
+    pval = zeros(length(var_set));
     for v = 1: length(var_set)
         strg = var_set{v};
         

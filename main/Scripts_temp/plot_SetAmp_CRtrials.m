@@ -1,7 +1,7 @@
 %% add trialtype and trialnum to wsArray and wSigTrials
 %% 
 
-function plot_SetAmp()
+function plot_SetAmp(dir)
 
 [filename1,path]= uigetfile('wsArray*.mat', 'Load wsArray.mat file');
 load([path filesep filename1]);
