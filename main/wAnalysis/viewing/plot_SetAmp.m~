@@ -100,6 +100,6 @@ if(length(theta) > i)
     saveas(gcf,[name 'CR 71_90'],'jpg');
     close(h1b);
 end
-cd ..
+qcd ..
 
 %% 

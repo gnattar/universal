@@ -22,7 +22,7 @@ function varargout = Universal_GR_12(varargin)
 
 % Edit the above text to modify the response to help Universal_GR_12
 
-% Last Modified by GUIDE v2.5 08-Oct-2013 18:29:13
+% Last Modified by GUIDE v2.5 22-Oct-2013 12:27:16
 
 % Begin initialization code - DO NOT EDIT
 
@@ -2901,17 +2901,33 @@ end
 function loadwSigsessionInfo_Callback(hObject, eventdata, handles)
 global sessionInfo
 global wSigTrials
+global wsArray
+global solo_data
+
 basedatapath = get(handles.wSig_datapath,'String');
 cd (basedatapath);
+
+[filename,pathName]=uigetfile('wsArray*.mat','Load wsArray.mat file');
+if isequal(filename, 0) || isequal(pathName,0)
+    return
+end
+cd (pathName);
+set(handles.wSig_datapath,'String',pathName);
+load( [pathName filesep filename],'-mat');
+
+[filename,pathName]=uigetfile('solo_data*.mat','Load solo_data.mat file');
+load( [pathName filesep filename],'-mat');
+
 [filename,pathName]=uigetfile('wSig*.mat','Load wSig.mat file');
 if isequal(filename, 0) || isequal(pathName,0)
     return
 end
-set(handles.wSig_datapath,'String',pathName);
-cd(pathName);
 load( [pathName filesep filename], '-mat');
+
+
 [filename,pathName]=uigetfile('SessionInfo*.mat','Load SessionInfo.mat file');
 load( [pathName filesep filename],'-mat');
+cd(pathName);
 
 bartheta_all=cellfun(@(x) x.mThetaNearBar,wSigTrials,'uniformoutput',false);
 wSigfilenames =cellfun(@(x) x.trackerFileName(29:32),wSigTrials,'uniformoutput',false);
@@ -2948,8 +2964,15 @@ save(filename, 'sessionInfo');
 function plotwSigData_Callback(hObject, eventdata, handles)
 global sessionInfo
 global wSigTrials
+global wsArray
+global solo_data
+
+folder = dir('plots');
+if length(folder) <1
+    mkdir ('plots');
+end
 d = './plots';
-plot_SetAmp(d);
+plot_SetAmp(d,wsArray,solo_data);
 
 set = {};
 gopix = sessionInfo.gopix;
@@ -3022,13 +3045,14 @@ baseline_barpos = str2double(get(handles.baseline_meanbarpos,'String'));
 
 trialsets = {'nogo','go','hit','miss','CR','FA'};
 
-for sets = [1,2,3,5,6]
+for sets = [1,2,3,4,5,6]
     str= [trialsets{sets} 'trialnums']; 
+    var_set = {'thetaenvtrials';'time';'dist';'bins';'amp';'mean_thetaenv';'mean_thetaenv_binned';'mean_whiskamp';'mean_whiskamp_binned';  'total_whiskamp'; 'total_whiskamp_binned'; 'peak_thetaenv'; 'peak_thetaenv_binned'; ...
+                    'prepole_thetaenv'; 'prepole_thetaenv_binned'; 'prcoccupancy'; 'prcoccupancy_binned'; 'pval'; 'mean_barpos';'biased_barpos';'baseline_barpos';'occupancy';'occupancybins';...
+                        'totalTouchKappa';'maxTouchKappa';'kappatrials'};
 % % % % %     [w_thetaenv] =  wdatasummary(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos);
     [w_thetaenv] =   wdatasummary_ampepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos);
-    var_set = {'thetaenvtrials','time','dist','bins','amp','mean_thetaenv','mean_thetaenv_binned','mean_whiskamp','mean_whiskamp_binned',  'total_whiskamp', 'total_whiskamp_binned', 'peak_thetaenv', 'peak_thetaenv_binned', ...
-                    'prepole_thetaenv', 'prepole_thetaenv_binned', 'prcoccupancy', 'prcoccupancy_binned', 'pval', 'mean_barpos','biased_barpos','baseline_barpos','occupancy','occupancybins',...
-                        'totalTouchKappa','maxTouchKappa','kappatrials'};
+
     for i=1:numblocks
         for v = 1:length(var_set)
             blocks.([trialsets{sets} '_' var_set{v}]){i} = w_thetaenv.(var_set{v}){i};
@@ -3759,8 +3783,9 @@ load([path filesep filename2]);
 contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput', false);
 nodetects =  find(cellfun(@isempty,contacts_detected));
 
-          contDet_param.threshDistToBarCenter = [.1   .70]; %lax
-%         contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
+%           contDet_param.threshDistToBarCenter = [.1   .70]; %lax
+         contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
+%           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
         contDet_param.thresh_deltaKappa = [-.1	.1];
         if isempty(wsArray.bar_time_window)
             barTimeWindow = str2num(get(handles.barTimeWindow,'String'));
@@ -4103,10 +4128,19 @@ end
 folder = uigetdir;
 cd (folder);
 save('wSigSummary','wSigSummary');
+fieldlist = fieldnames(wSigSummary{1,1});
+list = strmatch('nogo',fieldlist);
+set(handles.wSigblocks_datalist, 'String',list);
 
 
 % --- Executes on selection change in wSigSum_toplot.
 function wSigSum_toplot_Callback(hObject, eventdata, handles)
+global wSigSummary
+fieldlist = fieldnames(wSigSummary{1,1});
+plotlist = get(handles.wSigSum_toplot,'String');
+datatoplot =  plotlist(get(handles.wSigSum_toplot,'Value'));
+list = strmatch(datatoplot,fieldlist);
+set(handles.wSigblocks_datalist, 'String',fieldlist(list));
 
 
 % --- Executes during object creation, after setting all properties.
@@ -4120,16 +4154,13 @@ end
 % --- Executes on button press in plot_wSigSum.
 function plot_wSigSum_Callback(hObject, eventdata, handles)
 global wSigSummary
-% global wSigSum_Sessions
-
-% wSigSum_Sessions = struct([]);
 
 biased_bartheta= str2num(get(handles.current_bartheta,'String'));
 baseline_bartheta = str2num(get(handles.unbiased_bartheta,'String'));
 
-temp = cell2mat(cellfun(@(x) x.nogo_thetaenv_biased_barpos{1}{1},wSigSummary,'uniformoutput',false));
+temp = cell2mat(cellfun(@(x) x.nogo_biased_barpos{1}{1},wSigSummary,'uniformoutput',false));
 biased_bartheta = mean(temp);
-temp = cell2mat(cellfun(@(x) x.nogo_thetaenv_baseline_barpos{1}{1},wSigSummary,'uniformoutput',false));
+temp = cell2mat(cellfun(@(x) x.nogo_baseline_barpos{1}{1},wSigSummary,'uniformoutput',false));
 baseline_bartheta = mean(temp);
 plotlist = get(handles.wSigSum_toplot,'String');
 datatoplot= plotlist{get(handles.wSigSum_toplot,'Value')};
@@ -4147,38 +4178,37 @@ transparency =  0.5;
 legendstr = cell(numsessions,1);
 datacollected = zeros(numsessions*70,4,numblocks);
 
-spacing = 1/(numsessions+3.5);
 baseline_sessions = 2;
+
 mindata = 0; maxdata =0;
-% plotting setpoint
+% plotting Thetaenvelope
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
     h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw setpoint
     ah1=axes('Parent',h_fig1);
-    title([commentstr 'Theta_env Med  ' ]);%blocklist{j} 'Data ' datatoplot]);
+    title([commentstr 'Mean and Peak Theta Envelope   ' ]);%blocklist{j} 'Data ' datatoplot]);
     
     h_fig2 = figure('position', [300, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %% error from bartheat
-    ah2=axes('Parent',h_fig2); title([commentstr 'Theta_env Med Error  ' ]);%blocklist{j} 'Data ' datatoplot]);
+    ah2=axes('Parent',h_fig2); title([commentstr 'Mean and Peak Theta Envelope Error  ' ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
     %     figure;
     count =0;
     prev=0;
     
     for i = 1:numsessions
-        datawave = {'med','prepole','peak'};
-        colr(:,:,2) = [ 0 0 0 ;0 0 1; 1 0 0 ];
-        colr(:,:,1) = [ .5 .5 .5 ;.5 .5 1; 1 .5 .5 ];
-        for k = 1:length(datawave)
-            
-            selecteddata = strrep(datatoplot,'data',datawave(k));
-            temp = getfield(wSigSummary{i},selecteddata{1});
+        datawave = {'mean_thetaenv_binned','peak_thetaenv_binned'};
+        colr(:,:,2) = [ 0 0 0 ; 1 0 0 ]; % black red
+        colr(:,:,1) = [ .5 .5 .5 ; 1 .5 .5 ]; % black red
+        for k = 1:length(datawave)           
+            selecteddata = strcat(datatoplot,'_',datawave(k));
+            temp = wSigSummary{i}.(selecteddata{1});
             temp = temp{1};
             binnedxdata = temp{block}(:,1)';
             binnedydata = temp{block}(:,2)';
             binnedydata_sdev = temp{block}(:,3)';
-            curr_meanbarpos = wSigSummary{i}.nogo_thetaenv_mean_barpos{1}{1};
-             curr_meanbarpos = wSigSummary{i}.nogo_thetaenv_mean_barpos{1}{1};
+            curr_meanbarpos = wSigSummary{i}.nogo_mean_barpos{1}{1};
+            curr_biasedbarpos = wSigSummary{i}.nogo_biased_barpos{1}{1};
             %            mean_bartheta = getfield(wSigSummary{i},strrep(datatoplot,'databinned','meanbar'));
             %            mean_bartheta  = cell2mat(mean_bartheta {1});
             axes(ah1);
@@ -4224,23 +4254,21 @@ for j= 1:numblocks
     end
     axes(ah1); axis([0 count mindata-5 maxdata+5]);grid on; ylabel('Medianpole, Prepole and Peak(binned thetaenv)'); xlabel('Trials');
     
-    title('Binned Theta env Med Prepole Peak - K B R');
+    title('Mean and Peak Theta envelope - K R');
     
-    saveas(gcf,['thetaenv_med_bl ' blocklist{j}] ,'jpg');
-    saveas(gcf,['thetaenv_med_bl' blocklist{j}],'fig');
+    saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'jpg');
+    saveas(gcf,['Thetaenv' datatoplot ' ' blocklist{j}],'fig');
     
     axes(ah2);axis([0 count mindata-15 maxdata+2]);grid on; ylabel('Med, Prepole,Peak - mean bartheta (from expected bar position)'); xlabel('Trials');
-    title('Mean subtracted Theta env Med Prepole Peak - K B R');
-    saveas(gcf,['error_bl ' blocklist{j}] ,'jpg');
-    saveas(gcf,['error_bl' blocklist{j}],'fig');
+    title('Mean and Peak Theta envelope Error - K R');
+    saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'jpg');
+    saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}],'fig');
     hold off;
-    %        plot_dist_sessions(commentstr,numsessions);
 end
-% title([commentstr ' Block ' blocklist{j} ]);
 
 
 
-% plotting prcpastmeanbar and meanbarcross
+% plotting proccupancy
 mindata =0;
 maxdata =0;
 for j= 1:numblocks
@@ -4248,14 +4276,15 @@ for j= 1:numblocks
     sc = get(0,'ScreenSize');
     figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
     %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
-    title([commentstr 'Percent past mean barpos ' ]);%blocklist{j} 'Data ' datatoplot]);
+    title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
     count =0;
     prev=0;
     for i = 1:numsessions
         
-        selecteddata = strrep(datatoplot,'data','prcpastmeanbar');
-        temp = getfield(wSigSummary{i},selecteddata);
+        datawave = {'prcoccupancy_binned'};
+        selecteddata = strcat(datatoplot,'_',datawave);
+        temp = wSigSummary{i}.(selecteddata{1});
         temp = temp{1};
         
         binnedxdata = temp{block}(:,1)';
@@ -4273,19 +4302,16 @@ for j= 1:numblocks
         hline(0,{'k-','linewidth',1});
         hline(.5,{'r-','linewidth',1});
         legendstr(i) = {['session' num2str(i) ' ']};
-        %        wSigSum_Sessions.thrmed_binned{i,j}= [binnedxdata;binnedydata]';
         collateddata = [binnedxdata;binnedydata]';
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-        wSigSum_Sessions{i,j}.(selecteddata) = {collateddata};
-        
+        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
         count = count+binnedxdata(end)+10;
         
     end
-    axis([0 count 0 maxdata+.02]);grid on; ylabel('Percent dwell past mean barpos'); xlabel('Trials');
-    saveas(gcf,['prcpastbarpos_bl ' blocklist{j}] ,'jpg');
-    saveas(gcf,['prcpastbarpos_bl' blocklist{j}],'fig');
+    axis([0 count 0 maxdata+.02]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
+    saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'jpg');
+    saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
 end
-% title([commentstr ' Block ' blocklist{j} ]);
 hold off;
 
 
@@ -4296,60 +4322,18 @@ for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
     figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w');
-    title([commentstr 'TotalTouchKappa' ]); %' blocklist{j}]);
+    title([commentstr 'TotalTouchKappa ' datatoplot ]); %' blocklist{j}]);
     
     hold on;
     count =0;
     prev=0;
     for i = 1:numsessions
-%         
-%         selecteddata = strrep(datatoplot,'databinned','meanbarcross');
-%         temp = getfield(wSigSummary{i},selecteddata);
-%         temp = temp{1};
-%         curr_meanbarpos=  wSigSummary{i}.nogo_thetaenv_mean_barpos{1}{1};
-%         binnedxdata = temp{block}(:,1)';
-%         binnedydata = temp{block}(:,2)';
-%         binnedydata_sdev = temp{block}(:,3)';
-%         % %          mean_bartheta = getfield(wSigSummary{i},strrep(datatoplot,'databinned','meanbar'));
-%         % %           mean_bartheta  = cell2mat(mean_bartheta {1});
-        
-
-
-%         if(i<baseline_sessions+1)
-%             axis([min(binnedxdata+count) max(binnedxdata+count) -40 40]);
-%             errorbar(binnedxdata+count,binnedydata,binnedydata_sdev,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);
-%             %          hline(baseline_bartheta,'k--');
-%             hline(baseline_bartheta,{'k--','linewidth',1.5});
-%             hline(curr_meanbarpos,{'k-','linewidth',1});
-%         else
-%             axis([min(binnedxdata+count) max(binnedxdata+count) -40 40]);
-%             errorbar(binnedxdata+count,binnedydata,binnedydata_sdev,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);
-%             %           hline(biased_bartheta,'r--');
-%             hline(biased_bartheta,{'r--','linewidth',1.5});
-%             hline(curr_meanbarpos,{'r-','linewidth',1.0});
-%         end
-%         
-%         legendstr(i) = {['session' num2str(i) ' ']};
-%         %        wSigSum_Sessions.thr_durbinned{i,j}= [binnedxdata;binnedydata]';
-%         collateddata = [binnedxdata;binnedydata]';
-%         mindata = (mindata<min(binnedydata))*mindata + (mindata>min(binnedydata))*min(binnedydata);
-%         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-%         wSigSum_Sessions{i,j}.(selecteddata) = {collateddata};
-%         count = count+binnedxdata(end)+10;
-        
-        
-        
-        
-        
-        
-        
-        
-        
-          selecteddata = 'go_totalTouchKappa';
-         temp = getfield(wSigSummary{i},selecteddata);
-         temp = temp{1};
-         temp = temp{1};
-         
+  
+        datawave = {'totalTouchKappa'};
+        selecteddata = strcat('go','_',datawave);
+        temp = wSigSummary{i}.(selecteddata{1});
+        temp = temp{1};
+        temp = temp{1};
          ydata = temp(:,2);
          xdata= temp(:,1);
         
@@ -4366,28 +4350,17 @@ for j= 1:numblocks
         legendstr(i) = {['session' num2str(i) ' ']};
         %        wSigSum_Sessions.thr_durbinned{i,j}= [binnedxdata;binnedydata]';
         collateddata = [xdata;ydata]';
-        wSigSum_Sessions{i,j}.(selecteddata) = {collateddata};
+        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata};
         count = count+binnedxdata(end)+10;
 
     end
     axis([0 count -10 40]);grid on; ylabel('TotalTouchKappa'); xlabel('Trials');
-    saveas(gcf,['totalTouchKappa_bl ' blocklist{j}] ,'jpg');
-    saveas(gcf,['totalTouchKappa_bl' blocklist{j}],'fig');
+    saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'jpg');
+    saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}],'fig');
     hold off;
     plot_dist_sessions(commentstr,numsessions);
 end
-% title([commentstr ' Block ' blocklist{j} ]);
 
-% % 
-% % folder=uigetdir;
-% % cd(folder);
-% % save('wSigSum_Sessions','wSigSum_Sessions');
-% % cd ..
-
-
-%  vline(lasttrial(:,1),'k:');
-% legend('Initial','Initial','Biased','B+-');
-% title([commentstr  'All sessions ' datatoplot]);
 
 % --- Executes on selection change in wSigSum_block.
 function wSigSum_block_Callback(hObject, eventdata, handles)
@@ -4548,7 +4521,12 @@ dir= get(handles.wSigSum_datapath,'String');
 [fname,datapath] = uigetfile(dir,'Select wSigSummary data');
 cd (datapath);
 load(fname,'-mat');
-
+fieldlist = fieldnames(wSigSummary{1,1});
+plotlist = get(handles.wSigSum_toplot,'String');
+datatoplot =  plotlist(get(handles.wSigSum_toplot,'Value'));
+list = strmatch(datatoplot,fieldlist);
+set(handles.wSigblocks_datalist, 'String',fieldlist(list));
+set (handles.wSigSum_datapath,'String',datapath);
 
 % --- Executes on button press in pooleddata.
 function pooleddata_Callback(hObject, eventdata, handles)
@@ -5108,22 +5086,11 @@ load(fname,'-mat');
 
 
 function edit60_Callback(hObject, eventdata, handles)
-% hObject    handle to edit60 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit60 as text
-%        str2double(get(hObject,'String')) returns contents of edit60 as a double
 
 
 % --- Executes during object creation, after setting all properties.
 function edit60_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit60 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
 
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -5177,8 +5144,8 @@ while(count>=0)
 end
 folder = uigetdir;
 cd (folder);
-titl = get(handles.plot_soloSigSum_title,'String');
-save(['soloSigSummary' titl] ,'soloSigSummary');
+title = get(handles.plot_soloSigSum_title,'String');
+save(['soloSigSummary' title] ,'soloSigSummary');
 
 
 function plot_soloSigSum_title_Callback(hObject, eventdata, handles)
@@ -5244,3 +5211,13 @@ dir= get(handles.soloSigSum_datapath,'String');
 cd (datapath);
 load(fname,'-mat');
 
+
+
+% --- Executes on selection change in wSigblocks_datalist.
+function wSigblocks_datalist_Callback(hObject, eventdata, handles)
+% --- Executes during object creation, after setting all properties.
+function wSigblocks_datalist_CreateFcn(hObject, eventdata, handles)
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

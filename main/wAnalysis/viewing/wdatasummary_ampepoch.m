@@ -169,23 +169,21 @@ for(blk=1:numblocks)
         
         data =local.(strg);
         data1 = data(:,1);
-        binned= arrayfun( @(x) mean(data1(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data1,1), 'UniformOutput', false);
+        binned= arrayfun( @(x) nanmean(data1(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data1,1), 'UniformOutput', false);
         binned=cat(1,binned{:});
         
         if(size(data,2)>1)
             data2 = data(:,2);
-            binned_2 = arrayfun( @(x) mean(data2(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data2,1), 'UniformOutput', false);
+            binned_2 = arrayfun( @(x) nanmean(data2(x: min(x+windowSize-1,end) ),1), 1:windowSize:size(data2,1), 'UniformOutput', false);
             binned_2=cat(1,binned_2{:});
         end
-        xbins = arrayfun( @(x) mean(x:min(x+windowSize-1,size(data,1))), 1:windowSize:size(data,1), 'UniformOutput', false);
+        xbins = arrayfun( @(x) nanmean(x:min(x+windowSize-1,size(data,1))), 1:windowSize:size(data,1), 'UniformOutput', false);
         xbins=floor(cat(1,xbins{:}));
         
         switch v
             case {4,5,6}
                 plot(trialnums(xbins),binned,'linewidth',1,'color',col_set{v},'Marker','o'); hold on; 
                 plot (trialnums,data1,'linewidth',.5,'color',[.5 .5 .5]);
-%             case 5
-%                 [AX,H1,H2] = plotyy(trialnums(xbins),binned,trialnums(xbins),binned_2); %,'linewidth',1,'color','k','Marker','o');hold on;
             otherwise
                 errorbar(trialnums(xbins),binned,binned_2,'linewidth',1,'color',col_set{v},'Marker','o');hold on;
                 plot (trialnums,data1,'linewidth',.5,'color',[.5 .5 .5]);
@@ -196,14 +194,14 @@ for(blk=1:numblocks)
                 
         
 
-        if(length(binned)>5)
+        if(length(binned)>3)
             s = regstats(binned,trialnums(xbins),'linear','tstat');
-            pval(v)  = s.tstat.pval(2); % test for non-zero slope of med
-            w_thetaenv.(var_set{v}){blk} = {horzcat(trialnums,data(:,1))}; %% mean for restricted time window
-            w_thetaenv.([var_set{v} '_binned']){blk} = {horzcat(trialnums(xbins),binned)}; %%median binned withi n restricted time window
-            
+            pval(v)  = s.tstat.pval(2); % test for non-zero slope of med           
         end
-        if(size(data,2)>1 && (length(binned_2>5)) )        
+        w_thetaenv.(var_set{v}){blk} = {horzcat(trialnums,data(:,1))}; %% mean for restricted time window
+        w_thetaenv.([var_set{v} '_binned']){blk} = {horzcat(trialnums(xbins),binned)}; %%median binned withi n restricted time window
+ 
+        if(size(data,2)>1 )        
             w_thetaenv.(var_set{v}){blk} = {horzcat(trialnums,data(:,1),data(:,2))}; %% mean for restricted time window
             w_thetaenv.([var_set{v} '_binned']){blk} = {horzcat(trialnums(xbins),binned,binned_2)}; %%median binned withi n restricted time window
         end
