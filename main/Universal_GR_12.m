@@ -3069,6 +3069,9 @@ fname = strrep(fname,'wSigTrials','wSigBlocks');
 blocks.fname = fname;
 fname = [fpath filesep fname];
 save(fname,'blocks');
+javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar')
+jheapcl(1);
+
 
 % --- Executes on button press in zstack_avg.
 function zstack_avg_Callback(hObject, eventdata, handles)
@@ -4314,6 +4317,51 @@ for j= 1:numblocks
 end
 hold off;
 
+% plotting whisker amplitude
+mindata =0;
+maxdata =0;
+for j= 1:numblocks
+    block =j;
+    sc = get(0,'ScreenSize');
+    figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
+    %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
+    title([commentstr 'Mean whisking amplitude ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
+    hold on;
+    count =0;
+    prev=0;
+    for i = 1:numsessions
+        
+        datawave = {'mean_whiskamp_binned'};
+        selecteddata = strcat(datatoplot,'_',datawave);
+        temp = wSigSummary{i}.(selecteddata{1});
+        temp = temp{1};
+        
+        binnedxdata = temp{block}(:,1)';
+        binnedydata = temp{block}(:,2)';
+        
+        if(i<baseline_sessions+1)
+            axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
+            plot(binnedxdata+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
+            
+        else
+            axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
+            plot(binnedxdata+count,binnedydata,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
+            
+        end
+        hline(0,{'k-','linewidth',1});
+        hline(.5,{'r-','linewidth',1});
+        legendstr(i) = {['session' num2str(i) ' ']};
+        collateddata = [binnedxdata;binnedydata]';
+        maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
+        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
+        count = count+binnedxdata(end)+10;
+        
+    end
+    axis([0 count 0 maxdata+.02]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
+    saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'jpg');
+    saveas(gcf,['Mean Whisk Amp'  datatoplot ' ' blocklist{j}],'fig');
+end
+hold off;
 
 % plotting kappa
 mindata =0;
