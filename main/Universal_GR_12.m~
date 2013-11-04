@@ -4045,8 +4045,7 @@ set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','Per
 set(H1,'markersize',5,'Marker','.');set(H2,'markersize',5,'Marker','*') ;
 
 % saveas(gcf,'solo_performance_barpos','tif');
- h = gcf;
-print(h,'-depsc2','-painters','-loose','solo_performance_barpos')
+print(h1c,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
 
 save(['solodata_' solo_data.mouseName '_' sessionID],'solo_data');
 

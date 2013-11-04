@@ -25,6 +25,7 @@
 % for pointing out that the function is also used in export_fig.m.
 % 12/12/12 - Add support for isolating uipanels. Thanks to michael for
 % suggesting it.
+% 08/10/13 - Bug fix to allchildren suggested by Will Grant (many thanks!).
 
 function fh = isolate_axes(ah, vis)
 % Make sure we have an array of handles
@@ -94,7 +95,7 @@ delete(axs(~ismember(axs, [ah; allchildren(ah); allancestors(ah)])));
 return
 
 function ah = allchildren(ah)
-ah = allchild(ah);
+ah = findall(ah);
 if iscell(ah)
     ah = cell2mat(ah);
 end

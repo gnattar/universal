@@ -43,6 +43,7 @@ else
     load([path filesep filename1]);    
 end
 name = strrep(filename1,'wsArray_','');
+name = strrep(name,'.mat','');
 wSigTrials = wsArray.ws_trials;
 trialtypes = cellfun(@(x) x.trialType,wSigTrials);
 CRtrials = find(trialtypes==3);
@@ -61,7 +62,8 @@ for i = 11:30
     text(2.25,10,['T' num2str(CRtrials(i))]);
 end
 set(gcf,'PaperPositionMode','auto');
-saveas(gcf,[name 'CR 11_30'],'jpg');
+% saveas(gcf,[name 'CR 11_30'],'eps');
+print(h1b,'-depsc2','-painters','-loose',[name 'CR 11_30'])
 close(h1b);
 
 h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
@@ -72,7 +74,8 @@ for i = 31:50
     text(2.25,10,['T' num2str(CRtrials(i))]);
 end
 set(gcf,'PaperPositionMode','auto');
-saveas(gcf,[name 'CR 31_50'],'jpg');
+% saveas(gcf,[name 'CR 31_50'],'eps');
+ print(h1b,'-depsc2','-painters','-loose',[name 'CR 31_50'])
 close(h1b);
 
 if(length(theta) > i) 
@@ -84,7 +87,8 @@ if(length(theta) > i)
         text(2.25,10,['T' num2str(CRtrials(i))]);
     end
     set(gcf,'PaperPositionMode','auto');
-    saveas(gcf,[name 'CR 51_70'],'jpg');
+%     saveas(gcf,[name 'CR 51_70'],'eps');
+    print(h1b,'-depsc2','-painters','-loose',[name 'CR 51_70'])
     close(h1b);
 end
 
@@ -97,7 +101,8 @@ if(length(theta) > i)
         text(2.25,10,['T' num2str(CRtrials(i))]);
     end
     set(gcf,'PaperPositionMode','auto');
-    saveas(gcf,[name 'CR 71_90'],'jpg');
+%     saveas(gcf,[name 'CR 71_90'],'eps');
+    print(h1b,'-depsc2','-painters','-loose',[name 'CR 71_90'])
     close(h1b);
 end
 cd ..

@@ -150,12 +150,12 @@ for(blk=1:numblocks)
     %% plot thetaenv _med,meanbarcross,prepole
      
     var_set = {'mean_thetaenv','peak_thetaenv','prepole_thetaenv','prcoccupancy','mean_whiskamp','total_whiskamp'};
-    col_set = {'k','r','b','k','k','m'};
+    col_set = {'k','b','g','k','k','b'};
     pval = zeros(length(var_set));
     for v = 1: length(var_set)
         strg = var_set{v};
         
-        fnam=[str strg '.jpg'];
+        fnam=[str strg '.eps'];
         h1a=figure('Name',[strg ' plot']);
         set(0,'CurrentFigure',h1a);
         suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName ' B: ' str strg]);
@@ -182,10 +182,10 @@ for(blk=1:numblocks)
         
         switch v
             case {4,5,6}
-                plot(trialnums(xbins),binned,'linewidth',1,'color',col_set{v},'Marker','o'); hold on; 
+                plot(trialnums(xbins),binned,'linewidth',1,'color',col_set{v},'Marker','o','MarkerSize',8); hold on; 
                 plot (trialnums,data1,'linewidth',.5,'color',[.5 .5 .5]);
             otherwise
-                errorbar(trialnums(xbins),binned,binned_2,'linewidth',1,'color',col_set{v},'Marker','o');hold on;
+                errorbar(trialnums(xbins),binned,binned_2,'linewidth',1.5,'color',col_set{v},'Marker','o','MarkerSize',8);hold on;
                 plot (trialnums,data1,'linewidth',.5,'color',[.5 .5 .5]);
                 grid on;
                 hline(biased_bartheta,{'r-','linewidth',1.5},{['bb ' num2str(biased_bartheta)]},[0 .1]);
@@ -205,9 +205,9 @@ for(blk=1:numblocks)
             w_thetaenv.(var_set{v}){blk} = {horzcat(trialnums,data(:,1),data(:,2))}; %% mean for restricted time window
             w_thetaenv.([var_set{v} '_binned']){blk} = {horzcat(trialnums(xbins),binned,binned_2)}; %%median binned withi n restricted time window
         end
-        
 
-        saveas(gcf,[fpath,filesep,fnam],'jpg');
+%         saveas(gcf,[fpath,filesep,fnam],'jpg');
+        print(h1a,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
         close(h1a);   
         
     end
@@ -216,7 +216,7 @@ for(blk=1:numblocks)
         w_thetaenv.time {blk}= {thetaenv_time};
 
         %% plot dist
-        fnam=[str 'Dist' '.jpg'];
+        fnam=[str 'Dist' '.eps'];
         h1a=figure('Name',[strg ' plot']);
         set(0,'CurrentFigure',h1a);
         suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName ' B: ' str 'Thetaenv Distribution']);
@@ -239,7 +239,8 @@ for(blk=1:numblocks)
         title('Thetaenv_dist Cummulative ');
         ylabel('Normalized Dist');xlabel('Trials');
         
-        saveas(gcf,[fpath,filesep,fnam],'jpg');
+%         saveas(gcf,[fpath,filesep,fnam],'eps');
+        print(h1a,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
         close(h1a);
 
         w_thetaenv.dist {blk}= {thetaenv_dist};
@@ -255,7 +256,7 @@ for(blk=1:numblocks)
 
 
         %%plot thetaenv first and last n trials
-        fnam=[str 'Theta_env trials.jpg'];
+        fnam=[str 'Theta_env trials.eps'];
         h1c=figure('Name','Theta Envelope Trials');
         set(0,'CurrentFigure',h1c);
         suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName ' B: ' str ' Trials Early - Late']);
@@ -272,16 +273,17 @@ for(blk=1:numblocks)
         set(gca,'YTick',-30:10:30);
         %          subplot(numblocks*2,3,(blk-1)*2+5);
         subplot(numblocks*1,2,(blk-1)*2+2);
-        plot(xt,thetaenv_trials(lateinds(1:2:end),:),'color',[1 .5 .5],'linewidth',1); hold on;
+        plot(xt,thetaenv_trials(lateinds(1:2:end),:),'color',[.5 .5 1],'linewidth',1); hold on;
         hline(biased_bartheta,{'r','linewidth',1.5},{['bb ' num2str(biased_bartheta)]},[0 .1]);
         hline(mean_bartheta,{'r--','linewidth',0.5},{['mb ' num2str(mean_bartheta)]},[.75 -.1]);%(mean_bartheta-biased_bartheta)/10]);
         hline([biased_bartheta-shoulder, biased_bartheta+shoulder],{'k--','linewidth',0.5});
-        avg_thetaenv = nanmean(thetaenv_trials(lateinds,:),1); plot(xt,avg_thetaenv,'linewidth',1.5,'color','r'); grid on;   hold off;
+        avg_thetaenv = nanmean(thetaenv_trials(lateinds,:),1); plot(xt,avg_thetaenv,'linewidth',1.5,'color','b'); grid on;   hold off;
         axis([restrictTime(1),restrictTime(2),-30,30]);set(gca,'YGrid','on');
         set(gca,'YTick',-30:10:30);
         freezeColors;
 
-        saveas(gcf,[fpath,filesep,fnam],'jpg');
+%         saveas(gcf,[fpath,filesep,fnam],'eps');
+        print(h1c,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
         close(h1c);
 end
 
@@ -305,8 +307,9 @@ for trl = 1:20: size(thetaenv_dist,1)
     count = count +1;
     axis([-35 35 0 .5]);
 end
-fnam = [ str 'Thetaenv_Dist'];
-saveas(gcf,[fpath,filesep,fnam],'jpg');
+fnam = [ str 'Thetaenv_Dist.eps'];
+% saveas(gcf,[fpath,filesep,fnam],'eps');
+print(h1b,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
 close(h1b);
 
 
@@ -316,14 +319,15 @@ h1b = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w
 imagesc(occupancy_bins,trialnums,thetaenv_occupancy); hold on;
 vline(biased_bartheta,{'w', 'linewidth',1.5});
 vline([biased_bartheta-shoulder, biased_bartheta+shoulder],{'w--','linewidth',0.5});
-fnam = [ str 'Thetaenv_Occupancy'];
-saveas(gcf,[fpath,filesep,fnam],'jpg');
+fnam = [ str 'Thetaenv_Occupancy.eps'];
+% saveas(gcf,[fpath,filesep,fnam],'eps');
+print(h1b,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
 close(h1b);
 
 
 %% plot kappa
 
-fnam=[str 'fkappa.jpg'];
+fnam=[str 'fkappa.eps'];
 h2=figure('Name','Kappa');
 set(0,'CurrentFigure',h2);
 
@@ -383,7 +387,8 @@ for(blk=1:numblocks)
     
 end
 
-saveas(gcf,[fpath,filesep,fnam],'jpg');
+% saveas(gcf,[fpath,filesep,fnam],'eps');
+print(h2,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
 close(h2);
 
     w_thetaenv.totalTouchKappa{blk}= {horzcat(trialnums,totalkappa')};
@@ -452,8 +457,9 @@ if(plot_whiskerfits)
             set(gca,'YDir','reverse');
             hold off;
             %               colorbar('location','EastOutside');
-            fnam=['w' obj{t}.trackerFileName(30:33) '.jpg'];
-            saveas(gcf,[fpath,filesep,fnam],'jpg');
+            fnam=['w' obj{t}.trackerFileName(30:33) '.eps'];
+%             saveas(gcf,[fpath,filesep,fnam],'eps');
+            print(h3,'-depsc2','-painters','-loose',[fpath,filesep,fnam])
             msg=sprintf('Plotting %d of %d',i,length(trialnums));
             waitbar(i/(length(trialnums)+1),w,msg);
             %       set(f,'visible','on');
