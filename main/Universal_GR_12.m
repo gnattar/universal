@@ -22,7 +22,7 @@ function varargout = Universal_GR_12(varargin)
 
 % Edit the above text to modify the response to help Universal_GR_12
 
-% Last Modified by GUIDE v2.5 22-Oct-2013 12:27:16
+% Last Modified by GUIDE v2.5 04-Nov-2013 13:42:16
 
 % Begin initialization code - DO NOT EDIT
 
@@ -2586,6 +2586,8 @@ end
 
 barposmatall=round(barposmatall);
 barposmat = barposmatall(trialnumind,:);
+
+
 ['no trials =' num2str(length(trialnumind))]
 ['no. whisker files =' num2str(length(whisknumind))]
 ['no. meas files =' num2str(length(measnumind))]
@@ -4044,9 +4046,13 @@ set(AX(2),'YTick',[-.1:.1:1]);
 set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
 set(H1,'markersize',5,'Marker','.');set(H2,'markersize',5,'Marker','*') ;
 
+<<<<<<< Updated upstream
 % saveas(gcf,'solo_performance_barpos','tif');
  h = gcf;
 print(h,'-depsc2','-painters','-loose','solo_performance_barpos')
+=======
+saveas(gcf,'solo_performance_barpos','jpg');
+>>>>>>> Stashed changes
 
 save(['solodata_' solo_data.mouseName '_' sessionID],'solo_data');
 
@@ -5159,7 +5165,7 @@ end
 
 
 
-function soloSigSum_datapath_Callback(hObject, eventdata, handles)
+function soloSigSum_datapath_Callback(~, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -5271,3 +5277,29 @@ function wSigblocks_datalist_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in save_preplog.
+function save_preplog_Callback(hObject, eventdata, handles)
+basedatapath= get(handles.baseDataPath,'String');
+coordsatfirst= str2num(get(handles.coords1,'String'));
+coordsatnext= str2num(get(handles.coords2,'String'));
+barposatfirst= str2num(get(handles.barpos1,'String'));
+barposatnext= str2num(get(handles.barpos2,'String'));
+
+mouseName = get(handles.AnimalNameEdit, 'String');
+% sessionName = get(handles.SoloDataFileName, 'String');
+sessionID = get(handles.SoloSessionID, 'String');
+
+fname = [ mouseName sessionID 'log.txt'];
+t1 = ['Mouse name   ' , mouseName];
+t2 = ['Session ID   ', sessionID];
+t3 = ['Pos 1     '  num2str(barposatfirst)  '     '  , coordsatfirst ];
+t4 = ['Pos 2    ' num2str(barposatnext) '     '   coordsatnext];
+
+fid = fopen(fname,'w');
+fprintf(fid,'%s\n', t1); 
+fprintf(fid,'%s\n', t2); 
+fprintf(fid,'%s\n', t3); 
+fprintf(fid,'%s\n', t4); %12.8f\n',y);
+fclose(fid);
