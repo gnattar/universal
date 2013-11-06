@@ -44,8 +44,7 @@ else
 end
 name = strrep(filename1,'wsArray_','');
 name = strrep(name,'.mat','');
-mouseName = wsArray.mouseName;
-name = [mouseName ' ' name];
+name 
 wSigTrials = wsArray.ws_trials;
 trialtypes = cellfun(@(x) x.trialType,wSigTrials);
 CRtrials = find(trialtypes==3);

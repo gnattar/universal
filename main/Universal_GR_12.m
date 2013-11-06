@@ -2969,12 +2969,14 @@ global wSigTrials
 global wsArray
 global solo_data
 
+restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
+
 folder = dir('plots');
 if length(folder) <1
     mkdir ('plots');
 end
 d = './plots';
-plot_SetAmp(d,wsArray,solo_data);
+plot_SetAmp(d,wsArray,solo_data,restrictTime);
 
 set = {};
 gopix = sessionInfo.gopix;
@@ -3038,7 +3040,6 @@ for sets = 1:6
     end
 end
 avg_trials = str2num(get(handles.wh_trialstoavg,'string')); %% these many from last
-restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 plot_whiskerfits = get(handles.plot_fittedwhisker,'Value');
 timewindowtag = cell2mat(strcat('Trials',strrep(trialblocks,':','_'),'pole',get(handles.timewindowtag,'String')));
 
@@ -3997,7 +3998,9 @@ if addcontactinfo
     contact_cr = find(nocontactTrials & nolickTrials);
     
     for k = 1: length(whisker_trials)
-        trials = whisker_trials(1:k);
+%         trials = whisker_trials(1:k);
+        trials = (1:k);
+
 %         trials = whisker_trials(k:min(k+25,length(whisker_trials)));
         hit =  ismember(trials,contact_hit);
         miss =  ismember(trials,contact_miss);
@@ -4046,13 +4049,13 @@ set(AX(2),'YTick',[-.1:.1:1]);
 set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
 set(H1,'markersize',5,'Marker','.');set(H2,'markersize',5,'Marker','*') ;
 
-<<<<<<< Updated upstream
+
 % saveas(gcf,'solo_performance_barpos','tif');
  h = gcf;
 print(h,'-depsc2','-painters','-loose','solo_performance_barpos')
-=======
-saveas(gcf,'solo_performance_barpos','jpg');
->>>>>>> Stashed changes
+
+% saveas(gcf,'solo_performance_barpos','jpg');
+
 
 save(['solodata_' solo_data.mouseName '_' sessionID],'solo_data');
 

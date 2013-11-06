@@ -1,6 +1,6 @@
 
 function[w_thetaenv]...
-    =  wdatasummary_ampepoch(sessionInfo,obj,block_tags,block_trialnums,avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,str,timewindowtag,min_meanbarpos,baseline_barpos)
+    =  wdatasummary_devepoch(sessionInfo,obj,block_tags,block_trialnums,avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,str,timewindowtag,min_meanbarpos,baseline_barpos)
 %% new version : compare within block & with top 90% percentile of setpoint values
 % w_setpoint_trials % all setpoint values from all trials  entire length
 % w_setpoint_early % within the restricted time window from early trials
