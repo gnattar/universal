@@ -3241,7 +3241,7 @@ function load_solo_obj_Callback(hObject, eventdata, handles)
 global solo_data
 basedatapath = get(handles.solo_datapath,'String');
 cd (basedatapath);
-[filename,pathName]=uigetfile('solo_data*.mat','Load solo_data.mat file')
+[filename,pathName]=uigetfile('*.mat','Load solo_data.mat file')
 if isequal(filename, 0) || isequal(pathName,0)
     return
 end
@@ -4497,6 +4497,7 @@ end
 obj = ephusTrialArray_gr(mouseName, sessionID,ephuspath);
 cd ..
 save(['ephusdata_' mouseName '_' sessionID],'obj');
+['ephusdata_' mouseName '_' sessionID ':   Saved']
 
 %% adding ephus to sessObj
 current_dir = pwd;
@@ -4514,7 +4515,7 @@ else
     save('sessObj','sessObj','-v7.3');
 end
 cd (current_dir);
-
+['sessObj :  Saved']
 
 
 % --- Executes on button press in addephusTrials.
@@ -5285,20 +5286,20 @@ end
 % --- Executes on button press in save_preplog.
 function save_preplog_Callback(hObject, eventdata, handles)
 basedatapath= get(handles.baseDataPath,'String');
-coordsatfirst= str2num(get(handles.coords1,'String'));
-coordsatnext= str2num(get(handles.coords2,'String'));
-barposatfirst= str2num(get(handles.barpos1,'String'));
-barposatnext= str2num(get(handles.barpos2,'String'));
+coordsatfirst= get(handles.coords1,'String');
+coordsatnext= get(handles.coords2,'String');
+barposatfirst=get(handles.barpos1,'String');
+barposatnext= get(handles.barpos2,'String');
 
 mouseName = get(handles.AnimalNameEdit, 'String');
 % sessionName = get(handles.SoloDataFileName, 'String');
 sessionID = get(handles.SoloSessionID, 'String');
 
 fname = [ mouseName sessionID 'log.txt'];
-t1 = ['Mouse name   ' , mouseName];
-t2 = ['Session ID   ', sessionID];
-t3 = ['Pos 1     '  num2str(barposatfirst)  '     '  , coordsatfirst ];
-t4 = ['Pos 2    ' num2str(barposatnext) '     '   coordsatnext];
+t1 = ['Mouse name   ' , mouseName]
+t2 = ['Session ID   ', sessionID]
+t3 = ['Pos 1     '  barposatfirst  '     '  , coordsatfirst ]
+t4 = ['Pos 2    ' barposatnext '     '   coordsatnext]
 
 fid = fopen(fname,'w');
 fprintf(fid,'%s\n', t1); 
