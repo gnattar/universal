@@ -2914,55 +2914,30 @@ catch
     cd (basedatapath);
 end
 files = dir('wsArray*.mat');
-if(isempty(files))
+if(isempty(files)
     [filename,pathName]=uigetfile('wsArray*.mat','Load wsArray.mat file');
     if isequal(filename, 0) || isequal(pathName,0)
     return
     end
 else
-    filename = files(1).name;
-    pathName = pwd;
     set(handles.wSig_datapath,'String',pathName);
     load( [pathName filesep filename],'-mat');
 end
 
-cd('./solo_data');
-files = dir('solodata*.mat');
-if(isempty(files))
-    [filename,pathName]=uigetfile('solodata*.mat','Load solo_data.mat file');
-    if isequal(filename, 0) || isequal(pathName,0)
-    return
-    end
-else
-    filename = files(1).name;
-    pathName = pwd;
-    load( [pathName filesep filename],'-mat');
-end
-cd ..
 
-files = dir('wSigTrials*.mat');
-if(isempty(files))
-    [filename,pathName]=uigetfile('wSigTrials*.mat','Load wSig.mat file');
-    if isequal(filename, 0) || isequal(pathName,0)
-    return
-    end
-else
-    filename = files(1).name;
-    pathName = pwd;
-    load( [pathName filesep filename],'-mat');
-end
+[filename,pathName]=uigetfile('solodata*.mat','Load solo_data.mat file');
+load( [pathName filesep filename],'-mat');
 
-files = dir('SessionInfo*.mat');
-if(isempty(files))
-    [filename,pathName]=uigetfile('SessionInfo*.mat','Load SessionInfo.mat file');
-    if isequal(filename, 0) || isequal(pathName,0)
+[filename,pathName]=uigetfile('wSig*.mat','Load wSig.mat file');
+if isequal(filename, 0) || isequal(pathName,0)
     return
-    end
-else
-    filename = files(1).name;
-    pathName = pwd;
-    load( [pathName filesep filename],'-mat');
 end
+load( [pathName filesep filename], '-mat');
+
+
+[filename,pathName]=uigetfile('SessionInfo*.mat','Load SessionInfo.mat file');
+load( [pathName filesep filename],'-mat');
+cd(pathName);
 
 bartheta_all=cellfun(@(x) x.mThetaNearBar,wSigTrials,'uniformoutput',false);
 wSigfilenames =cellfun(@(x) x.trackerFileName(29:32),wSigTrials,'uniformoutput',false);

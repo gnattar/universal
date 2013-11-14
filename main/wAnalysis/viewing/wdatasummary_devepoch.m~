@@ -158,8 +158,8 @@ for(blk=1:numblocks)
     
     %% plot thetaenv _med,meanbarcross,prepole
      
-    var_set = {'meandev_thetaenv','peakdev_thetaenv','meanpole_thetaenv','prepole_thetaenv','prcoccupancy','meandev_whiskamp','totaldev_whiskamp','meanpole_whiskamp','totalpole_whiskamp'};
-    col_set = {'k','r','b','g','k','k','b','k','b'};
+    var_set = {'meandev_thetaenv','peakdev_thetaenv','meanpole_thetaenv','prepole_thetaenv','prcoccupancy','meandev_whiskamp','totaldev_whiskamp'};
+    col_set = {'k','r','b','g','k','k','b'};
     pval = zeros(length(var_set));
     for v = 1: length(var_set)
         strg = var_set{v};
@@ -190,7 +190,7 @@ for(blk=1:numblocks)
         xbins=floor(cat(1,xbins{:}));
         
         switch v
-            case {5,6,7,8,9}
+            case {5,6,7}
                 plot(trialnums(xbins),binned,'linewidth',1,'color',col_set{v},'Marker','o','MarkerSize',8); hold on; 
                 plot (trialnums,data1,'linewidth',.5,'color',[.5 .5 .5]);
             otherwise
