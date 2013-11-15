@@ -76,7 +76,6 @@ for i = 1:nTrials
         else   
 %             [contact_inds{i}{k}, contact_direct{i}{k}] = whisker_contact_detector_auto_thresh( d2bar, deltaKappa, barFrInds,KaThresh, [], threshDist);
 %              (['Trial' num2str(i) ' calling whisker_contact_detector_auto_thresh'])
-             FrameTime = ws.framePeriodInSec;
              [contact_inds{i}{k}, contact_direct{i}{k}] = whisker_contact_detector_auto_thresh( d2bar, deltaKappa, barFrInds, threshKappa,threshDist0,threshDist,ts,FrameTime);
 
 %         contact_inds{i}{k} = whisker_contact_detector4 ( d2bar, deltaKappa, ...

@@ -1,5 +1,5 @@
 
-function [contact_inds, contact_direction] = whisker_contact_detector_auto_thresh(dToBar, deltaKappa, barFrame_inds, kappaThresh_prior, threshDist0, threshDist_rough,time)
+function [contact_inds, contact_direction] = whisker_contact_detector_auto_thresh(dToBar, deltaKappa, barFrame_inds, kappaThresh_prior, threshDist0, threshDist_rough,time,FrameTime)
 % Use combination of whisker to bar distance and curvature
 % change for contact detection.
 
@@ -98,7 +98,7 @@ while count < barFrame_inds(end) - 1
         % Length criteria before relaxation. Number of point with Kappa
         % change crossing threshold >=3, or the distance to bar vary within
         % 2 pixels
-        if length(p1:p2) >= 2 || sum(abs(diff(dToBar(p1-1:p2+1))) <= 0.0389*2) >=2,   
+        if length(p1:p2) >= 3 || sum(abs(diff(dToBar(p1-1:p2+1))) <= 0.0389*2) >=2,   
             % determine touch direction, 1 for protraction, 0 for retraction
             touch_direc = mean(ismember(p1:p2, inds_prot)) > mean(ismember(p1:p2, inds_retr));
 % % %             if touch_direc == 1 
@@ -182,7 +182,7 @@ while count < barFrame_inds(end) - 1
             
             nContacts = nContacts + 1;
             inds = p1:p2;
-            FrameTime = time(2)-time(1);
+%             FrameTime = time(2)-time(1);
             contact_inds{nContacts} = round(time(inds)/FrameTime);
             contact_direction(nContacts) = touch_direc;
             % if the current detected contact overlap with the previous one,
