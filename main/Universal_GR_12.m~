@@ -2361,6 +2361,8 @@ end
 trialStartEnd = [handles.SoloStartTrial,handles.SoloEndTrial];
 obj = Solo.BehavTrialArray_gr(mouseName, sessionName,trialStartEnd,Solopath);
 obj.goPosition_mean=mean(obj.polePositions(obj.trialTypes))/10000;
+
+
 solo_data = obj;
 save(['solodata_' mouseName '_' sessionID],'solo_data');
 
@@ -2906,13 +2908,11 @@ global wSigTrials
 global wsArray
 global solo_data
 
-basedatapath = get(handles.wSig_datapath,'String');
-try
-    cd (basedatapath);
-catch
-    basedatapath = uigetdir('/Volumes/','Pick the base folder');
-    cd (basedatapath);
-end
+
+basedatapath = uigetdir('/Volumes/','Pick the base folder');
+cd (basedatapath);
+set(handles.wSig_datapath,'String',basedatapath );
+
 files = dir('wsArray*.mat');
 if(isempty(files))
     [filename,pathName]=uigetfile('wsArray*.mat','Load wsArray.mat file');
@@ -3008,7 +3008,7 @@ if length(folder) <1
 end
 d = './plots';
 restrictTime = [.5 , 4];
-plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
+% plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 set = {};
 gopix = sessionInfo.gopix;
@@ -3835,8 +3835,9 @@ load([path filesep filename2]);
 contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput', false);
 nodetects =  find(cellfun(@isempty,contacts_detected));
 
-%           contDet_param.threshDistToBarCenter = [.1   .70]; %lax
-         contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
+%           contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
+        contDet_param.threshDistToBarCenter = [.1   .5]; % lax
+%          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
         contDet_param.thresh_deltaKappa = [-.1	.1];
         if isempty(wsArray.bar_time_window)
@@ -4007,28 +4008,21 @@ end
 
 figure;
 
-[AX,H1,H2] = plotyy([1:solo_data.trialStartEnd(2)],solo_data.Dprime,[1:solo_data.trialStartEnd(2)],solo_data.PercentCorrect);hold on;
+hf1 = subplot(2,1,2);
+plot(solo_data.polePositions/100000,'b*','MarkerSize',2);hold on;
+plot(solo_data.hitTrialNums,zeros(1,length(solo_data.hitTrialNums)),'gd','MarkerSize',6,'MarkerFaceColor','g');
+plot(solo_data.missTrialNums,zeros(1,length(solo_data.missTrialNums)),'rd','MarkerSize',6,'MarkerFaceColor','r');
+plot(solo_data.falseAlarmTrialNums,ones(1,length(solo_data.falseAlarmTrialNums)),'rd','MarkerSize',6,'MarkerFaceColor','r');
+plot(solo_data.correctRejectionTrialNums,ones(1,length(solo_data.correctRejectionTrialNums)),'gd','MarkerSize',6,'MarkerFaceColor','g');
 
-hold(AX(1), 'on');
-plot(solo_data.polePositions/100000,'b*','MarkerSize',1);
-
-plot(solo_data.hitTrialNums,zeros(1,length(solo_data.hitTrialNums)),'gd','MarkerSize',4,'MarkerFaceColor','g');
-plot(solo_data.missTrialNums,zeros(1,length(solo_data.missTrialNums)),'rd','MarkerSize',4,'MarkerFaceColor','r');
-plot(solo_data.falseAlarmTrialNums,ones(1,length(solo_data.falseAlarmTrialNums)),'rd','MarkerSize',4,'MarkerFaceColor','r');
-plot(solo_data.correctRejectionTrialNums,ones(1,length(solo_data.correctRejectionTrialNums)),'gd','MarkerSize',4,'MarkerFaceColor','g');
-
-title(['Performance from ' name(length(name)-16:length(name)-8) ' Session' name(length(name)-6:length(name)-1)]);
-
-axis(AX(1),[0 solo_data.trialStartEnd(2) -.5 3.5]);
-set(AX(1),'YTick',[-.5 0 0.5 1 1.5 2 2.5 3 3.5]);
-
-
-axis(AX(2),[0 solo_data.trialStartEnd(2) -.1 1]);
-set(AX(2),'YTick',[-.1:.1:1]);
-
-set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
-set(H1,'markersize',3,'Marker','.');set(H2,'markersize',3,'Marker','.') ;
-
+title(['Pole positions and Trial performance ' name(length(name)-16:length(name)-8) ' Session' name(length(name)-6:length(name)-1)]);
+axis([ 0 solo_data.trialStartEnd(2) -.5 2]);
+% 
+% axis(hf1,[0 solo_data.trialStartEnd(2) -.5 3.5]);
+% set(hf1,'YTick',[-.5 0 0.5 1 1.5 2 2.5 3 3.5]);
+% 
+% axis(AX(2),[0 solo_data.trialStartEnd(2) -.1 1]);
+% set(AX(2),'YTick',[-.1:.1:1]);
 
 if addcontactinfo
     if(sum(ismember (wSigTrials{1}.trackerFileName,'anm'))>2)
@@ -4040,7 +4034,7 @@ if addcontactinfo
     contacttimes=cellfun(@(x) x.contacts{1}, wSigTrials,'uniformoutput',false)   ;
     nocontactTrials = cellfun(@isempty,contacttimes);
     contactTrials = ~nocontactTrials;
-    plot(whisker_trials,nocontactTrials,'kd','MarkerSize',4); hold on;
+    plot(whisker_trials,nocontactTrials,'kd','MarkerSize',6); hold on;
     lickTrials = solo_data.hitTrialInds + solo_data.falseAlarmTrialInds;
     lickTrials = lickTrials(whisker_trials);
     nolickTrials = solo_data.missTrialInds + solo_data.correctRejectionTrialInds;
@@ -4062,7 +4056,7 @@ if addcontactinfo
      
     for k = 1: length(whisker_trials)
 %         trials = whisker_trials(1:k);
-        trials = (1:k);
+        trials = whisker_trials(max(1,k-20):k);
 
 %         trials = whisker_trials(k:min(k+25,length(whisker_trials)));
         hit =  ismember(trials,contact_hit);
@@ -4084,42 +4078,41 @@ if addcontactinfo
     solo_data.Dprime_contact = r;
     solo_data.whisker_trials = whisker_trials;
     
+    subplot(2,1,1);
+
+    [AX,H1,H2] = plotyy([1:solo_data.trialStartEnd(2)],solo_data.Dprime_null,[1:solo_data.trialStartEnd(2)],solo_data.PC_null);hold on;
+    set(get(AX(1),'Ylabel'),'String','Dprime_null');set(get(AX(2),'Ylabel'),'String','PC_null');
+%     set(H1,'markersize',6,'Marker','.');set(H2,'markersize',6,'Marker','.') ;
+    set(H1,'color',[0 0 1.0],'Linestyle','-','linewidth',2);
+    set(H2,'color',[0 1 0],'Linestyle','-','linewidth',2);
     axis(AX(1),[0 solo_data.trialStartEnd(2) -.5 3.5]);
     set(AX(1),'YTick',[-.5 0 0.5 1 1.5 2 2.5 3 3.5]);
     
     axis(AX(2),[0 solo_data.trialStartEnd(2) -.1 1]);
     set(AX(2),'YTick',[-.1:.1:1]);
-    
-    set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
-    set(H1,'markersize',3,'Marker','.');set(H2,'markersize',3,'Marker','.') ;
+
     hold(AX(1), 'on');hold(AX(2), 'on');
     [AX,H3,H4] = plotyy(whisker_trials,solo_data.Dprime_contact,whisker_trials,solo_data.PC_contact);
-    set(H3,'color',[.5 .5 1.0],'Linestyle','-','linewidth',1);
-    set(H4,'color',[.1 1 .1],'Linestyle','-','linewidth',1);
+    set(H3,'color',[.2 .2 1.0],'Linestyle','-','linewidth',2);
+    set(H4,'color',[.2 1 .2],'Linestyle','-','linewidth',2);
     hold(AX(2), 'off');
     
 end
 
-title(['Performance from ' name(length(name)-16:length(name)-8) ' Session' name(length(name)-6:length(name)-1)]);
+title(['Performance from ' name(length(name)-17:length(name)-8) ' Session' name(length(name)-6:length(name)-1)]);
 hold(AX(1), 'off');        hold(AX(2), 'off');
 axis(AX(1),[0 solo_data.trialStartEnd(2) -.5 3.5]);
 set(AX(1),'YTick',[-.5 0 0.5 1 1.5 2 2.5 3 3.5]);
-
-
 axis(AX(2),[0 solo_data.trialStartEnd(2) -.1 1]);
 set(AX(2),'YTick',[-.1:.1:1]);
 
-set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
-set(H1,'markersize',3,'Marker','.');set(H2,'markersize',3,'Marker','.') ;
-
-
+% set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
+% set(H1,'markersize',6,'Marker','.');set(H2,'markersize',6,'Marker','.') ;
 % saveas(gcf,'solo_performance_barpos','tif');
  h = gcf;
 print(h,'-depsc2','-painters','-loose','solo_performance_barpos')
 
 % saveas(gcf,'solo_performance_barpos','jpg');
-
-
 save(['solodata_' solo_data.mouseName '_' sessionID],'solo_data');
 
 

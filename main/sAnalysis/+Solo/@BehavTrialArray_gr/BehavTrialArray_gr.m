@@ -21,6 +21,8 @@ classdef BehavTrialArray_gr < handle
         Dprime_contact = [];
         PC_contact = [];
         whisker_trials = [];
+        Dprime_null = [];
+        PC_null = [];
     end
     
     properties (Dependent = true)
@@ -83,10 +85,13 @@ classdef BehavTrialArray_gr < handle
                        gopos_trials(:,j) = eval(gopos);
                        goprob_trials(:,j) = eval(goprob);
                     end
-
-                       obj.goPosition_runmean = diag(cell2mat(gopos_trials)*cell2mat(goprob_trials'));
+                       obj.goPosition_runmean = diag(cell2mat(gopos_trials)*cell2mat(goprob_trials'));                     
                    end
-                    
+                   obj.Dprime_null = [];
+                   obj.PC_null = [];
+                [hr,far,dprime,percent_correct] = performance(obj);
+                obj.Dprime_null = dprime;
+                obj.PC_null = percent_correct;
             end
         end
         
@@ -169,7 +174,7 @@ classdef BehavTrialArray_gr < handle
             title(s)
         end
         
-        function [percent_correct, varargout] = performance(obj, varargin)
+        function [varargout] = performance(obj, varargin)
             %
             % Solo.BehavTrialArray.performance
             %
@@ -187,32 +192,56 @@ classdef BehavTrialArray_gr < handle
             % 3. [percent_correct, hit_rate, false_alarm_rate, dprime] = performance(obj)
             %
             %
-            
-            if nargin==1
-                hit = setdiff(obj.hitTrialNums, obj.trimmedTrialNums);
-                miss = setdiff(obj.missTrialNums, obj.trimmedTrialNums);
-                fa = setdiff(obj.falseAlarmTrialNums, obj.trimmedTrialNums);
-                cr = setdiff(obj.correctRejectionTrialNums, obj.trimmedTrialNums);
-            elseif nargin==2
-                trial_range = varargin{1};
-                t = trial_range(1):trial_range(2);
-                hit = intersect(obj.hitTrialNums, t);
-                miss = intersect(obj.missTrialNums, t);
-                fa = intersect(obj.falseAlarmTrialNums, t);
-                cr = intersect(obj.correctRejectionTrialNums, t);
-            else
-                error('Too many input arguments')
+          
+                                         
+    %                 if nargin==1                      
+                  
+    %                 hit = setdiff(obj.hitTrialNums, obj.trimmedTrialNums);
+    %                 miss = setdiff(obj.missTrialNums, obj.trimmedTrialNums);
+    %                 fa = setdiff(obj.falseAlarmTrialNums, obj.trimmedTrialNums);
+    %                 cr = setdiff(obj.correctRejectionTrialNums, obj.trimmedTrialNums);
+
+    %                 elseif nargin==2
+    %                     trial_range = varargin{1};
+    %                     t = trial_range(1):trial_range(2);
+    %                     hit = intersect(obj.hitTrialNums, t);
+    %                     miss = intersect(obj.missTrialNums, t);
+    %                     fa = intersect(obj.falseAlarmTrialNums, t);
+    %                     cr = intersect(obj.correctRejectionTrialNums, t);
+    %                 else
+    %                     error('Too many input arguments')
+    %                 end
+    %             num_s1 = length(hit) + length(miss);
+    %             num_s0 = length(fa) + length(cr);
+    %             percent_correct = (length(hit) + length(cr))/(num_s1 + num_s0);
+    %             hit_rate = length(hit)/num_s1;
+    %             false_alarm_rate = length(fa)/num_s0;
+    
+    
+    
+    alltrials = 1:length(obj.trials);
+    if nargin==1  
+        alltrials = alltrials;
+    elseif nargin==2
+        trial_range = varargin{1};
+        t = trial_range(1):trial_range(2);
+        alltrials = intersect(alltrials,t);
+    end
+            for k = 1 : length(alltrials)  
+                trials = max(1,k-20):k;
+                hit =  ismember(trials,obj.hitTrialNums);
+                miss =  ismember(trials,obj.missTrialNums);
+                fa =  ismember(trials,obj.falseAlarmTrialNums);
+                cr =  ismember(trials,obj.correctRejectionTrialNums);
+
+                num_s1 = sum( hit) + sum( miss );
+                num_s0 = sum(fa ) + sum(cr);
+                percent_correct(k) = (sum(hit) + sum(cr))/(num_s1 + num_s0);
+                hit_rate = sum(hit)/num_s1;
+                false_alarm_rate = sum(fa)/num_s0;
+                r(k) = Solo.dprime(hit_rate,false_alarm_rate,num_s1,num_s0);    
+
             end
-            
-            
-            num_s1 = length(hit) + length(miss);
-            num_s0 = length(fa) + length(cr);
-            
-            percent_correct = (length(hit) + length(cr))/(num_s1 + num_s0);
-            hit_rate = length(hit)/num_s1;
-            false_alarm_rate = length(fa)/num_s0;
-            
-            
             if nargout==2
                 varargout{1} = hit_rate;
             elseif nargout==3
@@ -221,7 +250,8 @@ classdef BehavTrialArray_gr < handle
             elseif nargout==4
                 varargout{1} = hit_rate;
                 varargout{2} = false_alarm_rate;
-                varargout{3} = Solo.dprime(hit_rate,false_alarm_rate,num_s1,num_s0);
+                varargout{3} = r;
+                varargout{4} = percent_correct;
             end
         end
         
@@ -596,7 +626,7 @@ classdef BehavTrialArray_gr < handle
         
         function value = get.Dprime(obj)
             if ~isempty(obj.trials)
-                value = cellfun(@(x) x.Dprime, obj.trials);
+                value = cell2mat(cellfun(@(x) x.Dprime, obj.trials,'UniformOutput',false));   
             else
                 value = [];
             end
@@ -604,7 +634,7 @@ classdef BehavTrialArray_gr < handle
         
         function value = get.PercentCorrect(obj)
             if ~isempty(obj.trials)
-                value = cellfun(@(x) x.PercentCorrect, obj.trials);
+                value = cell2mat(cellfun(@(x) x.PercentCorrect, obj.trials,'UniformOutput',false));
             else
                 value = [];
             end
