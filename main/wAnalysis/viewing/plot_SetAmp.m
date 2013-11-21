@@ -32,7 +32,7 @@ if redo
     end
 
     list = dir('wsArray*.mat');
-    filename1 = list.name;
+    filename1 = list(1).name;
     save(filename1,'wsArray');
 end
 %% plot CR trials whisker data
@@ -101,9 +101,13 @@ if(length(theta) > i)
     h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
     suptitle([name 'CR 71:90']); 
     for i = 71:min(length(theta),90)
-        [tuenv, tlenv]  =  envelope(theta{i});
-        subplot(10,2,i-70);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',6);axis([restrictTime(1) restrictTime(2)  -30 30]);
-        text(2.25,10,['T' num2str(CRtrials(i))]);
+        try
+            [tuenv, tlenv]  =  envelope(theta{i});
+            subplot(10,2,i-70);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',6);axis([restrictTime(1) restrictTime(2)  -30 30]);
+            text(2.25,10,['T' num2str(CRtrials(i))]);
+        catch
+            break
+        end
     end
     set(gcf,'PaperPositionMode','auto');
 %     saveas(gcf,[name 'CR 71_90'],'eps');

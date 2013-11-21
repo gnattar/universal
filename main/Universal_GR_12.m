@@ -2907,12 +2907,10 @@ global wsArray
 global solo_data
 
 basedatapath = get(handles.wSig_datapath,'String');
-try
-    cd (basedatapath);
-catch
-    basedatapath = uigetdir('/Volumes/','Pick the base folder');
-    cd (basedatapath);
-end
+basedatapath = uigetdir('/Volumes/','Pick the base folder');
+set(handles.wSig_datapath,'String',basedatapath);
+cd (basedatapath);
+
 files = dir('wsArray*.mat');
 if(isempty(files))
     [filename,pathName]=uigetfile('wsArray*.mat','Load wsArray.mat file');
@@ -3008,7 +3006,7 @@ if length(folder) <1
 end
 d = './plots';
 restrictTime = [.5 , 4];
-plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
+% plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 set = {};
 gopix = sessionInfo.gopix;
@@ -3835,8 +3833,9 @@ load([path filesep filename2]);
 contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput', false);
 nodetects =  find(cellfun(@isempty,contacts_detected));
 
-%           contDet_param.threshDistToBarCenter = [.1   .70]; %lax
-         contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
+%           contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
+        contDet_param.threshDistToBarCenter = [.1   .50]; %lax
+%          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
         contDet_param.thresh_deltaKappa = [-.1	.1];
         if isempty(wsArray.bar_time_window)
@@ -4010,12 +4009,12 @@ figure;
 [AX,H1,H2] = plotyy([1:solo_data.trialStartEnd(2)],solo_data.Dprime,[1:solo_data.trialStartEnd(2)],solo_data.PercentCorrect);hold on;
 
 hold(AX(1), 'on');
-plot(solo_data.polePositions/100000,'b*','MarkerSize',1);
+plot(solo_data.polePositions/100000,'b*','MarkerSize',3);
 
-plot(solo_data.hitTrialNums,zeros(1,length(solo_data.hitTrialNums)),'gd','MarkerSize',4,'MarkerFaceColor','g');
-plot(solo_data.missTrialNums,zeros(1,length(solo_data.missTrialNums)),'rd','MarkerSize',4,'MarkerFaceColor','r');
-plot(solo_data.falseAlarmTrialNums,ones(1,length(solo_data.falseAlarmTrialNums)),'rd','MarkerSize',4,'MarkerFaceColor','r');
-plot(solo_data.correctRejectionTrialNums,ones(1,length(solo_data.correctRejectionTrialNums)),'gd','MarkerSize',4,'MarkerFaceColor','g');
+plot(solo_data.hitTrialNums,zeros(1,length(solo_data.hitTrialNums)),'gd','MarkerSize',6,'MarkerFaceColor','g');
+plot(solo_data.missTrialNums,zeros(1,length(solo_data.missTrialNums)),'rd','MarkerSize',6,'MarkerFaceColor','r');
+plot(solo_data.falseAlarmTrialNums,ones(1,length(solo_data.falseAlarmTrialNums)),'rd','MarkerSize',6,'MarkerFaceColor','r');
+plot(solo_data.correctRejectionTrialNums,ones(1,length(solo_data.correctRejectionTrialNums)),'gd','MarkerSize',6,'MarkerFaceColor','g');
 
 title(['Performance from ' name(length(name)-16:length(name)-8) ' Session' name(length(name)-6:length(name)-1)]);
 
@@ -4027,7 +4026,7 @@ axis(AX(2),[0 solo_data.trialStartEnd(2) -.1 1]);
 set(AX(2),'YTick',[-.1:.1:1]);
 
 set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
-set(H1,'markersize',3,'Marker','.');set(H2,'markersize',3,'Marker','.') ;
+set(H1,'markersize',5,'Marker','.');set(H2,'markersize',5,'Marker','.') ;
 
 
 if addcontactinfo
@@ -4040,7 +4039,7 @@ if addcontactinfo
     contacttimes=cellfun(@(x) x.contacts{1}, wSigTrials,'uniformoutput',false)   ;
     nocontactTrials = cellfun(@isempty,contacttimes);
     contactTrials = ~nocontactTrials;
-    plot(whisker_trials,nocontactTrials,'kd','MarkerSize',4); hold on;
+    plot(whisker_trials,nocontactTrials,'kd','MarkerSize',6); hold on;
     lickTrials = solo_data.hitTrialInds + solo_data.falseAlarmTrialInds;
     lickTrials = lickTrials(whisker_trials);
     nolickTrials = solo_data.missTrialInds + solo_data.correctRejectionTrialInds;
@@ -4091,11 +4090,11 @@ if addcontactinfo
     set(AX(2),'YTick',[-.1:.1:1]);
     
     set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
-    set(H1,'markersize',3,'Marker','.');set(H2,'markersize',3,'Marker','.') ;
+    set(H1,'markersize',4,'Marker','.');set(H2,'markersize',4,'Marker','.') ;
     hold(AX(1), 'on');hold(AX(2), 'on');
     [AX,H3,H4] = plotyy(whisker_trials,solo_data.Dprime_contact,whisker_trials,solo_data.PC_contact);
-    set(H3,'color',[.5 .5 1.0],'Linestyle','-','linewidth',1);
-    set(H4,'color',[.1 1 .1],'Linestyle','-','linewidth',1);
+    set(H3,'color',[.5 .5 1.0],'Linestyle','-','linewidth',3);
+    set(H4,'color',[.1 1 .1],'Linestyle','-','linewidth',3);
     hold(AX(2), 'off');
     
 end
@@ -4110,7 +4109,7 @@ axis(AX(2),[0 solo_data.trialStartEnd(2) -.1 1]);
 set(AX(2),'YTick',[-.1:.1:1]);
 
 set(get(AX(1),'Ylabel'),'String','Dprime');set(get(AX(2),'Ylabel'),'String','PercentCorrect');
-set(H1,'markersize',3,'Marker','.');set(H2,'markersize',3,'Marker','.') ;
+set(H1,'markersize',4,'Marker','.');set(H2,'markersize',4,'Marker','.') ;
 
 
 % saveas(gcf,'solo_performance_barpos','tif');
@@ -4231,9 +4230,7 @@ end
 % --- Executes on button press in plot_wSigSum.
 function plot_wSigSum_Callback(hObject, eventdata, handles)
 global wSigSummary
-
-biased_bartheta= str2num(get(handles.current_bartheta,'String'));
-baseline_bartheta = str2num(get(handles.unbiased_bartheta,'String'));
+override =1;
 
 temp = cell2mat(cellfun(@(x) x.nogo_biased_barpos{1}{1},wSigSummary,'uniformoutput',false));
 biased_bartheta = mean(temp);
@@ -4241,6 +4238,10 @@ temp = cell2mat(cellfun(@(x) x.nogo_baseline_barpos{1}{1},wSigSummary,'uniformou
 baseline_bartheta = mean(temp);
 plotlist = get(handles.wSigSum_toplot,'String');
 datatoplot= plotlist{get(handles.wSigSum_toplot,'Value')};
+if(override)
+    biased_bartheta= str2num(get(handles.current_bartheta,'String'));
+    baseline_bartheta = str2num(get(handles.unbiased_bartheta,'String'));
+end
 
 blocks= get(handles.wSigSum_block,'String');
 blocklist = blocks(get(handles.wSigSum_block,'Value'));
@@ -4255,7 +4256,7 @@ transparency =  0.5;
 legendstr = cell(numsessions,1);
 datacollected = zeros(numsessions*70,4,numblocks);
 
-baseline_sessions = 2;
+baseline_sessions = 4;
 
 mindata = 0; maxdata =0;
 % plotting Thetaenvelope
@@ -4274,9 +4275,9 @@ for j= 1:numblocks
     prev=0;
     
     for i = 1:numsessions
-        datawave = {'mean_thetaenv_binned','peak_thetaenv_binned'};
-        colr(:,:,2) = [ 0 0 0 ; 1 0 0 ]; % black red
-        colr(:,:,1) = [ .5 .5 .5 ; 1 .5 .5 ]; % black red
+        datawave = {'meandev_thetaenv_binned','peakdev_thetaenv_binned'};%,'meanpole_thetaenv_binned'};
+        colr(:,:,2) = [ 0 0 1 ; 1 0 0 ;];%0 0 0]; % black red blue
+        colr(:,:,1) = [ .5 .5 1 ; 1 .5 .5;];% .5 .5 .5 ]; % black red blue
         for k = 1:length(datawave)           
             selecteddata = strcat(datatoplot,'_',datawave(k));
             temp = wSigSummary{i}.(selecteddata{1});
@@ -4329,17 +4330,21 @@ for j= 1:numblocks
         count = count+binnedxdata(end)+10;
         
     end
-    axes(ah1); axis([0 count mindata-5 maxdata+5]);grid on; ylabel('Medianpole, Prepole and Peak(binned thetaenv)'); xlabel('Trials');
+    axes(ah1); axis([0 count mindata-5 maxdata+5]);grid on; ylabel('Meandev, Peakdev (binned thetaenv)'); xlabel('Trials');
     
-    title('Mean and Peak Theta envelope - K R');
-    
-    saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'jpg');
+    title('Mean(Dev) Peak(Dev) Theta envelope - B R ');
     saveas(gcf,['Thetaenv' datatoplot ' ' blocklist{j}],'fig');
+    set(gcf,'PaperPositionMode','auto');
+    print( h_fig1 ,'-depsc2','-painters','-loose',['Thetaenv ' datatoplot ' ' blocklist{j}]);
+%     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'jpg');
     
-    axes(ah2);axis([0 count mindata-15 maxdata+2]);grid on; ylabel('Med, Prepole,Peak - mean bartheta (from expected bar position)'); xlabel('Trials');
-    title('Mean and Peak Theta envelope Error - K R');
-    saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'jpg');
+    
+    axes(ah2);axis([0 count mindata-15 maxdata+2]);grid on; ylabel('MeanDev, PeakDev- mean bartheta (from expected bar position)'); xlabel('Trials');
+    title('Mean(Dev) Peak(Dev) Theta envelope  Error - B R');
+%     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'jpg');
     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}],'fig');
+    set(gcf,'PaperPositionMode','auto');
+    print( h_fig2 ,'-depsc2','-painters','-loose',['Thetaenv Error'  datatoplot ' ' blocklist{j}]);
     hold off;
 end
 
@@ -4351,7 +4356,7 @@ maxdata =0;
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
-    figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
+    ah3 = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
     %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
     title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
@@ -4387,7 +4392,9 @@ for j= 1:numblocks
     end
     axis([0 count 0 maxdata+.02]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
     saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'jpg');
-    saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
+%     saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
+    set(gcf,'PaperPositionMode','auto');
+    print(ah3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ' '  blocklist{j}]);
 end
 hold off;
 
@@ -4397,7 +4404,7 @@ maxdata =0;
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
-    figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
+    ah4=figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
     %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
     title([commentstr 'Mean whisking amplitude ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
@@ -4405,7 +4412,7 @@ for j= 1:numblocks
     prev=0;
     for i = 1:numsessions
         
-        datawave = {'mean_whiskamp_binned'};
+        datawave = {'meandev_whiskamp_binned'};
         selecteddata = strcat(datatoplot,'_',datawave);
         temp = wSigSummary{i}.(selecteddata{1});
         temp = temp{1};
@@ -4431,9 +4438,11 @@ for j= 1:numblocks
         count = count+binnedxdata(end)+10;
         
     end
-    axis([0 count 0 maxdata+.02]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
-    saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'jpg');
+    axis([0 count 0 maxdata+.02]);grid on; ylabel('Whisk amplitude  biased barpos'); xlabel('Trials');
+%     saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'jpg');
     saveas(gcf,['Mean Whisk Amp'  datatoplot ' ' blocklist{j}],'fig');
+    set(gcf,'PaperPositionMode','auto');
+    print(ah4,'-depsc2','-painters','-loose',['Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
 end
 hold off;
 
@@ -4443,7 +4452,7 @@ maxdata =0;
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
-    figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w');
+    ah5=figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w');
     title([commentstr 'TotalTouchKappa ' datatoplot ]); %' blocklist{j}]);
     
     hold on;
@@ -4477,8 +4486,10 @@ for j= 1:numblocks
 
     end
     axis([0 count -10 40]);grid on; ylabel('TotalTouchKappa'); xlabel('Trials');
-    saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'jpg');
+%     saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'jpg');
     saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}],'fig');
+    set(gcf,'PaperPositionMode','auto');
+    print(ah5,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
     hold off;
     plot_dist_sessions(commentstr,numsessions);
 end
@@ -5254,7 +5265,7 @@ cd (basedatapath);
 count=0;
 
 while(count>=0)
-    [filename,pathName]=uigetfile('solo_data*.mat','Load solo_data*.mat file');
+    [filename,pathName]=uigetfile('solodata*.mat','Load solodata*.mat file');
     if isequal(filename, 0) || isequal(pathName,0)
         break
     end
