@@ -170,7 +170,6 @@ else
             wSigTrials{i} = wSigTrials{i}.recompute_cached_mean_theta_kappa(theta_kappa_roi_array); % multiwhisker 
 
             wSigTrials{i} = wSigTrials{i}.recompute_cached_follicle_coords(extrap_distance_in_pix);
-            
         
     end
     wsArray = NX_WhiskerSignalTrialArray(sessionInfo,wSigTrials);

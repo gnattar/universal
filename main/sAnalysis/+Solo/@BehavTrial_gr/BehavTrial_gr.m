@@ -84,8 +84,7 @@ classdef BehavTrial_gr < handle
                 obj.protName = solo_data.protocol_name;
                 obj.Dprime = solo_data.saved_history.AnalysisSection_Dprime{trial_num};
                 obj.PercentCorrect = solo_data.saved_history.AnalysisSection_PercentCorrect{trial_num};
-                
-                
+                    
                 obj.sessionType = solo_data.saved_history.SessionTypeSection_SessionType{trial_num};
                 obj.extraITIOnErrorSetting = solo_data.saved_history.TimesSection_ExtraITIOnError{trial_num};
                 obj.samplingPeriodTimeSetting = solo_data.saved_history.TimesSection_SamplingPeriodTime{trial_num};

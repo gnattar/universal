@@ -106,7 +106,6 @@ if(length(theta) > i)
             subplot(10,2,i-70);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',6);axis([restrictTime(1) restrictTime(2)  -30 30]);
             text(2.25,10,['T' num2str(CRtrials(i))]);
         catch
-            break
         end
     end
     set(gcf,'PaperPositionMode','auto');
