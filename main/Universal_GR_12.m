@@ -2907,14 +2907,15 @@ global wsArray
 global solo_data
 
 basedatapath = get(handles.wSig_datapath,'String');
-basedatapath = uigetdir('/Volumes/','Pick the base folder');
+try
+    cd (basedatapath);
+    basedatapath = uigetdir(basedatapath,'Pick the base folder');
+catch
+    basedatapath = uigetdir('/Volumes/','Pick the base folder');
+end
+
 set(handles.wSig_datapath,'String',basedatapath);
-cd (basedatapath);
 
-
-basedatapath = uigetdir('/Volumes/','Pick the base folder');
-cd (basedatapath);
-set(handles.wSig_datapath,'String',basedatapath );
 
 files = dir('wsArray*.mat');
 if(isempty(files))
@@ -3011,7 +3012,7 @@ if length(folder) <1
 end
 d = './plots';
 restrictTime = [.5 , 4];
-% plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
+plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 set = {};
 gopix = sessionInfo.gopix;
@@ -4226,7 +4227,7 @@ end
 % --- Executes on button press in plot_wSigSum.
 function plot_wSigSum_Callback(hObject, eventdata, handles)
 global wSigSummary
-override =1; % this should be there in latest update 131121
+override =0; % this should be there in latest update 131121
 
 temp = cell2mat(cellfun(@(x) x.nogo_biased_barpos{1}{1},wSigSummary,'uniformoutput',false));
 biased_bartheta = mean(temp);
@@ -4252,18 +4253,18 @@ transparency =  0.5;
 legendstr = cell(numsessions,1);
 datacollected = zeros(numsessions*70,4,numblocks);
 
-baseline_sessions = 2;
+baseline_sessions = 3;
 
 mindata = 0; maxdata =0;
 % plotting Thetaenvelope
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
-    h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw setpoint
+    h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw setpoint
     ah1=axes('Parent',h_fig1);
     title([commentstr 'Mean and Peak Theta Envelope   ' ]);%blocklist{j} 'Data ' datatoplot]);
     
-    h_fig2 = figure('position', [300, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %% error from bartheat
+    h_fig2 = figure('position', [300, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %% error from bartheat
     ah2=axes('Parent',h_fig2); title([commentstr 'Mean and Peak Theta Envelope Error  ' ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
     %     figure;
@@ -4335,7 +4336,7 @@ for j= 1:numblocks
 %     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'jpg');
     
     
-    axes(ah2);axis([0 count mindata-15 maxdata+2]);grid on; ylabel('MeanDev, PeakDev- mean bartheta (from expected bar position)'); xlabel('Trials');
+    axes(ah2);axis([0 count mindata-10 maxdata+10]);grid on; ylabel('MeanDev, PeakDev- mean bartheta (from expected bar position)'); xlabel('Trials');
     title('Mean(Dev) Peak(Dev) Theta envelope  Error - B R');
 %     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'jpg');
     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}],'fig');
@@ -4352,7 +4353,7 @@ maxdata =0;
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
-    ah3 = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
+    ah3 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
     %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
     title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
@@ -4400,7 +4401,7 @@ maxdata =0;
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
-    ah4=figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w'); %%raw theta
+    ah4=figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
     %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
     title([commentstr 'Mean whisking amplitude ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
@@ -4448,7 +4449,7 @@ maxdata =0;
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
-    ah5=figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w');
+    ah5=figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w');
     title([commentstr 'TotalTouchKappa ' datatoplot ]); %' blocklist{j}]);
     
     hold on;
