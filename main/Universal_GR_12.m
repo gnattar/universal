@@ -22,7 +22,7 @@ function varargout = Universal_GR_12(varargin)
 
 % Edit the above text to modify the response to help Universal_GR_12
 
-% Last Modified by GUIDE v2.5 04-Nov-2013 13:42:16
+% Last Modified by GUIDE v2.5 13-Dec-2013 13:14:42
 
 % Begin initialization code - DO NOT EDIT
 
@@ -2913,7 +2913,7 @@ try
 catch
     basedatapath = uigetdir('/Volumes/','Pick the base folder');
 end
-
+cd (basedatapath);
 set(handles.wSig_datapath,'String',basedatapath);
 
 
@@ -3011,8 +3011,10 @@ if length(folder) <1
     mkdir ('plots');
 end
 d = './plots';
-restrictTime = [.5 , 4];
-plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
+if(get(handles.select_plot_SetAmp,'Value'))
+    restrictTime = [.5 , 4];
+    plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
+end
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 set = {};
 gopix = sessionInfo.gopix;
@@ -3839,8 +3841,8 @@ load([path filesep filename2]);
 contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput', false);
 nodetects =  find(cellfun(@isempty,contacts_detected));
 
-%           contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
-        contDet_param.threshDistToBarCenter = [.1   .50]; %lax
+          contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
+%         contDet_param.threshDistToBarCenter = [.1   .50]; %lax
 %          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
         contDet_param.thresh_deltaKappa = [-.1	.1];
@@ -4253,7 +4255,7 @@ transparency =  0.5;
 legendstr = cell(numsessions,1);
 datacollected = zeros(numsessions*70,4,numblocks);
 
-baseline_sessions = 3;
+baseline_sessions = 4;
 
 mindata = 0; maxdata =0;
 % plotting Thetaenvelope
@@ -5378,3 +5380,8 @@ fprintf(fid,'%s\n', t2);
 fprintf(fid,'%s\n', t3); 
 fprintf(fid,'%s\n', t4); %12.8f\n',y);
 fclose(fid);
+
+
+% --- Executes on button press in select_plot_SetAmp.
+function select_plot_SetAmp_Callback(hObject, eventdata, handles)
+

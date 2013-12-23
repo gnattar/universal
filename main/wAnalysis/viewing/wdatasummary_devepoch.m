@@ -40,7 +40,7 @@ nogopix(1,2) = point(1,2);
 
 frames_list=arrayfun(@(x) size(x{:}.time{1},2), obj,'uniformoutput',false);
 maxframes = max(cell2mat(frames_list));
-numpoleframes = (restrictTime(2)-restrictTime(1))*500;
+numpoleframes = round((restrictTime(2)-restrictTime(1))*500);
 
 if~(exist([pd '/plots/'],'dir'))
     mkdir (pd,'plots') ;
