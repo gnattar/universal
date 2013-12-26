@@ -3011,10 +3011,15 @@ if length(folder) <1
     mkdir ('plots');
 end
 d = './plots';
+
 if(get(handles.select_plot_SetAmp,'Value'))
     restrictTime = [.5 , 4];
     plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
 end
+
+restrictTime = [.5 , 4];
+% plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
+
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 set = {};
 gopix = sessionInfo.gopix;
@@ -3055,7 +3060,8 @@ end
 blocks = struct('tag','','gotrialnums',[],'nogotrialnums',[],'gotrialnames',[],'nogotrialnames',[],'hittrialnums',[],'hittrialnames',[],...
                 'misstrialnums',[],'misstrialnames',[],'CRtrialnums',[],'CRtrialnames',[],'FAtrialnums',[],'FAtrialnames',[]);
 
-trialsets = {'nogo','go','hit','miss','CR','FA'};
+ trialsets = {'nogo','go','hit','miss','CR','FA'};
+
 for sets = 1:6
     for i=1:numblocks
         blocks.tag{i}= tags{i};
@@ -3088,6 +3094,10 @@ trialsets = {'nogo','go','hit','miss','CR','FA'};
 
 for sets = [1,2,3,4,5,6]
     str= [trialsets{sets} 'trialnums']; 
+    if (size(blocks.(str){1},1) < 20)
+        ['Too few trials for type ' str ' :Skipping']
+        continue
+    end
     var_set = {'thetaenvtrials';'time';'dist';'bins';'amp';'meandev_thetaenv';'meandev_thetaenv_binned';'meanpole_thetaenv';'meanpole_thetaenv_binned';...
                 'meandev_whiskamp';'meandev_whiskamp_binned';  'totaldev_whiskamp'; 'totaldev_whiskamp_binned';'meanpole_whiskamp';'meanpole_whiskamp_binned';  'totalpole_whiskamp'; 'totalpole_whiskamp_binned';...
                 'peakdev_thetaenv'; 'peakdev_thetaenv_binned'; 'prepole_thetaenv'; 'prepole_thetaenv_binned'; 'prcoccupancy'; 'prcoccupancy_binned';...
@@ -4255,7 +4265,7 @@ transparency =  0.5;
 legendstr = cell(numsessions,1);
 datacollected = zeros(numsessions*70,4,numblocks);
 
-baseline_sessions = 4;
+baseline_sessions = 7;
 
 mindata = 0; maxdata =0;
 % plotting Thetaenvelope
@@ -5307,32 +5317,32 @@ global soloSigSummary
     
     for j = 1:numsessions
        obj =  soloSigSummary{j};
-      dprime = getfield(obj,'Dprime');
+      dprime_null = getfield(obj,'Dprime_null');
       dprime_corrected = getfield(obj,'Dprime_contact');
-      pc = getfield(obj,'PercentCorrect');
+      pc_null = getfield(obj,'PC_null');
       pc_corrected = getfield(obj,'PC_contact');
-      numtrials = size(dprime,2);
+      numtrials = size(dprime_null,2);
       axes(ah1);
-      plot([count+1:count+numtrials], dprime,'color',[.1 .5 .75],'Linestyle','-','Marker','o','MarkerSize',2,'MarkerFaceColor',[.1 .5 .75]);
+      plot([count+1:count+numtrials], dprime_null,'color',[.1 .5 .75],'Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor',[.1 .5 .75]);
       hold on;
       numtrials = size(dprime_corrected,2);
-      plot([count+1:count+numtrials], dprime_corrected,'color','b','Linestyle','--','Marker','o','MarkerSize',2,'MarkerFaceColor','b');
+      plot([count+1:count+numtrials], dprime_corrected,'color','b','Linestyle','--','Marker','o','MarkerSize',.5,'MarkerFaceColor','b');
       hline (1,{'r--','linewidth',1.5});
       axes(ah2);
-      numtrials = size(dprime,2);
-      plot([count+1:count+numtrials], pc,'color','g','Linestyle','-','Marker','o','MarkerSize',2,'MarkerFaceColor','g');
+      numtrials = size(dprime_null,2);
+      plot([count+1:count+numtrials], pc_null,'color','g','Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor','g');
       hold on;
       numtrials = size(dprime_corrected,2);
-      plot([count+1:count+numtrials], pc_corrected,'color',[.1 .75 .5],'Linestyle','--','Marker','o','MarkerSize',2,'MarkerFaceColor',[.1 .75 .5]);
+      plot([count+1:count+numtrials], pc_corrected,'color',[.1 .75 .5],'Linestyle','--','Marker','o','MarkerSize',.5,'MarkerFaceColor',[.1 .75 .5]);
       hline (.60,{'r--','linewidth',1.5});
-      numtrials = max( size(dprime_corrected,2),size(dprime,2));
+      numtrials = max( size(dprime_corrected,2),size(dprime_null,2));
       count = count + numtrials +10;      
     end
 axes(ah1);
-legend('Dprime','Dprime Touchcorrected');
+legend('Dprime null','Dprime Touchcorrected');
 saveas(gcf,[mousename 'Dprime_sessions'] ,'jpg');
 axes(ah2);
-legend('PC','PC Touchcorrected');
+legend('PC null','PC Touchcorrected');
 saveas(gcf,[mousename 'PC_sessions'] ,'jpg');
 
 % --- Executes on button press in load_soloSigSummary.

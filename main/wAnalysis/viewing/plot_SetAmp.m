@@ -6,7 +6,7 @@ function plot_SetAmp(d,wsArray,solo_data,restrictTime,mad_threshold,redo)
 if(nargin < 2)
 [filename1,path]= uigetfile('wsArray*.mat', 'Load wsArray.mat file');
 load([path filesep filename1]);
-[filename2,path]= uigetfile('solo_data*.mat', 'Load solo_data.mat file');
+[filename2,path]= uigetfile('solodata*.mat', 'Load solodata.mat file');
 load([path filesep filename2]);
 end
 names=cellfun(@(x) x.trackerFileName(length(x.trackerFileName)-21:length(x.trackerFileName)-18),wsArray.ws_trials,'uniformoutput',false);
@@ -71,25 +71,33 @@ set(gcf,'PaperPositionMode','auto');
 print(h1b,'-depsc2','-painters','-loose',[name 'CR 11_30'])
 close(h1b);
 
-h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
-suptitle([name 'CR 31:50']);
-for i = 31:50
-    [tuenv, tlenv]  =  envelope(theta{i});    devepoch = find(Amp{i}>(mad_threshold*mad(Amp{i})));
-    subplot(10,2,i-30);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',6); hold on;axis([restrictTime(1) restrictTime(2)  -30 30]);
-    text(2.25,10,['T' num2str(CRtrials(i))]);
+if(length(theta) > i) 
+    h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
+    suptitle([name 'CR 31:50']);
+    for i = 31:50
+        try
+            [tuenv, tlenv]  =  envelope(theta{i});    devepoch = find(Amp{i}>(mad_threshold*mad(Amp{i})));
+            subplot(10,2,i-30);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',6); hold on;axis([restrictTime(1) restrictTime(2)  -30 30]);
+            text(2.25,10,['T' num2str(CRtrials(i))]);
+        catch
+        end
+    end
+    set(gcf,'PaperPositionMode','auto');
+    % saveas(gcf,[name 'CR 31_50'],'eps');
+     print(h1b,'-depsc2','-painters','-loose',[name 'CR 31_50'])
+    close(h1b);
 end
-set(gcf,'PaperPositionMode','auto');
-% saveas(gcf,[name 'CR 31_50'],'eps');
- print(h1b,'-depsc2','-painters','-loose',[name 'CR 31_50'])
-close(h1b);
 
 if(length(theta) > i) 
     h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
     suptitle([name 'CR 51:70']); 
     for i = 51:min(length(theta),70)
-        [tuenv, tlenv]  =  envelope(theta{i});  devepoch = find(Amp{i}>(mad_threshold*mad(Amp{i})));
-        subplot(10,2,i-50);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',6);axis([restrictTime(1) restrictTime(2)  -30 30]);
-        text(2.25,10,['T' num2str(CRtrials(i))]);
+        try
+            [tuenv, tlenv]  =  envelope(theta{i});  devepoch = find(Amp{i}>(mad_threshold*mad(Amp{i})));
+            subplot(10,2,i-50);plot(t{i},Set{i},'linewidth',1,'color','b'); hold on;plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on;plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',6);axis([restrictTime(1) restrictTime(2)  -30 30]);
+            text(2.25,10,['T' num2str(CRtrials(i))]);
+        catch
+        end
     end
     set(gcf,'PaperPositionMode','auto');
 %     saveas(gcf,[name 'CR 51_70'],'eps');
