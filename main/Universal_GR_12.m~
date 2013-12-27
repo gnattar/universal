@@ -4277,255 +4277,261 @@ datacollected = zeros(numsessions*70,4,numblocks);
 
 
 baseline_sessions = 2;
-
-
-mindata = 0; maxdata =0;
-% plotting Thetaenvelope
-for j= 1:numblocks
-    block =j;
-    sc = get(0,'ScreenSize');
-    h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw setpoint
-    ah1=axes('Parent',h_fig1);
-    title([commentstr{1} 'Mean and Peak Theta Envelope   ' ]);%blocklist{j} 'Data ' datatoplot]);
-    
-    h_fig2 = figure('position', [300, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %% error from bartheat
-    ah2=axes('Parent',h_fig2); title([commentstr{1}  'Mean and Peak Theta Envelope Error  ' ]);%blocklist{j} 'Data ' datatoplot]);
-    hold on;
-    %     figure;
-    count =0;
-    prev=0;
-    
-    for i = 1:numsessions
-        datawave = {'meandev_thetaenv_binned','peakdev_thetaenv_binned'};%,'meanpole_thetaenv_binned'};
-        colr(:,:,2) = [ 0 0 1 ; 1 0 0 ;];%0 0 0]; % black red blue
-        colr(:,:,1) = [ .5 .5 1 ; 1 .5 .5;];% .5 .5 .5 ]; % black red blue
-        for k = 1:length(datawave)           
-            selecteddata = strcat(datatoplot,'_',datawave(k));
-            temp = wSigSummary{i}.(selecteddata{1});
-            temp = temp{1};
-            binnedxdata = temp{block}(:,1)';
-            binnedydata = temp{block}(:,2)';
-            binnedydata_sdev = temp{block}(:,3)';
-            curr_meanbarpos = wSigSummary{i}.nogo_mean_barpos{1}{1};
-            curr_biasedbarpos = wSigSummary{i}.nogo_biased_barpos{1}{1};
-            %            mean_bartheta = getfield(wSigSummary{i},strrep(datatoplot,'databinned','meanbar'));
-            %            mean_bartheta  = cell2mat(mean_bartheta {1});
-            axes(ah1);
-            
-            if(i<baseline_sessions+1)
-                tcol = colr(:,:,1);
-                errorbar(binnedxdata+count,binnedydata,binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
-                axis([min(binnedxdata+count) max(binnedxdata+count) -30  max(binnedydata)-10]);
-                hline(curr_meanbarpos,{'k--','linewidth',1.5});
-                hline(baseline_bartheta ,{'k-','linewidth',1.5});
-                
-            else
-                tcol = colr(:,:,2);
-                errorbar(binnedxdata+count,binnedydata,binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
-                axis([min(binnedxdata+count) max(binnedxdata+count) min(binnedydata)-10 max(binnedydata)+10 ]);
-                %                 hline(biased_bartheta,'r--');
-                hline(biased_bartheta,{'r-','linewidth',1.5});
-                hline(curr_meanbarpos,{'r--','linewidth',1.5});
-            end
-            mindata = (mindata<min(binnedydata))*mindata + (mindata>min(binnedydata))*min(binnedydata);
-            maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-            collateddata = [binnedxdata;binnedydata]';
-            wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata};
-            
-            legendstr(i) = {['session' num2str(i) ' ']};
-            
-            axes(ah2);
-            if(i<baseline_sessions+1)
-                tcol = colr(:,:,1);
-                %        plot(xdata+count,(ydata-baseline_bartheta),'color',col(j,:),'linewidth',1.0);
-                errorbar(binnedxdata+count,(binnedydata-baseline_bartheta),binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
-            else
-                tcol = colr(:,:,2);
-                %        plot(xdata+count,(ydata-bartheta),'color',col(j,:),'linewidth',1.0);
-                errorbar(binnedxdata+count,(binnedydata-biased_bartheta),binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
-            end
-            legendstr(i) = {['session' num2str(i) ' ']};
-            hline(0,{'r-','linewidth',1});
-        end
-        
-        count = count+binnedxdata(end)+10;
-        
-    end
-    axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel('Meandev, Peakdev (binned thetaenv)'); xlabel('Trials');
-    
-    title([commentstr{1} 'Mean PeakTheta envelope - B R ']);
-    saveas(gcf,['Thetaenv' datatoplot ' ' blocklist{j}],'fig');
-    set(gcf,'PaperPositionMode','auto');
-    print( h_fig1 ,'-depsc2','-painters','-loose',['Thetaenv ' datatoplot ' ' blocklist{j}]);
-%     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'jpg');
-    
-    
-    axes(ah2);axis([0 count mindata-5 mindata+35]);grid on; ylabel('MeanDev, PeakDev- mean bartheta (from expected bar position)'); xlabel('Trials');
-    title([commentstr{1} 'Mean Peak Theta envelope  Error - B R']);
-%     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'jpg');
-    saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}],'fig');
-    set(gcf,'PaperPositionMode','auto');
-    print( h_fig2 ,'-depsc2','-painters','-loose',['Thetaenv Error'  datatoplot ' ' blocklist{j}]);
-    hold off;
-end
-
-
-
-% plotting proccupancy
-mindata =0;
-maxdata =0;
-for j= 1:numblocks
-    block =j;
-    sc = get(0,'ScreenSize');
-    ah3 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
-    %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
-    title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
-    hold on;
-    count =0;
-    prev=0;
-    for i = 1:numsessions
-        
-        datawave = {'prcoccupancy_binned'};
-        selecteddata = strcat(datatoplot,'_',datawave);
-        temp = wSigSummary{i}.(selecteddata{1});
-        temp = temp{1};
-        
-        binnedxdata = temp{block}(:,1)';
-        binnedydata = temp{block}(:,2)';
-        
-        if(i<baseline_sessions+1)
-            axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
-            plot(binnedxdata+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
-            
-        else
-            axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
-            plot(binnedxdata+count,binnedydata,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
-            
-        end
-        hline(0,{'k-','linewidth',1});
-        hline(.5,{'r-','linewidth',1});
-        legendstr(i) = {['session' num2str(i) ' ']};
-        collateddata = [binnedxdata;binnedydata]';
-        maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-        count = count+binnedxdata(end)+10;
-        
-    end
-    axis([0 count 0 .2]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
-    saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'jpg');
-%     saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
-    set(gcf,'PaperPositionMode','auto');
-    print(ah3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ' '  blocklist{j}]);
-end
-hold off;
-
-% plotting whisker amplitude
-mindata =0;
-maxdata =0;
-for j= 1:numblocks
-    block =j;
-    sc = get(0,'ScreenSize');
-    ah4=figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
-    %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
-    title([commentstr 'Mean whisking amplitude ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
-    hold on;
-    count =0;
-    prev=0;
-    for i = 1:numsessions
-        
-        datawave = {'meandev_whiskamp_binned'};
-        selecteddata = strcat(datatoplot,'_',datawave);
-        temp = wSigSummary{i}.(selecteddata{1});
-        temp = temp{1};
-        
-        binnedxdata = temp{block}(:,1)';
-        binnedydata = temp{block}(:,2)';
-        
-        if(i<baseline_sessions+1)
-            axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
-            plot(binnedxdata+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
-            
-        else
-            axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
-            plot(binnedxdata+count,binnedydata,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
-            
-        end
-        hline(0,{'k-','linewidth',1});
-        hline(.5,{'r-','linewidth',1});
-        legendstr(i) = {['session' num2str(i) ' ']};
-        collateddata = [binnedxdata;binnedydata]';
-        maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-        count = count+binnedxdata(end)+10;
-        
-    end
-    axis([0 count 0 8]);grid on; ylabel('Whisk amplitude  biased barpos'); xlabel('Trials');
-%     saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'jpg');
-    saveas(gcf,['Mean Whisk Amp'  datatoplot ' ' blocklist{j}],'fig');
-    set(gcf,'PaperPositionMode','auto');
-    print(ah4,'-depsc2','-painters','-loose',['Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
-end
-hold off;
-
-% plotting kappa
-mindata =0;
-maxdata =0;
-for j= 1:numblocks
-    block =j;
-    sc = get(0,'ScreenSize');
-    ah5=figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w');
-    title([commentstr 'TotalTouchKappa ' datatoplot ]); %' blocklist{j}]);
-    
-    hold on;
-    count =0;
-    prev=0;
-    for i = 1:numsessions
-  
-        datawave = {'totalTouchKappa'};
-        selecteddata = strcat('go','_',datawave);
-        temp = wSigSummary{i}.(selecteddata{1});
-        temp = temp{1};
-        temp = temp{1};
-         ydata = temp(:,2);
-         xdata= temp(:,1);
-        
-        if(i<baseline_sessions+1)
-            axis([min(xdata+count) max(xdata+count) -10 40]);
-            plot(xdata+count,ydata,'color',[.5 .5 .5],'linewidth',.2,'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);
-        else
-            axis([min(xdata+count) max(xdata+count) -10 40]);
-
-            plot(xdata+count,ydata,'color',[0 0 0 ],'linewidth',.2,'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);
-
-        end
-        
-        legendstr(i) = {['session' num2str(i) ' ']};
-        %        wSigSum_Sessions.thr_durbinned{i,j}= [binnedxdata;binnedydata]';
-        collateddata = [xdata;ydata]';
-        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata};
-        count = count+binnedxdata(end)+10;
-
-    end
-    axis([0 count -15 15]);grid on; ylabel('TotalTouchKappa'); xlabel('Trials');
-%     saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'jpg');
-    saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}],'fig');
-    set(gcf,'PaperPositionMode','auto');
-    print(ah5,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
-    hold off;
-end
+% 
+% 
+% mindata = 0; maxdata =0;
+% % plotting Thetaenvelope
+% for j= 1:numblocks
+%     block =j;
+%     sc = get(0,'ScreenSize');
+%     h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw setpoint
+%     ah1=axes('Parent',h_fig1);
+%     title([commentstr 'Mean and Peak Theta Envelope   ' ]);%blocklist{j} 'Data ' datatoplot]);
+%     
+%     h_fig2 = figure('position', [300, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %% error from bartheat
+%     ah2=axes('Parent',h_fig2); title([commentstr 'Mean and Peak Theta Envelope Error  ' ]);%blocklist{j} 'Data ' datatoplot]);
+%     hold on;
+%     %     figure;
+%     count =0;
+%     prev=0;
+%     
+%     for i = 1:numsessions
+%         datawave = {'meandev_thetaenv_binned','peakdev_thetaenv_binned'};%,'meanpole_thetaenv_binned'};
+%         colr(:,:,2) = [ 0 0 1 ; 1 0 0 ;];%0 0 0]; % black red blue
+%         colr(:,:,1) = [ .5 .5 1 ; 1 .5 .5;];% .5 .5 .5 ]; % black red blue
+%         for k = 1:length(datawave)           
+%             selecteddata = strcat(datatoplot,'_',datawave(k));
+%             temp = wSigSummary{i}.(selecteddata{1});
+%             temp = temp{1};
+%             binnedxdata = temp{block}(:,1)';
+%             binnedydata = temp{block}(:,2)';
+%             binnedydata_sdev = temp{block}(:,3)';
+%             curr_meanbarpos = wSigSummary{i}.nogo_mean_barpos{1}{1};
+%             curr_biasedbarpos = wSigSummary{i}.nogo_biased_barpos{1}{1};
+%             %            mean_bartheta = getfield(wSigSummary{i},strrep(datatoplot,'databinned','meanbar'));
+%             %            mean_bartheta  = cell2mat(mean_bartheta {1});
+%             axes(ah1);
+%             
+%             if(i<baseline_sessions+1)
+%                 tcol = colr(:,:,1);
+%                 errorbar(binnedxdata+count,binnedydata,binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
+%                 axis([min(binnedxdata+count) max(binnedxdata+count) -30  max(binnedydata)-10]);
+%                 hline(curr_meanbarpos,{'k--','linewidth',1.5});
+%                 hline(baseline_bartheta ,{'k-','linewidth',1.5});
+%                 
+%             else
+%                 tcol = colr(:,:,2);
+%                 errorbar(binnedxdata+count,binnedydata,binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
+%                 axis([min(binnedxdata+count) max(binnedxdata+count) min(binnedydata)-10 max(binnedydata)+10 ]);
+%                 %                 hline(biased_bartheta,'r--');
+%                 hline(biased_bartheta,{'r-','linewidth',1.5});
+%                 hline(curr_meanbarpos,{'r--','linewidth',1.5});
+%             end
+%             mindata = (mindata<min(binnedydata))*mindata + (mindata>min(binnedydata))*min(binnedydata);
+%             maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
+%             collateddata = [binnedxdata;binnedydata]';
+%             wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata};
+%             
+%             legendstr(i) = {['session' num2str(i) ' ']};
+%             
+%             axes(ah2);
+%             if(i<baseline_sessions+1)
+%                 tcol = colr(:,:,1);
+%                 %        plot(xdata+count,(ydata-baseline_bartheta),'color',col(j,:),'linewidth',1.0);
+%                 errorbar(binnedxdata+count,(binnedydata-baseline_bartheta),binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
+%             else
+%                 tcol = colr(:,:,2);
+%                 %        plot(xdata+count,(ydata-bartheta),'color',col(j,:),'linewidth',1.0);
+%                 errorbar(binnedxdata+count,(binnedydata-biased_bartheta),binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
+%             end
+%             legendstr(i) = {['session' num2str(i) ' ']};
+%             hline(0,{'r-','linewidth',1});
+%         end
+%         
+%         count = count+binnedxdata(end)+10;
+%         
+%     end
+%     axes(ah1); axis([0 count mindata-5 maxdata+5]);grid on; ylabel('Meandev, Peakdev (binned thetaenv)'); xlabel('Trials');
+%     
+%     title('Mean(Dev) Peak(Dev) Theta envelope - B R ');
+%     saveas(gcf,['Thetaenv' datatoplot ' ' blocklist{j}],'fig');
+%     set(gcf,'PaperPositionMode','auto');
+%     print( h_fig1 ,'-depsc2','-painters','-loose',['Thetaenv ' datatoplot ' ' blocklist{j}]);
+% %     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'jpg');
+%     
+%     
+%     axes(ah2);axis([0 count mindata-10 maxdata+10]);grid on; ylabel('MeanDev, PeakDev- mean bartheta (from expected bar position)'); xlabel('Trials');
+%     title('Mean(Dev) Peak(Dev) Theta envelope  Error - B R');
+% %     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'jpg');
+%     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}],'fig');
+%     set(gcf,'PaperPositionMode','auto');
+%     print( h_fig2 ,'-depsc2','-painters','-loose',['Thetaenv Error'  datatoplot ' ' blocklist{j}]);
+%     hold off;
+% end
+% 
+% 
+% 
+% % plotting proccupancy
+% mindata =0;
+% maxdata =0;
+% for j= 1:numblocks
+%     block =j;
+%     sc = get(0,'ScreenSize');
+%     ah3 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
+%     %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
+%     title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
+%     hold on;
+%     count =0;
+%     prev=0;
+%     for i = 1:numsessions
+%         
+%         datawave = {'prcoccupancy_binned'};
+%         selecteddata = strcat(datatoplot,'_',datawave);
+%         temp = wSigSummary{i}.(selecteddata{1});
+%         temp = temp{1};
+%         
+%         binnedxdata = temp{block}(:,1)';
+%         binnedydata = temp{block}(:,2)';
+%         
+%         if(i<baseline_sessions+1)
+%             axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
+%             plot(binnedxdata+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
+%             
+%         else
+%             axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
+%             plot(binnedxdata+count,binnedydata,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
+%             
+%         end
+%         hline(0,{'k-','linewidth',1});
+%         hline(.5,{'r-','linewidth',1});
+%         legendstr(i) = {['session' num2str(i) ' ']};
+%         collateddata = [binnedxdata;binnedydata]';
+%         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
+%         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
+%         count = count+binnedxdata(end)+10;
+%         
+%     end
+%     axis([0 count 0 maxdata+.02]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
+%     saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'jpg');
+% %     saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
+%     set(gcf,'PaperPositionMode','auto');
+%     print(ah3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ' '  blocklist{j}]);
+% end
+% hold off;
+% 
+% % plotting whisker amplitude
+% mindata =0;
+% maxdata =0;
+% for j= 1:numblocks
+%     block =j;
+%     sc = get(0,'ScreenSize');
+%     ah4=figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
+%     %     title([commentstr 'Amplitude Block ' blocklist{j} 'Data ' 'Amp_med']);
+%     title([commentstr 'Mean whisking amplitude ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
+%     hold on;
+%     count =0;
+%     prev=0;
+%     for i = 1:numsessions
+%         
+%         datawave = {'meandev_whiskamp_binned'};
+%         selecteddata = strcat(datatoplot,'_',datawave);
+%         temp = wSigSummary{i}.(selecteddata{1});
+%         temp = temp{1};
+%         
+%         binnedxdata = temp{block}(:,1)';
+%         binnedydata = temp{block}(:,2)';
+%         
+%         if(i<baseline_sessions+1)
+%             axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
+%             plot(binnedxdata+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
+%             
+%         else
+%             axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
+%             plot(binnedxdata+count,binnedydata,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
+%             
+%         end
+%         hline(0,{'k-','linewidth',1});
+%         hline(.5,{'r-','linewidth',1});
+%         legendstr(i) = {['session' num2str(i) ' ']};
+%         collateddata = [binnedxdata;binnedydata]';
+%         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
+%         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
+%         count = count+binnedxdata(end)+10;
+%         
+%     end
+%     axis([0 count 0 maxdata+.02]);grid on; ylabel('Whisk amplitude  biased barpos'); xlabel('Trials');
+% %     saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'jpg');
+%     saveas(gcf,['Mean Whisk Amp'  datatoplot ' ' blocklist{j}],'fig');
+%     set(gcf,'PaperPositionMode','auto');
+%     print(ah4,'-depsc2','-painters','-loose',['Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
+% end
+% hold off;
+% 
+% % plotting kappa
+% mindata =0;
+% maxdata =0;
+% for j= 1:numblocks
+%     block =j;
+%     sc = get(0,'ScreenSize');
+%     ah5=figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w');
+%     title([commentstr 'TotalTouchKappa ' datatoplot ]); %' blocklist{j}]);
+%     
+%     hold on;
+%     count =0;
+%     prev=0;
+%     for i = 1:numsessions
+%   
+%         datawave = {'totalTouchKappa'};
+%         selecteddata = strcat('go','_',datawave);
+%         temp = wSigSummary{i}.(selecteddata{1});
+%         temp = temp{1};
+%         temp = temp{1};
+%          ydata = temp(:,2);
+%          xdata= temp(:,1);
+%         
+%         if(i<baseline_sessions+1)
+%             axis([min(xdata+count) max(xdata+count) -10 40]);
+%             plot(xdata+count,ydata,'color',[.5 .5 .5],'linewidth',.2,'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);
+%         else
+%             axis([min(xdata+count) max(xdata+count) -10 40]);
+% 
+%             plot(xdata+count,ydata,'color',[0 0 0 ],'linewidth',.2,'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);
+% 
+%         end
+%         
+%         legendstr(i) = {['session' num2str(i) ' ']};
+%         %        wSigSum_Sessions.thr_durbinned{i,j}= [binnedxdata;binnedydata]';
+%         collateddata = [xdata;ydata]';
+%         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata};
+%         count = count+binnedxdata(end)+10;
+% 
+%     end
+%     axis([0 count -10 40]);grid on; ylabel('TotalTouchKappa'); xlabel('Trials');
+% %     saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'jpg');
+%     saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}],'fig');
+%     set(gcf,'PaperPositionMode','auto');
+%     print(ah5,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
+%     hold off;
+% end
 
 % plotting performance
 mindata = 0; maxdata =0;
 for j= 1:numblocks
     block =j;
     sc = get(0,'ScreenSize');
+    
+    hold on;
+   
+    count =0;
+    prev=0;
+
     datawave = {'Dprime_contact','PC_contact'};
     ax = {'ah6','ah7'};
     axavg = {'ax8','ax9'};
-    colr(:,:,1) = [ 0 0 1 ; 0 1 0 ;]%0 0 0]; %b,g
-    colr(:,:,2) = [  .1 .5 .75;.1 .75 .5];% .5 .5 .5 ]; % b,g
+    colr(:,:,2) = [ 0 1 0 ; 0 0 1 ;];%0 0 0]; % black red blue
+    colr(:,:,1) = [ .1 .75 .5 ; .1 .5 .75];% .5 .5 .5 ]; % black red blue
     for k = 1:length(datawave)  
-        count =0;    
+
         selecteddata =datawave(k);
         avg_ydata = zeros(numsessions,1);
         h_fig6 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w');        
@@ -4552,38 +4558,30 @@ for j= 1:numblocks
             
             legendstr(i) = {['session' num2str(i) ' ']};
             count = count+xdata(end)+10;
-            
         end       
-        if(k ==1)
-            axis([0 count 0 3]);
-        else
-            axis([0 count 0 1]);
-        end
         title([commentstr selecteddata]);
         saveas(gcf, [commentstr{1} selecteddata{1}],'fig');
         set(gcf,'PaperPositionMode','auto');
         print( h_fig6 ,'-depsc2','-painters','-loose', [commentstr{1} selecteddata{1}]);
-        close (h_fig6);
+        close (hfig_6);
          
         h_fig7 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); 
         ah7=axes('Parent',h_fig7);
-        plot(1:numsessions,avg_ydata,'color',tcol(1,:),'linewidth',2); 
-        if(k ==1)
-            axis([0 numsessions+1 0 3]);
-        else
-            axis([0 numsessions+1 0 1]);
-        end
+        plot(numsessions,avg_ydata,'color',tcol(1,:));
         saveas(gcf,[commentstr{1} 'Avg_' selecteddata{1}],'fig');
         set(gcf,'PaperPositionMode','auto');
         print( h_fig7 ,'-depsc2','-painters','-loose',[commentstr{1} 'Avg_' selecteddata{1}]);
-        close (h_fig7);
+        close (hfig_7);
            
-    end  
-end
-    plot_dist_sessions(commentstr,numsessions);
-     javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar');
-     jheapcl(1);
+    end
     
+
+
+    
+    
+end
+
+    plot_dist_sessions(commentstr,numsessions);
 
 % --- Executes on selection change in wSigSum_block.
 function wSigSum_block_Callback(hObject, eventdata, handles)
