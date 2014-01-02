@@ -4788,17 +4788,15 @@ global wSigSessSum_anm
 [filename,pathName]=uigetfile('wSigSum_anm.mat','Load wSigSum_anm.mat file');
 load( [pathName filesep filename], '-mat');
 cd (pathName);
-trialtype_select = 'nogo';
+
 mean_subtract_on =1;
 count =1;
-fieldnames = {'meandev_thetaenv';'peakdev_thetaenv';'meanpole_thetaenv';'proccupancy';'meandev_whiskamp'}; 
-
+fieldnames = {'meandev_thetaenv';'nogo_thetaenv_prepolebinned';'nogo_thetaenv_peakbinned';'nogo_thetaenv_prcpastmeanbarbinned'};
 for k = 1:length(fieldnames)
-    current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
-    if(strcmp(current_field,'nogo_proccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp') )
+    if(strcmp(fieldnames(k),'nogo_thetaenv_prcpastmeanbarbinned'))
         mean_subtract_on = 0;
     end    
-    [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,current_field{1},mean_subtract_on);
+    [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldnames{k},mean_subtract_on);
     wSigSessSum_anm.(propname) = tempobj;
 end   
 
@@ -4810,14 +4808,18 @@ num = 3;
         colr(:,:,4) = bone(num);
 
 for k = 1:length(fieldnames)  
-    current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
+    fieldname = fieldnames{k};
     propname = strrep(fieldname,'nogo_thetaenv_','');
-    if(strcmp(current_field,'nogo_proccupancy_binned'))
+    if(strcmp(fieldnames(k),'nogo_thetaenv_prcpastmeanbarbinned'))
         propname = strrep(propname,'binned','');
         mean_subtract_on = 0;
+      
+
     else
         propname = strrep(propname,'binned','err');
+
         mean_subtract_on = 1;
+
     end
     name = [propname 'normchange'];
     resid = [propname 'residuals'];
@@ -4844,9 +4846,9 @@ for k = 1:length(fieldnames)
                 count = max(tempobj{i}{j}.(name)(:,1)+count) + 20;
         end
         if mean_subtract_on
-            title ([propname ' plot Norm. Change']);
+            title ([propname ' plot Norm. Change over T50 to T250 ']);
         else
-             title ([propname ' plot Pr. Occupancy change ']);
+             title ([propname ' plot Prc occupancy change over T50 to T250 ']);
         end
     end
     set(gcf,'PaperPositionMode','auto');
@@ -4859,10 +4861,10 @@ save('wSigSessSum_anm.mat','wSigSessSum_anm');
     
     
 function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,mean_subtract_on)
-    propname = strrep(fieldname,'nogo_','');
+    propname = strrep(fieldname,'nogo_thetaenv_','');
     propname = strrep(propname,'binned','');
     if mean_subtract_on
-         propname = [propname, 'err'];
+         propname = [propname 'err'];
     end
     numanm = size(wSigSum_anm,2);    
     for i = 1:numanm
@@ -4874,7 +4876,7 @@ function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,
             curr_sess = curr_anm{j};
             curr_data =curr_sess.(fieldname);
             curr_data = cell2mat(curr_data{block});
-            target_barpos = curr_sess.nogo_biased_barpos{1};
+            target_barpos = curr_sess.nogo_thetaenv_biased_barpos{1};
             target_barpos = target_barpos{block};
 
             x = curr_data(:,1);
