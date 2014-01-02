@@ -4513,7 +4513,7 @@ for j= 1:numblocks
     print(ah5,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
     hold off;
 end
-
+    plot_dist_sessions(commentstr,numsessions);
 % plotting performance
 mindata = 0; maxdata =0;
 for j= 1:numblocks
@@ -4535,7 +4535,10 @@ for j= 1:numblocks
             temp = [wSigSummary{i}.gotrialnames{1};wSigSummary{i}.nogotrialnames{1}];
             xdata = sort(temp,'ascend');
             temp = wSigSummary{i}.solodata.(selecteddata{1});  
-            xdata(xdata>length(temp)) = [];
+            xdata(xdata>length(temp)) = [];     
+            if(isempty(xdata))
+                xdata = 1;
+            end
             ydata = temp(xdata)';
             avg_ydata(i) = prctile(ydata,75);        
             if(i<baseline_sessions+1)
@@ -4580,7 +4583,7 @@ for j= 1:numblocks
            
     end  
 end
-    plot_dist_sessions(commentstr,numsessions);
+
      javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar');
      jheapcl(1);
     
