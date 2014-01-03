@@ -4381,16 +4381,16 @@ for j= 1:numblocks
     end
     axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel('Meandev, Peakdev (binned thetaenv)'); xlabel('Trials');
     
-    title([commentstr{1} 'Mean PeakTheta envelope - B R ']);
+    title([commentstr{1} 'Mean PeakTheta envelope - B R ']);set(gca,'FontSize',18);
     saveas(gcf,['Thetaenv' datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print( h_fig1 ,'-depsc2','-painters','-loose',['Thetaenv ' datatoplot ' ' blocklist{j}]);
-%     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'jpg');
+    saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'tif');
     
     
     axes(ah2);axis([0 count mindata-5 mindata+35]);grid on; ylabel('MeanDev, PeakDev- mean bartheta (from expected bar position)'); xlabel('Trials');
-    title([commentstr{1} 'Mean Peak Theta envelope  Error - B R']);
-%     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'jpg');
+    title([commentstr{1} 'Mean Peak Theta envelope  Error - B R']);set(gca,'FontSize',18);
+    saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}] ,'tif');
     saveas(gcf,['Thetaenv Error'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print( h_fig2 ,'-depsc2','-painters','-loose',['Thetaenv Error'  datatoplot ' ' blocklist{j}]);
@@ -4440,8 +4440,9 @@ for j= 1:numblocks
         
     end
     axis([0 count 0 .2]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
-    saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'jpg');
-%     saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
+    set(gca,'FontSize',18);
+    saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
+    saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(ah3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ' '  blocklist{j}]);
 end
@@ -4488,7 +4489,8 @@ for j= 1:numblocks
         
     end
     axis([0 count 0 8]);grid on; ylabel('Whisk amplitude  biased barpos'); xlabel('Trials');
-%     saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'jpg');
+    set(gca,'FontSize',18);
+    saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['Mean Whisk Amp'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(ah4,'-depsc2','-painters','-loose',['Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
@@ -4535,7 +4537,8 @@ for j= 1:numblocks
 
     end
     axis([0 count -15 15]);grid on; ylabel('TotalTouchKappa'); xlabel('Trials');
-%     saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'jpg');
+    set(gca,'FontSize',18);
+    saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'tif');
     saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(ah5,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
@@ -4590,21 +4593,24 @@ for j= 1:numblocks
         else
             axis([0 count 0 1]);
         end
-        title([commentstr selecteddata]);
+        title([commentstr selecteddata]);set(gca,'FontSize',18);
         saveas(gcf, [commentstr{1} selecteddata{1}],'fig');
+        saveas(gcf, [commentstr{1} selecteddata{1}],'tif');
         set(gcf,'PaperPositionMode','auto');
         print( h_fig6 ,'-depsc2','-painters','-loose', [commentstr{1} selecteddata{1}]);
         close (h_fig6);
          
         h_fig7 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); 
         ah7=axes('Parent',h_fig7);
-        plot(1:numsessions,avg_ydata,'color',tcol(1,:),'linewidth',2); 
+        plot(1:numsessions,avg_ydata,'color',tcol(1,:),'linewidth',2,'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(1,:)); 
         if(k ==1)
             axis([0 numsessions+1 0 3]);
         else
             axis([0 numsessions+1 0 1]);
         end
+        set(gca,'FontSize',18);
         saveas(gcf,[commentstr{1} 'Avg_' selecteddata{1}],'fig');
+        saveas(gcf,[commentstr{1} 'Avg_' selecteddata{1}],'tif');
         set(gcf,'PaperPositionMode','auto');
         print( h_fig7 ,'-depsc2','-painters','-loose',[commentstr{1} 'Avg_' selecteddata{1}]);
         close (h_fig7);
@@ -4865,41 +4871,71 @@ for k = 1:length(fieldnames)
     tempobj = wSigSessSum_anm.(propname) ;
     
     numanm = size(tempobj,2);
-    tempmat =nan(2,max(sess_count),numanm);
-    sc = get(0,'ScreenSize');
-    figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
-    for i = 1:numanm
-        
-%         tempobj{i}{j}.sesstypelog = 'B';
-%         numbasesess = 
-
+    tempmat =nan(2,max(sess_count)+2,numanm);
+    sc = get(0,'ScreenSize');   
+    f1=figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
+    a1=axes('Parent',f1);title([ propname]);
+    no_bs=0;
+%     temp_collected_data = zeros(numanm,(max(sess_count)+2)*2);
+    for i = 1:numanm        
         numsessions = size(tempobj{i},2);   
         sesstags = wSigSessSum_anm.sesstype{i}{1};
         num_bs=sum(sesstags=='B');
-        numskips  =  2 - num_bs;
-        count =0;
+        if (num_bs >0) || (no_bs<1)
+            no_bs =0;
+        else
+            no_bs =1;
+        end
+        numskips  =  2 - num_bs;        
+        count = 250*numskips;
         for j = 1:numsessions
             
-            tempmat(:,j,i) = tempobj{i}{j}.(name)(:,2);
+            tempmat(:,j+numskips,i) = tempobj{i}{j}.(name)(:,2);
             if mean_subtract_on
                 errorbar(tempobj{i}{j}.(name)(:,1)+count,tempobj{i}{j}.(name)(:,2),tempobj{i}{j}.(name)(:,3),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1)); hold on;
             else
-                plot(tempobj{i}{j}.(name)(:,1)+count,tempobj{i}{j}.(name)(:,2),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1)); hold on;
+                plot(tempobj{i}{j}.(name)(:,1)+count ,tempobj{i}{j}.(name)(:,2),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1)); hold on;
             end
             hline (0,'k:');
             xlabel('Trials'); ylabel ([propname ' change']);
-            count = max(tempobj{i}{j}.(name)(:,1)+count) +20;
+            count = max(tempobj{i}{j}.(name)(:,1)+count);
         end
         if mean_subtract_on
             title ([strrep(propname,'_',' ') '  Norm. Change']);
         else
             title ([strrep(propname,'_',' ') '  Change ']);
         end
-    end
-    set(gcf,'PaperPositionMode','auto');
+    end   
+    
+    set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
      saveas(gcf,propname,'fig');
+     saveas(gcf,propname,'tif');
     print(gcf,'-depsc2','-painters','-loose',propname)  
-     wSigSessSum_anm.mat.(propname) = tempmat;
+     wSigSessSum_anm.(propname) = tempmat;
+    avg_anm_sess = nanmean(tempmat,3); 
+    
+    temp = isnan(avg_anm_sess);
+    avg_anm_sess(:,find(sum(temp)>0)) = [];
+%     tempmat(:,find(sum(temp)>0),:) = [];
+    std_anm_sess = nanstd(tempmat,1,3);%./sqrt(numanm+1); 
+     std_anm_sess(:,find(sum(temp)>0)) = [];
+    f2 =figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
+    a2=axes('Parent',f2);
+    title(['avg_' propname]);
+    for i = 1: length(avg_anm_sess)
+        xval(:,i) = [(no_bs*250)+((i-1)*250)+50 ;(no_bs*250)+((i-1)*250)+250];
+        errorbar(xval(:,i),avg_anm_sess(:,i),std_anm_sess(:,i),'color','k','Marker','o','Markersize',8,'MarkerFaceColor',[0 0 0],'linewidth',2);hold on;
+    end
+    temp =zeros(size(xval,1),size(xval,2),3);
+    temp(:,:,1) = xval(:,:);
+    temp(:,:,2) =avg_anm_sess(:,:);
+    temp(:,:,3) =std_anm_sess(:,:);
+    wSigSessSum_anm.(['avg' propname]) = temp;
+    set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
+     saveas(gcf,['avg_' propname],'fig');
+      saveas(gcf,['avg_' propname],'tif');
+    print(gcf,'-depsc2','-painters','-loose',['avg' propname])  
+     
 end
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
 
