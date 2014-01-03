@@ -4248,18 +4248,45 @@ end
 % --- Executes on button press in plot_wSigSum.
 function plot_wSigSum_Callback(hObject, eventdata, handles)
 global wSigSummary
-override =0; % this should be there in latest update 131121
+% ButtonName = questdlg('Override mean and biased barpos?', ...
+%                          'Override', ...
+%                          'Yes', 'No', 'No');
+ButtonName = 'No';
+switch ButtonName,
+     case 'Yes',
+        override =1; 
+% % %         biased_barpos= str2num(get(handles.current_bartheta,'String'));
+% % %         baseline_barpos = str2num(get(handles.unbiased_bartheta,'String'));
+% % %         [filename2,path]= uigetfile('SessionInfo*.mat', 'Load SessionInfo.mat file');
+% % %         load([path filesep filename2]);
+% % % 
+% % %         y  =sessionInfo.go_bartheta;
+% % %         x = sessionInfo.gopos;
+% % %         ind = find(~isnan(y));
+% % %         y = y(ind);
+% % %         x = x(ind);
+% % %         y = sort(y ,'ascend');
+% % %         p=polyfit(x,y,1);
+% % %         biased_bartheta = round(polyval(p,biased_barpos*10000)*100)/100;
+% % %         baseline_bartheta =  round(polyval(p,baseline_barpos*10000)*100)/100;
 
-temp = cell2mat(cellfun(@(x) x.nogo_biased_barpos{1}{1},wSigSummary,'uniformoutput',false));
-biased_bartheta = mean(temp);
-temp = cell2mat(cellfun(@(x) x.nogo_baseline_barpos{1}{1},wSigSummary,'uniformoutput',false));
-baseline_bartheta = mean(temp);
+        biased_bartheta = str2num(get(handles.current_bartheta,'String'));
+        baseline_bartheta = str2num(get(handles.unbiased_bartheta,'String'));
+        
+    case 'No'
+        tags=cell2mat(cellfun(@(x) x.tag{1},wSigSummary,'uniformoutput',false)');
+        temp = cell2mat(cellfun(@(x) x.nogo_mean_barpos{1}{1},wSigSummary,'uniformoutput',false));
+        temp(tags=='B') = nan;
+        biased_bartheta = nanmean(temp);
+        temp = cell2mat(cellfun(@(x) x.nogo_mean_barpos{1}{1},wSigSummary,'uniformoutput',false));
+        temp(tags ~= 'B') = nan;
+        baseline_bartheta = nanmean(temp);
+end
+
+
 plotlist = get(handles.wSigSum_toplot,'String');
 datatoplot= plotlist{get(handles.wSigSum_toplot,'Value')};
-if(override)
-    biased_bartheta= str2num(get(handles.current_bartheta,'String'));
-    baseline_bartheta = str2num(get(handles.unbiased_bartheta,'String'));
-end
+
 
 blocks= get(handles.wSigSum_block,'String');
 blocklist = blocks(get(handles.wSigSum_block,'Value'));
@@ -4275,8 +4302,9 @@ legendstr = cell(numsessions,1);
 datacollected = zeros(numsessions*70,4,numblocks);
 
 
+tags=cell2mat(cellfun(@(x) x.tag{1},wSigSummary,'uniformoutput',false)');
 
-baseline_sessions = 2;
+baseline_sessions = sum(tags=='B');
 
 
 mindata = 0; maxdata =0;
@@ -4791,66 +4819,86 @@ cd (pathName);
 trialtype_select = 'nogo';
 mean_subtract_on =1;
 count =1;
-fieldnames = {'meandev_thetaenv';'peakdev_thetaenv';'meanpole_thetaenv';'proccupancy';'meandev_whiskamp'}; 
+
+fieldnames = {'meandev_thetaenv';'peakdev_thetaenv';'meanpole_thetaenv';'prcoccupancy';'meandev_whiskamp'}; 
 
 for k = 1:length(fieldnames)
     current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
-    if(strcmp(current_field,'nogo_proccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp') )
+    if(strcmp(current_field,'nogo_prcoccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp') )
         mean_subtract_on = 0;
     end    
     [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,current_field{1},mean_subtract_on);
     wSigSessSum_anm.(propname) = tempobj;
+    numanm = length(tempobj);
 end   
 
+for i = 1:numanm    
+    temp = '';
+    for j = 1 : sess_count(i)
+         temp= strcat(temp, wSigSum_anm{i}{j}.tag{1});
+    end
+    wSigSessSum_anm.sesstype{i}{1}=temp'; 
+end
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
-num = 3;
-        colr(:,:,1) = gray(num);
-        colr(:,:,2) = winter(num);
-        colr(:,:,3) = hot(num);
-        colr(:,:,4) = bone(num);
+
+%         colr(:,:,1) = gray(num);
+%         colr(:,:,2) = winter(num);
+%         colr(:,:,3) = hot(num);
+%         colr(:,:,4) = bone(num);
+
+colr(:,:,1) = lines(numanm);
+
 
 for k = 1:length(fieldnames)  
     current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
-    propname = strrep(fieldname,'nogo_thetaenv_','');
-    if(strcmp(current_field,'nogo_proccupancy_binned'))
-        propname = strrep(propname,'binned','');
+    
+    if(strcmp(current_field,'nogo_prcoccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp_binned'))
+        propname = strrep(current_field,'_binned','');       
         mean_subtract_on = 0;
     else
-        propname = strrep(propname,'binned','err');
+        propname = strrep(current_field,'_binned','_err');
         mean_subtract_on = 1;
     end
+    propname= propname{1};
     name = [propname 'normchange'];
     resid = [propname 'residuals'];
     tempobj = wSigSessSum_anm.(propname) ;
     
     numanm = size(tempobj,2);
     tempmat =nan(2,max(sess_count),numanm);
-    
-    figure;
+    sc = get(0,'ScreenSize');
+    figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
     for i = 1:numanm
+        
+%         tempobj{i}{j}.sesstypelog = 'B';
+%         numbasesess = 
 
+        numsessions = size(tempobj{i},2);   
+        sesstags = wSigSessSum_anm.sesstype{i}{1};
+        num_bs=sum(sesstags=='B');
+        numskips  =  2 - num_bs;
         count =0;
-        numsessions = size(tempobj{i},2);
         for j = 1:numsessions
+            
             tempmat(:,j,i) = tempobj{i}{j}.(name)(:,2);
             if mean_subtract_on
-                errorbar(tempobj{i}{j}.(name)(:,1)+count,tempobj{i}{j}.(name)(:,2),tempobj{i}{j}.(name)(:,3),'color',colr(i,:,k),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,k)); hold on;
+                errorbar(tempobj{i}{j}.(name)(:,1)+count,tempobj{i}{j}.(name)(:,2),tempobj{i}{j}.(name)(:,3),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1)); hold on;
             else
-                plot(tempobj{i}{j}.(name)(:,1)+count,tempobj{i}{j}.(name)(:,2),'color',colr(i,:,k),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,k)); hold on;
-
+                plot(tempobj{i}{j}.(name)(:,1)+count,tempobj{i}{j}.(name)(:,2),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1)); hold on;
             end
             hline (0,'k:');
             xlabel('Trials'); ylabel ([propname ' change']);
-                count = max(tempobj{i}{j}.(name)(:,1)+count) + 20;
+            count = max(tempobj{i}{j}.(name)(:,1)+count) +20;
         end
         if mean_subtract_on
-            title ([propname ' plot Norm. Change']);
+            title ([strrep(propname,'_',' ') '  Norm. Change']);
         else
-             title ([propname ' plot Pr. Occupancy change ']);
+            title ([strrep(propname,'_',' ') '  Change ']);
         end
     end
     set(gcf,'PaperPositionMode','auto');
-    saveas(gcf,propname,'jpg');
+     saveas(gcf,propname,'fig');
+    print(gcf,'-depsc2','-painters','-loose',propname)  
      wSigSessSum_anm.mat.(propname) = tempmat;
 end
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
@@ -4859,25 +4907,33 @@ save('wSigSessSum_anm.mat','wSigSessSum_anm');
     
     
 function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,mean_subtract_on)
-    propname = strrep(fieldname,'nogo_','');
-    propname = strrep(propname,'binned','');
+%     propname = strrep(fieldname,'nogo_','');   
     if mean_subtract_on
-         propname = [propname, 'err'];
+         propname = strrep(fieldname,'_binned','_err');
+         
+    else
+         propname = strrep(fieldname,'_binned','');
     end
     numanm = size(wSigSum_anm,2);    
     for i = 1:numanm
         curr_anm=wSigSum_anm{i};
-        numsessions=size(curr_anm,2);
+        numsessions=size(curr_anm,2);         
         sess_count(i,1) =numsessions;
+        
         for j= 1:numsessions
             block =1;
             curr_sess = curr_anm{j};
+            curr_sess_type = curr_sess.tag;
             curr_data =curr_sess.(fieldname);
             curr_data = cell2mat(curr_data{block});
-            target_barpos = curr_sess.nogo_biased_barpos{1};
-            target_barpos = target_barpos{block};
-
-            x = curr_data(:,1);
+            if(strcmpi(curr_sess_type,'b'))
+                target_barpos = curr_sess.nogo_mean_barpos{1};
+                target_barpos = target_barpos{block};
+            else
+                target_barpos = curr_sess.nogo_biased_barpos{1};
+                target_barpos = target_barpos{block};
+            end
+            x = curr_data(:,1) %+ (numskips*100);
             if(mean_subtract_on)
                 y=curr_data(:,2)-target_barpos;  
             else
@@ -4893,6 +4949,8 @@ function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,
             [y1,delta1] =polyval(p,50,S);
             [y2,delta2] =polyval(p,250,S);
             tempobj{i}{j}.([propname 'normchange']) = [50 ,y1,delta1;250,y2,delta2];
+
+
         end
 
     end
