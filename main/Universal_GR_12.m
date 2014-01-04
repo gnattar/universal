@@ -3100,11 +3100,11 @@ for sets = [1,2,3,4,5,6]
     end
     var_set = {'thetaenvtrials';'time';'dist';'bins';'amp';'meandev_thetaenv';'meandev_thetaenv_binned';'meanpole_thetaenv';'meanpole_thetaenv_binned';...
                 'meandev_whiskamp';'meandev_whiskamp_binned';  'totaldev_whiskamp'; 'totaldev_whiskamp_binned';'meanpole_whiskamp';'meanpole_whiskamp_binned';  'totalpole_whiskamp'; 'totalpole_whiskamp_binned';...
-                'peakdev_thetaenv'; 'peakdev_thetaenv_binned'; 'prepole_thetaenv'; 'prepole_thetaenv_binned'; 'prcoccupancy'; 'prcoccupancy_binned';...
+                'peakdev_thetaenv'; 'peakdev_thetaenv_binned'; 'prepole_thetaenv'; 'prepole_thetaenv_binned'; 'prcoccupancy'; 'prcoccupancy_binned';'prcoccupancy_epoch'; 'prcoccupancy_epoch_binned';...
                 'pval'; 'mean_barpos';'biased_barpos';'baseline_barpos';'occupancy';'occupancybins';...
                 'totalTouchKappa';'maxTouchKappa';'kappatrials'};
-% % % % %     [w_thetaenv] =  wdatasummary(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos);
-    [w_thetaenv] =   wdatasummary_devepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2.5);
+%     [w_thetaenv] =   wdatasummary_devepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2.5);
+    [w_thetaenv] =   wdatasummary_wepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2.5);
 
     for i=1:numblocks
         for v = 1:length(var_set)
@@ -4304,8 +4304,7 @@ datacollected = zeros(numsessions*70,4,numblocks);
 
 tags=cell2mat(cellfun(@(x) x.tag{1},wSigSummary,'uniformoutput',false)');
 
-baseline_sessions = sum(tags=='B');
-
+num_baseline_sessions = sum(tags=='B');
 
 mindata = 0; maxdata =0;
 % plotting Thetaenvelope
@@ -4317,14 +4316,33 @@ for j= 1:numblocks
     title([commentstr{1} 'Mean and Peak Theta Envelope   ' ]);%blocklist{j} 'Data ' datatoplot]);
     
     h_fig2 = figure('position', [300, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %% error from bartheat
-    ah2=axes('Parent',h_fig2); title([commentstr{1}  'Mean and Peak Theta Envelope Error  ' ]);%blocklist{j} 'Data ' datatoplot]);
+    ah2=axes('Parent',h_fig2); title([commentstr{1}  'Mean and Peak Theta Envelope Change from Baseline  ' ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
     %     figure;
     count =0;
-    prev=0;
-    
+    prev=0; 
+    datawave = {'meandev_thetaenv_binned','peakdev_thetaenv_binned','meanpole_thetaenv_binned'};
+
+    if(num_baseline_sessions>0)
+        baseline_sessions = find(tags == 'B');
+        mean_baseline = zeros(length(datawave),1);
+         for k = 1:length(datawave)           
+            
+            selecteddata = strcat(datatoplot,'_',datawave(k));
+                for i = 1:numsessions
+                    temp = wSigSummary{i}.(selecteddata{1});
+                    temp = temp{1};
+                    binnedydata = temp{block}(:,2)';       
+                    mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
+                end
+             mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
+         end
+            
+        
+    else
+        mean_baseline = 0;
+    end
     for i = 1:numsessions
-        datawave = {'meandev_thetaenv_binned','peakdev_thetaenv_binned'};%,'meanpole_thetaenv_binned'};
         colr(:,:,2) = [ 0 0 1 ; 1 0 0 ;];%0 0 0]; % black red blue
         colr(:,:,1) = [ .5 .5 1 ; 1 .5 .5;];% .5 .5 .5 ]; % black red blue
         for k = 1:length(datawave)           
@@ -4340,7 +4358,7 @@ for j= 1:numblocks
             %            mean_bartheta  = cell2mat(mean_bartheta {1});
             axes(ah1);
             
-            if(i<baseline_sessions+1)
+            if(i<num_baseline_sessions+1)
                 tcol = colr(:,:,1);
                 errorbar(binnedxdata+count,binnedydata,binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
                 axis([min(binnedxdata+count) max(binnedxdata+count) -30  max(binnedydata)-10]);
@@ -4363,10 +4381,12 @@ for j= 1:numblocks
             legendstr(i) = {['session' num2str(i) ' ']};
             
             axes(ah2);
-            if(i<baseline_sessions+1)
+            if(i<num_baseline_sessions+1)
                 tcol = colr(:,:,1);
-                %        plot(xdata+count,(ydata-baseline_bartheta),'color',col(j,:),'linewidth',1.0);
-                errorbar(binnedxdata+count,(binnedydata-baseline_bartheta),binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
+                
+%                 errorbar(binnedxdata+count,(binnedydata-baseline_bartheta),binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
+                errorbar(binnedxdata+count,(binnedydata-meanbaseline),binnedydata_sdev,'color',tcol(k,:),'Marker','o','MarkerSize',6,'MarkerFaceColor',tcol(k,:));hold on;
+
             else
                 tcol = colr(:,:,2);
                 %        plot(xdata+count,(ydata-bartheta),'color',col(j,:),'linewidth',1.0);
@@ -4421,7 +4441,7 @@ for j= 1:numblocks
         binnedxdata = temp{block}(:,1)';
         binnedydata = temp{block}(:,2)';
         
-        if(i<baseline_sessions+1)
+        if(i<num_baseline_sessions+1)
             axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
             plot(binnedxdata+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
             
@@ -4470,7 +4490,7 @@ for j= 1:numblocks
         binnedxdata = temp{block}(:,1)';
         binnedydata = temp{block}(:,2)';
         
-        if(i<baseline_sessions+1)
+        if(i<num_baseline_sessions+1)
             axis([min(binnedxdata+count) max(binnedxdata+count) -.1 .6]);
             plot(binnedxdata+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
             
@@ -4519,7 +4539,7 @@ for j= 1:numblocks
          ydata = temp(:,2);
          xdata= temp(:,1);
         
-        if(i<baseline_sessions+1)
+        if(i<num_baseline_sessions+1)
             axis([min(xdata+count) max(xdata+count) -10 40]);
             plot(xdata+count,ydata,'color',[.5 .5 .5],'linewidth',.2,'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);
         else
@@ -4572,7 +4592,7 @@ for j= 1:numblocks
             end
             ydata = temp(xdata)';
             avg_ydata(i) = prctile(ydata,75);        
-            if(i<baseline_sessions+1)
+            if(i<num_baseline_sessions+1)
                 tcol = colr(:,:,1);
                 plot(xdata+count,ydata,'color',tcol(k,:),'Linewidth',2);hold on;
 %                 axis([min(xdata+count) max(xdata+count) .5  2.0]);
@@ -5134,7 +5154,7 @@ function plot_contactSig_sessions_Callback(hObject, eventdata, handles)
 global CaSigSummary
 global CaSigSum_Sessions
 
-baseline_sessions=2;
+num_baseline_sessions=2;
 contact_roistoplot = str2num(get(handles.CaSigSum_rois,'String'));
 numsessions=size(CaSigSummary,2);
 numrois = length(contact_roistoplot);
