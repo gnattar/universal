@@ -4510,12 +4510,12 @@ for j= 1:numblocks
     set(gcf,'PaperPositionMode','auto');
     print(h_fig3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ]);
     axes(ah4);
-    axis([0 count 0 5]);grid on; ylabel('Change in Percent occupancy from baseline'); xlabel('Trials');
+    axis([0 count 0 .2]);grid on; ylabel('Change in Percent occupancy past biased barpos'); xlabel('Trials');
     set(gca,'FontSize',18);   
     saveas(gcf,['dPrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(h_fig4,'-depsc2','-painters','-loose',['dPrcOccupancy' datatoplot]);
+    print(h_fig4,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot]);
 
     
 end

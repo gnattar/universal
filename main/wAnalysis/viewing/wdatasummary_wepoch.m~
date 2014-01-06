@@ -166,12 +166,7 @@ for(blk=1:numblocks)
         fnam=[str strg '.tif'];
         h1a=figure('Name',[strg ' plot']);
         set(0,'CurrentFigure',h1a);
-        tempstr =  strrep(strg,'_', ' ');
-        tempstr = strrep(tempstr,'meandev', 'Mean Whisk Epoch');
-        tempstr = strrep(tempstr,'epoch', ' Whisk Epoch');
-        tempstr = strrep(tempstr,'meanpole', '  Mean Sampling Period');
-        tempstr = strrep(tempstr,'thetaenv', ' Theta Envelope');
-        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  ' ' tempstr ' from ' str 'trials']);
+        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName ' B: ' str strg]);
 
         windowSize=10;
         grid on;
@@ -228,26 +223,26 @@ for(blk=1:numblocks)
         fnam=[str 'Dist' '.tif'];
         h1a=figure('Name',[strg ' plot']);
         set(0,'CurrentFigure',h1a);
-        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  'Thetaenv Distribution from ' str ' trials']);
+        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName ' B: ' str 'Thetaenv Distribution']);
         %         subplot(numblocks*2,3,(blk-1)*2+3);
-
+%         subplot(numblocks*2,1,(blk-1)*2+(1));
+        title('Thetaenv Distribution');
         nonzero_distvals = sum((thetaenv_dist_epoch>0),1);
         cummu_dist = sum(thetaenv_dist_epoch,1)./size(thetaenv_dist_epoch,2);
         plot(thetaenv_bins',cummu_dist','linewidth',1.5,'color',[.5 .5 .5]); hold on;
-        
+%         subplot(numblocks*2,1,(blk-1)*2+(2));    
+        title('Thetaenv Distribution from sampling period ');
+        cummu_dist = histnorm(reshape(thetaenv_trials,prod(size(thetaenv_trials)),1),thetaenv_bins);
+        plot(thetaenv_bins',cummu_dist','linewidth',1.5,'color',[.5 .5 1]); hold on;
+         ylabel('Normalized Distribution');xlabel('Trials');
+        axis ([-35 35 0 1]);grid on;
         nonzero_distvals = sum((thetaenv_dist>0),1);
         cummu_dist = sum(thetaenv_dist,1)./size(thetaenv_dist,2);
-        plot(thetaenv_bins',cummu_dist','linewidth',1.5,'color',[.5 .5 1]); hold on;
-%         subplot(numblocks*2,1,(blk-1)*2+(2));    
-        title('Thetaenv Distribution');
-%         cummu_dist = histnorm(reshape(thetaenv_trials,prod(size(thetaenv_trials)),1),thetaenv_bins);
-%         plot(thetaenv_bins',cummu_dist','linewidth',1.5,'color',[.5 .5 1]); hold on;
-        legend('Occupancy Sampling period','Occupancy Whisk Epochs'); 
-        ylabel('Normalized Distribution');xlabel('Trials');
-        axis ([-50 50 0 .5]);grid on;
+        plot(thetaenv_bins',cummu_dist','linewidth',1.5,'color',[.5 .5 .5]); hold on;
 
         vline(biased_bartheta,{'r', 'linewidth',1.5},{num2str(biased_bartheta)},[0 0]);grid on;
         vline(mean_bartheta,{'r--','linewidth',1},{num2str(mean_bartheta)},[.2 .5]);
+        ylabel('Normalized Distribution');xlabel('Trials');
         
         saveas(gcf,[fpath,filesep,fnam],'tif');
         print(h1a,'-dtiff','-painters','-loose',[fpath,filesep,fnam])
@@ -271,7 +266,7 @@ for(blk=1:numblocks)
         fnam=[str 'Theta_env trials.tif'];
         h1c=figure('Name','Theta Envelope Trials');
         set(0,'CurrentFigure',h1c);
-        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  ' ' str ' Trials Early - Late']);
+        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName ' B: ' str ' Trials Early - Late']);
 
         xt = thetaenv_time;
         %          subplot(numblocks*2,3,(blk-1)*2+4);
@@ -347,7 +342,7 @@ for(blk=1:numblocks)
     end
     hold off;
     
-    title(['M:' obj{1}.mouseName ' S: ' obj{1}.sessionName ' Ttype: ' str  ' Kappa'  ]);
+    title(['M:' obj{1}.mouseName ' S: ' obj{1}.sessionName ' Ttype: ' str ' Bk: ' block_tags{blk}  ' Kappa'  ]);
 %     xt = [1:maxframes]*frameTime;
     maxkappa = cell2mat(cellfun(@(x) x.maxTouchKappaTrial,obj(trialnums),'uniformoutput',false));
     totalkappa = cell2mat(cellfun(@(x) x.totalTouchKappaTrial,obj(trialnums),'uniformoutput',false));
@@ -439,7 +434,7 @@ if(plot_whiskerfits)
             plot(r*sin(p)+barpos(1,1),r*cos(p)+barpos(1,2),'linewidth',6,'color','red');
             plot(r*sin(p)+nogopix(1,1),r*cos(p)+nogopix(1,2),'linewidth',2,'color','black');
             
-            filename = ['Mouse:' obj{i}.mouseName ' Session: ' obj{i}.sessionName ' Trialtype: ' str ' '  obj{t}.trackerFileName];
+            filename = ['Mouse:' obj{i}.mouseName ' Session: ' obj{i}.sessionName ' Trialtype: ' str ' Block: ' block_tags{blk} obj{t}.trackerFileName];
             title(gca,filename);
             set(gca,'YDir','reverse');
             hold off;
