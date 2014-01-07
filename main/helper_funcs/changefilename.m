@@ -1,5 +1,7 @@
 function changefilename(d)
 files = dir('WDBP*');
+
+%% to change file number for new = old +1; !!!!  if new = old-1 change iteration to 1:length(files) !!!!
 for i =length(files):-1:1
     name = files(i).name;
     uscores = find(ismember(name,'_'));
@@ -16,3 +18,13 @@ for i =length(files):-1:1
     java.io.File(name).renameTo(java.io.File(newname))
 
 end
+%% to change date number
+for i =length(files):-1:1
+    name = files(i).name;
+    uscores = find(ismember(name,'_'));
+    datenum = name(uscores(3)+1:uscores(3)+2);
+    newdatenum = '03';
+    newname = strrep(name,datenum,newdatenum);
+    java.io.File(name).renameTo(java.io.File(newname))
+end
+

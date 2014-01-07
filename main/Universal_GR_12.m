@@ -5739,6 +5739,7 @@ coordsatfirst= get(handles.coords1,'String');
 coordsatnext= get(handles.coords2,'String');
 barposatfirst=get(handles.barpos1,'String');
 barposatnext= get(handles.barpos2,'String');
+cont_detwindow = get(handles.barTimeWindow,'String');
 
 mouseName = get(handles.AnimalNameEdit, 'String');
 % sessionName = get(handles.SoloDataFileName, 'String');
@@ -5749,12 +5750,14 @@ t1 = ['Mouse name   ' , mouseName]
 t2 = ['Session ID   ', sessionID]
 t3 = ['Pos 1     '  barposatfirst  '     '  , coordsatfirst ]
 t4 = ['Pos 2    ' barposatnext '     '   coordsatnext]
+t5 = ['Contact_detect window  ' cont_detwindow]
 
 fid = fopen(fname,'w');
 fprintf(fid,'%s\n', t1); 
 fprintf(fid,'%s\n', t2); 
 fprintf(fid,'%s\n', t3); 
-fprintf(fid,'%s\n', t4); %12.8f\n',y);
+fprintf(fid,'%s\n', t4);
+fprintf(fid,'%s\n', t5); %12.8f\n',y);
 fclose(fid);
 
 
