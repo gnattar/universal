@@ -3011,16 +3011,12 @@ if length(folder) <1
     mkdir ('plots');
 end
 d = './plots';
-
+restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 if(get(handles.select_plot_SetAmp,'Value'))
-    restrictTime = [.5 , 4];
-    plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
+    timewindow = [.5 , 4];
+    plot_SetAmp(d,wsArray,solo_data,restrictTime,timewindow,2.5,1);
 end
 
-restrictTime = [.5 , 4];
-% plot_SetAmp(d,wsArray,solo_data,restrictTime,2.5,1);
-
-restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
 set = {};
 gopix = sessionInfo.gopix;
 nogopix =  sessionInfo.nogopix;
@@ -3105,7 +3101,7 @@ for sets = [1,2,3,4,5,6]
                 'totalTouchKappa';'maxTouchKappa';'kappatrials'};
             % 'totaldev_whiskamp'; 'totaldev_whiskamp_binned'; 'totalpole_whiskamp'; 'totalpole_whiskamp_binned';
 %     [w_thetaenv] =   wdatasummary_devepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2.5);
-    [w_thetaenv] =   wdatasummary_wepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2.5);
+    [w_thetaenv] =   wdatasummary_wepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2);
 
     for i=1:numblocks
         for v = 1:length(var_set)
@@ -4399,16 +4395,17 @@ for j= 1:numblocks
         
     end
     axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel('Thetaenvelope'); xlabel('Trials');
-    
-    title([commentstr{1} 'Mean PeakTheta envelope - B R ']);set(gca,'FontSize',18);
+    legend('Mean Whisk Epoch','Peak Whisk Epoch','Mean Sampling Period');
+    title([commentstr{1} 'Theta envelope']);set(gca,'FontSize',18);
     saveas(gcf,['Thetaenv' datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print( h_fig1 ,'-depsc2','-painters','-loose',['Thetaenv ' datatoplot ' ' blocklist{j}]);
     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'tif');
     
     
-    axes(ah2);axis([0 count mindata-5 mindata+35]);grid on; ylabel('delta Theta Envelope'); xlabel('Trials');
+    axes(ah2);axis([0 count -10  25]);grid on; ylabel('delta Theta Envelope'); xlabel('Trials');
     title([commentstr{1} ' Change in Theta envelope ']);set(gca,'FontSize',18);
+    legend('Mean Whisk Epoch','Peak Whisk Epoch','Mean Sampling Period');
     saveas(gcf,['dThetaenv'  datatoplot ' ' blocklist{j}] ,'tif');
     saveas(gcf,['dThetaenv'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
@@ -4503,14 +4500,14 @@ for j= 1:numblocks
         
     end
     axes(ah3);
-    axis([0 count 0 .2]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
+    axis([0 count 0 .5]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
     set(gca,'FontSize',18);   
     saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(h_fig3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ]);
     axes(ah4);
-    axis([0 count 0 5]);grid on; ylabel('Change in Percent occupancy from baseline'); xlabel('Trials');
+    axis([0 count 0 6]);grid on; ylabel('Change in Percent occupancy from baseline'); xlabel('Trials');
     set(gca,'FontSize',18);   
     saveas(gcf,['dPrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
@@ -4607,14 +4604,14 @@ for j= 1:numblocks
         
     end
     axes(ah5);
-    axis([0 count 0 .2]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
+    axis([0 count 0 .5]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
     set(gca,'FontSize',18);   
     saveas(gcf,['PrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['PrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
     axes(ah6);
-    axis([0 count 0 5]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
+    axis([0 count 0 6]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
     set(gca,'FontSize',18);   
     saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
