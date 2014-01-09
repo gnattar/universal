@@ -3012,9 +3012,10 @@ if length(folder) <1
 end
 d = './plots';
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
+epoch_threshold = 2;
 if(get(handles.select_plot_SetAmp,'Value'))
     timewindow = [.5 , 4];
-    plot_SetAmp(d,wsArray,solo_data,restrictTime,timewindow,2.5,1);
+    plot_SetAmp(d,wsArray,solo_data,restrictTime,timewindow,epoch_threshold,1);
 end
 
 set = {};
@@ -3071,6 +3072,7 @@ for sets = 1:6
         temp= zeros(length(curr_trials(ind)),1);
         for k=1:length(curr_trials(ind))
             if (ismember(blocks.(str){i}(k),wSigtrials))
+                k
                 temp(k)=find(wSigtrials==blocks.(str){i}(k));
             end
         end
@@ -3101,7 +3103,7 @@ for sets = [1,2,3,4,5,6]
                 'totalTouchKappa';'maxTouchKappa';'kappatrials'};
             % 'totaldev_whiskamp'; 'totaldev_whiskamp_binned'; 'totalpole_whiskamp'; 'totalpole_whiskamp_binned';
 %     [w_thetaenv] =   wdatasummary_devepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2.5);
-    [w_thetaenv] =   wdatasummary_wepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,2);
+    [w_thetaenv] =   wdatasummary_wepoch(sessionInfo,wSigTrials,blocks.tag,blocks.(str),avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,trialsets{sets},timewindowtag,min_meanbarpos,baseline_barpos,epoch_threshold);
 
     for i=1:numblocks
         for v = 1:length(var_set)
@@ -3847,9 +3849,9 @@ load([path filesep filename2]);
 
 contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput', false);
 nodetects =  find(cellfun(@isempty,contacts_detected));
-%             contDet_param.threshDistToBarCenter = [.1   .90]; % super lax for bad tracking files
+            contDet_param.threshDistToBarCenter = [.1   1.0]; % super lax for bad tracking files
 %           contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
-        contDet_param.threshDistToBarCenter = [.1   .50]; %lax
+%         contDet_param.threshDistToBarCenter = [.1   .50]; %lax
 %          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
         contDet_param.thresh_deltaKappa = [-.1	.1];
