@@ -69,7 +69,7 @@ for s = 1:length(sets)
             subplot(10,2,i-sets(s,1)+1);
             plot(t{i},Set{i},'linewidth',1,'color','b'); hold on; 
             plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on; 
-            plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',8); 
+            plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',12); 
             axis([timewindow(1) timewindow(2) -30 30]);
             text(2.25,10,['T' num2str(CRtrials(i))]);
         catch

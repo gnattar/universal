@@ -3012,7 +3012,7 @@ if length(folder) <1
 end
 d = './plots';
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
-epoch_threshold = 2;
+epoch_threshold = 2.0;
 if(get(handles.select_plot_SetAmp,'Value'))
     timewindow = [.5 , 4];
     plot_SetAmp(d,wsArray,solo_data,restrictTime,timewindow,epoch_threshold,1);
@@ -4503,14 +4503,14 @@ for j= 1:numblocks
     end
     axes(ah3);
     axis([0 count 0 .5]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
-    set(gca,'FontSize',18);   
+    set(gca,'FontSize',18);  title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]); 
     saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(h_fig3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ]);
     axes(ah4);
-    axis([0 count 0 6]);grid on; ylabel('Change in Percent occupancy from baseline'); xlabel('Trials');
-    set(gca,'FontSize',18);   
+    axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from baseline'); xlabel('Trials');
+    set(gca,'FontSize',18);   title([commentstr 'Percent Ocuupancy from whisking epochs ' datatoplot  ]);
     saveas(gcf,['dPrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
@@ -4613,7 +4613,7 @@ for j= 1:numblocks
     set(gcf,'PaperPositionMode','auto');
     print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
     axes(ah6);
-    axis([0 count 0 6]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
+    axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
     set(gca,'FontSize',18);   
     saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');

@@ -60,18 +60,18 @@ d2 = figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1], 'color','w');
 c =copper(i);suptitle ([anm 'Cumulative totalTouchKappa_distributions from Sessions']);
 for i = 1:numSess
 %      bins = wSigSummary{1, i}.nogo_thetaenv_bins{1, 1}{1, 1} ;
-    bins = [-15:1:15];
+    bins = [-30:1:30];
    totalTouchKappa = wSigSummary{1, i}.go_totalTouchKappa{1, 1}{1, 1};
    temp = totalTouchKappa(:,2);
    temp(temp==0) = [];
    subplot(numSess,1,i);
     if(~isempty(temp))
         totalkappa_dist = histnorm(temp,bins);
-        plot([-15:15],totalkappa_dist,'color','k','Linewidth',1.5); xlabel('Kappa'); ylabel('Norm freq');  title('Kappa Dist Cummulative ');
-        axis([-15 15 0 .75]);
+        plot([-30:1: 30],totalkappa_dist,'color','k','Linewidth',1.5); xlabel('Kappa'); ylabel('Norm freq');  title('Kappa Dist Cummulative ');
+        axis([-30 30 0 .75]);
         text(.5,.5,['Contacts ' num2str(length(temp)) '/' num2str(length(totalTouchKappa)) ],'VerticalAlignment','top','HorizontalAlignment','center');
     else
-        axis([-15 15 0 .25]);
+        axis([-30 30 0 .25]);
         text(.5,.2,['Contacts ' num2str(length(temp)) '/' num2str(length(totalTouchKappa)) ],'VerticalAlignment','top','HorizontalAlignment','center');
     end
 
