@@ -3012,7 +3012,7 @@ if length(folder) <1
 end
 d = './plots';
 restrictTime = str2num(get(handles.timewindow_wSiganal,'String'));
-epoch_threshold = 3;
+epoch_threshold = 2.5;
 if(get(handles.select_plot_SetAmp,'Value'))
     timewindow = [.5 , 4];
     plot_SetAmp(d,wsArray,solo_data,restrictTime,timewindow,epoch_threshold,1);
