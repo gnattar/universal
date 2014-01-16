@@ -3,11 +3,12 @@
 
 function plot_SetAmp(d,wsArray,solo_data,restrictTime,timewindow,mad_threshold,redo)
 
-if(nargin < 2)
+if(isempty(solo_data)|| isempty(wsArray))
 [filename1,path]= uigetfile('wsArray*.mat', 'Load wsArray.mat file');
 load([path filesep filename1]);
 [filename2,path]= uigetfile('solodata*.mat', 'Load solodata.mat file');
 load([path filesep filename2]);
+timewindow = [.5,4];
 end
 names=cellfun(@(x) x.trackerFileName(length(x.trackerFileName)-21:length(x.trackerFileName)-18),wsArray.ws_trials,'uniformoutput',false);
 wSig_trialnums =str2num(char(names));
@@ -53,8 +54,8 @@ Set=cellfun(@(x) x.Setpoint{1}, wSigTrials(CRtrials),'Uniformoutput',false);
 t = cellfun(@(x) x.time{1}, wSigTrials(CRtrials),'Uniformoutput',false);
 Amp =cellfun(@(x) x.Amplitude{1}, wSigTrials(CRtrials),'Uniformoutput',false);
 theta = cellfun(@(x) x.theta{1}, wSigTrials(CRtrials),'Uniformoutput',false);
-sets = [11 , 30;31 ,50; 51,70; 71, 90];
-setnames = {'CR 11:30','CR 31:50','CR 51:70','CR 71:90'};
+sets = [11 , 30;31 ,50; 51,70; 71, 90; 91,110; 111, 130;131, 150;151, 170;171, 190;191, 210;];
+setnames = {'CR 11:30','CR 31:50','CR 51:70','CR 71:90','CR 91:110','CR 111:130','CR 131:150','CR 151:170','CR 171:190','CR 191:210'};
 sc = get(0,'ScreenSize');
 
 
@@ -73,8 +74,12 @@ for s = 1:length(sets)
             axis([timewindow(1) timewindow(2) -30 30]);
             text(2.25,10,['T' num2str(CRtrials(i))]);
         catch
-            'Not more traces'
-            break
+            'No more traces'
+            set(h1b,'PaperPositionMode','auto');
+            print(h1b,'-dtiff','-painters','-loose',[name setnames{s}])
+            close(h1b);
+            cd ..
+           return
         end
     end
     set(h1b,'PaperPositionMode','auto');

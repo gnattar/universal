@@ -4393,7 +4393,7 @@ for j= 1:numblocks
             hline(0,{'r-','linewidth',1});
         end
         
-        count = count+binnedxdata(end)-binnedxdata(1)+50;
+        count = count+binnedxdata(end)-binnedxdata(1)+20;
         
     end
     axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel('Thetaenvelope'); xlabel('Trials');
@@ -4479,7 +4479,7 @@ for j= 1:numblocks
         collateddata = [binnedxdata;binnedydata]';
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-%         count = count+binnedxdata(end)-binnedxdata(1)+50;
+%         count = count+binnedxdata(end)-binnedxdata(1)+20;
         
         axes(ah4);
         if(i<num_baseline_sessions+1)
@@ -4497,7 +4497,7 @@ for j= 1:numblocks
         collateddata = [binnedxdata;binnedydata]';
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-        count = count+binnedxdata(end)-binnedxdata(1)+50;
+        count = count+binnedxdata(end)-binnedxdata(1)+20;
         
         
     end
@@ -4583,7 +4583,7 @@ for j= 1:numblocks
         collateddata = [binnedxdata;binnedydata]';
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-%         count = count+binnedxdata(end)-binnedxdata(1)+50;
+%         count = count+binnedxdata(end)-binnedxdata(1)+10;
         
         axes(ah6);
         if(i<num_baseline_sessions+1)
@@ -4601,7 +4601,7 @@ for j= 1:numblocks
         collateddata = [binnedxdata;binnedydata]';
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-        count = count+binnedxdata(end)-binnedxdata(1)+50;
+        count = count+binnedxdata(end)-binnedxdata(1)+20;
         
         
     end
@@ -4663,7 +4663,7 @@ for j= 1:numblocks
         collateddata = [binnedxdata;binnedydata]';
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-        count = count+binnedxdata(end)-binnedxdata(1)+50;
+        count = count+binnedxdata(end)-binnedxdata(1)+10;
         
     end
     axis([0 count 0 8]);grid on; ylabel('Mean Whisking amplitude'); xlabel('Trials');
@@ -4711,7 +4711,7 @@ for j= 1:numblocks
         %        wSigSum_Sessions.thr_durbinned{i,j}= [binnedxdata;binnedydata]';
         collateddata = [xdata;ydata]';
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata};
-        count = count+binnedxdata(end)+50;
+        count = count+binnedxdata(end)+10;
 
     end
     axis([0 count -15 15]);grid on; ylabel('TotalTouchKappa'); xlabel('Trials');
@@ -4764,7 +4764,7 @@ for j= 1:numblocks
             wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata};
             
             legendstr(i) = {['session' num2str(i) ' ']};
-            count = count+xdata(end)+50;
+            count = count+xdata(end)+10;
             
         end       
         if(k ==1)
