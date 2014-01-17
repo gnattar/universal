@@ -4502,15 +4502,15 @@ for j= 1:numblocks
         
     end
     axes(ah3);
-    axis([0 count 0 .5]);grid on; ylabel('Percent occupancy past biased barpos'); xlabel('Trials');
+    axis([0 count 0 .5]);grid on; ylabel('Percent occupancy past biased position'); xlabel('Trials');
     set(gca,'FontSize',18);  title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]); 
     saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(h_fig3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ]);
     axes(ah4);
-    axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from baseline'); xlabel('Trials');
-    set(gca,'FontSize',18);   title([commentstr 'Percent Ocuupancy from whisking epochs ' datatoplot  ]);
+    axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy past biased position'); xlabel('Trials');
+    set(gca,'FontSize',18);   title([commentstr 'Change in Percent Ocuupancy past biased position' datatoplot  ]);
     saveas(gcf,['dPrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
