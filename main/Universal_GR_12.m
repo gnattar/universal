@@ -4414,7 +4414,8 @@ for j= 1:numblocks
     print( h_fig2 ,'-depsc2','-painters','-loose',['Thetaenv Error'  datatoplot ' ' blocklist{j}]);
     hold off;
 end
-
+close(h_fig1);
+close(h_fig2);
 
 
 % plotting proccupancy sampling period
@@ -4519,110 +4520,111 @@ for j= 1:numblocks
     
 end
 hold off;
-
+close(h_fig3);
+close(h_fig4);
 
 % plotting proccupancy whisking epochs
-mindata =0;
-maxdata =0;
-for j= 1:numblocks
-    block =j;
-    sc = get(0,'ScreenSize');
-    h_fig5 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
-    ah5 = axes('Parent',h_fig5);
-    title([commentstr 'Percent Ocuupancy past biased bar position from whisk epochs ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
-    
-    h_fig6 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
-    ah6 = axes('Parent',h_fig6);
-    title([commentstr 'Change in Percent Ocuupancy past biased bar position from whisking epochs ' ]);
-    
-    hold on;
-    count =0;
-    prev=0;
-    datawave = {'prcoccupancy_epoch_binned'};
-
-    if(num_baseline_sessions>0)
-        baseline_sessions = find(tags == 'B');
-        mean_baseline = zeros(length(datawave),1);
-         for k = 1:length(datawave)           
-            
-            selecteddata = strcat(datatoplot,'_',datawave(k));
-                for i = 1:num_baseline_sessions
-                    temp = wSigSummary{i}.(selecteddata{1});
-                    temp = temp{1};
-                    binnedydata = temp{block}(:,2)';       
-                    mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
-                end
-             mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
-         end
-    else
-        mean_baseline = 1;
-    end    
-    
-    
-    
-    for i = 1:numsessions
-        selecteddata = strcat(datatoplot,'_',datawave);
-        temp = wSigSummary{i}.(selecteddata{1});
-        temp = temp{1};
-        
-        binnedxdata = temp{block}(:,1)';
-        binnedydata = temp{block}(:,2)';
-        axes(ah5);
-        if(i<num_baseline_sessions+1)
-            axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) -.1 .6]);
-            plot(binnedxdata-binnedxdata(1)+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
-            
-        else
-            axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) -.1 .6]);
-            plot(binnedxdata-binnedxdata(1)+count,binnedydata,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
-            
-        end
-        hline(0,{'k-','linewidth',1});
-        hline(.5,{'r-','linewidth',1});
-        legendstr(i) = {['session' num2str(i) ' ']};
-        collateddata = [binnedxdata;binnedydata]';
-        maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
+% mindata =0;
+% maxdata =0;
+% for j= 1:numblocks
+%     block =j;
+%     sc = get(0,'ScreenSize');
+%     h_fig5 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
+%     ah5 = axes('Parent',h_fig5);
+%     title([commentstr 'Percent Ocuupancy past biased bar position from whisk epochs ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
+%     
+%     h_fig6 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
+%     ah6 = axes('Parent',h_fig6);
+%     title([commentstr 'Change in Percent Ocuupancy past biased bar position from whisking epochs ' ]);
+%     
+%     hold on;
+%     count =0;
+%     prev=0;
+%     datawave = {'prcoccupancy_epoch_binned'};
+% 
+%     if(num_baseline_sessions>0)
+%         baseline_sessions = find(tags == 'B');
+%         mean_baseline = zeros(length(datawave),1);
+%          for k = 1:length(datawave)           
+%             
+%             selecteddata = strcat(datatoplot,'_',datawave(k));
+%                 for i = 1:num_baseline_sessions
+%                     temp = wSigSummary{i}.(selecteddata{1});
+%                     temp = temp{1};
+%                     binnedydata = temp{block}(:,2)';       
+%                     mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
+%                 end
+%              mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
+%          end
+%     else
+%         mean_baseline = 1;
+%     end    
+%     
+%     
+%     
+%     for i = 1:numsessions
+%         selecteddata = strcat(datatoplot,'_',datawave);
+%         temp = wSigSummary{i}.(selecteddata{1});
+%         temp = temp{1};
+%         
+%         binnedxdata = temp{block}(:,1)';
+%         binnedydata = temp{block}(:,2)';
+%         axes(ah5);
+%         if(i<num_baseline_sessions+1)
+%             axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) -.1 .6]);
+%             plot(binnedxdata-binnedxdata(1)+count,binnedydata,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
+%             
+%         else
+%             axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) -.1 .6]);
+%             plot(binnedxdata-binnedxdata(1)+count,binnedydata,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
+%             
+%         end
+%         hline(0,{'k-','linewidth',1});
+%         hline(.5,{'r-','linewidth',1});
+%         legendstr(i) = {['session' num2str(i) ' ']};
+%         collateddata = [binnedxdata;binnedydata]';
+%         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
+%         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
+% %         count = count+binnedxdata(end)-binnedxdata(1)+50;
+%         
+%         axes(ah6);
+%         if(i<num_baseline_sessions+1)
+%             axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) 0 5]);
+%             plot(binnedxdata-binnedxdata(1)+count,binnedydata./mean_baseline,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
+%             
+%         else
+%             axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) 0 5]);
+%             plot(binnedxdata-binnedxdata(1)+count,binnedydata./mean_baseline,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
+%             
+%         end
+%         hline(0,{'k-','linewidth',1});
+%         hline(.5,{'k-','linewidth',1});
+%         legendstr(i) = {['session' num2str(i) ' ']};
+%         collateddata = [binnedxdata;binnedydata]';
+%         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
+%         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
 %         count = count+binnedxdata(end)-binnedxdata(1)+50;
-        
-        axes(ah6);
-        if(i<num_baseline_sessions+1)
-            axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) 0 5]);
-            plot(binnedxdata-binnedxdata(1)+count,binnedydata./mean_baseline,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
-            
-        else
-            axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) 0 5]);
-            plot(binnedxdata-binnedxdata(1)+count,binnedydata./mean_baseline,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
-            
-        end
-        hline(0,{'k-','linewidth',1});
-        hline(.5,{'k-','linewidth',1});
-        legendstr(i) = {['session' num2str(i) ' ']};
-        collateddata = [binnedxdata;binnedydata]';
-        maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-        count = count+binnedxdata(end)-binnedxdata(1)+50;
-        
-        
-    end
-    axes(ah5);
-    axis([0 count 0 .5]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
-    set(gca,'FontSize',18);   
-    saveas(gcf,['PrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
-    saveas(gcf,['PrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
-    set(gcf,'PaperPositionMode','auto');
-    print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
-    axes(ah6);
-    axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
-    set(gca,'FontSize',18);   
-    saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
-    saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
-    set(gcf,'PaperPositionMode','auto');
-    print(h_fig6,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
-
-    
-end
-hold off;
+%         
+%         
+%     end
+%     axes(ah5);
+%     axis([0 count 0 .5]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
+%     set(gca,'FontSize',18);   
+%     saveas(gcf,['PrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
+%     saveas(gcf,['PrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
+%     set(gcf,'PaperPositionMode','auto');
+%     print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
+%     axes(ah6);
+%     axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
+%     set(gca,'FontSize',18);   
+%     saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
+%     saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
+%     set(gcf,'PaperPositionMode','auto');
+%     print(h_fig6,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
+% 
+%     
+% end
+% hold off;
 
 
 
@@ -4674,7 +4676,7 @@ for j= 1:numblocks
     print(ah7,'-depsc2','-painters','-loose',['Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
 end
 hold off;
-
+close(ah7);
 % plotting kappa
 mindata =0;
 maxdata =0;
@@ -4722,6 +4724,7 @@ for j= 1:numblocks
     print(ah8,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
     hold off;
 end
+close(ah8);
     plot_dist_sessions(commentstr,numsessions);
     
 % plotting performance
@@ -4796,7 +4799,8 @@ for j= 1:numblocks
            
     end  
 end
-
+close(h_fig11);
+close(h_fig12);
      javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar');
      jheapcl(1);
     

@@ -11,7 +11,7 @@ baseline_bartheta = mean(temp);
 % anm = 'gr199201';
 % numSess = 8;
  sc = get(0,'ScreenSize');
-figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*3/4], 'color','w');
+d0=figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*3/4], 'color','w');
 suptitle ([anm 'Normalized Thetaenv_distributions from Sessions']);
 for i = 1:numSess
     dist = wSigSummary{1, i}.nogo_dist{1, 1}{1, 1};
@@ -30,6 +30,7 @@ xlabel ('Theta env (deg)');
 fnam = [ anm '_NormThetadist'];
 set(gcf,'PaperPositionMode','auto');
 saveas(gcf,[pwd,filesep,fnam],'tif');
+close(d0);
 
 d1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*3/4], 'color','w');
 c =copper(i);suptitle ([anm 'Cumulative Thetaenv_distributions from Sessions']);
