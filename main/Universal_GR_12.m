@@ -4510,7 +4510,8 @@ for j= 1:numblocks
     print(h_fig3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ]);
     axes(ah4);
     axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy past biased position'); xlabel('Trials');
-    set(gca,'FontSize',18);   title([commentstr 'Change in Percent Ocuupancy past biased position' datatoplot  ]);
+    set(gca,'FontSize',12);   title([commentstr 'Change in Percent Ocuupancy past biased position' datatoplot  ]);
+
     saveas(gcf,['dPrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
@@ -4614,7 +4615,7 @@ for j= 1:numblocks
     print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
     axes(ah6);
     axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
-    set(gca,'FontSize',18);   
+    set(gca,'FontSize',12);   
     saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
@@ -4998,21 +4999,22 @@ save('wSigSum_anm','wSigSum_anm');
 % --- Executes on button press in plot_pooledbatchdata.
 function plot_pooledbatchdata_Callback(hObject, eventdata, handles)
 global wSigSessSum_anm
+wSigSessSum_anm = {};
 [filename,pathName]=uigetfile('wSigSum_anm.mat','Load wSigSum_anm.mat file');
 load( [pathName filesep filename], '-mat');
 cd (pathName);
 trialtype_select = 'nogo';
-mean_subtract_on =1;
 count =1;
-
 fieldnames = {'meandev_thetaenv';'peakdev_thetaenv';'meanpole_thetaenv';'prcoccupancy';'meandev_whiskamp'}; 
 
 for k = 1:length(fieldnames)
     current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
     if(strcmp(current_field,'nogo_prcoccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp') )
-        mean_subtract_on = 0;
+        plot_subdelta = 0;
+    else
+        plot_subdelta =1;
     end    
-    [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,current_field{1},mean_subtract_on);
+    [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,current_field{1},plot_subdelta);
     wSigSessSum_anm.(propname) = tempobj;
     numanm = length(tempobj);
 end   
@@ -5026,36 +5028,33 @@ for i = 1:numanm
 end
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
 
-%         colr(:,:,1) = gray(num);
-%         colr(:,:,2) = winter(num);
-%         colr(:,:,3) = hot(num);
-%         colr(:,:,4) = bone(num);
-
 colr(:,:,1) = lines(numanm);
-
 
 for k = 1:length(fieldnames)  
     current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
     
     if(strcmp(current_field,'nogo_prcoccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp_binned'))
-        propname = strrep(current_field,'_binned','');       
-        mean_subtract_on = 0;
+        propname = strrep(current_field,'_binned','');      
+        plot_subdelta = 0;
     else
-        propname = strrep(current_field,'_binned','_err');
-        mean_subtract_on = 1;
+        propname = strrep(current_field,'_binned',''); 
+        plot_subdelta = 1;
     end
+    pname=strrep(propname{1},'_',' ')
+    
     propname= propname{1};
     name = [propname 'normchange'];
+    meanname = [propname 'mean'];
     resid = [propname 'residuals'];
     tempobj = wSigSessSum_anm.(propname) ;
     
     numanm = size(tempobj,2);
     tempmat =nan(2,max(sess_count)+2,numanm);
+    tempmat_mean =nan(1,max(sess_count)+2,numanm);
     sc = get(0,'ScreenSize');   
     f1=figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
-    a1=axes('Parent',f1);title([ propname]);
+    a1=axes('Parent',f1);title([pname]);
     no_bs=0;
-%     temp_collected_data = zeros(numanm,(max(sess_count)+2)*2);
     for i = 1:numanm        
         numsessions = size(tempobj{i},2);   
         sesstags = wSigSessSum_anm.sesstype{i}{1};
@@ -5067,53 +5066,98 @@ for k = 1:length(fieldnames)
         end
         numskips  =  2 - num_bs;        
         count = 250*numskips;
+        collectmat = zeros(numsessions,2);
         for j = 1:numsessions
             
             tempmat(:,j+numskips,i) = tempobj{i}{j}.(name)(:,2);
-            if mean_subtract_on
-                errorbar(tempobj{i}{j}.(name)(:,1)+count,tempobj{i}{j}.(name)(:,2),tempobj{i}{j}.(name)(:,3),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1)); hold on;
-            else
-                plot(tempobj{i}{j}.(name)(:,1)+count ,tempobj{i}{j}.(name)(:,2),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1)); hold on;
-            end
-            hline (0,'k:');
-            xlabel('Trials'); ylabel ([propname ' change']);
+            tempmat_mean(1,j+numskips,i) = tempobj{i}{j}.(meanname)(1);
+            numpnts = size(tempobj{i}{j}.(name)(:,1),1);
+%             plot(mean(tempobj{i}{j}.(name)(:,1)+count),mean(tempobj{i}{j}.(name)(:,2)),'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1),'linewidth',2); hold on;
+            collectmat(j,1:2) = [mean(tempobj{i}{j}.(name)(:,1)+count),mean(tempobj{i}{j}.(name)(:,2))];
             count = max(tempobj{i}{j}.(name)(:,1)+count);
         end
-        if mean_subtract_on
-            title ([strrep(propname,'_',' ') '  Norm. Change']);
+            plot( collectmat(:,1),collectmat(:,2), 'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1),'linewidth',2);      hold on;
+            hline (0,'k:');
+            xlabel('Trials'); ylabel ([pname ' change']);
+        if plot_subdelta
+            title ([strrep(pname,'_',' ') '  Abs. Change']);
         else
-            title ([strrep(propname,'_',' ') '  Change ']);
+            title ([strrep(pname,'_',' ') ' Times Change ']);
         end
     end   
     
     set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
-     saveas(gcf,propname,'fig');
-     saveas(gcf,propname,'tif');
-    print(gcf,'-depsc2','-painters','-loose',propname)  
+     saveas(gcf,pname,'fig');
+     saveas(gcf,pname,'tif');
+    print(gcf,'-depsc2','-painters','-loose',pname)  
      wSigSessSum_anm.(propname) = tempmat;
+     
     avg_anm_sess = nanmean(tempmat,3); 
-    
     temp = isnan(avg_anm_sess);
     avg_anm_sess(:,find(sum(temp)>0)) = [];
-%     tempmat(:,find(sum(temp)>0),:) = [];
-    std_anm_sess = nanstd(tempmat,1,3);%./sqrt(numanm+1); 
+    std_anm_sess = nanstd(tempmat,1,3)./sqrt(numanm+1); 
      std_anm_sess(:,find(sum(temp)>0)) = [];
     f2 =figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
     a2=axes('Parent',f2);
-    title(['avg_' propname]);
+        f3 =figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
+    a3=axes('Parent',f3);
+%     title(['avg_' propname]);
+
     for i = 1: length(avg_anm_sess)
-        xval(:,i) = [(no_bs*250)+((i-1)*250)+50 ;(no_bs*250)+((i-1)*250)+250];
-        errorbar(xval(:,i),avg_anm_sess(:,i),std_anm_sess(:,i),'color','k','Marker','o','Markersize',8,'MarkerFaceColor',[0 0 0],'linewidth',2);hold on;
+%         xval(:,i) = [(no_bs*250)+((i-1)*250)+50 ;(no_bs*250)+((i-1)*250)+250];
+        xval(:,i) = [i*2-1;i*2];
+        axes(a2);
+         errorbar(xval(:,i),avg_anm_sess(:,i),std_anm_sess(:,i)/sqrt(numanm+1),'color','k','Marker','o','Markersize',8,'MarkerFaceColor',[0 0 0],'linewidth',2);hold on;       
+ 
     end
+     title([pname ' Average change ']);
+    ylabel([ 'Change in ' pname]);
+    xlabel('Sessions');
+   
     temp =zeros(size(xval,1),size(xval,2),3);
     temp(:,:,1) = xval(:,:);
     temp(:,:,2) =avg_anm_sess(:,:);
     temp(:,:,3) =std_anm_sess(:,:);
     wSigSessSum_anm.(['avg' propname]) = temp;
     set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
-     saveas(gcf,['avg_' propname],'fig');
-      saveas(gcf,['avg_' propname],'tif');
-    print(gcf,'-depsc2','-painters','-loose',['avg' propname])  
+    saveas(gcf,['avg_' pname '2pt'],'fig');
+    saveas(gcf,['avg_' pname '2pt'],'tif');
+    print(gcf,'-depsc2','-painters','-loose',['avg' pname])
+    
+    %%% 
+    num_bl = 2;
+    mean_b = mean(tempmat_mean(1,1:num_bl,:));
+    mean_b = repmat(mean_b,1,size(tempmat_mean,2));
+    if(plot_subdelta)
+      mean_sub= tempmat_mean - mean_b;
+    else
+       mean_sub= tempmat_mean ./ mean_b;
+    end
+%     tempmat_mean
+    avg_anm_sess = nanmean(mean_sub,3); 
+    std_anm_sess = nanstd(mean_sub,1,3)./sqrt(numanm+1);
+    avg_anm_sess(isnan(avg_anm_sess)) =[];
+    std_anm_sess(isnan(std_anm_sess)) =[];
+%     x = mean(xval,1);
+%     x = x(1:length(avg_anm_sess));
+    x= [1:length(avg_anm_sess)];
+
+    axes(a3);
+    errorbar(x,avg_anm_sess',std_anm_sess','color','k','Marker','o','Markersize',8,'MarkerFaceColor',[.5 .5 .5],'linewidth',2);hold on;
+    temp =zeros(1,size(avg_anm_sess,2),3);
+    temp(:,:,1) = x;
+    temp(:,:,2) =avg_anm_sess(:,:);
+    temp(:,:,3) =std_anm_sess(:,:);
+    
+    wSigSessSum_anm.(['mavg' propname]) = temp;
+    
+    title([pname 'Change from baseline sessions']);
+    ylabel([ 'Change in ' pname]);
+    xlabel('Sessions');
+    set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
+     saveas(gcf,['avg_' pname],'fig');
+      saveas(gcf,['avg_' pname],'tif');
+    print(gcf,'-depsc2','-painters','-loose',['avg' pname])  
      
 end
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
@@ -5121,51 +5165,67 @@ save('wSigSessSum_anm.mat','wSigSessSum_anm');
 
     
     
-function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,mean_subtract_on)
-%     propname = strrep(fieldname,'nogo_','');   
-    if mean_subtract_on
-         propname = strrep(fieldname,'_binned','_err');
-         
-    else
-         propname = strrep(fieldname,'_binned','');
-    end
+function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,plot_subdelta)
+
+    propname = strrep(fieldname,'_binned','');
     numanm = size(wSigSum_anm,2);    
     for i = 1:numanm
         curr_anm=wSigSum_anm{i};
         numsessions=size(curr_anm,2);         
         sess_count(i,1) =numsessions;
-        
+        mean_baseline = 0;
+        num_bl = 0;
+        for j= 1:numsessions
+            block =1;
+            curr_sess = curr_anm{j};
+            curr_sess_type = curr_sess.tag;
+            curr_data =curr_sess.(fieldname);
+            curr_data = cell2mat(curr_data{block});       
+            if(strcmpi(curr_sess_type,'b'))
+                mean_baseline =  mean_baseline + mean(curr_data(:,2));   
+                num_bl = num_bl+1;
+            end
+        end
+        if(num_bl>0)
+            mean_baseline = mean_baseline/num_bl;
+        else
+            mean_baseline = 0;
+        end
+
         for j= 1:numsessions
             block =1;
             curr_sess = curr_anm{j};
             curr_sess_type = curr_sess.tag;
             curr_data =curr_sess.(fieldname);
             curr_data = cell2mat(curr_data{block});
-            if(strcmpi(curr_sess_type,'b'))
-                target_barpos = curr_sess.nogo_mean_barpos{1};
-                target_barpos = target_barpos{block};
+% % %             if(strcmpi(curr_sess_type,'b'))
+% % %                 mean_baseline = mean(curr_data(:,2));
+% % % %                 target_barpos = curr_sess.nogo_mean_barpos{1};
+% % % %                 target_barpos = target_barpos{block};
+% % %             else               
+% % % %                 target_barpos = curr_sess.nogo_biased_barpos{1};
+% % % %                 target_barpos = target_barpos{block};
+% % %             end
+            x = curr_data(:,1); %+ (numskips*100);
+            if(plot_subdelta)
+%                 y=curr_data(:,2)-target_barpos;  
+                  y=curr_data(:,2)-mean_baseline;       % subtractive normalization
             else
-                target_barpos = curr_sess.nogo_biased_barpos{1};
-                target_barpos = target_barpos{block};
-            end
-            x = curr_data(:,1) %+ (numskips*100);
-            if(mean_subtract_on)
-                y=curr_data(:,2)-target_barpos;  
-            else
-                y=curr_data(:,2);
+                  y=curr_data(:,2)/mean_baseline;       % divisive normalization
             end
             [p,S] = polyfit(x,y,1); %st line fit
             [yfit,delta] = polyval(p,x,S); %delta is the error estimate in prediction
             temp = length(x);
-            tempobj{i}{j}.([propname ]) = [x,y];
+            tempobj{i}{j}.([propname]) = [x,y];
             tempobj{i}{j}.([propname 'slope_intercept']) = p';
             tempobj{i}{j}.([propname 'residuals']) = delta;
             tempobj{i}{j}.([propname 'change']) = [x(1) ,yfit(1);x(temp),yfit(temp)];
+            
             [y1,delta1] =polyval(p,50,S);
             [y2,delta2] =polyval(p,250,S);
             tempobj{i}{j}.([propname 'normchange']) = [50 ,y1,delta1;250,y2,delta2];
-
-
+            tempobj{i}{j}.([propname 'mean'])= mean([y1,y2]);
+            
         end
 
     end

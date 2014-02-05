@@ -164,14 +164,14 @@ for(blk=1:numblocks)
         strg = var_set{v};
         
         fnam=[str strg '.tif'];
-        h1a=figure('Name',[strg ' plot']);
+        h1a=figure('Name',[strg ' plot'],'Visible','off');
         set(0,'CurrentFigure',h1a);
         tempstr =  strrep(strg,'_', ' ');
         tempstr = strrep(tempstr,'meandev', 'Mean Whisk Epoch');
         tempstr = strrep(tempstr,'epoch', ' Whisk Epoch');
         tempstr = strrep(tempstr,'meanpole', '  Mean Sampling Period');
         tempstr = strrep(tempstr,'thetaenv', ' Theta Envelope');
-        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  ' ' tempstr ' from ' str 'trials']);
+        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  ' ' tempstr ' from ' str 'trials']);set(gcf,'Visible','off');set(gcf,'Visible','off');
 
         windowSize=10;
         grid on;
@@ -226,9 +226,9 @@ for(blk=1:numblocks)
 
         %% plot dist
         fnam=[str 'Dist' '.tif'];
-        h1a=figure('Name',[strg ' plot']);
+        h1a=figure('Name',[strg ' plot'],'Visible','off');
         set(0,'CurrentFigure',h1a);
-        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  'Thetaenv Distribution from ' str ' trials']);
+        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  'Thetaenv Distribution from ' str ' trials']);set(gcf,'Visible','off');
         %         subplot(numblocks*2,3,(blk-1)*2+3);
 
         nonzero_distvals = sum((thetaenv_dist_epoch>0),1);
@@ -269,9 +269,9 @@ for(blk=1:numblocks)
 
         %%plot thetaenv first and last n trials
         fnam=[str 'Theta_env trials.tif'];
-        h1c=figure('Name','Theta Envelope Trials');
+        h1c=figure('Name','Theta Envelope Trials','Visible','off');
         set(0,'CurrentFigure',h1c);
-        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  ' ' str ' Trials Early - Late']);
+        suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  ' ' str ' Trials Early - Late']);set(gcf,'Visible','off');
 
         xt = thetaenv_time;
         %          subplot(numblocks*2,3,(blk-1)*2+4);
@@ -302,7 +302,7 @@ end
 
 
 sc = get(0,'ScreenSize');
-h1b = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w');
+h1b = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w','Visible','off');
 waterfall(occupancy_bins,trialnums,thetaenv_occupancy); hold on;
 vline(biased_bartheta,{'w', 'linewidth',1.5});
 vline([biased_bartheta-shoulder, biased_bartheta+shoulder],{'w--','linewidth',0.5});
@@ -315,7 +315,7 @@ close(h1b);
 %% plot kappa
 
 fnam=[str 'fkappa.tif'];
-h2=figure('Name','Kappa');
+h2=figure('Name','Kappa','Visible','off');
 set(0,'CurrentFigure',h2);
 
 for(blk=1:numblocks)
