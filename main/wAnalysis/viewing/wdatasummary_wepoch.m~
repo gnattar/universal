@@ -1,6 +1,6 @@
 
 function[w_data]...
-    =  wdatasummary_wepoch(sessionInfo,obj,block_tags,block_trialnums,avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,str,timewindowtag,min_meanbarpos,baseline_barpos,dev_threshold)
+    =  wdatasummary_wepoch(sessionInfo,obj,block_tags,block_trialnums,avg_trials,gopix,nogopix,restrictTime,pd,plot_whiskerfits,str,timewindowtag,min_meanbarpos,baseline_barpos,dev_threshold,data_to_analyze)
 %% new version : compare within block & with top 90% percentile of setpoint values
 % w_setpoint_trials % all setpoint values from all trials  entire length
 % w_setpoint_early % within the restricted time window from early trials
@@ -8,11 +8,11 @@ function[w_data]...
 % w_setpoint_trials_med % mean of 90th percentile of setpoint values within window
 % w_setpoint_trials_width std of the points avgd over
 % data_to_analyze = 1 (theta) = 0 (thetaenvelope)
-w_thetaenv = struct('thetaenvtrials',[],'time',[],'dist',[],'bins',[],'amp',[],'dist_epoch',[],'meandev_thetaenv',[],'meandev_thetaenv_binned',[],'meanpole_thetaenv',[],'meanpole_thetaenv_binned',[],...
+w_data = struct('datatrials',[],'time',[],'dist',[],'bins',[],'amp',[],'dist_epoch',[],'meandev_data',[],'meandev_data_binned',[],'meanpole_data',[],'meanpole_data_binned',[],...
     'meandev_whiskamp',[],'meandev_whiskamp_binned',[],...
     'meanpole_whiskamp',[],'meanpole_whiskamp_binned',[], ...
-    'peakdev_thetaenv',[],'peakdev_thetaenv_binned',[],...
-    'prepole_thetaenv',[],'prepole_thetaenv_binned',[],'prcoccupancy',[],'prcoccupancy_binned',[],'prcoccupancy_epoch',[],'prcoccupancy_epoch_binned',[],'pval',[],'mean_barpos',[]);
+    'peakdev_data',[],'peakdev_data_binned',[],...
+    'prepole_data',[],'prepole_data_binned',[],'prcoccupancy',[],'prcoccupancy_binned',[],'prcoccupancy_epoch',[],'prcoccupancy_epoch_binned',[],'pval',[],'mean_barpos',[]);
 
 %'totalpole_whiskamp',[],'totalpole_whiskamp_binned',[], 'totaldev_whiskamp',[],'totaldev_whiskamp_binned',[],
 numblocks = size(block_tags,2);
@@ -63,27 +63,27 @@ fpath = [pd '/plots/' timewindowtag '/' str];
 for(blk=1:numblocks)
     trialnums = block_trialnums{blk};
     col=jet(length(trialnums));
-    thetaenv_bins = -50:2.5:50;
+    data_bins = -50:2.5:50;
     occupancy_bins = -40:1:40;
     occupancy_nbins = length(occupancy_bins );
-    nbins=length(thetaenv_bins);
-    thetaenv_dist = nan(length(trialnums),nbins);
-    thetaenv_dist_epoch = nan(length(trialnums),nbins);
-    thetaenv_occupancy = nan(length(trialnums), occupancy_nbins);
-    thetaenv_trials = nan(length(trialnums)+1,numpoleframes);
+    nbins=length(data_bins);
+    data_dist = nan(length(trialnums),nbins);
+    data_dist_epoch = nan(length(trialnums),nbins);
+    data_occupancy = nan(length(trialnums), occupancy_nbins);
+    data_trials = nan(length(trialnums)+1,numpoleframes);
     amp_trials= nan(length(trialnums)+1,numpoleframes);
-    local.meandev_thetaenv = nan(length(trialnums),2);
-    local.peakdev_thetaenv = nan(length(trialnums),2);
+    local.meandev_data = nan(length(trialnums),2);
+    local.peakdev_data = nan(length(trialnums),2);
     local.totaldev_whiskamp = nan(length(trialnums),1);
     local.meandev_whiskamp = nan(length(trialnums),1);
-    local.meanpole_thetaenv = nan(length(trialnums),2);
+    local.meanpole_data = nan(length(trialnums),2);
     local.totalpole_whiskamp = nan(length(trialnums),1);
     local.meanpole_whiskamp = nan(length(trialnums),1);
     local.prcoccupancy = nan(length(trialnums),1);
     local.prcoccupancy_epoch = nan(length(trialnums),1);
-    local.prepole_thetaenv = nan(length(trialnums),2);
+    local.prepole_data = nan(length(trialnums),2);
     ref_time = restrictTime(1)+.002:.002:restrictTime(2);ref_time=round(ref_time.*1000)./1000;
-    thetaenv_time =   ref_time;
+    data_time =   ref_time;
     numpoleframes = length(ref_time);
     
     %        count =1;
@@ -101,6 +101,11 @@ for(blk=1:numblocks)
             amp     = obj{t}.Amplitude{1,1};
             theta = obj{t}.theta{1,1};        
             thetaenv = envelope(theta,'linear');
+            if(data_to_analyze) %1 = theta
+                data = theta;
+            else % 0 = thetaenv
+                data = thetaenv;
+            end
             xt = obj{t}.time{1,1};xt = round( xt.*1000)./1000;
             poleinds =  find((restrictTime(1)< xt) & (xt<=restrictTime(2)));
             poleinds_dev = find(amp(poleinds)>dev_threshold*mad(amp(poleinds)));
@@ -110,15 +115,15 @@ for(blk=1:numblocks)
                 trialnums(i);
                 obj{i}.trackerFileName
             end
-            thetaenv_pole = thetaenv(poleinds);
+            data_pole = data(poleinds);
             xt_pole = xt(poleinds);
             [lia,matchedinds]= ismember( xt_pole,ref_time);
-            thetaenv_trials(i,matchedinds>0) =   thetaenv_pole;
-            thetaenv_amp(i,matchedinds>0) = amp(poleinds);
-            thetaenv_dev = thetaenv(poleinds_dev);
-            thetaenv_occupancy(i,:) = histnorm(thetaenv_pole,occupancy_bins);
-            thetaenv_dist(i,:) = histnorm(thetaenv_pole,thetaenv_bins);%./length(thetaenv_pole);
-            thetaenv_dist_epoch (i,:) = histnorm(thetaenv_dev,thetaenv_bins);
+            data_trials(i,matchedinds>0) =   data_pole;
+            data_amp(i,matchedinds>0) = amp(poleinds);
+            data_dev = data(poleinds_dev);
+            data_occupancy(i,:) = histnorm(data_pole,occupancy_bins);
+            data_dist(i,:) = histnorm(data_pole,data_bins);%./length(data_pole);
+            data_dist_epoch (i,:) = histnorm(data_dev,data_bins);
             past_meanbar= find(thetaenv_bins > biased_bartheta - shoulder);
             local.meandev_thetaenv(i,1) = mean(thetaenv_dev);
             local.meandev_thetaenv(i,2) =  std(thetaenv_dev);
@@ -166,7 +171,6 @@ for v = 1: length(var_set)
     tempstr = strrep(tempstr,'epoch', ' Whisk Epoch');
     tempstr = strrep(tempstr,'meanpole', '  Mean Sampling Period');
     tempstr = strrep(tempstr,'thetaenv', ' Theta Envelope');
-
     suptitle(['M:' obj{1}.mouseName ' S:' obj{1}.sessionName  ' ' tempstr ' from ' str 'trials']);
     set(gcf,'Visible','off');
     windowSize=10;

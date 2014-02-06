@@ -61,7 +61,7 @@ sc = get(0,'ScreenSize');
 
 for s = 1:length(sets)
     h1b = figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
-    suptitle([name setnames(s) ' Sampling time ' restrictTime]);
+    suptitle([name setnames(s)]);
     for i = sets(s,1):sets(s,2)
         try
             [tuenv, tlenv]  =  envelope(theta{i});
@@ -70,8 +70,8 @@ for s = 1:length(sets)
             subplot(10,2,i-sets(s,1)+1);
             plot(t{i},Set{i},'linewidth',1,'color','b'); hold on; 
             plot(t{i},Amp{i},'linewidth',1, 'color','r');hold on; 
-            plot(t{i},tuenv,'linewidth',1, 'color','m');hold on; plot(t{i}(devepoch),tuenv(devepoch),'m.','MarkerSize',12); 
-            plot(t{i},theta{i},'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',12); 
+            plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',12); 
+            plot(t{i},tuenv,'linewidth',1, 'color','k');hold on; plot(t{i}(devepoch),tuenv(devepoch),'k.','MarkerSize',12); 
             axis([timewindow(1) timewindow(2) -30 30]);
             text(2.25,10,['T' num2str(CRtrials(i))]);
         catch

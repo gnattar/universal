@@ -4328,7 +4328,7 @@ for j= 1:numblocks
     %     figure;
     count =0;
     prev=0; 
-    data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
+    data_to_analyze =  get(handles.wSigSum_toplot,'String');
     datalabel = data_to_analyze(2);
     datawave = {['meandev_' data_to_analyze(1) '_binned'],['peakdev_' data_to_analyze(1) '_binned'],['meanpole_' data_to_analyze(1) '_binned']};
 
@@ -4634,6 +4634,8 @@ for j= 1:numblocks
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
         count = count+binnedxdata(end)-binnedxdata(1)+50;
+        
+        
     end
     axes(ah5);
     axis([0 count 0 .5]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
@@ -4648,9 +4650,36 @@ for j= 1:numblocks
     saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
     saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(h_fig6,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]); 
+    print(h_fig6,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
+
+    
 end
 hold off;
+
+         
+        
+    end
+    axes(ah5);
+    axis([0 count 0 .5]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
+    set(gca,'FontSize',18);   
+    saveas(gcf,['PrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
+    saveas(gcf,['PrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
+    set(gcf,'PaperPositionMode','auto');
+    print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
+    axes(ah6);
+    axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
+    set(gca,'FontSize',18);   
+    saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
+    saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
+    set(gcf,'PaperPositionMode','auto');
+    print(h_fig6,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
+
+    
+end
+hold off;
+
+
+
 
 % plotting whisker amplitude
 mindata =0;
@@ -5032,9 +5061,8 @@ load( [pathName filesep filename], '-mat');
 cd (pathName);
 trialtype_select = 'nogo';
 count =1;
-data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
-datalabel = data_to_analyze(2);
-fieldnames = {['meandev_' data_to_analyze(1)] ;['peakdev_' data_to_analyze(1)];['meanpole_' data_to_analyze(1)];'prcoccupancy';'meandev_whiskamp'}; 
+
+fieldnames = {'meandev_thetaenv';'peakdev_thetaenv';'meanpole_thetaenv';'prcoccupancy';'meandev_whiskamp'}; 
 
 for k = 1:length(fieldnames)
     current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
