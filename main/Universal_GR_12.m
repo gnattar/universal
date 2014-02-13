@@ -128,7 +128,7 @@ CaSignal.AspectRatio_mode = 'Square';
 CaSignal.ICA_figs = nan(1,2);
 handles.SoloStartTrial=1;
 handles.SoloEndTrial=1;
-
+handles.use_theta = 1;
 % Update handles structure
 guidata(hObject, handles);
 
@@ -4291,8 +4291,8 @@ switch ButtonName,
 end
 
 
-plotlist = get(handles.wSigSum_toplot,'String');
-datatoplot= plotlist{get(handles.wSigSum_toplot,'Value')};
+plotlist = get(handles.wSigSum_datatoplot,'String');
+datatoplot= plotlist{get(handles.wSigSum_datatoplot,'Value')};
 
 
 blocks= get(handles.wSigSum_block,'String');
@@ -4330,7 +4330,7 @@ for j= 1:numblocks
     prev=0; 
     data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
     datalabel = data_to_analyze(2);
-    datawave = {['meandev_' data_to_analyze(1) '_binned'],['peakdev_' data_to_analyze(1) '_binned'],['meanpole_' data_to_analyze(1) '_binned']};
+    datawave = {['meandev_' data_to_analyze{1} '_binned'],['peakdev_' data_to_analyze{1} '_binned'],['meanpole_' data_to_analyze{1} '_binned']};
 
     if(num_baseline_sessions>0)
         baseline_sessions = find(tags == 'B');
@@ -4407,22 +4407,22 @@ for j= 1:numblocks
         
     end
     
-    axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel(data); xlabel('Trials');
+    axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel(datalabel); xlabel('Trials');
     legend('Mean Whisk Epoch','Peak Whisk Epoch','Mean Sampling Period');
     title([commentstr{1} 'Theta envelope']);set(gca,'FontSize',18);
-    saveas(gcf,[datalabel datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,[datalabel{1} datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print( h_fig1 ,'-depsc2','-painters','-loose',[datalabel ' '  datatoplot ' ' blocklist{j}]);
+    print( h_fig1 ,'-depsc2','-painters','-loose',[datalabel{1} ' '  datatoplot ' ' blocklist{j}]);
     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'tif');
     
     
     axes(ah2);axis([0 count -10  25]);grid on; ylabel('delta Theta Envelope'); xlabel('Trials');
     title([commentstr{1} ' Change in Theta envelope ']);set(gca,'FontSize',18);
     legend('Mean Whisk Epoch','Peak Whisk Epoch','Mean Sampling Period');
-    saveas(gcf,['d' datalabel  datatoplot ' ' blocklist{j}] ,'tif');
-    saveas(gcf,['d' datalabel  datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,['d' datalabel{1}  datatoplot ' ' blocklist{j}] ,'tif');
+    saveas(gcf,['d' datalabel{1}  datatoplot ' ' blocklist{j}],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print( h_fig2 ,'-depsc2','-painters','-loose',['d' datalabel  datatoplot ' ' blocklist{j}]);
+    print( h_fig2 ,'-depsc2','-painters','-loose',['d' datalabel{1}  datatoplot ' ' blocklist{j}]);
     hold off;
 end
 close(h_fig1);
@@ -4616,24 +4616,6 @@ for j= 1:numblocks
         maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
         wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
         count = count+binnedxdata(end)-binnedxdata(1)+50;
-        
-        axes(ah6);
-        if(i<num_baseline_sessions+1)
-            axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) 0 5]);
-            plot(binnedxdata-binnedxdata(1)+count,binnedydata./mean_baseline,'color',[.5 .5 .5],'Marker','o','MarkerSize',6,'MarkerFaceColor',[.5 .5 .5]);hold on;
-            
-        else
-            axis([min(binnedxdata-binnedxdata(1)+count) max(binnedxdata-binnedxdata(1)+count) 0 5]);
-            plot(binnedxdata-binnedxdata(1)+count,binnedydata./mean_baseline,'color',[0 0 0 ],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0 0 0 ]);hold on;
-            
-        end
-        hline(0,{'k-','linewidth',1});
-        hline(.5,{'k-','linewidth',1});
-        legendstr(i) = {['session' num2str(i) ' ']};
-        collateddata = [binnedxdata;binnedydata]';
-        maxdata = (maxdata>max(binnedydata))*maxdata + (maxdata<max(binnedydata))*max(binnedydata);
-        wSigSum_Sessions{i,j}.(selecteddata{1}) = {collateddata}; 
-        count = count+binnedxdata(end)-binnedxdata(1)+50;
     end
     axes(ah5);
     axis([0 count 0 .5]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
@@ -4749,7 +4731,7 @@ for j= 1:numblocks
     hold off;
 end
 close(ah8);
-    plot_dist_sessions(commentstr,numsessions);
+    plot_dist_sessions(commentstr,numsessions,datalabel);
     
 % plotting performance
 mindata = 0; maxdata =0;
@@ -4823,8 +4805,7 @@ for j= 1:numblocks
            
     end  
 end
-close(h_fig11);
-close(h_fig12);
+
      javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar');
      jheapcl(1);
     
@@ -4991,7 +4972,7 @@ cd (datapath);
 load(fname,'-mat');
 fieldlist = fieldnames(wSigSummary{1,1});
 plotlist = get(handles.wSigSum_toplot,'String');
-datatoplot =  plotlist(get(handles.wSigSum_toplot,'Value'));
+datatoplot =  plotlist(get(handles.wSigSum_datatoplot,'Value'));
 list = strmatch(datatoplot,fieldlist);
 set(handles.wSigblocks_datalist, 'String',fieldlist(list));
 set (handles.wSigSum_datapath,'String',datapath);
@@ -5033,7 +5014,7 @@ cd (pathName);
 trialtype_select = 'nogo';
 count =1;
 data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
-datalabel = data_to_analyze(2);
+G = data_to_analyze(2);
 fieldnames = {['meandev_' data_to_analyze(1)] ;['peakdev_' data_to_analyze(1)];['meanpole_' data_to_analyze(1)];'prcoccupancy';'meandev_whiskamp'}; 
 
 for k = 1:length(fieldnames)

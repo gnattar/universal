@@ -1,5 +1,5 @@
 
-function plot_dist_sessions(anm,numSess)
+function plot_dist_sessions(anm,numSess,datalabel)
 global wSigSummary
 if(iscell(anm))
     anm=anm{1};
@@ -37,7 +37,7 @@ c =copper(i);suptitle ([anm 'Cumulative Thetaenv_distributions from Sessions']);
 for i = 1:numSess
 %      bins = wSigSummary{1, i}.nogo_thetaenv_bins{1, 1}{1, 1} ;
     bins = [-30:2.5:30];
-   temp = wSigSummary{1, i}.nogo_thetaenvtrials{1, 1}{1, 1};
+   temp = wSigSummary{1, i}.nogo_datatrials{1, 1}{1, 1};
 	temp = reshape(temp,1,prod(size(temp)));
     dist=histnorm(temp,bins);
    subplot(numSess,1,i);
