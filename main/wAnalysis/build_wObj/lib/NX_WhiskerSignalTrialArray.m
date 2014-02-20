@@ -56,7 +56,9 @@ classdef NX_WhiskerSignalTrialArray
             
             for wNo = 1:length(obj.trajIDs)
                 for k  =1:obj.nTrials
-                    k
+                    if(k>305)
+                        k
+                    end
                     cont_params = obj.ws_trials{k}.contact_params{wNo};
                     
                     if ~isempty(cont_params)

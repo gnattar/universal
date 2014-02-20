@@ -129,6 +129,7 @@ CaSignal.ICA_figs = nan(1,2);
 handles.SoloStartTrial=1;
 handles.SoloEndTrial=1;
 handles.use_theta = 1;
+handles.use_thetaenv = 0;
 % Update handles structure
 guidata(hObject, handles);
 
@@ -5861,6 +5862,7 @@ function analyze_Theta_Callback(hObject, eventdata, handles)
 handles.use_theta = get(hObject,'Value');
 if(handles.use_theta)
     set(handles.analyze_ThetaEnvelope,'Value',0);
+    handles.use_thetaenv = 0;
 else
     set(handles.analyze_ThetaEnvelope,'Value',1);
 end
@@ -5871,6 +5873,7 @@ function analyze_ThetaEnvelope_Callback(hObject, eventdata, handles)
 handles.use_thetaenv = get(hObject,'Value');
 if(handles.use_thetaenv)
     set(handles.analyze_Theta,'Value',0);
+    handles.use_theta=0;
 else
     set(handles.analyze_Theta,'Value',1);
 end
