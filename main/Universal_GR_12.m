@@ -4423,7 +4423,7 @@ for j= 1:numblocks
     saveas(gcf,[commentstr{1} ' d' datalabel{1}  datatoplot] ,'tif');
     saveas(gcf,[commentstr{1} ' d' datalabel{1}  datatoplot],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print( h_fig2 ,'-depsc2','-painters','-loose',['d' datalabel{1}  datatoplot ' ' blocklist{j}]);
+    print( h_fig2 ,'-depsc2','-painters','-loose',[commentstr{1}  ' d' datalabel{1}  datatoplot ' ' blocklist{j}]);
     hold off;
 end
 close(h_fig1);
@@ -4528,7 +4528,7 @@ for j= 1:numblocks
     saveas(gcf,[commentstr{1}  ' dPrcOccupancy' datatoplot ] ,'tif');
     saveas(gcf,[commentstr{1}  ' dPrcOccupancy'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(h_fig4,'-depsc2','-painters','-loose',['dPrcOccupancy' datatoplot]);
+    print(h_fig4,'-depsc2','-painters','-loose',[commentstr{1} ' dPrcOccupancy' datatoplot]);
 
     
 end
@@ -4624,14 +4624,14 @@ for j= 1:numblocks
     saveas(gcf,[commentstr{1}  ' PrcOccupancy whisk epoch' datatoplot ] ,'tif');
     saveas(gcf,[commentstr{1}  ' PrcOccupancy whisk epoch'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
+    print(h_fig5,'-depsc2','-painters','-loose',[commentstr{1} ' PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
     axes(ah6);
     axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
     set(gca,'FontSize',12);   
     saveas(gcf,[commentstr{1}  ' dPrcOccupancy whisk epoch' datatoplot ] ,'tif');
     saveas(gcf,[commentstr{1}  ' dPrcOccupancy whisk epoch'  datatoplot],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(h_fig6,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]); 
+    print(h_fig6,'-depsc2','-painters','-loose',[commentstr{1} ' PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]); 
 end
 hold off;
 close(h_fig5);
@@ -4682,7 +4682,7 @@ for j= 1:numblocks
     saveas(gcf,[commentstr{1}  ' Mean Whisk Amp' datatoplot] ,'tif');
     saveas(gcf,[commentstr{1}  'Mean Whisk Amp'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(ah7,'-depsc2','-painters','-loose',['Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
+    print(ah7,'-depsc2','-painters','-loose',[commentstr{1} ' Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
 end
 hold off;
 close(ah7);
@@ -4730,7 +4730,7 @@ for j= 1:numblocks
     saveas(gcf,[commentstr{1} ' TotalTouchKappa'  datatoplot] ,'tif');
     saveas(gcf,[commentstr{1} ' TotalTouchKappa'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(ah8,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
+    print(ah8,'-depsc2','-painters','-loose',[commentstr{1} ' TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
     hold off;
 end
 close(ah8);
