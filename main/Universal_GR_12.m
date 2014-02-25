@@ -4259,6 +4259,9 @@ global wSigSummary
 % ButtonName = questdlg('Override mean and biased barpos?', ...
 %                          'Override', ...
 %                          'Yes', 'No', 'No');
+
+data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
+datalabel = data_to_analyze(2);
 ButtonName = 'No';
 switch ButtonName,
      case 'Yes',
@@ -4295,7 +4298,6 @@ end
 plotlist = get(handles.wSigSum_datatoplot,'String');
 datatoplot= plotlist{get(handles.wSigSum_datatoplot,'Value')};
 
-
 blocks= get(handles.wSigSum_block,'String');
 blocklist = blocks(get(handles.wSigSum_block,'Value'));
 block= get(handles.wSigSum_block,'Value');
@@ -4321,16 +4323,14 @@ for j= 1:numblocks
     sc = get(0,'ScreenSize');
     h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw setpoint
     ah1=axes('Parent',h_fig1);
-    title([commentstr{1} 'Theta Envelope' ]);%blocklist{j} 'Data ' datatoplot]);
+    title([commentstr{1} ' ' datalabel{1} ]);%blocklist{j} 'Data ' datatoplot]);
     
     h_fig2 = figure('position', [300, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %% error from bartheat
-    ah2=axes('Parent',h_fig2); title([commentstr{1}  'Theta Envelope Change from Baseline  ' ]);%blocklist{j} 'Data ' datatoplot]);
+    ah2=axes('Parent',h_fig2); title([commentstr{1}  datalabel{1} ' Change from Baseline  ' ]);%blocklist{j} 'Data ' datatoplot]);
     hold on;
     %     figure;
     count =0;
     prev=0; 
-    data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
-    datalabel = data_to_analyze(2);
     datawave = {['meandev_' data_to_analyze{1} '_binned'],['peakdev_' data_to_analyze{1} '_binned'],['meanpole_' data_to_analyze{1} '_binned']};
 
     if(num_baseline_sessions>0)
@@ -4410,18 +4410,18 @@ for j= 1:numblocks
     
     axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel(datalabel); xlabel('Trials');
     legend('Mean Whisk Epoch','Peak Whisk Epoch','Mean Sampling Period');
-    title([commentstr{1} 'Theta envelope']);set(gca,'FontSize',18);
-    saveas(gcf,[datalabel{1} datatoplot ' ' blocklist{j}],'fig');
+    title([commentstr{1} ' ' datalabel{1}]);set(gca,'FontSize',18);
+    saveas(gcf,[commentstr{1} datalabel{1} datatoplot],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print( h_fig1 ,'-depsc2','-painters','-loose',[datalabel{1} ' '  datatoplot ' ' blocklist{j}]);
+    print( h_fig1 ,'-depsc2','-painters','-loose',[commentstr{1} datalabel{1} ' '  datatoplot]);
     saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'tif');
     
     
     axes(ah2);axis([0 count -10  25]);grid on; ylabel('delta Theta Envelope'); xlabel('Trials');
-    title([commentstr{1} ' Change in Theta envelope ']);set(gca,'FontSize',18);
+    title([commentstr{1} ' Change in ' datalabel{1}]);set(gca,'FontSize',18);
     legend('Mean Whisk Epoch','Peak Whisk Epoch','Mean Sampling Period');
-    saveas(gcf,['d' datalabel{1}  datatoplot ' ' blocklist{j}] ,'tif');
-    saveas(gcf,['d' datalabel{1}  datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,[commentstr{1} ' d' datalabel{1}  datatoplot] ,'tif');
+    saveas(gcf,[commentstr{1} ' d' datalabel{1}  datatoplot],'fig');
     set(gcf,'PaperPositionMode','auto');
     print( h_fig2 ,'-depsc2','-painters','-loose',['d' datalabel{1}  datatoplot ' ' blocklist{j}]);
     hold off;
@@ -4438,11 +4438,11 @@ for j= 1:numblocks
     sc = get(0,'ScreenSize');
     h_fig3 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
     ah3 = axes('Parent',h_fig3);
-    title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
+    title([commentstr 'Percent ' datalabel{1} ' Ocuupancy past biased bar position ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
     
     h_fig4 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
     ah4 = axes('Parent',h_fig4);
-    title([commentstr 'Change in Percent Ocuupancy past biased bar position from baseline' ]);
+    title([commentstr 'Change in Percent ' datalabel{1} ' Ocuupancy past biased bar position from baseline' ]);
     
     hold on;
     count =0;
@@ -4516,17 +4516,17 @@ for j= 1:numblocks
     end
     axes(ah3);
     axis([0 count 0 .5]);grid on; ylabel('Percent occupancy past biased position'); xlabel('Trials');
-    set(gca,'FontSize',18);  title([commentstr 'Percent Ocuupancy past biased bar position ' datatoplot  ]); 
-    saveas(gcf,['PrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
-    saveas(gcf,['PrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
+    set(gca,'FontSize',18);  title([commentstr 'Percent ' datalabel{1} ' Ocuupancy past biased bar position ' datatoplot  ]); 
+    saveas(gcf,[commentstr{1} ' PrcOccupancy' datatoplot] ,'tif');
+    saveas(gcf,[commentstr{1} ' PrcOccupancy'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print(h_fig3,'-depsc2','-painters','-loose',['PrcOccupancy' datatoplot ]);
+    print(h_fig3,'-depsc2','-painters','-loose',[commentstr{1} ' PrcOccupancy' datatoplot ]);
     axes(ah4);
     axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy past biased position'); xlabel('Trials');
-    set(gca,'FontSize',12);   title([commentstr 'Change in Percent Ocuupancy past biased position' datatoplot  ]);
+    set(gca,'FontSize',12);   title([commentstr 'Change in Percent ' datalabel{1} ' Ocuupancy past biased position' datatoplot  ]);
 
-    saveas(gcf,['dPrcOccupancy' datatoplot ' '  blocklist{j}] ,'tif');
-    saveas(gcf,['dPrcOccupancy'  datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,[commentstr{1}  ' dPrcOccupancy' datatoplot ] ,'tif');
+    saveas(gcf,[commentstr{1}  ' dPrcOccupancy'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(h_fig4,'-depsc2','-painters','-loose',['dPrcOccupancy' datatoplot]);
 
@@ -4544,11 +4544,11 @@ for j= 1:numblocks
     sc = get(0,'ScreenSize');
     h_fig5 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
     ah5 = axes('Parent',h_fig5);
-    title([commentstr 'Percent Ocuupancy past biased bar position from whisk epochs ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
+    title([commentstr 'Percent ' datalabel{1} ' Ocuupancy past biased bar position from whisk epochs ' datatoplot  ]);%blocklist{j} 'Data ' datatoplot]);
     
     h_fig6 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2, sc(4)*1/2], 'color','w'); %%raw theta
     ah6 = axes('Parent',h_fig6);
-    title([commentstr 'Change in Percent Ocuupancy past biased bar position from whisking epochs ' ]);
+    title([commentstr 'Change in Percent ' datalabel{1} ' Ocuupancy past biased bar position from whisking epochs ' ]);
     
     hold on;
     count =0;
@@ -4621,19 +4621,21 @@ for j= 1:numblocks
     axes(ah5);
     axis([0 count 0 .5]);grid on; ylabel('Percent occupancy from whisking epoch'); xlabel('Trials');
     set(gca,'FontSize',18);   
-    saveas(gcf,['PrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
-    saveas(gcf,['PrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,[commentstr{1}  ' PrcOccupancy whisk epoch' datatoplot ] ,'tif');
+    saveas(gcf,[commentstr{1}  ' PrcOccupancy whisk epoch'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(h_fig5,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]);
     axes(ah6);
     axis([0 count 0 8]);grid on; ylabel('Change in Percent occupancy from whisking epoch'); xlabel('Trials');
     set(gca,'FontSize',12);   
-    saveas(gcf,['dPrcOccupancy whisk epoch' datatoplot ' '  blocklist{j}] ,'tif');
-    saveas(gcf,['dPrcOccupancy whisk epoch'  datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,[commentstr{1}  ' dPrcOccupancy whisk epoch' datatoplot ] ,'tif');
+    saveas(gcf,[commentstr{1}  ' dPrcOccupancy whisk epoch'  datatoplot],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(h_fig6,'-depsc2','-painters','-loose',['PrcOccupancy whisking epoch' datatoplot ' '  blocklist{j}]); 
 end
 hold off;
+close(h_fig5);
+close(h_fig6);
 
 % plotting whisker amplitude
 mindata =0;
@@ -4677,8 +4679,8 @@ for j= 1:numblocks
     end
     axis([0 count 0 8]);grid on; ylabel('Mean Whisking amplitude'); xlabel('Trials');
     set(gca,'FontSize',18);
-    saveas(gcf,['Mean Whisk Amp' datatoplot ' '  blocklist{j}] ,'tif');
-    saveas(gcf,['Mean Whisk Amp'  datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,[commentstr{1}  ' Mean Whisk Amp' datatoplot] ,'tif');
+    saveas(gcf,[commentstr{1}  'Mean Whisk Amp'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(ah7,'-depsc2','-painters','-loose',['Mean Whisk Amp'  datatoplot ' ' blocklist{j}]);
 end
@@ -4725,8 +4727,8 @@ for j= 1:numblocks
     end
     axis([0 count -15 15]);grid on; ylabel('TotalTouchKappa'); xlabel('Trials');
     set(gca,'FontSize',18);
-    saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}] ,'tif');
-    saveas(gcf,['TotalTouchKappa'  datatoplot ' ' blocklist{j}],'fig');
+    saveas(gcf,[commentstr{1} ' TotalTouchKappa'  datatoplot] ,'tif');
+    saveas(gcf,[commentstr{1} ' TotalTouchKappa'  datatoplot ],'fig');
     set(gcf,'PaperPositionMode','auto');
     print(ah8,'-depsc2','-painters','-loose',['TotalTouchKappa'  datatoplot ' ' blocklist{j}]);
     hold off;

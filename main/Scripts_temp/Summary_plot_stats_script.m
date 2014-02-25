@@ -13,16 +13,16 @@ set(gca,'FontSize',16);
 figure('position', [1000, sc(4)/10-100, sc(3)*2/3, sc(4)*3/3], 'color','w');
 errorbar(C.mavgnogo_peakdev_data(:,:,1),C.mavgnogo_peakdev_data(:,:,2),C.mavgnogo_peakdev_data(:,:,3)./sqrt(numanm_C),'color','k','Linewidth',3,'Marker','o','MarkerSize',15,'Markerfacecolor',[.5 .5 .5]);hold on;
 errorbar(A.mavgnogo_peakdev_data(:,:,1),A.mavgnogo_peakdev_data(:,:,2),A.mavgnogo_peakdev_data(:,:,3)./sqrt(numanm_A +1),'color','r','Linewidth',3,'Marker','o','MarkerSize',15,'Markerfacecolor',[.85 .5 .5]);hold on;
-hline(0,'k--');title('Relative change in peak whisker theta envelope','FontSize',18);
-xlabel ('Sessions','FontSize',16);ylabel('Relative change in peak whisker theta envelope (deg)','FontSize',16);
+hline(0,'k--');title('Relative change in peak whisker theta ','FontSize',18);
+xlabel ('Sessions','FontSize',16);ylabel('Relative change in peak whisker theta  (deg)','FontSize',16);
 set(gca,'FontSize',16);
 
 
 figure('position', [1000, sc(4)/10-100, sc(3)*2/3, sc(4)*3/3], 'color','w');
 errorbar(C.mavgnogo_meandev_data(:,:,1),C.mavgnogo_meandev_data(:,:,2),C.mavgnogo_meandev_data(:,:,3)./sqrt(numanm_C),'color','k','Linewidth',3,'Marker','o','MarkerSize',15,'Markerfacecolor',[.5 .5 .5]);hold on;
 errorbar(A.mavgnogo_meandev_data(:,:,1),A.mavgnogo_meandev_data(:,:,2),A.mavgnogo_meandev_data(:,:,3)./sqrt(numanm_A +1),'color','r','Linewidth',3,'Marker','o','MarkerSize',15,'Markerfacecolor',[.85 .5 .5]);hold on;
-hline(0,'k--');title('Relative change in mean whisker theta envelope','FontSize',18);
-xlabel ('Sessions','FontSize',16);ylabel('Relative change in mean whisker theta envelope (deg)','FontSize',16);
+hline(0,'k--');title('Relative change in mean whisker theta ','FontSize',18);
+xlabel ('Sessions','FontSize',16);ylabel('Relative change in mean whisker theta  (deg)','FontSize',16);
 set(gca,'FontSize',16);
 
 fields = {'mavgnogo_prcoccupancy','mavgnogo_peakdev_data','mavgnogo_meandev_data'}
