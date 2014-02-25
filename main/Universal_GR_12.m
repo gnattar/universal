@@ -4411,10 +4411,10 @@ for j= 1:numblocks
     axes(ah1); axis([0 count mindata-5 mindata+35]);grid on; ylabel(datalabel); xlabel('Trials');
     legend('Mean Whisk Epoch','Peak Whisk Epoch','Mean Sampling Period');
     title([commentstr{1} ' ' datalabel{1}]);set(gca,'FontSize',18);
-    saveas(gcf,[commentstr{1} datalabel{1} datatoplot],'fig');
+    saveas(gcf,[commentstr{1} ' ' datalabel{1} datatoplot],'fig');
     set(gcf,'PaperPositionMode','auto');
-    print( h_fig1 ,'-depsc2','-painters','-loose',[commentstr{1} datalabel{1} ' '  datatoplot]);
-    saveas(gcf,['Thetaenv ' datatoplot ' ' blocklist{j}] ,'tif');
+    print( h_fig1 ,'-depsc2','-painters','-loose',[commentstr{1} ' '  datalabel{1} ' '  datatoplot]);
+    saveas(gcf,[commentstr{1}  ' Thetaenv ' datatoplot] ,'tif');
     
     
     axes(ah2);axis([0 count -10  25]);grid on; ylabel('delta Theta Envelope'); xlabel('Trials');
