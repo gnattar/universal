@@ -5016,7 +5016,7 @@ trialtype_select = 'nogo';
 count =1;
 data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
 G = data_to_analyze(2);
-fieldnames = {['meandev_' data_to_analyze(1)] ;['peakdev_' data_to_analyze(1)];['meanpole_' data_to_analyze(1)];'prcoccupancy';'meandev_whiskamp'}; 
+fieldnames = {['meandev_' data_to_analyze{1}] ;['peakdev_' data_to_analyze{1}];['meanpole_' data_to_analyze{1}];'prcoccupancy';'meandev_whiskamp'}; 
 
 for k = 1:length(fieldnames)
     current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
