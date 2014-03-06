@@ -5036,8 +5036,13 @@ for i = 1:numanm
     temp = '';
     for j = 1 : sess_count(i)
          temp= strcat(temp, wSigSum_anm{i}{j}.tag{1});
+         wSigSessSum_anm.baseline_barpos{i}{j}=wSigSum_anm{i}{j}.nogo_baseline_barpos{1}{1};
+         wSigSessSum_anm.biased_barpos{i}{j}=wSigSum_anm{i}{j}.nogo_biased_barpos{1}{1};
+         wSigSessSum_anm.mean_barpos{i}{j}=wSigSum_anm{i}{j}.nogo_mean_barpos{1}{1};
+         wSigSessSum_anm.switchmag{i}{j}=wSigSum_anm{i}{j}.nogo_biased_barpos{1}{1}-wSigSum_anm{i}{j}.nogo_baseline_barpos{1}{1};
     end
     wSigSessSum_anm.sesstype{i}{1}=temp'; 
+
 end
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
 

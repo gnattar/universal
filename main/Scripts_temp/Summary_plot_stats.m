@@ -43,12 +43,56 @@ b=[A.(fields{k})(:,1:2,2) C.(fields{k})(:,1:2,2)]'
 
 end
 % 
-% 
-% %%to plot switch variable vs. switch magnitude
-% temp = nanmean(A.nogo_prcoccupancy,1);
-% APrO=nanmean(temp(:,3:8,:),2);
-% APrO = reshape(APrO,7,1,1);
-% 
-% temp = nanmean(C.nogo_prcoccupancy,1);
-% CPrO=nanmean(temp(:,3:8,:),2);
-% CPrO = reshape(CPrO,6,1,1);
+
+%%to plot switch variable vs. switch magnitude
+
+A_bl = cell2mat(cellfun(@(x) nanmean(cell2mat(x(1:2))), A.mean_barpos, 'UniformOutput',false));
+C_bl = cell2mat(cellfun(@(x) nanmean(cell2mat(x(1:2))), C.mean_barpos, 'UniformOutput',false));
+A_bi = cell2mat(cellfun(@(x) nanmean(cell2mat(x(3:8))), A.mean_barpos, 'UniformOutput',false));
+C_bi = cell2mat(cellfun(@(x) nanmean(cell2mat(x(3:8))), C.mean_barpos, 'UniformOutput',false));
+A_mag = A_bi-A_bl;
+C_mag = C_bi-C_bl;
+
+
+temp = nanmean(A.nogo_prcoccupancy,1);
+APrO=nanmean(temp(:,3:8,:),2);
+APrO = reshape(APrO,7,1,1);
+
+temp = nanmean(C.nogo_prcoccupancy,1);
+CPrO=nanmean(temp(:,3:8,:),2);
+CPrO = reshape(CPrO,6,1,1);
+
+figure;plot(A_mag,APrO,'bo','MarkerSize',12); hold on; plot(C_mag,CPrO,'ro','MarkerSize',12),set(gca,'FontSize',16);
+xlabel('Switch Magnitude (deg)');
+ylabel('Change in PrOccupancy');
+title('Chnge in PrOccupancy vs. switch magnitude');
+
+
+temp = nanmean(A.nogo_peakdev_data,1);
+Apeak=nanmean(temp(:,3:8,:),2);
+Apeak = reshape(Apeak,7,1,1);
+
+temp = nanmean(C.nogo_peakdev_data,1);
+Cpeak=nanmean(temp(:,3:8,:),2);
+Cpeak = reshape(Cpeak,6,1,1);
+
+figure;plot(A_mag,Apeak,'bo','MarkerSize',12); hold on; plot(C_mag,Cpeak,'ro','MarkerSize',12),set(gca,'FontSize',16);
+xlabel('Switch Magnitude (deg)');
+ylabel('Change in Peak Theta');
+title('Chnge in Peak Theta vs. switch magnitude');
+
+
+
+
+temp = nanmean(A.nogo_meandev_data,1);
+Amean=nanmean(temp(:,3:8,:),2);
+Amean = reshape(Amean,7,1,1);
+
+temp = nanmean(C.nogo_meandev_data,1);
+Cmean=nanmean(temp(:,3:8,:),2);
+Cmean = reshape(Cmean,6,1,1);
+
+figure;plot(A_mag,Amean,'bo','MarkerSize',12); hold on; plot(C_mag,Cmean,'ro','MarkerSize',12),set(gca,'FontSize',16);
+xlabel('Switch Magnitude (deg)');
+ylabel('Change in Mean Theta');
+title('Chnge in Mean Theta vs. switch magnitude');
