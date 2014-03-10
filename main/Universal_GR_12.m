@@ -2678,7 +2678,7 @@ if(get(handles.CaTrials_select,'Value')==1)
     end
     numrois = CaTrials(1,1).nROIs;
 elseif (get(handles.sorted_CaTrials_select,'Value')==1)
-    [filename,pathName]=uigetfile('sorted_CaSignal*.mat','Load sorted_CaSignal.mat file')
+    [filename,pathName]=uigetfile('sorted_CaTrials*.mat','Load sorted_CaTrials.mat file')
     if isequal(filename, 0) || isequal(pathName,0)
         return
     end
@@ -2694,7 +2694,7 @@ elseif (get(handles.sorted_CaTrials_select,'Value')==1)
     numrois = CaTrials(1,1).nROIs;
 elseif(get(handles.contact_CaSignal_select,'Value')==1)
     
-    [filename,pathName]=uigetfile('contact_CaSignal*.mat','Load contact_CaSignal.mat file')
+    [filename,pathName]=uigetfile('contact_CaTrials*.mat','Load contact_CaTrials.mat file')
     if isequal(filename, 0) || isequal(pathName,0)
         return
     end
