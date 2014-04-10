@@ -1046,8 +1046,7 @@ for i = 1: nROI_effective
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 
-    if get(handles.AnalysisModeBGsub,'Value') == 1
-        if get(handles.lightstim_subtract,'Value') == 1
+
             lightstim_window = strsplit(get(handles.lightstim_window,'String'),',');
             xt=CaSignal.CaTrials(1).FrameTime * [1:length(BG)];
             all_ind = [1:length(BG)];
@@ -1055,10 +1054,28 @@ for i = 1: nROI_effective
             [ma,xt_h]=min(abs(xt-lightstim_window(2)));
             lighton_ind = (xt<xt(xt_h)) & (xt>xt(xt_l));
             lightoff_ind = ~(lighton_ind);
-            avg_BG (lighton_ind) = nanmedian(BG(lighton_ind));
-            avg_BG (lightoff_ind) = nanmedian(BG(lightoff_ind));
-            sd_BG (lighton_ind) = nanstd(BG(lighton_ind))/nanstd(BG(lightoff_ind));
-            sd_BG (lightoff_ind) = 1;
+            
+            bleach_filler = F(i,1:xt_l-2) - prctile(F(i,lightoff_ind),10);
+            temp = filter(ones(1,5)/5,1, bleach_filler);
+            bleach_filler(5:end)=temp(5:end) ;
+            F(i,1:xt_l-2) =  F(i,1:xt_l-2)-bleach_filler;
+
+            avg_BG_lighton = nanmedian(BG(lighton_ind));
+            avg_BG_lightoff = nanmedian(BG(lightoff_ind));            
+            avg_F_lightoff = nanmedian(F(i,1:xt_l-2));
+            avg_F_diff =  (avg_BG_lighton - avg_BG_lightoff); %* avg_F_lightoff/ avg_BG_lightoff;            
+            avg_F(lighton_ind) = avg_F_diff;
+            avg_F(lightoff_ind) = 0;
+            
+            
+            sd_BG_lighton = nanstd(BG(lighton_ind));
+            sd_BG_lightoff = nanstd(BG(lightoff_ind));
+            sd_F_lightoff = nanstd(F(i,1:xt_l-2));
+            sd_F_diff =  sd_BG_lighton * sd_F_lightoff/ sd_BG_lightoff;
+%             sd_F(lighton_ind) = sd_F_diff;
+            sd_F(lighton_ind) = 1;
+            sd_F(lightoff_ind) = 1;            
+
 %             if abs(F(i,xt_l) - nanmedian(BG(lighton_ind))) < abs(F(i,xt_l) - nanmedian(BG(lightoff_ind)))
 %                 avg_BG(xt_l)=nanmedian(BG(lighton_ind));
 %             else
@@ -1070,12 +1087,11 @@ for i = 1: nROI_effective
 %             else
 %                 avg_BG(xt_h)=nanmedian(BG(lightoff_ind));
 %             end
-            
-            F(i,:) = (F(i,:) - avg_BG)./sd_BG;
+    if get(handles.AnalysisModeBGsub,'Value') == 1
+        if get(handles.lightstim_subtract,'Value') == 1
+            F(i,:) = (F(i,:) -  avg_F)./sd_F;
             F(i,xt_l-2:xt_l+2) = nan;
-            F(i,xt_h-2:xt_h+2) = nan;
-            
-
+            F(i,xt_h-2:xt_h+2) = nan;     
         else  
             F(i,:) = F(i,:) - nanmean(BG);
         end
