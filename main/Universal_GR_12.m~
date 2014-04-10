@@ -1046,7 +1046,8 @@ for i = 1: nROI_effective
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 
-
+    if get(handles.AnalysisModeBGsub,'Value') == 1
+        if get(handles.lightstim_subtract,'Value') == 1
             lightstim_window = strsplit(get(handles.lightstim_window,'String'),',');
             xt=CaSignal.CaTrials(1).FrameTime * [1:length(BG)];
             all_ind = [1:length(BG)];
@@ -1056,10 +1057,6 @@ for i = 1: nROI_effective
             lightoff_ind = ~(lighton_ind);
             avg_BG (lighton_ind) = nanmedian(BG(lighton_ind));
             avg_BG (lightoff_ind) = nanmedian(BG(lightoff_ind));
-            bleach_filler = F(i,1:xt_l-2) - nanmedian(BG(lightoff_ind)) ;
-            temp = filter(ones(1,5)/5,1, bleach_filler);
-            bleach_filler(5:end)=temp(5:end) ;
-
             sd_BG (lighton_ind) = nanstd(BG(lighton_ind))/nanstd(BG(lightoff_ind));
             sd_BG (lightoff_ind) = 1;
 %             if abs(F(i,xt_l) - nanmedian(BG(lighton_ind))) < abs(F(i,xt_l) - nanmedian(BG(lightoff_ind)))
@@ -1073,13 +1070,12 @@ for i = 1: nROI_effective
 %             else
 %                 avg_BG(xt_h)=nanmedian(BG(lightoff_ind));
 %             end
-    if get(handles.AnalysisModeBGsub,'Value') == 1
-        if get(handles.lightstim_subtract,'Value') == 1
+            
             F(i,:) = (F(i,:) - avg_BG)./sd_BG;
             F(i,xt_l-2:xt_l+2) = nan;
             F(i,xt_h-2:xt_h+2) = nan;
-            F(i,1:xt_l-2) =  F(i,1:xt_l-2)-bleach_filler;
-                
+            
+
         else  
             F(i,:) = F(i,:) - nanmean(BG);
         end

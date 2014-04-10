@@ -67,10 +67,8 @@ rois_name_tag = '';
             subplot(roisperfig,numcolstoplot,count);
             count=count+1;
             xt=[ts ts(length(ts))+dt*1:dt:ts(length(ts))+dt*5];
-            [y,temp]=min(abs(xt-1.0));
-%             imagesc(xt(1:end),1:numtrials,newrois(:,:,rois(i)));caxis(cscale);colormap(jet);xlabel('Time(s)'); ylabel('Trials');
-            imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet);xlabel('Time(s)'); ylabel('Trials');
-
+            temp=find(min(abs(xt-1.0
+            imagesc([ts ts(length(ts))+dt*1:dt:ts(length(ts))+dt*5],1:numtrials,newrois(:,:,rois(i)));caxis(cscale);colormap(jet);xlabel('Time(s)'); ylabel('Trials');
             vline([.5 1 1.5 2 2.5 ],'k-');
 
             figure(h1);
