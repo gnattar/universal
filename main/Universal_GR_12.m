@@ -4147,6 +4147,7 @@ if addcontactinfo
     solo_data.Dprime_contact = r;
     solo_data.whisker_trials = whisker_trials;
     
+end
     subplot(2,1,1);
 
     [AX,H1,H2] = plotyy([1:solo_data.trialStartEnd(2)],solo_data.Dprime_null,[1:solo_data.trialStartEnd(2)],solo_data.PC_null);hold on;
@@ -4159,13 +4160,13 @@ if addcontactinfo
     
     axis(AX(2),[0 solo_data.trialStartEnd(2) -.1 1]);
     set(AX(2),'YTick',[-.1:.1:1]);
-    
+
+if addcontactinfo    
     hold(AX(1), 'on');hold(AX(2), 'on');
     [AX,H3,H4] = plotyy(whisker_trials,solo_data.Dprime_contact,whisker_trials,solo_data.PC_contact);
     set(H3,'color',[.5 .5 1.0],'Linestyle','-','linewidth',2);
     set(H4,'color',[.5 1 .5],'Linestyle','-','linewidth',2);
     hold(AX(2), 'off');
-    
 end
 
 title(['Performance from ' name(length(name)-17:length(name)-8) ' Session' name(length(name)-6:length(name)-1)]);
@@ -5807,20 +5808,23 @@ global soloSigSummary
       dprime_corrected_smth  = filter(ones(1,windowSize)/windowSize,1, dprime_corrected);
       pc_corrected_smth = filter(ones(1,windowSize)/windowSize,1, pc_corrected);
       axes(ah1);
-%       plot([count+1:count+numtrials], dprime_null,'color',[.1 .5 .75],'Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor',[.1 .5 .75],'Linewidth',2);
+       plot([count+1:count+numtrials], dprime_null,'color',[.1 .5 .75],'Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor',[.1 .5 .75],'Linewidth',2);
       hold on;
       numtrials = size(dprime_corrected,2);
-       plot([count+1:count+numtrials], dprime_corrected_smth,'color','b','Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor','b','Linewidth',2);
+%        plot([count+1:count+numtrials], dprime_corrected_smth,'color','b','Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor','b','Linewidth',2);
+      
       hline (1,{'r--','linewidth',1.5});
-      avg_dprime_corrected = median(dprime_corrected);
+%       avg_dprime_corrected(j) = median(dprime_corrected);
+      avg_dprime_corrected(j) = nanmedian(dprime_null);
       axes(ah2);
       numtrials = size(dprime_null,2);
-%       plot([count+1:count+numtrials], pc_null,'color','g','Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor','g');
+       plot([count+1:count+numtrials], pc_null,'color','g','Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor','g');
       hold on;
       numtrials = size(dprime_corrected,2);
-      plot([count+1:count+numtrials], pc_corrected_smth,'color',[.1 .75 .5],'Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor',[.1 .75 .5],'Linewidth',2);
+%       plot([count+1:count+numtrials], pc_corrected_smth,'color',[.1 .75 .5],'Linestyle','-','Marker','o','MarkerSize',.5,'MarkerFaceColor',[.1 .75 .5],'Linewidth',2);
       hline (.60,{'r--','linewidth',1.5});
-      avg_pc_corrected = median(pc_corrected);
+%       avg_pc_corrected = median(pc_corrected);
+        avg_pc_corrected(j) = nanmedian(pc_null);
       numtrials = max( size(dprime_corrected,2),size(dprime_null,2));
       count = count + numtrials +10;      
     end
@@ -5831,8 +5835,8 @@ axes(ah2);
 legend('PC null','PC Touchcorrected');
 saveas(gcf,[mousename 'PC_sessions'] ,'jpg');
 figure;suptitle([mousename 'Performance']);
-plot(numsessions,avg_dprime_corrected,'color','b'); hold on;
-plot(numsessions,avg_pc_corrected,'color',[.1 .75 .5]);
+plot([1:numsessions],avg_dprime_corrected,'color','b','Linestyle','-','Marker','o','MarkerSize',15,'MarkerFaceColor','b'); hold on;
+plot([1:numsessions],avg_pc_corrected,'color',[.1 .75 .5],'Linestyle','-','Marker','o','MarkerSize',15,'MarkerFaceColor',[.1 .75 .5]); 
 saveas(gcf,[mousename 'Performance_sessions'] ,'jpg');
 
 % --- Executes on button press in load_soloSigSummary.
