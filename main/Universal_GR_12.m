@@ -4377,24 +4377,27 @@ for j= 1:numblocks
     count =0;
     prev=0; 
     datawave = {['meandev_' data_to_analyze{1} '_binned'],['peakdev_' data_to_analyze{1} '_binned'],['meanpole_' data_to_analyze{1} '_binned']};
-
-    if(num_baseline_sessions>0)
-        baseline_sessions = find(tags == 'B');
-        mean_baseline = zeros(length(datawave),1);
-         for k = 1:length(datawave)           
-            
-            selecteddata = strcat(datatoplot,'_',datawave(k));
-                for i = 1:num_baseline_sessions
-                    temp = wSigSummary{i}.(selecteddata{1});
-                    temp = temp{1};
-                    binnedydata = temp{block}(:,2)';       
-                    mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
-                end
-             mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
-         end
-    else
-        mean_baseline = 0;
-    end
+    mean_baseline = zeros(length(datawave),1);
+    
+     for k = 1:length(datawave)                       
+        selecteddata = strcat(datatoplot,'_',datawave(k));
+        if(num_baseline_sessions>0)
+            baseline_sessions = find(tags == 'B');
+            for i = 1:num_baseline_sessions
+                temp = wSigSummary{i}.(selecteddata{1});
+                temp = temp{1};
+                binnedydata = temp{block}(:,2)';       
+                mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
+            end
+            mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
+        else
+            temp = wSigSummary{1}.(selecteddata{1});
+            temp = temp{1};
+            binnedydata = temp{block}(:,2)';           
+            mean_baseline (k) = mean(binnedydata);
+        end
+     end
+ 
     for i = 1:numsessions
         colr(:,:,2) = [ 0 0 1 ; 1 0 0 ;0 0 0]; % blue red black
         colr(:,:,1) = [ .5 .5 1 ; 1 .5 .5; .5 .5 .5 ]; %
@@ -4493,26 +4496,27 @@ for j= 1:numblocks
     count =0;
     prev=0;
     datawave = {'prcoccupancy_binned'};
+    mean_baseline = zeros(length(datawave),1);
 
-    if(num_baseline_sessions>0)
-        baseline_sessions = find(tags == 'B');
-        mean_baseline = zeros(length(datawave),1);
-         for k = 1:length(datawave)           
-            
-            selecteddata = strcat(datatoplot,'_',datawave(k));
-                for i = 1:num_baseline_sessions
-                    temp = wSigSummary{i}.(selecteddata{1});
-                    temp = temp{1};
-                    binnedydata = temp{block}(:,2)';       
-                    mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
-                end
-             mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
-         end
-    else
-        mean_baseline = 1;
-    end    
-    
-    
+    for k = 1:length(datawave)
+        selecteddata = strcat(datatoplot,'_',datawave(k));
+        if(num_baseline_sessions>0)
+            baseline_sessions = find(tags == 'B');
+            for i = 1:num_baseline_sessions
+                temp = wSigSummary{i}.(selecteddata{1});
+                temp = temp{1};
+                binnedydata = temp{block}(:,2)';
+                mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
+            end
+            mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
+        else
+            temp = wSigSummary{1}.(selecteddata{1});
+            temp = temp{1};
+            binnedydata = temp{block}(:,2)';
+            mean_baseline (k) = mean( binnedydata);
+        end
+        
+    end
     
     for i = 1:numsessions
         selecteddata = strcat(datatoplot,'_',datawave);
@@ -4599,26 +4603,26 @@ for j= 1:numblocks
     count =0;
     prev=0;
     datawave = {'prcoccupancy_epoch_binned'};
-
-    if(num_baseline_sessions>0)
-        baseline_sessions = find(tags == 'B');
-        mean_baseline = zeros(length(datawave),1);
-         for k = 1:length(datawave)           
-            
-            selecteddata = strcat(datatoplot,'_',datawave(k));
-                for i = 1:num_baseline_sessions
-                    temp = wSigSummary{i}.(selecteddata{1});
-                    temp = temp{1};
-                    binnedydata = temp{block}(:,2)';       
-                    mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
-                end
-             mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
-         end
-    else
-        mean_baseline = 1;
-    end    
-    
-    
+    mean_baseline = zeros(length(datawave),1);    
+    for k = 1:length(datawave)
+        selecteddata = strcat(datatoplot,'_',datawave(k));
+        if(num_baseline_sessions>0)
+            baseline_sessions = find(tags == 'B');
+            for i = 1:num_baseline_sessions
+                temp = wSigSummary{i}.(selecteddata{1});
+                temp = temp{1};
+                binnedydata = temp{block}(:,2)';
+                mean_baseline (k) = mean_baseline (k)  + mean(binnedydata);
+            end
+            mean_baseline (k) = mean_baseline (k) / num_baseline_sessions ;
+        else
+            temp = wSigSummary{1}.(selecteddata{1});
+            temp = temp{1};
+            binnedydata = temp{block}(:,2)';
+            mean_baseline (k) =  mean(binnedydata);
+        end
+        
+    end
     
     for i = 1:numsessions
         selecteddata = strcat(datatoplot,'_',datawave);
@@ -5114,24 +5118,25 @@ for k = 1:length(fieldnames)
     numanm = size(tempobj,2);
     tempmat =nan(2,max(sess_count)+2,numanm);
     tempmat_mean =nan(1,max(sess_count)+2,numanm);
+    mean_sub = nan(max(sess_count)+2,1,numanm);
     sc = get(0,'ScreenSize');   
     f1=figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
     a1=axes('Parent',f1);title([pname]);
     no_bs=0;
+    
     for i = 1:numanm        
         numsessions = size(tempobj{i},2);   
         sesstags = wSigSessSum_anm.sesstype{i}{1};
         num_bs=sum(sesstags=='B');
-        if (num_bs >0) || (no_bs<1)
+        if (num_bs >0) %|| (no_bs<1)
             no_bs =0;
-        else
+        elseif num_bs == 0
             no_bs =1;
         end
         numskips  =  2 - num_bs;        
         count = 250*numskips;
-        collectmat = zeros(numsessions,2);
-        for j = 1:numsessions
-            
+        collectmat = zeros(numsessions,2);       
+        for j = 1:numsessions          
             tempmat(:,j+numskips,i) = tempobj{i}{j}.(name)(:,2);
             tempmat_mean(1,j+numskips,i) = tempobj{i}{j}.(meanname)(1);
             numpnts = size(tempobj{i}{j}.(name)(:,1),1);
@@ -5142,6 +5147,7 @@ for k = 1:length(fieldnames)
             plot( collectmat(:,1),collectmat(:,2), 'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1),'linewidth',2);      hold on;
             hline (0,'k:');
             xlabel('Trials'); ylabel ([pname ' change']);
+            mean_sub(3-num_bs:2-num_bs+size(collectmat,1),1,i) = collectmat(:,2);
         if plot_subdelta
             title ([strrep(pname,'_',' ') '  Abs. Change']);
         else
@@ -5158,7 +5164,8 @@ for k = 1:length(fieldnames)
     avg_anm_sess = nanmean(tempmat,3); 
     temp = isnan(avg_anm_sess);
     avg_anm_sess(:,find(sum(temp)>0)) = [];
-    std_anm_sess = nanstd(tempmat,1,3)./sqrt(numanm+1); 
+%     std_anm_sess = nanstd(tempmat,1,3)./sqrt(numanm); 
+    std_anm_sess = nanstd(tempmat,1,3);
      std_anm_sess(:,find(sum(temp)>0)) = [];
     f2 =figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
     a2=axes('Parent',f2);
@@ -5170,7 +5177,7 @@ for k = 1:length(fieldnames)
 %         xval(:,i) = [(no_bs*250)+((i-1)*250)+50 ;(no_bs*250)+((i-1)*250)+250];
         xval(:,i) = [i*2-1;i*2];
         axes(a2);
-         errorbar(xval(:,i),avg_anm_sess(:,i),std_anm_sess(:,i)/sqrt(numanm+1),'color','k','Marker','o','Markersize',8,'MarkerFaceColor',[0 0 0],'linewidth',2);hold on;       
+         errorbar(xval(:,i),avg_anm_sess(:,i),std_anm_sess(:,i),'color','k','Marker','o','Markersize',8,'MarkerFaceColor',[0 0 0],'linewidth',2);hold on;       
  
     end
      title([pname ' Average change ']);
@@ -5191,23 +5198,22 @@ for k = 1:length(fieldnames)
     num_bl = 2;
     mean_b = mean(tempmat_mean(1,1:num_bl,:));
     mean_b = repmat(mean_b,1,size(tempmat_mean,2));
-    if(plot_subdelta)
-      mean_sub= tempmat_mean - mean_b;
-    else
-       mean_sub= tempmat_mean ./ mean_b;
-    end
-%     tempmat_mean
+%     if(plot_subdelta)
+%       mean_sub= tempmat_mean - mean_b;
+%     else
+%        mean_sub= tempmat_mean ./ mean_b;
+%     end
+
     avg_anm_sess = nanmean(mean_sub,3); 
-    std_anm_sess = nanstd(mean_sub,1,3)./sqrt(numanm+1);
+    std_anm_sess = nanstd(mean_sub,1,3)./sqrt(numanm);
+%     std_anm_sess = nanstd(mean_sub,1,3);
     avg_anm_sess(isnan(avg_anm_sess)) =[];
     std_anm_sess(isnan(std_anm_sess)) =[];
-%     x = mean(xval,1);
-%     x = x(1:length(avg_anm_sess));
     x= [1:length(avg_anm_sess)];
 
     axes(a3);
     errorbar(x,avg_anm_sess',std_anm_sess','color','k','Marker','o','Markersize',8,'MarkerFaceColor',[.5 .5 .5],'linewidth',2);hold on;
-    temp =zeros(1,size(avg_anm_sess,2),3);
+    temp =zeros(1,size(avg_anm_sess,1),3);
     temp(:,:,1) = x;
     temp(:,:,2) =avg_anm_sess(:,:);
     temp(:,:,3) =std_anm_sess(:,:);
@@ -5252,7 +5258,9 @@ function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,
         if(num_bl>0)
             mean_baseline = mean_baseline/num_bl;
         else
-            mean_baseline = 0;
+            first_sess = curr_anm{1}.(fieldname);
+            first_sess = cell2mat(first_sess{block});
+            mean_baseline = mean(first_sess (:,2));
         end
 
         for j= 1:numsessions
