@@ -1,7 +1,8 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam)
 % plot signals arranged by rois : to check roi selection in fovs
 roisperfig = 5;
-
+s_time = 1.0 ;
+e_time = 5.0;
 fovname = [nam 'fov ' fov 'rois ' roislist]; 
 frametime=obj.FrameTime;
 rois_trials  = arrayfun(@(x) x.dff, obj,'uniformoutput',false);
@@ -11,6 +12,7 @@ if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
     velocity =cell2mat(arrayfun(@(x) x.Velocity{1}, obj,'uniformoutput',false)');
     ts_wsk = cell2mat(arrayfun(@(x) x.ts_wsk{1}, obj,'uniformoutput',false)');
     totalTouchKappa = cell2mat(arrayfun(@(x) x.total_touchKappa, obj,'uniformoutput',false)');
+    s_time = 0;
 end
 
 numtrials = length(rois_trials);
@@ -67,7 +69,7 @@ rois_name_tag = '';
             subplot(roisperfig,numcolstoplot,count);
             count=count+1;
             xt=[ts ts(length(ts))+dt*1:dt:ts(length(ts))+dt*5];
-            [y,temp]=min(abs(xt-1.0));
+            [y,temp]=min(abs(xt-s_time));
 %             imagesc(xt(1:end),1:numtrials,newrois(:,:,rois(i)));caxis(cscale);colormap(jet);xlabel('Time(s)'); ylabel('Trials');
             imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet);xlabel('Time(s)'); ylabel('Trials');
 
@@ -88,7 +90,7 @@ rois_name_tag = '';
                      hold on;  
                     end   
                     xlabel('Time (s)'); ylabel('dFF');
-                    axis([1.0 ts(length(ts)) -100 500]);set(gca,'YMinorTick','on','YTick', -100:100:500);
+                    axis([s_time ts(length(ts)) -100 500]);set(gca,'YMinorTick','on','YTick', -100:100:500);
                     vline([  1 1.5 2 2.5],'k-');
                 end
 
@@ -126,7 +128,7 @@ rois_name_tag = '';
 %                     plot([frametime:frametime:length(detected_avg)*frametime] ,detected_avg,'color',col(types(k),:),'linewidth',1.5);           
                     plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(types(k),:),'linewidth',1.5);           
 
-                   axis([1.0 ts(length(ts)) -50 250]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
+                   axis([s_time ts(length(ts)) -50 250]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
 
                     vline([ 1 1.5 2 2.5],'k-');
                     text(1,100,[ num2str(sum(detected,1)) '/' num2str(size(event_detected_data,1)) '(' num2str(sum(detected,1)/size(event_detected_data,1)) ')']);%,'Location','NorthEast');

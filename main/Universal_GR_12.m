@@ -1225,15 +1225,27 @@ current_dir = pwd;
 separators = find(current_dir == filesep);
 session_dir = current_dir(1:separators(length(separators)-3));
 cd (session_dir);
-sessObj_found = dir('sessObj.mat');
+
+prompt={'Enter roi name:','Enter fov name:'};
+name='Input for sessObj';
+numlines=1;
+defaultanswer={'1','1'};
+ans=inputdlg(prompt,name,numlines,defaultanswer);
+if(isempty(ans{1}) || isempty(ans{2}) )
+    sessObjname = 'sessObj';
+else
+    sessObjname = ['sessObj' 'R' ans{1} 'F' ans{2}];
+end
+
+sessObj_found = dir([sessObjname '*.mat']);
 if isempty(sessObj_found)
     sessObj = {};
     sessObj.CaTrials = CaSignal.CaTrials;
-    save('sessObj','sessObj','-v7.3');
+    save([sessObjname '.mat'],'sessObj','-v7.3');
 else
-    load('sessObj.mat');
+    load([sessObjname '.mat']);
     sessObj.CaTrials = CaSignal.CaTrials;
-    save('sessObj','sessObj','-v7.3');
+    save([sessObjname '.mat'],'sessObj','-v7.3');
 end
 cd (current_dir);
 save_gui_info(handles);
@@ -2427,15 +2439,28 @@ current_dir = pwd;
 separators = find(current_dir == filesep);
 session_dir = current_dir(1:separators(length(separators)));
 cd (session_dir);
-sessObj_found = dir('sessObj.mat');
+
+prompt={'Enter roi name:','Enter fov name:'};
+name='Input for sessObj';
+numlines=1;
+defaultanswer={'1','1'};
+ans=inputdlg(prompt,name,numlines,defaultanswer);
+if(isempty(ans{1}) || isempty(ans{1}))
+    sessObjname = 'sessObj';
+else
+    sessObjname = ['sessObj' 'R' ans{1} 'F' ans{2}];
+end
+
+sessObj_found = dir([sessObjname '*.mat']);
+
 if isempty(sessObj_found)
     sessObj = {};
     sessObj.behavTrials = behavTrials;
-    save('sessObj','sessObj','-v7.3');
+    save([sessObjname '.mat'],'sessObj','-v7.3');
 else
     load('sessObj.mat');
     sessObj.behavTrials = behavTrials;
-    save('sessObj','sessObj','-v7.3');
+    save([sessObjname '.mat'],'sessObj','-v7.3');
 end
 cd (current_dir);
 'Done'
@@ -4009,15 +4034,28 @@ wSig_trialnums =str2num(char(names));
 
 
     %% adding this to sessObj
-    sessObj_found = dir('sessObj.mat');
+    
+    prompt={'Enter roi name:','Enter fov name:'};
+    name='Input for sessObj';
+    numlines=1;
+    defaultanswer={'1','1'};
+    ans=inputdlg(prompt,name,numlines,defaultanswer);
+    if(isempty(ans{1}) || isempty(ans{1}))
+        sessObjname = 'sessObj';
+    else
+        sessObjname = ['sessObj' 'R' ans{1} 'F' ans{2}];
+    end
+
+    sessObj_found = dir([sessObjname '*.mat']);
+
     if isempty(sessObj_found)
         sessObj = {};
         sessObj.wSigTrials = wSigTrials;
-        save('sessObj','sessObj','-v7.3');
+        save([sessObjname '.mat'],'sessObj','-v7.3');
     else
         load('sessObj.mat');
         sessObj.wSigTrials = wSigTrials;;
-        save('sessObj','sessObj','-v7.3');
+        save([sessObjname '.mat'],'sessObj','-v7.3');
     end
 
 % end
@@ -4945,15 +4983,28 @@ current_dir = pwd;
 separators = find(current_dir == filesep);
 session_dir = current_dir(1:separators(length(separators)-0)); % one folder up from ephus_data dir
 cd (session_dir);
-sessObj_found = dir('sessObj.mat');
+
+prompt={'Enter roi name:','Enter fov name:'};
+name='Input for sessObj';
+numlines=1;
+defaultanswer={'1','1'};
+ans=inputdlg(prompt,name,numlines,defaultanswer);
+if(isempty(ans{1}) || isempty(ans{1}))
+    sessObjname = 'sessObj';
+else
+    sessObjname = ['sessObj' 'R' ans{1} 'F' ans{2}];
+end
+
+sessObj_found = dir([sessObjname '*.mat']);
+
 if isempty(sessObj_found)
     sessObj = {};
     sessObj.ephusTrials = obj;
-    save('sessObj','sessObj','-v7.3');
+    save([sessObjname '.mat'],'sessObj','-v7.3');
 else
     load('sessObj.mat');
     sessObj.ephusTrials = obj;
-    save('sessObj','sessObj','-v7.3');
+    save([sessObjname '.mat'],'sessObj','-v7.3');
 end
 cd (current_dir);
 ['sessObj :  Saved']

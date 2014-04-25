@@ -144,8 +144,9 @@ function breakup_volume_images(fpath, flist, n_planes, mode, reference_image,  .
                     X = X+df; Xi = Xi + 1;
                     if (Xi >= nf) ; X = 0 ; Xi = 0 ; Y = Y-df; end
                     M = 1.5*quantile(reshape(fov_refims{n},[],1),.995);
-    				M = roi.roiArray.maxImagePixelValue;
-                    imshow(fov_refims{n}, [0 M], 'Parent', ar, 'Border', 'tight');
+%     				M = roi.roiArray.maxImagePixelValue;
+%                     imshow(fov_refims{n}, [0 M], 'Parent', ar, 'Border', 'tight');
+                    imshow(fov_refims{n}, [min(min(fov_refims{n})) max(max(fov_refims{n}))], 'Parent', ar, 'Border', 'tight');
                     text(50,50,num2str(n), 'Color', [1 0 0], 'FontSize', 24);
                 end
                 disp('breakup_volume_images::preview mode skips output.');
