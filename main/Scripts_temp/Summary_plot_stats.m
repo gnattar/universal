@@ -41,25 +41,25 @@ b=[A.(fields{k})(:,1:2,2) C.(fields{k})(:,1:2,2)]'
 [h,p,ks2stat] = kstest2(b,a,'alpha',.01)
 [h,p,ks2stat] = kstest2(b,c,'alpha',.01)
 
-end
+% end
 % 
 
 %%to plot switch variable vs. switch magnitude
 
 A_bl = cell2mat(cellfun(@(x) nanmean(cell2mat(x(1:2))), A.mean_barpos, 'UniformOutput',false));
 C_bl = cell2mat(cellfun(@(x) nanmean(cell2mat(x(1:2))), C.mean_barpos, 'UniformOutput',false));
-A_bi = cell2mat(cellfun(@(x) nanmean(cell2mat(x(3:8))), A.mean_barpos, 'UniformOutput',false));
-C_bi = cell2mat(cellfun(@(x) nanmean(cell2mat(x(3:8))), C.mean_barpos, 'UniformOutput',false));
+A_bi = cell2mat(cellfun(@(x) nanmean(cell2mat(x(3:end))), A.mean_barpos, 'UniformOutput',false));
+C_bi = cell2mat(cellfun(@(x) nanmean(cell2mat(x(3:end))), C.mean_barpos, 'UniformOutput',false));
 A_mag = A_bi-A_bl;
 C_mag = C_bi-C_bl;
 
 
 temp = nanmean(A.nogo_prcoccupancy,1);
-APrO=nanmean(temp(:,3:8,:),2);
+APrO=nanmean(temp(:,3:end,:),2);
 APrO = reshape(APrO,7,1,1);
 
 temp = nanmean(C.nogo_prcoccupancy,1);
-CPrO=nanmean(temp(:,3:8,:),2);
+CPrO=nanmean(temp(:,3:end,:),2);
 CPrO = reshape(CPrO,6,1,1);
 
 figure;plot(A_mag,APrO,'bo','MarkerSize',12); hold on; plot(C_mag,CPrO,'ro','MarkerSize',12),set(gca,'FontSize',16);
@@ -69,11 +69,11 @@ title('Chnge in PrOccupancy vs. switch magnitude');
 
 
 temp = nanmean(A.nogo_peakdev_data,1);
-Apeak=nanmean(temp(:,3:8,:),2);
+Apeak=nanmean(temp(:,3:end,:),2);
 Apeak = reshape(Apeak,7,1,1);
 
 temp = nanmean(C.nogo_peakdev_data,1);
-Cpeak=nanmean(temp(:,3:8,:),2);
+Cpeak=nanmean(temp(:,3:end,:),2);
 Cpeak = reshape(Cpeak,6,1,1);
 
 figure;plot(A_mag,Apeak,'bo','MarkerSize',12); hold on; plot(C_mag,Cpeak,'ro','MarkerSize',12),set(gca,'FontSize',16);

@@ -22,7 +22,7 @@ function varargout = Universal_GR_12(varargin)
 
 % Edit the above text to modify the response to help Universal_GR_12
 
-% Last Modified by GUIDE v2.5 03-Apr-2014 08:56:38
+% Last Modified by GUIDE v2.5 08-May-2014 22:18:38
 
 % Begin initialization code - DO NOT EDIT
 
@@ -548,7 +548,11 @@ if get(handles.dispMeanMode, 'Value')==1
     else
         im = CaSignal.ImageArray;
         sc = CaSignal.Scale;
-        mean_im = mean(im,3);
+        ft = CaSignal.CaTrials(1).FrameTime;
+        timewindow = str2num(get(handles.im_timewindow,'String'));
+        temp =[1:size(im,3)]*ft;
+        frames_used = find(timewindow(1)<temp & temp<timewindow(2));
+        mean_im = mean(im(:,:,frames_used),3);
         colormap(gray);
     end
     imagesc(mean_im, sc);
@@ -563,9 +567,13 @@ if get(handles.dispMaxDelta,'Value')==1
     end
     im = CaSignal.ImageArray;
     sc = CaSignal.Scale;
-    mean_im = uint16(mean(im,3));
+    ft = CaSignal.CaTrials(1).FrameTime;
+    timewindow = str2num(get(handles.im_timewindow,'String'));
+    temp =[1:size(im,3)]*ft;
+    frames_used = find (timewindow(1)<temp & temp<timewindow(2));
+    mean_im = uint16(mean(im(:,:,frames_used),3));
     im = im_mov_avg(im,5);
-    max_im = max(im,[],3);
+    max_im = max(im(:,:,frames_used),[],3);
     CaSignal.MaxDelta = max_im - mean_im;
     imagesc(CaSignal.MaxDelta, sc);
     colormap(gray);
@@ -581,8 +589,12 @@ if get(handles.dispMaxMode,'Value')==1
     end
     im = CaSignal.ImageArray;
     sc = CaSignal.Scale;
+    ft = CaSignal.CaTrials(1).FrameTime;
+    timewindow = str2num(get(handles.im_timewindow,'String'));
+    temp =[1:size(im,3)]*ft;
+    frames_used = find(timewindow(1)<temp & temp<timewindow(2));
     im = im_mov_avg(im,5);
-    max_im = max(im,[],3);
+    max_im = max(im(:,:,frames_used),[],3);
     imagesc(max_im, sc);
     colormap(gray);
     set(gca, 'Position',[0.05 0.05 0.9 0.9], 'Visible','off');
@@ -1013,7 +1025,7 @@ end
 if nargin < 5 %~exist('plot_flag','var')
     plot_flag = 1;
 end
-if ~isempty(CaSignal.ROIinfo(TrialNo).BGmask)
+if ~isempty(CaSignal.ROIinfo(TrialNo).BGmask) && (get(handles.AnalysisModeBGsub,'Value') == 1)
     BGmask = repmat(CaSignal.ROIinfo(TrialNo).BGmask,[1 1 size(im,3)]) ;
     BG_img = BGmask.*double(im);
     BG_img(BG_img==0) = NaN;
@@ -1055,10 +1067,10 @@ for i = 1: nROI_effective
             lighton_ind = (xt<xt(xt_h)) & (xt>xt(xt_l));
             lightoff_ind = ~(lighton_ind);
             
-            bleach_filler = F(i,1:xt_l-2) - prctile(F(i,lightoff_ind),10);
-            temp = filter(ones(1,5)/5,1, bleach_filler);
-            bleach_filler(5:end)=temp(5:end) ;
-            F(i,1:xt_l-2) =  F(i,1:xt_l-2)-bleach_filler;
+% %             bleach_filler = F(i,1:xt_l-2) - prctile(F(i,lightoff_ind),10);
+% %             temp = filter(ones(1,5)/5,1, bleach_filler);
+% %             bleach_filler(5:end)=temp(5:end) ;
+% %             F(i,1:xt_l-2) =  F(i,1:xt_l-2)-bleach_filler;
 
             avg_BG_lighton = nanmedian(BG(lighton_ind));
             avg_BG_lightoff = nanmedian(BG(lightoff_ind));            
@@ -1107,7 +1119,10 @@ for i = 1: nROI_effective
 end;
 CaSignal.CaTrials(TrialNo).dff = dff;
 CaSignal.CaTrials(TrialNo).f_raw = F;
-ts = (1:CaSignal.CaTrials(TrialNo).nFrames).*CaSignal.CaTrials(TrialNo).FrameTime;
+% ts = (1:CaSignal.CaTrials(TrialNo).nFrames).*CaSignal.CaTrials(TrialNo).FrameTime;
+ts = (1:size(dff,2)).*CaSignal.CaTrials(TrialNo).FrameTime;
+
+
 if plot_flag == 1
     if get(handles.check_plotAllROIs, 'Value') == 1
         roiNos = [];
@@ -4970,7 +4985,7 @@ if isempty(sessObj_found)
     sessObj.ephusTrials = obj;
     save([sessObjname '.mat'],'sessObj','-v7.3');
 else
-    load(sessObjname(1).name);
+    load(sessObjname);
     sessObj.ephusTrials = obj;
     save([sessObjname '.mat'],'sessObj','-v7.3');
 end
@@ -5989,3 +6004,14 @@ function lightstim_subtract_CreateFcn(hObject, eventdata, handles)
 
 % --- Executes on button press in lightstim_subtract.
 function lightstim_subtract_Callback(hObject, eventdata, handles)
+
+
+
+function im_timewindow_Callback(hObject, eventdata, handles)
+
+% --- Executes during object creation, after setting all properties.
+function im_timewindow_CreateFcn(hObject, eventdata, handles)
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
