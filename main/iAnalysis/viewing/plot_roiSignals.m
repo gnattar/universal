@@ -3,6 +3,7 @@ function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam
 roisperfig = 5;
 s_time = 1.0 ;
 e_time = 5.0;
+
 fovname = [nam 'fov ' fov 'rois ' roislist]; 
 frametime=obj.FrameTime;
 rois_trials  = arrayfun(@(x) x.dff, obj,'uniformoutput',false);
@@ -13,8 +14,19 @@ if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
     ts_wsk = cell2mat(arrayfun(@(x) x.ts_wsk{1}, obj,'uniformoutput',false)');
     totalTouchKappa = cell2mat(arrayfun(@(x) x.total_touchKappa, obj,'uniformoutput',false)');
     s_time = 0;
+    
 end
 
+if strcmp(sfx , 'Csort') 
+    btt = {'T','NT'}; 
+elseif strcmp(sfx , 'CSort_barpos')
+    btt = num2str([length(trialtypes):1]);
+elseif (strcmp(sfx , 'Bsort'))
+    btt = {'H','M','CR','FA'};
+else
+     btt = {''};
+end
+curr_btt = trialtypes(btt);
 numtrials = length(rois_trials);
 numrois = size(rois_trials{1},1);
 numframes =size(rois_trials{1},2);
@@ -195,7 +207,7 @@ rois_name_tag = '';
         
     else
         
-        fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx 'CaTraces.jpg'];
+        fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx 'CaTraces ' curr_btt ];
         figure(h1);
         suptitle(fnam);
         set(gcf,'PaperUnits','inches');
