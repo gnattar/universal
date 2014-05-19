@@ -1,7 +1,8 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam)
 % plot signals arranged by rois : to check roi selection in fovs
 roisperfig = 5;
-s_time = 1.0 ;
+% s_time = 1.0 ;
+s_time = 0;
 e_time = 5.0;
 
 fovname = [nam 'fov ' fov 'rois ' roislist]; 
@@ -18,15 +19,15 @@ if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
 end
 
 if strcmp(sfx , 'Csort') 
-    btt = {'T','NT'}; 
+    btt = ['T';'N']; 
 elseif strcmp(sfx , 'CSort_barpos')
     btt = num2str([length(trialtypes):1]);
 elseif (strcmp(sfx , 'Bsort'))
-    btt = {'H','M','CR','FA'};
+    btt = ['H';'M';'C';'F'];
 else
-     btt = {''};
+     btt = [''];
 end
-curr_btt = trialtypes(btt);
+curr_btt = btt(unique(trialtypes),:);
 numtrials = length(rois_trials);
 numrois = size(rois_trials{1},1);
 numframes =size(rois_trials{1},2);
@@ -207,7 +208,7 @@ rois_name_tag = '';
         
     else
         
-        fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx 'CaTraces ' curr_btt ];
+        fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx 'CaTraces ' curr_btt' ];
         figure(h1);
         suptitle(fnam);
         set(gcf,'PaperUnits','inches');
