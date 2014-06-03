@@ -1,12 +1,14 @@
 function changefilename(d)
 files = dir('WDBP*');
 
-%% to change file number for new = old +1; !!!!  if new = old-1 change iteration to 1:length(files) !!!!
-for i =1:length(files)
+%% to change file number for new = old +1; !!!!  i =length(files):-1:1
+%% if new = old-1 change iteration to 1:length(files) !!!!
+
+for  i =length(files):-1:1
     name = files(i).name;
     uscores = find(ismember(name,'_'));
     num = name(uscores(4)+1:uscores(5)-1);
-    newnum = str2num(num)-1;
+    newnum = str2num(num)+1;
     if (newnum < 10)
         nn = ['000' num2str(newnum)];
     elseif (newnum < 100)

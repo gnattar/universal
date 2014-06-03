@@ -58,18 +58,32 @@ for i= 1:numtrials
       
 end
 cscale=[0 300];
-a = round(linspace(1,300,20));
-if (max(overlay)>0)
-    b = [3 1 16 18  5 7 10 8  6 9 11 4 12 14 17 15  2 13 19 20];
-else
-    b = [ 3 16 5 10 6 11 12 17 2 19 1 18 7 8 9 4 14 15 13 20];
-end
-scaledcol = a(b);;
-scaledcol = a(b);
+
+a =reshape(round(linspace(30,150,10)),2,5); b =reshape(round(linspace(300,150,10)),2,5);
+scaledcol = reshape([a;b],2,10);
+scaledcol = reshape(scaledcol,1,20);
 temp = jet(cscale(1,2));
-% temp = othercolor('Mrainbow',300);
 col = temp(scaledcol,:);
 
+% scaledcol = [38;76;113;263;300;151;188];
+% if max(overlay)>0
+% %     scaledcol = [1;56;300;248;143;173;...
+% %         281; 218;38;  76; 113; 83; ...
+% %         188; 263; 300;170];%
+%     a =reshape(round(linspace(30,150,10)),2,5); b =reshape(round(linspace(300,150,10)),2,5);
+%     scaledcol = reshape([a;b],2,10)
+%      temp = jet(cscale(1,2));
+%     col = temp(scaledcol,:);
+% else
+% %     col = [0 0 .5 ; .5 0 0;  0.4 1 .6; .76 0 0; 0 .5 1; 1 0 0;1 .44 0; 0 .5 1; 1 0 0; 1 .44 0]; %[0 0 1; 0 .5 1;.5 .5 1; 1 0 0;.5 0 0 ;0 0 0];
+%     a =reshape(round(linspace(30,150,10)),2,5); b =reshape(round(linspace(300,150,10)),2,5);
+%     scaledcol = reshape([a;b],2,10)    
+%     temp = jet(cscale(1,2));
+% 
+%     col = temp(scaledcol,:);
+% %     scaledcol = [1;300; 241; 173; 143; 76;263;230;]; 
+% %     scaledcol = [1;38;76;230;263;300;151];
+% end
 if(tag_trialtypes ==1)
     temp = permute(temprois,[3,2,1]);
     newrois=zeros(size(temp,1),size(temp,2)+1,size(temp,3));
@@ -105,7 +119,8 @@ rois_name_tag = '';
             count=count+1;
             xt=[ts ts(length(ts))+dt*1:dt:ts(length(ts))+dt*5];
             [y,temp]=min(abs(xt-s_time));
-            imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet(300));xlabel('Time(s)'); ylabel('Trials');
+%             imagesc(xt(1:end),1:numtrials,newrois(:,:,rois(i)));caxis(cscale);colormap(jet);xlabel('Time(s)'); ylabel('Trials');
+            imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet);xlabel('Time(s)'); ylabel('Trials');
 
             vline([.5 1 1.5 2 2.5 ],'k-');
 
@@ -127,7 +142,7 @@ rois_name_tag = '';
                         end
                         
                         for j=1:length(trials_ktype)
-                            plot(ts ,newrois(trials_ktype(j),1:length(ts),rois(i))','color',col(k,:),'linewidth',1);
+                            plot(ts ,newrois(trials_ktype(j),1:length(ts),rois(i))','color',col(types(k),:),'linewidth',1);
                             hold on;
                         end
                         xlabel('Time (s)'); ylabel('dFF');
@@ -171,12 +186,12 @@ rois_name_tag = '';
             threshold = 2; % in m.a.d
             [event_detected_data,events_septs,detected] = detect_Ca_events(temp_data,frametime,threshold);
             detected_data= event_detected_data(find(detected),:);
-            detected_avg=mean(detected_data ,1);%sum(detected_data ,1)./max(sum(detected,1),1);
+            detected_avg=nanmean(detected_data ,1);%sum(detected_data ,1)./max(sum(detected,1),1);
             detected_sd=(detected_data.^2 + repmat(detected_avg.^2,size(detected_data,1),1) - 2*detected_data.*repmat(detected_avg,size(detected_data,1),1));
-            detected_sd=(mean(detected_sd,1)).^0.5;
-            alltrials_avg = mean(temp_data,1);
+            detected_sd=(nanmean(detected_sd,1)).^0.5;
+            alltrials_avg = nanmean(temp_data,1);
             %                     plot([frametime:frametime:length(detected_avg)*frametime] ,detected_avg,'color',col(types(k),:),'linewidth',1.5);
-            plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(k,:),'linewidth',1.5);
+            plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(types(k),:),'linewidth',1.5);
 
             axis([s_time ts(length(ts)) -50 250]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
 
