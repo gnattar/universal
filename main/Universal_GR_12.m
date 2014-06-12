@@ -1055,19 +1055,20 @@ for i = 1: nROI_effective
     else
         F(i,:) = mean(roi_img, 1);
     end
-     
+
             lightstim_window = strsplit(get(handles.lightstim_window,'String'),',');
             xt=CaSignal.CaTrials(TrialNo).FrameTime * [1:size(F,2)];
             all_ind = [1:length(BG)];
             [mi,xt_l]= min(abs(xt-lightstim_window(1)));
             [ma,xt_h]=min(abs(xt-lightstim_window(2)));
+%     if get(handles.lightstim_subtract,'Value')
             lighton_ind = (xt<xt(xt_h-3)) & (xt>xt(xt_l+3));
             lightonbl_ind = (xt<0.95) & (xt>xt(xt_l+2)+.1);
             lightonblank_ind = zeros(length(lightonbl_ind),1);
             lightonblank_ind(xt_l:xt_l+3) =1;
             lightonblank_ind(xt_h-3:xt_h) =1;
             lightoff_ind = (xt<xt(xt_l)) | (xt>xt(xt_h));
-           
+%      end      
 
     if get(handles.AnalysisModeBGsub,'Value') && get(handles.lightstim_subtract,'Value')
         if isempty(handles.lightstim_template)
@@ -1106,8 +1107,8 @@ for i = 1: nROI_effective
 % %                 end
 % %             end
             top = mean(prctile(F(i,lighton_ind),80)) ;
-            bottom = mean(prctile(F(i,lighton_ind),20)) ;
-            off = mean(prctile(F(i,lightoff_ind),20));
+            bottom = mean(prctile(F(i,lighton_ind),30)) ;
+            off = mean(prctile(F(i,lightoff_ind),30));
             F(i,lighton_ind) = F(i,lighton_ind) - handles.lightstim_template(TrialName) * (bottom - off);
             F(i,find(lightonblank_ind)) = nan;
 %             F(i,xt_l:xt_l+3) = nan;
@@ -2946,7 +2947,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     end
     disp('order = hits misses cr  fa')
     
-   plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+     plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
     
   
     %%
@@ -2979,7 +2980,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                 count = count +length(sorted_CaTrials.notouch );
                 overlay =0;
             end
-            plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+             plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
             
             %% sort by bar_pos_trial
             tag_trialtypes =1;
@@ -3076,7 +3077,7 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
         overlay=0;
     end
 
-%     plot_roiSignals(contact_CaTrials,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+      plot_roiSignals(contact_CaTrials,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
     
     
     %% sort by bar_pos_trial
@@ -3084,17 +3085,15 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
     sfx = 'Csort_barpos';
     count =0;
     trialtypes = ones(length(contact_CaTrials),1);      
-    touchinds = zeros(length(contact_CaTrials),1);
+    touchinds = ones(length(contact_CaTrials),1);
     barposall=cell2mat(arrayfun(@(x) x.barpos, contact_CaTrials, 'uniformoutput',false));
     barpositions1 = unique(barposall);
    if isfield(sorted_CaTrials,'lightstim')
        temp = [length(barpositions1)];
        overlay=zeros(temp,1);
-        contact_CaTrials_inds = arrayfun(@(x) x.CaSigTrialind,contact_CaTrials);
-        temp = intersect(contact_CaTrials_inds,sorted_CaTrials.lightstim);
-        [v1,c1,l1] = find(ismember(contact_CaTrials_inds,temp));
-        temp = intersect(contact_CaTrials_inds,sorted_CaTrials.nolightstim);
-        [v2,c2,l2]  = find(ismember(contact_CaTrials_inds,temp));
+        contact_CaTrials_inds = arrayfun(@(x) x.CaSigTrialind,contact_CaTrials);        
+        [v1,c1,l1] = intersect(contact_CaTrials_inds,sorted_CaTrials.lightstim);
+        c2 = find(~ismember(contact_CaTrials_inds,v1));
         for i=2:2:length(barpositions1)*2
             inds= find(barposall(c1)==barpositions1(round(i/2))) ;
             touchinds(count+1:count+length(inds))=c1(inds);
@@ -3765,11 +3764,15 @@ names=cellfun(@(x) x.trackerFileName(length(x.trackerFileName)-21:length(x.track
 wSig_trialnums =str2num(char(names)); % from trial filenames
 [common_trialnums,ctags,wtags]=intersect(CaSig_trialnums,wSig_trialnums);
 
-ind = zeros(length(ctags),1);
-ind (intersect(ctags,sorted_CaTrials.hits))=1;
-ind (intersect(ctags,sorted_CaTrials.cr))=3;
-ind (intersect(ctags,sorted_CaTrials.misses))=2;
-ind (intersect(ctags,sorted_CaTrials.fa))=4;
+ind = zeros(length(common_trialnums),1);
+[v,c,s] = intersect(ctags,sorted_CaTrials.hits);
+ind (c)=1;
+[v,c,s] = intersect(ctags,sorted_CaTrials.cr);
+ind (c)= 3;
+[v,c,s] = intersect(ctags,sorted_CaTrials.misses);
+ind (c)=2;
+[v,c,s] = intersect(ctags,sorted_CaTrials.fa);
+ind (c)=4;
 [Y,indorder] = sort(ind,'ascend');
 
 % %% removing nogo trials
@@ -3849,6 +3852,7 @@ contact_CaTrials=struct('solo_trial',[],'dff',{},'ts',{},'FrameTime',{},'nframes
     'deltaKappa',{},'ts_wsk',{},'contactdir',{},'contacts',{},'barpos',[],'Setpoint',{},'Amplitude',{},'Velocity',{},'total_touchKappa',{},'max_touchKappa',{});
 count=0;
 handles.aligned_contact = get(handles.align_to_first_touch,'Value'); % 1 for first
+mismatch =0;
 % % % 
 % % % ButtonName = questdlg('Is there a .5 s trigger delay in wdata acq?','Data acq mismatch?','Yes','No','No');
 % % % switch ButtonName,

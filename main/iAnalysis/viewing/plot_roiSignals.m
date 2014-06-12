@@ -133,8 +133,10 @@ rois_name_tag = '';
                         xlabel('Time (s)'); ylabel('dFF');
                         axis([s_time ts(length(ts)) -100 500]);set(gca,'YMinorTick','on','YTick', -100:100:500);
                         vline([  1 1.5 2 2.5],'k-');
-                    else
+                    elseif isempty(trials_ktype) && overlay(k)==0
                         count = count+1;
+                    else
+                        
                     end
                 end
 
@@ -151,7 +153,9 @@ rois_name_tag = '';
     % % %          end
 
 
-
+%     if(max(overlay>0))
+%         count = (roicount-(roicount>roisperfig)*roisperfig-1)*numcolstoplot+max(overlay)+1+1;
+%     end
     % plot trace averages
     figure(h1);
     types= unique(trialtypes);
@@ -159,32 +163,39 @@ rois_name_tag = '';
     
     for k = 1:max(types)
         trials_ktype=(find(trialtypes==k));
-        if (numel(overlay)>1 && overlay(k)>0)
-            subplot(roisperfig,numcolstoplot, overlay(k)+max(overlay)+1 +((mod(roicount,roisperfig)*1 +(mod(roicount,roisperfig)==0)*roisperfig) -1)*numcolstoplot);
-            hold on;
-        else
-            subplot(roisperfig,numcolstoplot, count);
-            count = count+1;
-        end
         if(~isempty(trials_ktype))
+            if (numel(overlay)>1 && overlay(k)>0)
+                subplot(roisperfig,numcolstoplot, overlay(k)+max(overlay)+1 +((mod(roicount,roisperfig)*1 +(mod(roicount,roisperfig)==0)*roisperfig) -1)*numcolstoplot);
+                hold on;
+            else
+                subplot(roisperfig,numcolstoplot, count);
+                count = count+1;
+            end
+            
             temp_data=newrois(trials_ktype,1:length(ts),rois(i));
             threshold = 2; % in m.a.d
             [event_detected_data,events_septs,detected] = detect_Ca_events(temp_data,frametime,threshold);
             detected_data= event_detected_data(find(detected),:);
-            detected_avg=mean(detected_data ,1);%sum(detected_data ,1)./max(sum(detected,1),1);
+            detected_avg=nanmean(detected_data ,1);%sum(detected_data ,1)./max(sum(detected,1),1);
             detected_sd=(detected_data.^2 + repmat(detected_avg.^2,size(detected_data,1),1) - 2*detected_data.*repmat(detected_avg,size(detected_data,1),1));
-            detected_sd=(mean(detected_sd,1)).^0.5;
-            alltrials_avg = mean(temp_data,1);
+            detected_sd=(nanmean(detected_sd,1)).^0.5;
+            alltrials_avg = nanmean(temp_data,1);
             %                     plot([frametime:frametime:length(detected_avg)*frametime] ,detected_avg,'color',col(types(k),:),'linewidth',1.5);
             plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(k,:),'linewidth',1.5);
-
+            
             axis([s_time ts(length(ts)) -50 250]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
-
+            
             vline([ 1 1.5 2 2.5],'k-');
-            text(1,100,[ num2str(sum(detected,1)) '/' num2str(size(event_detected_data,1)) '(' num2str(sum(detected,1)/size(event_detected_data,1)) ')']);%,'Location','NorthEast');
+            text(3.5,200,[ num2str(sum(detected,1)) '/' num2str(size(event_detected_data,1)) '(' num2str(sum(detected,1)/size(event_detected_data,1)) ')']);%,'Location','NorthEast');
+        elseif isempty(trials_ktype) && overlay(k)==0
+            count = count+1;
         end
     end
     
+%     if(max(overlay>0))
+%         
+%         count = (roicount-(roicount>roisperfig)*roisperfig-1)*numcolstoplot+max(overlay)*2+1+1;
+%     end   
     
     % plot max(dFF) vs. dKappa
     if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
@@ -194,6 +205,7 @@ rois_name_tag = '';
         
         for k = 1:max(types)
             if (numel(overlay)>1 && overlay(k)>0)
+                subplot(roisperfig,numcolstoplot, overlay(k)+max(overlay) +((mod(roicount,roisperfig)*1 +(mod(roicount,roisperfig)==0)*roisperfig) -1)*numcolstoplot);
                 hold on;
             else
                 subplot(roisperfig,length(types), count1);

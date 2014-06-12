@@ -7,15 +7,20 @@ htrials = solo_data.hitTrialNums(ismember(solo_data.hitTrialNums,imtrials));
 mtrials = solo_data.missTrialNums(ismember(solo_data.missTrialNums,imtrials));
 crtrials = solo_data.correctRejectionTrialNums(ismember(solo_data.correctRejectionTrialNums,imtrials));
 fatrials = solo_data.falseAlarmTrialNums(ismember(solo_data.falseAlarmTrialNums,imtrials));
+timeper =0;
 
-%% htrials
+% htrials
 if(length(htrials)>0)
     temp_m_im = zeros(s(1),s(2),length(htrials));
     parfor i = 1:length(htrials)
         n = find (imtrials == htrials(i));
         fname = list(n).name;
         [im,header] = imread_multi_GR(fname, 'g');
-        timeper =  (header.SI4.fastZEnable)*header.SI4.fastZPeriod +  (~header.SI4.fastZEnable)*header.SI4.scanFramePeriod;
+        if header.SI4.fastZEnable
+           timeper = header.SI4.fastZPeriod;
+        elseif (~header.SI4.fastZEnable)
+           timeper = header.SI4.scanFramePeriod;
+        end
         tpts = round(twindow / timeper);
         tinds = tpts(1) : tpts(2);
         tmmat = repmat(mean(im (:,:,tinds),3),1,1,length(tinds));
@@ -26,18 +31,23 @@ if(length(htrials)>0)
     for i = 2:size(temp_m_im,3)
         imwrite(uint16(temp_m_im(:,:,i)),colormap(gray), ['Bsort_htrials_Mean.tiff'], 'writemode', 'append')
     end
-    % subplot(2,2,1), imagesc(mean(temp_m_im,3)); colormap(gray);
+    subplot(2,2,1), imagesc(mean(temp_m_im,3)); colormap(gray);
     'saved Bsort_htrials_Mean.tiff'
 end
 
 %% mtrials
+
 if(length(mtrials)>0)
     temp_m_im = zeros(s(1),s(2),length(mtrials));
     parfor i = 1:length(mtrials)
         n = find (imtrials == mtrials(i));
         fname = list(n).name
         [im,header] = imread_multi_GR(fname, 'g');
-        timeper =  (header.SI4.fastZEnable)*header.SI4.fastZPeriod +  (~header.SI4.fastZEnable)*header.SI4.scanFramePeriod;
+        if header.SI4.fastZEnable
+           timeper = header.SI4.fastZPeriod;
+        elseif (~header.SI4.fastZEnable)
+           timeper = header.SI4.scanFramePeriod;
+        end
         tpts = round(twindow / timeper);
         tinds = tpts(1) : tpts(2);
         tmmat = repmat(mean(im (:,:,tinds),3),1,1,length(tinds));
@@ -57,7 +67,11 @@ if(length(crtrials)>0)
         n = find (imtrials == crtrials(i));
         fname = list(n).name;
         [im,header] = imread_multi_GR(fname, 'g');
-        timeper =  (header.SI4.fastZEnable)*header.SI4.fastZPeriod +  (~header.SI4.fastZEnable)*header.SI4.scanFramePeriod;
+        if header.SI4.fastZEnable
+           timeper = header.SI4.fastZPeriod;
+        elseif (~header.SI4.fastZEnable)
+           timeper = header.SI4.scanFramePeriod;
+        end
         tpts = round(twindow / timeper);
         tinds = tpts(1) : tpts(2);
         tmmat = repmat(mean(im (:,:,tinds),3),1,1,length(tinds));
@@ -77,7 +91,11 @@ if(length(fatrials)>0)
         n = find (imtrials == fatrials(i));
         fname = list(n).name;
         [im,header] = imread_multi_GR(fname, 'g');
-        timeper =  (header.SI4.fastZEnable)*header.SI4.fastZPeriod +  (~header.SI4.fastZEnable)*header.SI4.scanFramePeriod;
+        if header.SI4.fastZEnable
+           timeper = header.SI4.fastZPeriod;
+        elseif (~header.SI4.fastZEnable)
+           timeper = header.SI4.scanFramePeriod;
+        end
         tpts = round(twindow / timeper);
         tinds = tpts(1) : tpts(2);
         tmmat = repmat(mean(im (:,:,tinds),3),1,1,length(tinds));
