@@ -18,8 +18,10 @@ if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
     
 end
 
-if strcmp(sfx , 'Csort') || strcmp(sfx , 'Tsort')
+if strcmp(sfx , 'Tsort')
     btt = ['T';'N']; 
+elseif strcmp(sfx , 'Csort')
+    btt = 'C';
 elseif strcmp(sfx , 'Csort_barpos')
     if numel(overlay)>1
         btt = num2str(sort(unique(overlay(overlay>0)),'descend'));
@@ -58,11 +60,15 @@ for i= 1:numtrials
       
 end
 cscale=[0 300];
-a = round(linspace(1,300,20));
+% a = round(linspace(1,300,20));
+a = round(linspace(1,300,30));
 if (max(overlay)>0)
-    b = [3 1 16 18  5 7 10 8  6 9 11 4 12 14 17 15  2 13 19 20];
+%     b = [3 1 16 18  5 7 10 8  6 9 11 4 12 14 17 15  2 13 19 20];
+    b = [3 1 16 18  5 7 10 8  6 9 21 23 11 4 26 22 12 14 28 25 17 15 29 24  2 13 30 26 19 20];
+
 else
-    b = [ 3 16 5 10 6 11 12 17 2 19 1 18 7 8 9 4 14 15 13 20];
+%     b = [ 3 16 5 10 6 11 12 17 2 19 1 18 7 8 9 4 14 15 13 20];
+    b = [ 3 16 5 10 6 21 11 26 12 28 17 29 2 30 19 1 18 7 8 9 23 4 22 14 25 15 24 13 26 20];
 end
 scaledcol = a(b);;
 scaledcol = a(b);
@@ -197,62 +203,62 @@ rois_name_tag = '';
 %         count = (roicount-(roicount>roisperfig)*roisperfig-1)*numcolstoplot+max(overlay)*2+1+1;
 %     end   
     
-    % plot max(dFF) vs. dKappa
-    if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
-        figure(h2);
-        types= unique(trialtypes);
-        %                         subplot(roisperfig,numcolstoplot, count);
-        
-        for k = 1:max(types)
-            if (numel(overlay)>1 && overlay(k)>0)
-                subplot(roisperfig,numcolstoplot, overlay(k)+max(overlay) +((mod(roicount,roisperfig)*1 +(mod(roicount,roisperfig)==0)*roisperfig) -1)*numcolstoplot);
-                hold on;
-            else
-                subplot(roisperfig,length(types), count1);
-                count1=count1+1;
-            end
-            if(~isempty(trials_ktype))
-                trials_ktype=(find(trialtypes==types(k)));
-                temp_data=newrois(trials_ktype,1:length(ts),rois(i));
-                temp_dKappa = dKappa(trials_ktype,:);
-                temp_velocity = velocity(trials_ktype,:);
-                temp_ts_wsk = ts_wsk(trials_ktype,:);
-                temp_totalTouchKappa = totalTouchKappa(trials_ktype,:);
-                [event_detected_data,events_septs,detected] = detect_Ca_events(temp_data,frametime,threshold);
-
-                max_dFF=zeros(size(temp_data,1),1);
-
-                for m = 1:size(events_septs,1)
-                    temp2 = temp_data(m,events_septs(m,1):events_septs(m,2));
-                    total_dFF(m,1) = sum(temp2);
-                    max_dFF(m,1) = nanmean(prctile(temp2,90));
-                end
-
-                total_velocity = sum(temp_velocity,2);
-                [X, outliers_idx] = outliers(temp_totalTouchKappa.*max_dFF);
-                %                      plot(total_dKappa,max_dFF,'Marker','o','color',col(types(k),:),'Markersize',6);
-                scatter(temp_totalTouchKappa,max_dFF,80,col(types(k),:),'fill');hold on;
-                plot(temp_totalTouchKappa(outliers_idx),max_dFF(outliers_idx),'*','color',[1,1,1],'MarkerSize',6);
-                %                           set(gca,'Xscale','log');
-                %                           temp_totalTouchKappa(outliers_idx) = [];
-                %                           total_dFF(outliers_idx)=[];
-                P=polyfit(temp_totalTouchKappa,max_dFF,1);
-                yfit = P(1)*temp_totalTouchKappa + P(2);
-                hold on;
-                plot(temp_totalTouchKappa,yfit,'color',col(types(k),:),'linewidth',2);hold off;
-                grid on;xlabel('total_dKappa'); ylabel('peak_dFF');
-                text(0 ,200,['b=' num2str(P(1))]);
-
-                %                           axis([min(temp_totalTouchKappa)-1 max(temp_totalTouchKappa)+1 -10 max(max_dFF) ]);
-                axis([-10 40 -50 400 ]);
-                set(gca,'YMinorTick','on','YTick', 0:100:500);
-                %                     vline([.5 1 1.5 2 2.5],'k-');
-            end
-            
-        end
-        
-        
-    end
+%     % plot max(dFF) vs. dKappa
+%     if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
+%         figure(h2);
+%         types= unique(trialtypes);
+%         %                         subplot(roisperfig,numcolstoplot, count);
+%         
+%         for k = 1:max(types)
+%             if (numel(overlay)>1 && overlay(k)>0)
+%                 subplot(roisperfig,numcolstoplot, overlay(k)+max(overlay) +((mod(roicount,roisperfig)*1 +(mod(roicount,roisperfig)==0)*roisperfig) -1)*numcolstoplot);
+%                 hold on;
+%             else
+%                 subplot(roisperfig,length(types), count1);
+%                 count1=count1+1;
+%             end
+%             if(~isempty(trials_ktype))
+%                 trials_ktype=(find(trialtypes==types(k)));
+%                 temp_data=newrois(trials_ktype,1:length(ts),rois(i));
+%                 temp_dKappa = dKappa(trials_ktype,:);
+%                 temp_velocity = velocity(trials_ktype,:);
+%                 temp_ts_wsk = ts_wsk(trials_ktype,:);
+%                 temp_totalTouchKappa = totalTouchKappa(trials_ktype,:);
+%                 [event_detected_data,events_septs,detected] = detect_Ca_events(temp_data,frametime,threshold);
+% 
+%                 max_dFF=zeros(size(temp_data,1),1);
+% 
+%                 for m = 1:size(events_septs,1)
+%                     temp2 = temp_data(m,events_septs(m,1):events_septs(m,2));
+%                     total_dFF(m,1) = sum(temp2);
+%                     max_dFF(m,1) = nanmean(prctile(temp2,90));
+%                 end
+% 
+%                 total_velocity = sum(temp_velocity,2);
+%                 [X, outliers_idx] = outliers(temp_totalTouchKappa.*max_dFF);
+%                 %                      plot(total_dKappa,max_dFF,'Marker','o','color',col(types(k),:),'Markersize',6);
+%                 scatter(temp_totalTouchKappa,max_dFF,80,col(types(k),:),'fill');hold on;
+%                 plot(temp_totalTouchKappa(outliers_idx),max_dFF(outliers_idx),'*','color',[1,1,1],'MarkerSize',6);
+%                 %                           set(gca,'Xscale','log');
+%                 %                           temp_totalTouchKappa(outliers_idx) = [];
+%                 %                           total_dFF(outliers_idx)=[];
+%                 P=polyfit(temp_totalTouchKappa,max_dFF,1);
+%                 yfit = P(1)*temp_totalTouchKappa + P(2);
+%                 hold on;
+%                 plot(temp_totalTouchKappa,yfit,'color',col(types(k),:),'linewidth',2);hold off;
+%                 grid on;xlabel('total_dKappa'); ylabel('peak_dFF');
+%                 text(0 ,200,['b=' num2str(P(1))]);
+% 
+%                 %                           axis([min(temp_totalTouchKappa)-1 max(temp_totalTouchKappa)+1 -10 max(max_dFF) ]);
+%                 axis([-10 40 -50 400 ]);
+%                 set(gca,'YMinorTick','on','YTick', 0:100:500);
+%                 %                     vline([.5 1 1.5 2 2.5],'k-');
+%             end
+%             
+%         end
+%         
+%         
+%     end
     if (mod(roicount,roisperfig)>0) && (roicount<length(rois))
         
     else

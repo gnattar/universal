@@ -1088,10 +1088,9 @@ for i = 1: nROI_effective
         end
         
         bl = mean(F(i,lightonbl_ind)) ;
-        bl_sd = std(F(i,lightonbl_ind));
-        bl_2= mean(F(i,lighton_ind)) ;
-        if(bl>bl_2+bl_sd) %% if there is direct light induced activity
-            sub = mean(prctile(F(i,lighton_ind),30)) ;            
+        light= mean(F(i,lighton_ind)) ;
+        if(bl>light) %% if there is direct light induced activity
+            sub = bottom;
         else
             sub = bl;
         end
@@ -1103,10 +1102,10 @@ for i = 1: nROI_effective
     end;
     
     if get(handles.AnalysisModeDeltaFF,'Value') && get(handles.lightstim_subtract,'Value') 
-        baseline = mean(prctile(F(i,lightoff_ind),40));
+        baseline = mean(prctile(F(i,lightoff_ind),20));
         dff(i,:) = (F(i,:)- baseline)./baseline*100;        
     elseif get(handles.AnalysisModeDeltaFF,'Value')
-        baseline = mean(prctile(F(i,:),40));
+        baseline = mean(prctile(F(i,:),20));
         dff(i,:) = (F(i,:)- baseline)./baseline*100;
     else
         
