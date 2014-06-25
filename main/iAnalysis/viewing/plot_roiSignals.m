@@ -37,7 +37,7 @@ elseif (strcmp(sfx , 'Tsort_barpos'))
         btt = num2str(sort(unique(trialtypes),'descend'));
     end
 else
-     btt = [''];
+     btt = ['A'];
 end
 if max(overlay)>0
     curr_btt = btt(overlay(overlay>0),:);
@@ -63,12 +63,14 @@ cscale=[0 300];
 % a = round(linspace(1,300,20));
 a = round(linspace(1,300,30));
 if (max(overlay)>0)
+
 %     b = [3 1 16 18  5 7 10 8  6 9 11 4 12 14 17 15  2 13 19 20];
     b = [3 1 16 18  5 7 10 8  6 9 21 23 11 4 26 22 12 14 28 25 17 15 29 24  2 13 30 26 19 20];
 
 else
 %     b = [ 3 16 5 10 6 11 12 17 2 19 1 18 7 8 9 4 14 15 13 20];
     b = [ 3 16 5 10 6 21 11 26 12 28 17 29 2 30 19 1 18 7 8 9 23 4 22 14 25 15 24 13 26 20];
+
 end
 scaledcol = a(b);;
 scaledcol = a(b);
@@ -113,7 +115,7 @@ rois_name_tag = '';
             [y,temp]=min(abs(xt-s_time));
             imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet(300));xlabel('Time(s)'); ylabel('Trials');
 
-            vline([.5 1 1.5 2 2.5 ],'k-');
+            vline([ 1 1.5 2 2.5 3],'k-');
 
             figure(h1);
             % plot traces
@@ -138,8 +140,11 @@ rois_name_tag = '';
                         end
                         xlabel('Time (s)'); ylabel('dFF');
                         axis([s_time ts(length(ts)) -100 500]);set(gca,'YMinorTick','on','YTick', -100:100:500);
-                        vline([  1 1.5 2 2.5],'k-');
-                    elseif isempty(trials_ktype) && overlay(k)==0
+                        vline([  1 1.5 2 2.5 3],'k-');
+                    elseif isempty(trials_ktype) && (numel(overlay)>1 && overlay(k)==0)
+                        count = count+1;
+                    elseif isempty(trials_ktype) && numel(overlay)==1
+                        
                         count = count+1;
                     else
                         
@@ -191,9 +196,12 @@ rois_name_tag = '';
             
             axis([s_time ts(length(ts)) -50 250]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
             
-            vline([ 1 1.5 2 2.5],'k-');
+            vline([ 1 1.5 2 2.5 3],'k-');
             text(3.5,200,[ num2str(sum(detected,1)) '/' num2str(size(event_detected_data,1)) '(' num2str(sum(detected,1)/size(event_detected_data,1)) ')']);%,'Location','NorthEast');
-        elseif isempty(trials_ktype) && overlay(k)==0
+        elseif isempty(trials_ktype) && (numel(overlay)>1 && overlay(k)==0)
+            count = count+1;
+        elseif isempty(trials_ktype) && numel(overlay)==1
+            
             count = count+1;
         end
     end

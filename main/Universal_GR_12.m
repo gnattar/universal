@@ -1087,7 +1087,7 @@ for i = 1: nROI_effective
             lightstim_subtract_Callback();
         end
         
-        bl = mean(F(i,lightonbl_ind)) ;
+        bl = mean(prctile(F(i,lightonbl_ind),90)) ;
         bl_sd = std(F(i,lightonbl_ind));
         bl_2= mean(F(i,lighton_ind)) ;
         if(bl>bl_2+bl_sd) %% if there is direct light induced activity
@@ -1730,7 +1730,7 @@ set(handles.SoloDataFileName, 'String', SoloFileName);
 behavTrialNums = trialStartEnd(1):trialStartEnd(2);
 behavTrialNums(trailsToBeExcluded) = [];
 
-if length(behavTrialNums) ~= str2num(get(handles.TotTrialNum, 'String'))
+if length(behavTrialNums) < str2num(get(handles.TotTrialNum, 'String'))
     error('Number of behavior trials NOT equal to Number of Ca Image Trials!')
 end
 
