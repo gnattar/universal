@@ -1063,7 +1063,7 @@ for i = 1: nROI_effective
     [ma,xt_h]=min(abs(xt-lightstim_window(2)));
     %     if get(handles.lightstim_subtract,'Value')
     lighton_ind = (xt<xt(xt_h-3)) & (xt>xt(xt_l+3));
-    lightonbl_ind = (xt<0.95) & (xt>xt(xt_l+2)+.1);
+    lightonbl_ind = (xt<1.25) & (xt>xt(xt_l+2)+.1);
     lightonblank_ind = zeros(length(lightonbl_ind),1);
     lightonblank_ind(xt_l+1:xt_l+3) =1;
     lightonblank_ind(xt_h-3:xt_h-1) =1;
