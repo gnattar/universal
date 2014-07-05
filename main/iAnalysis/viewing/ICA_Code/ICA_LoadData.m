@@ -1,4 +1,4 @@
-function AllData = ICA_LoadData(DataDir,FileBaseName,FileNums)
+function AllData = ICA_LoadData(DataDir,FileBaseName,FileNums,Twindow)
 % function AllData = LoadData(BaseDir, FileNums)
 % function AllData = LoadData(FileNum)
 % Simple function to process multiple tiff files and output
@@ -19,21 +19,15 @@ files = dir([DataDir filesep FileBaseName '*.tif']);
  hw = waitbar(0, 'Loading Imaging data ...');
 
 for ii=1:length(FileNums)
-  
-%   BaseDir = 'NX102527_100625_tuft1_reg/';
-%   BaseFile = 'NX102527_100625_tuft1_greenberg_0';
 
-%   BaseDir = 'NXJF36703_090716_tuft2/';
-%   BaseFile = 'NXJF36703_090716_tuft2_d52_beh_dftReg_greenberg_0';
-%   Base = [BaseDir BaseFile];
-%   if ii< 10; Base = [Base '0'];   end
-%   %         str = ['[~,Aout] = scim_openTif(\''' Base '00' num2str(ii) '.tif'')'];
-%   str = ['scim_openTif(''' Base num2str(ii) '.tif'')'];
-%   [~,Aout] = eval(str);
-%   Aout = squeeze(Aout);
-
- Aout = imread_multi_GR(fullfile(DataDir, files(FileNums(ii)).name),'g');
-  Aout = double(Aout);
+ [Aout,header] = imread_multi_GR(fullfile(DataDir, files(FileNums(ii)).name),'g');
+ if header.SI4.fastZEnable
+     tpts = round(Twindow / header.SI4.fastZPeriod);
+ elseif (~header.SI4.fastZEnable)
+     tpts = round(Twindow / header.SI4.scanFramePeriod);
+ end
+ frames = tpts(1) : tpts(2);
+  Aout = double(Aout(:,:,frames));
   DataSize = [size(Aout,1) size(Aout,2)];
   AllData = [AllData; reshape(Aout,DataSize(1)*DataSize(2)...
     ,size(Aout,3))'];

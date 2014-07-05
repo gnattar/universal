@@ -36,6 +36,8 @@ elseif (strcmp(sfx , 'Tsort_barpos'))
     else
         btt = num2str(sort(unique(trialtypes),'descend'));
     end
+elseif (strcmp(sfx , 'Tsort'))
+    btt = ['T';'N'];
 else
      btt = ['A'];
 end

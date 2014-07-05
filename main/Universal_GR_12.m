@@ -1065,8 +1065,8 @@ for i = 1: nROI_effective
     lighton_ind = (xt<xt(xt_h-3)) & (xt>xt(xt_l+3));
     lightonbl_ind = (xt<0.95) & (xt>xt(xt_l+2)+.1);
     lightonblank_ind = zeros(length(lightonbl_ind),1);
-    lightonblank_ind(xt_l:xt_l+3) =1;
-    lightonblank_ind(xt_h-3:xt_h) =1;
+    lightonblank_ind(xt_l+1:xt_l+3) =1;
+    lightonblank_ind(xt_h-3:xt_h-1) =1;
     lightoff_ind = (xt<xt(xt_l)) | (xt>xt(xt_h));
     %      end
     
@@ -1087,13 +1087,13 @@ for i = 1: nROI_effective
             lightstim_subtract_Callback();
         end
         
-        bl = mean(prctile(F(i,lightonbl_ind),90)) ;
+        bl = mean(prctile(F(i,lightonbl_ind),90));
         bl_sd = std(F(i,lightonbl_ind));
         bl_2= mean(F(i,lighton_ind)) ;
         if(bl>bl_2+bl_sd) %% if there is direct light induced activity
             sub = mean(prctile(F(i,lighton_ind),30)) ;            
         else
-            sub = bl;
+            sub = mean(F(i,lightonbl_ind));
         end
         off = mean(prctile(F(i,lightoff_ind),20));    
         F(i,lighton_ind) = F(i,lighton_ind) - handles.lightstim_template(TrialName) * (sub - off);
@@ -2110,6 +2110,7 @@ if get(hObject, 'Value') == 1
     %**************
     
     % load_saved_data_SVD
+    Twindow = str2num(get(handles.im_timewindow,'String'));
     if isempty(CaSignal.ImageArray)
         error('No Imaging Data loaded. Do this before running ICA!');
     end
@@ -2118,22 +2119,22 @@ if get(hObject, 'Value') == 1
         
         CaSignal. ica_data.FileBaseName = get(handles.batchPrefixEdit, 'String');
         CaSignal.ica_data.DataDir = pwd;
-        CaSignal.ica_data.FileNums = [1:50];% using filenums [1:50] for now , need to put a text box
+        CaSignal.ica_data.FileNums = [1:100];% using filenums [1:50] for now , need to put a text box
         usr_confirm = questdlg('ica_data.Data exists. Reload data from first 50 data .tif files.Continue? ');
         if strcmpi(usr_confirm, 'Yes')
             % Load the data files
-            CaSignal.ica_data.Data = ICA_LoadData(CaSignal.ica_data.DataDir,CaSignal.ica_data.FileBaseName, CaSignal.ica_data.FileNums);
+            CaSignal.ica_data.Data = ICA_LoadData(CaSignal.ica_data.DataDir,CaSignal.ica_data.FileBaseName, CaSignal.ica_data.FileNums,Twindow);
         end
         
     else
         
         %          h = msgbox('No ica_data.Data, Loading data from first 50 data .tif files.');
-        
+
         CaSignal.ica_data.FileBaseName = get(handles.batchPrefixEdit, 'String');
         CaSignal.ica_data.DataDir = pwd;
-        CaSignal.ica_data.FileNums = [1:50];% using filenums [1:50] for now , need to put a text box
+        CaSignal.ica_data.FileNums = [1:100];% using filenums [1:50] for now , need to put a text box 
         % Load the data files
-        CaSignal.ica_data.Data = ICA_LoadData( CaSignal.ica_data.DataDir,  CaSignal.ica_data.FileBaseName,  CaSignal.ica_data.FileNums);
+        CaSignal.ica_data.Data = ICA_LoadData( CaSignal.ica_data.DataDir,  CaSignal.ica_data.FileBaseName,  CaSignal.ica_data.FileNums,Twindow);
         
     end
     
@@ -2952,7 +2953,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                 trialtypes = zeros(length(trialorder),1);
                 trialtypes(count+1:count+length(sorted_CaTrials.touch )) = 1;
                 count = count +length(sorted_CaTrials.touch);
-                trialtypes(count+1:count+length(sorted_CaTrials.notouch )) = 3;
+                trialtypes(count+1:count+length(sorted_CaTrials.notouch )) = 2;
                 count = count +length(sorted_CaTrials.notouch );
                 overlay =0;
             end
@@ -5161,18 +5162,19 @@ else
     trials=str2num(filenames);
     filenames=arrayfun(@(x) x.trialname,obj,'uniformoutput',false);
     ephustrials=str2num(cell2mat(filenames'));
-    commontrials=ephustrials(ismember(ephustrials,trials));
-    commontrialinds = find(ismember(ephustrials,trials));
+    [commontrials,etags,ctags]=intersect(ephustrials,trials);
 end
 
 
 if length(commontrials) ~= str2num(get(handles.TotTrialNum, 'String'))
-    error('Number of ephus trials NOT equal to Number of Ca Image Trials!')
+    disp('Number of ephus trials NOT equal to Number of Ca Image Trials!')
+   [v,c] = setdiff(trials,commontrials);
+    CaSignal.CaTrials(c).ephusTrial = [];
 end
 
 for i = 1:length(commontrials)
     
-    CaSignal.CaTrials(i).ephusTrial = obj(commontrialinds(i));
+    CaSignal.CaTrials(i).ephusTrial = obj(etags(i));
 end
 disp([num2str(i) ' Ephus Trials added to CaSignal.CaTrials']);
 set(handles.msgBox, 'String', [num2str(i) ' Ephus Trials added to CaSignal.CaTrials']);
