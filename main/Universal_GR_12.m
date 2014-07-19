@@ -2873,7 +2873,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     tag_trialtypes =1;
     sfx = 'Bsort';
     count =0;
-    
+    overlay = zeros(8,1);
     if isfield(sorted_CaTrials,'lightstim')
         trialorder  = [intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.hits), intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.hits) ,intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.misses) ,intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.misses),...
                 intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.cr) ,intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.cr),intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.fa),intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.fa) ];                   
@@ -2884,33 +2884,39 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
         count = count +length(intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.hits) );
         trialtypes(count+1:count+length(intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.hits) )) = 2;
         count = count +length(intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.hits) );
-
+        overlay (2) = 1;
+        
         if(isempty(sorted_CaTrials.misses))
             'No Miss Trials in this list'
+            overlay (4) = -1;
         else
             trialtypes(count+1:count+length(intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.misses))) = 3;
             count = count +length(intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.misses));
             trialtypes(count+1:count+length(intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.misses))) = 4;
             count = count +length(intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.misses));
+            overlay (4) = 2;
         end
 
         if(isempty(sorted_CaTrials.cr))
-            'No Correct Rejection Trials in this list'        
+            'No Correct Rejection Trials in this list'  
+            overlay (6) = -1;
         else
             trialtypes(count+1:count+length(intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.cr) )) = 5;
             count = count +length(intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.cr));
             trialtypes(count+1:count+length(intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.cr) )) = 6;
             count = count +length(intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.cr));
+             overlay (6) = 3;
         end
 
         if(isempty(sorted_CaTrials.fa))
             'No False alarm Trials in this list'
+            overlay (8) = -1;
         else
             trialtypes(count+1:count+length(intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.fa) )) = 7;
             count = count +length(intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.fa) );
             trialtypes(count+1:count+length(intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.fa) )) = 8;
+            overlay (8) = 4;
         end
-        overlay = [0;1;0;2;0;3;0;4];
     else  
         trialorder  = [sorted_CaTrials.hits , sorted_CaTrials.misses , sorted_CaTrials.cr, sorted_CaTrials.fa];
         trialtypes = zeros(length(trialorder),1);
