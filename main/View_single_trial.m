@@ -27,11 +27,11 @@ function varargout = View_single_trial(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @View_single_trial_OpeningFcn, ...
-                   'gui_OutputFcn',  @View_single_trial_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @View_single_trial_OpeningFcn, ...
+    'gui_OutputFcn',  @View_single_trial_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -62,7 +62,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = View_single_trial_OutputFcn(hObject, eventdata, handles) 
+function varargout = View_single_trial_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
@@ -75,7 +75,7 @@ maxtrials=str2num(get(handles.numtrials,'String'));
 if(currenttrial+1<=maxtrials)
     currenttrial =currenttrial +1;
     set(handles.currenttrial,'String',num2str(currenttrial));
-%     currenttrial_Callback(handles.currenttrial,handles.rois_toplot);
+    %     currenttrial_Callback(handles.currenttrial,handles.rois_toplot);
     currenttrial_Callback(hObject,eventdata,handles);
 else
     disp('Cannot increment trials anymore');
@@ -87,7 +87,7 @@ currenttrial=str2num(get(handles.currenttrial,'String'));
 if(currenttrial-1>0)
     currenttrial =currenttrial -1;
     set(handles.currenttrial,'String',num2str(currenttrial));
-%     currenttrial_Callback(handles.currenttrial,handles.rois_toplot);
+    %     currenttrial_Callback(handles.currenttrial,handles.rois_toplot);
     currenttrial_Callback(hObject,eventdata,handles);
 else
     disp('Cannot decrement trials anymore');
@@ -96,7 +96,7 @@ end
 function currenttrial_Callback(hObject, eventdata, handles)
 currenttrial = str2num(get(handles.currenttrial,'String'));
 roiNo = str2num(get(handles.rois_toplot,'String'));
-global obj 
+global obj
 global h1
 figure(h1);
 trNo = currenttrial;
@@ -104,209 +104,217 @@ trNo = currenttrial;
 %solo info
 
 
-    soloTrNo =  obj(trNo).solo_trial;
-    trType = obj(trNo).trialtype;
-    trCorrect = obj(trNo).trialCorrect;
- 
-    
-    fig_export_dir = ['Trialdata'];
-    folder=dir(fig_export_dir);
-    if(isempty(folder))
-        mkdir(fig_export_dir);
-    end
-% winfo and einfo
-  if ~isempty( obj(trNo).ts_wsk)
-       wskNo = '2';
-    ts_wsk = obj(trNo).ts_wsk{1};
-      ts_wsk =ts_wsk-ts_wsk(1);  
+soloTrNo =  obj(trNo).solo_trial;
+trType = obj(trNo).trialtype;
+trCorrect = obj(trNo).trialCorrect;
 
-     contacts=obj(trNo).contacts{1};
-     
-     
-     list = get(handles.selectObj,'String');
+
+fig_export_dir = ['Trialdata'];
+folder=dir(fig_export_dir);
+if(isempty(folder))
+    mkdir(fig_export_dir);
+end
+% winfo and einfo
+if ~isempty( obj(trNo).ts_wsk)
+    wskNo = '2';
+    ts_wsk = obj(trNo).ts_wsk{1};
+    ts_wsk =ts_wsk-ts_wsk(1);
+    
+    contacts=obj(trNo).contacts{1};
+    
+    
+    list = get(handles.selectObj,'String');
     target=list(get(handles.selectObj,'Value'));
     licks=obj(trNo).licks;
     ephus_time = obj(trNo).ephuststep;
     lickTime_trial = ephus_time(licks >3)';
-     barOnOff = [1.08, 2.58]; 
+    barOnOff = [1.08, 2.58];
     if(strcmp(target,'contact_CaTrials'))
-         barOnOff =  barOnOff-(contacts(1)/500)+ 0.5;
-         lickTime_trial = lickTime_trial - (contacts(1)/500)+ 0.1;
-
+        barOnOff =  barOnOff-(contacts(1)/500)+ 0.5;
+        lickTime_trial = lickTime_trial - (contacts(1)/500)+ 0.1;
+        
     end
     
     ha(1) = subaxis(5,1,1, 'sv', 0.05);
-
-    Setpoint = obj(trNo).Setpoint{1};   
+    
+    Setpoint = obj(trNo).Setpoint{1};
     plot(ts_wsk, Setpoint,'k','linewidth',1.5);
     line([lickTime_trial'; lickTime_trial'], ...
-    [zeros(1,length(lickTime_trial)); ones(1,length(lickTime_trial))*10],'color','m','linewidth',.5)
+        [zeros(1,length(lickTime_trial)); ones(1,length(lickTime_trial))*10],'color','m','linewidth',.5)
     if(barOnOff(1)>0)
         line([barOnOff(1); barOnOff(1)], [0 0; 30 30], 'color','c','linewidth',.5);
     end
     if (barOnOff(2)<3.5)
-         line([barOnOff(2); barOnOff(2)], [0 0; 30 30], 'color','b','linewidth',.5);
+        line([barOnOff(2); barOnOff(2)], [0 0; 30 30], 'color','b','linewidth',.5);
     end
     
-% % %     if(~isempty(contacts))
-% % %          numcontacts = size(contacts,2);   
-% % %         
-% % %             for i = 1:numcontacts
-% % %                 if(iscell(contacts))
-% % %                     ithcontact=contacts{i}-(contacts{1}(1)-250)*(strcmp(target,'contact_CaTrials')); %with respect to the first contact being fixed at .5s
-% % %                 else
-% % %                    ithcontact=contacts(i)-(contacts(1)-250)*(strcmp(target,'contact_CaTrials'));
-% % %                 end
-% % %                 ithcontact=(ithcontact/500);
-% % %                 line([ithcontact;ithcontact],[zeros(1,length(ithcontact))+10;ones(1,length(ithcontact))*20],'color',[.6 .5 0],'linewidth',.5)
-% % % 
-% % %             end
-% % % 
-% % %     end
+    % % %     if(~isempty(contacts))
+    % % %          numcontacts = size(contacts,2);
+    % % %
+    % % %             for i = 1:numcontacts
+    % % %                 if(iscell(contacts))
+    % % %                     ithcontact=contacts{i}-(contacts{1}(1)-250)*(strcmp(target,'contact_CaTrials')); %with respect to the first contact being fixed at .5s
+    % % %                 else
+    % % %                    ithcontact=contacts(i)-(contacts(1)-250)*(strcmp(target,'contact_CaTrials'));
+    % % %                 end
+    % % %                 ithcontact=(ithcontact/500);
+    % % %                 line([ithcontact;ithcontact],[zeros(1,length(ithcontact))+10;ones(1,length(ithcontact))*20],'color',[.6 .5 0],'linewidth',.5)
+    % % %
+    % % %             end
+    % % %
+    % % %     end
     
     ylabel('Setpoint','fontsize',15);xlim([0 max(ts_wsk)])
     set(gca,'XMinorTick','on','XTick',0:.2:6);
     condir= num2str(obj(trNo).contactdir{1});
     if(isempty(condir))
-        condir='nocontact';       
+        condir='nocontact';
     end
     if(strcmp(target,'contact_CaTrials'))
-     title(sprintf('%d:Trial %d, Type %s,  %s ',trNo,soloTrNo,trType,condir), 'fontsize',20);
-    else 
-     title(sprintf('%d:Trial %d, Type %d, C/NC %d,  %s ',trNo,soloTrNo,trType,trCorrect,condir), 'fontsize',20);
+        title(sprintf('%d:Trial %d, Type %s,  %s ',trNo,soloTrNo,trType,condir), 'fontsize',20);
+    else
+        title(sprintf('%d:Trial %d, Type %d, C/NC %d,  %s ',trNo,soloTrNo,trType,trCorrect,condir), 'fontsize',20);
     end
-
+    
     ha(5) = subaxis(5,1,5, 'sv', 0.05);
-
-    vel =  obj(trNo).Velocity{1};  
+    
+    vel =  obj(trNo).Velocity{1};
     plot(ts_wsk, vel, 'r','linewidth',1.5);
     ylabel('Velocity','fontsize',15);  xlim([0 max(ts_wsk)]);
     set(gca,'XMinorTick','on','XTick',0:.2:6);
-
-    ha(2) = subaxis(5,1,2, 'sv', 0.05);   
+    
+    ha(2) = subaxis(5,1,2, 'sv', 0.05);
     Amplitude=obj(trNo).Amplitude{1};
     plot(ts_wsk, Amplitude,'k','linewidth',1.5);
     
     ylabel('Amplitude','fontsize',15);
     xlabel('Time (s)','fontsize',20);xlim([0 max(ts_wsk)])
-%      set(ha, 'box','off', 'xlim',[0 max(ts_wsk)]); 
+    %      set(ha, 'box','off', 'xlim',[0 max(ts_wsk)]);
     set(gca,'XMinorTick','on','XTick',0:.2:6); %
     
-     ha(4) = subaxis(5,1,4, 'sv', 0.05);   
+    ha(4) = subaxis(5,1,4, 'sv', 0.05);
     dKappa = obj(trNo).deltaKappa{1};
     plot(ts_wsk,dKappa,'b','linewidth',1.5);
     line([lickTime_trial'; lickTime_trial'], ...
-    [zeros(1,length(lickTime_trial)); ones(1,length(lickTime_trial))*.5],'color','m','linewidth',1)
+        [zeros(1,length(lickTime_trial)); ones(1,length(lickTime_trial))*.5],'color','m','linewidth',1)
     if(barOnOff(1)>0)
         line([barOnOff(1); barOnOff(1)], [0 0; .5 .5], 'color','c','linewidth',2.5);
     end
     if (barOnOff(2)<3.5)
-    line([barOnOff(2); barOnOff(2)], [0 0; .5 .5], 'color','k','linewidth',2.5);
+        line([barOnOff(2); barOnOff(2)], [0 0; .5 .5], 'color','k','linewidth',2.5);
     end
     if(~isempty(contacts))
-         numcontacts = size(contacts,2);   
+        numcontacts = size(contacts,2);
         
-            for i = 1:numcontacts
-                if(iscell(contacts))
-                    ithcontact=contacts{i}-(contacts{1}(1)-250)*(strcmp(target,'contact_CaTrials')); %with respect to the first contact being fixed at .5s
-                else
-                   ithcontact=contacts(i)-(contacts(1)-250)*(strcmp(target,'contact_CaTrials'));
-                end
-                ithcontact=(ithcontact/500);
-                line([ithcontact;ithcontact],[ones(1,length(ithcontact))*-1;ones(1,length(ithcontact))*-2],'color',[.6 .5 0],'linewidth',1)
-
+        for i = 1:numcontacts
+            if(iscell(contacts))
+                ithcontact=contacts{i}-(contacts{1}(1)-250)*(strcmp(target,'contact_CaTrials')); %with respect to the first contact being fixed at .5s
+            else
+                ithcontact=contacts(i)-(contacts(1)-250)*(strcmp(target,'contact_CaTrials'));
             end
-
+            ithcontact=(ithcontact/500);
+            line([ithcontact;ithcontact],[ones(1,length(ithcontact))*-1;ones(1,length(ithcontact))*-2],'color',[.6 .5 0],'linewidth',1)
+            
+        end
+        
     end
     ylabel('deltaKappa','fontsize',15);  xlim([0 max(ts_wsk)]);
     set(gca,'XMinorTick','on','XTick',0:.2:6);
     
-  else 
-      ha(1) = subaxis(5,1,1, 'sv', 0.05);
-%       set(ha(1),'visible','off');
-      delete(ha(1));
-      ha(5) = subaxis(5,1,5, 'sv', 0.05);
-         delete(ha(5));
-      ha(2) = subaxis(5,1,2, 'sv', 0.05);
-       delete(ha(2));
-      ha(4) = subaxis(5,1,4, 'sv', 0.05);
-      delete(ha(4));
-  end
-  
+else
+    ha(1) = subaxis(5,1,1, 'sv', 0.05);
+    %       set(ha(1),'visible','off');
+    delete(ha(1));
+    ha(5) = subaxis(5,1,5, 'sv', 0.05);
+    delete(ha(5));
+    ha(2) = subaxis(5,1,2, 'sv', 0.05);
+    delete(ha(2));
+    ha(4) = subaxis(5,1,4, 'sv', 0.05);
+    delete(ha(4));
+end
+
 
 %Ca info
-  if isfield(obj,'dff')
-%         ~isempty( obj(trNo).dff)
+if isfield(obj,'dff')
+    %         ~isempty( obj(trNo).dff)
     yl_dff = [-50 350];
-
+    
     numtrials = size(obj,2);
     numrois= obj(1).nROIs;
     roiName = num2str(roiNo);
-
-
-
+    
+    
+    
     % Get Ca signal and whisker variable in trials
-% % %         %% temporary fix for the 500ms delay in wSig data : advancing CaSig data by 500ms
-% % %         delay = ceil(.5/obj(trNo).FrameTime);
-% % %         dffarray = obj(trNo).dff(:,delay+1:end);
-% % %         barOnOff = [.5, 2];
-% % %          %% remove for data after Dec 28,2012 and uncomment the following statements
+    % % %         %% temporary fix for the 500ms delay in wSig data : advancing CaSig data by 500ms
+    % % %         delay = ceil(.5/obj(trNo).FrameTime);
+    % % %         dffarray = obj(trNo).dff(:,delay+1:end);
+    % % %         barOnOff = [.5, 2];
+    % % %          %% remove for data after Dec 28,2012 and uncomment the following statements
     [dffarray] = obj(trNo).dff;
-       
+    
     dff = mean(dffarray(roiNo,:),1);
     
-   if  iscell(obj(trNo).ts)
-     ts = obj(trNo).ts{1};
-   else
-      ts = obj(trNo).ts; 
-   end
-     ts = ts - ts(1);
-
-     
-     
-        ha(3) = subaxis(5,1,3, 'MarginTop', 0.1);   
+    if  iscell(obj(trNo).ts)
+        ts = obj(trNo).ts{1};
+    else
+        ts = obj(trNo).ts;
+    end
+    ts = ts - ts(1);
+    
+    
+    
+    ha(3) = subaxis(5,1,3, 'MarginTop', 0.1);
     plot(ts, dff, 'color',[1 .6 0],'linewidth',1.5)
-        title(sprintf('dFFmean(%s)',roiName), 'fontsize',20);
+    title(sprintf('dFFmean(%s)',roiName), 'fontsize',20);
     line([lickTime_trial'; lickTime_trial'], ...
         [zeros(1,length(lickTime_trial)); ones(1,length(lickTime_trial))*20],'color','m','linewidth',1)
     if(barOnOff(1)>0)
         line([barOnOff(1); barOnOff(1)], [0 0; 100 100], 'color','c','linewidth',1);%hold on;
     end
-% % %     if(~isempty(contacts))
-% % %          numcontacts = size(contacts,2);   
-% % %         
-% % %             for i = 1:numcontacts
-% % %                 if(iscell(contacts))
-% % %                     ithcontact=contacts{i}-(contacts{1}(1)-250)*(strcmp(target,'contact_CaTrials')); %with respect to the first contact being fixed at .5s
-% % %                 else
-% % %                    ithcontact=contacts(i)-(contacts(1)-250)*(strcmp(target,'contact_CaTrials'));
-% % %                 end
-% % %                 ithcontact=(ithcontact/500);
-% % %                 line([ithcontact;ithcontact],[ones(1,length(ithcontact))*50;ones(1,length(ithcontact))*100],'color',[.6 .5 0],'linewidth',.5); hold on;
-% % % 
-% % %             end
-% % % 
-% % %     end
+    % % %     if(~isempty(contacts))
+    % % %          numcontacts = size(contacts,2);
+    % % %
+    % % %             for i = 1:numcontacts
+    % % %                 if(iscell(contacts))
+    % % %                     ithcontact=contacts{i}-(contacts{1}(1)-250)*(strcmp(target,'contact_CaTrials')); %with respect to the first contact being fixed at .5s
+    % % %                 else
+    % % %                    ithcontact=contacts(i)-(contacts(1)-250)*(strcmp(target,'contact_CaTrials'));
+    % % %                 end
+    % % %                 ithcontact=(ithcontact/500);
+    % % %                 line([ithcontact;ithcontact],[ones(1,length(ithcontact))*50;ones(1,length(ithcontact))*100],'color',[.6 .5 0],'linewidth',.5); hold on;
+    % % %
+    % % %             end
+    % % %
+    % % %     end
     if (barOnOff(2)<3.5)
-    line([barOnOff(2); barOnOff(2)], [0 0; 100 100], 'color','b','linewidth',.5);
+        line([barOnOff(2); barOnOff(2)], [0 0; 100 100], 'color','b','linewidth',.5);
+    end
+    
+    if (isfield(obj,'lightstim'))
+        if(obj(trNo).lightstim)
+            line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','y','linewidth',1);
+        else
+            line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','k','linewidth',1);
+        end
     end
     ylabel('dF/F','fontsize',15)
     ylim(yl_dff);    set(gca,'XMinorTick','on','XTick',0:.2:6); xlim([0 max(ts_wsk)]);
     
-
-
-  else
-      ha(3) = subaxis(5,1,3, 'sv', 0.05);
-%       set(ha(3),'visible','off');
-     delete(ha(3));
-  end
+    
+    
+else
+    ha(3) = subaxis(5,1,3, 'sv', 0.05);
+    %       set(ha(3),'visible','off');
+    delete(ha(3));
+end
 
 %%
-    figure(gcf)
+figure(gcf)
 %     fname=sprintf('ROIs %s_%d_Trial_%s',roiName,trNo,soloTrNo);
-	 fname=sprintf('%d_Trial_%s',trNo,soloTrNo);
+fname=sprintf('%d_Trial_%s',trNo,soloTrNo);
 if get(handles.save_fig,'Value')
-   export_fig(fullfile(fig_export_dir,fname ),gcf,'-png')
+    export_fig(fullfile(fig_export_dir,fname ),gcf,'-png')
 end
 
 
@@ -340,29 +348,36 @@ else
     load([path fname],'-mat');
     
     choice = questdlg('Redo sync_sessObj?', ...
-	'Yes', ...
-	'Yes','No thank you','No thank you');
-switch choice
-    case 'Yes'
-        set(handles.resync_sessObj,'Value',1);
-    case 'No thank you'
-        set(handles.resync_sessObj,'Value',0);
-end
-    if ~isfield(sessObj,'synced_sessObj') || get(handles.resync_sessObj,'Value')
-     [synced_sessObj] = sync_all_session_data( sessObj);
-     sessObj.synced_sessObj = synced_sessObj;
-     save('sessObj','sessObj','-v7.3');
+        'Yes', ...
+        'Yes','No thank you','No thank you');
+    switch choice
+        case 'Yes'
+            set(handles.resync_sessObj,'Value',1);
+        case 'No thank you'
+            set(handles.resync_sessObj,'Value',0);
     end
-    obj = sessObj.synced_sessObj;
+    
+    prompt={'Roi name:','Fov name:'};
+    name='Input for Ca data';
+    numlines=1;
+    defaultanswer={'1','1'};
+    ans=inputdlg(prompt,name,numlines,defaultanswer);
+    Cadatasrc = ['R' ans{1} 'F' ans{2} ];
+    if ~isfield(sessObj,[Cadatasrc 'synced_sessObj']) || get(handles.resync_sessObj,'Value')
+        [synced_sessObj] = sync_all_session_data( sessObj,Cadatasrc);
+        sessObj.([Cadatasrc 'synced_sessObj']) = synced_sessObj;
+        save('sessObj','sessObj','-v7.3');
+    end
+    obj = sessObj.([Cadatasrc 'synced_sessObj']);
     if isfield(obj,'nROIs')
-       numrois=obj.nROIs;
+        numrois=obj.nROIs;
     else
         numrois = 0;
     end
 end
 set(handles.totalrois,'String',num2str(numrois));
 set(handles.numtrials,'String',num2str(size(obj,2)));
-temp = arrayfun(@(x) x.Setpoint,sessObj.synced_sessObj,'uniformoutput',false);
+temp = arrayfun(@(x) x.Setpoint,obj,'uniformoutput',false);
 temp2 = cellfun(@isempty, temp);
 temp2 = ~temp2;
 currenttrial = min(find(temp2));

@@ -63,15 +63,14 @@ for i= 1:numtrials
 end
 cscale=[0 300];
 % a = round(linspace(1,300,20));
-a = round(linspace(1,300,30));
+a = round(linspace(1,300,34));
 if (max(overlay)>0)
-
-%     b = [3 1 16 18  5 7 10 8  6 9 11 4 12 14 17 15  2 13 19 20];
-    b = [3 1 16 18  5 7 10 8  6 9 21 23 11 4 26 22 12 14 28 25 17 15 29 24  2 13 30 26 19 20];
+    b = [ 10    1   34  26  16  8   28  18];
+%     b = [3 1 16 18  5 7 21 23 10 8  6 9 11 4 26 22 12 14 28 25 34 32 17 15 29 24 33 31 2 13 30 26 19 20];
 
 else
-%     b = [ 3 16 5 10 6 11 12 17 2 19 1 18 7 8 9 4 14 15 13 20];
-    b = [ 3 16 5 10 6 21 11 26 12 28 17 29 2 30 19 1 18 7 8 9 23 4 22 14 25 15 24 13 26 20];
+    b = [ 10  34  16 28 1   26   8  18];
+%     b = [ 3 16 5 21  10 6 11 26 12 28 34 17 29  33 2 30 19 1 18 7 8 9 23 4 22 14 25 32 15 24 31 13 26 20];
 
 end
 scaledcol = a(b);;
@@ -102,10 +101,10 @@ sc = get(0,'ScreenSize');
 % h1 = figure('position', [1000, sc(4)/10-100, sc(3)*3/10, sc(4)*3/4], 'color','w');
 h1 = figure('position', [1000, sc(4)/10-100, sc(3), sc(4)], 'color','w');
 ah1=axes('Parent',h1); title( 'Ca_Signal traces' );
- if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
-     h2 = figure('position', [300, sc(4)/10-100, sc(3), sc(4)], 'color','w');
-     ah2=axes('Parent',h2); title('dFF vs. totalKappa' );
- end
+%  if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
+%      h2 = figure('position', [300, sc(4)/10-100, sc(3), sc(4)], 'color','w');
+%      ah2=axes('Parent',h2); title('dFF vs. totalKappa' );
+%  end
 rois_name_tag = '';
     for i = 1:length(rois)
                figure(h1);
@@ -137,7 +136,7 @@ rois_name_tag = '';
                         end
                         
                         for j=1:length(trials_ktype)
-                            plot(ts ,newrois(trials_ktype(j),1:length(ts),rois(i))','color',col(k,:),'linewidth',1);
+                            plot(ts ,newrois(trials_ktype(j),1:length(ts),rois(i))','color',col(k,:),'linewidth',.5);
                             hold on;
                         end
                         xlabel('Time (s)'); ylabel('dFF');
@@ -150,6 +149,13 @@ rois_name_tag = '';
                         count = count+1;
                     else
                         
+                    end
+                    if (k+1) > max(types) && (strcmp(sfx , 'Tsort_barpos') || strcmp(sfx , 'Csort_barpos'))
+                        if (max(overlay>0) )
+                            temp = (mod(roicount,roisperfig)==0)*roisperfig + (mod(roicount,roisperfig)>0)*mod(roicount,roisperfig);
+%                          count = (roicount-(roicount>roisperfig)*(floor(roicount/roisperfig)*roisperfig)-1)*numcolstoplot+max(overlay)+1+1;
+                            count =(temp -1) * numcolstoplot + max(overlay)+1 +1;
+                        end
                     end
                 end
 
@@ -166,8 +172,10 @@ rois_name_tag = '';
     % % %          end
 
 
-%     if(max(overlay>0))
-%         count = (roicount-(roicount>roisperfig)*roisperfig-1)*numcolstoplot+max(overlay)+1+1;
+%     if(max(overlay>0) && mod(roicount,roisperfig) >0)
+% %         count = (roicount-(roicount>roisperfig)*roisperfig-1)*numcolstoplot+max(overlay)+1+1;
+%         count = (roicount-(roicount>roisperfig)*(floor(roicount/roisperfig)*roisperfig)-1)*numcolstoplot+max(overlay)+1+1
+% 
 %     end
     % plot trace averages
     figure(h1);
@@ -186,15 +194,19 @@ rois_name_tag = '';
             end
             
             temp_data=newrois(trials_ktype,1:length(ts),rois(i));
-            threshold = 2; % in m.a.d
+            threshold = 1.5; %% in m.a.d
             [event_detected_data,events_septs,detected] = detect_Ca_events(temp_data,frametime,threshold);
-            detected_data= event_detected_data(find(detected),:);
+%              detected_data= event_detected_data(find(detected),:);
+            detected_data= temp_data(:,:);
+
             detected_avg=nanmean(detected_data ,1);%sum(detected_data ,1)./max(sum(detected,1),1);
             detected_sd=(detected_data.^2 + repmat(detected_avg.^2,size(detected_data,1),1) - 2*detected_data.*repmat(detected_avg,size(detected_data,1),1));
             detected_sd=(nanmean(detected_sd,1)).^0.5;
-            alltrials_avg = nanmean(temp_data,1);
+%             alltrials_avg = nanmean(temp_data,1);
+            alltrials_avg = detected_avg;
+
             %                     plot([frametime:frametime:length(detected_avg)*frametime] ,detected_avg,'color',col(types(k),:),'linewidth',1.5);
-            plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(k,:),'linewidth',1.5);
+            plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(k,:),'linewidth',1);
             
             axis([s_time ts(length(ts)) -50 250]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
             
@@ -206,12 +218,21 @@ rois_name_tag = '';
             
             count = count+1;
         end
+        if(k+1) > max(types) && (strcmp(sfx , 'Tsort_barpos') || strcmp(sfx , 'Csort_barpos'))
+            if(max(overlay>0) )
+                 temp = (mod(roicount,roisperfig)==0)*roisperfig + (mod(roicount,roisperfig)>0)*mod(roicount,roisperfig);
+%              count = ((roicount)-(roicount>roisperfig)*(floor(roicount/roisperfig)*roisperfig)-1)*numcolstoplot+max(overlay)+2+1+1;
+               count =  (temp-1) * numcolstoplot + max(overlay)*2 +2;
+            end
+        end
     end
     
-%     if(max(overlay>0))
-%         
-%         count = (roicount-(roicount>roisperfig)*roisperfig-1)*numcolstoplot+max(overlay)*2+1+1;
-%     end   
+% % %     if(max(overlay>0))
+% % %         
+% % % %         count = (roicount-(roicount>roisperfig)*roisperfig-1)*numcolstoplot+max(overlay)*2+1+1;
+% % %         count = (roicount-(roicount>roisperfig)*(floor(roicount/roisperfig)*roisperfig)-1)*numcolstoplot+max(overlay)+2+1+1;
+% % % 
+% % %     end   
     
 %     % plot max(dFF) vs. dKappa
 %     if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
@@ -288,30 +309,30 @@ rois_name_tag = '';
         end
         close(h1);
 
-        if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
-            fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx  'dKappa_dFF.jpg'];
-            figure(h2);
-            suptitle(fnam);
-            
-            set(gcf,'PaperUnits','inches');
-            set(gcf,'PaperPosition',[1 1 24 10]);
-            set(gcf, 'PaperSize', [24,10]);
-            set(gcf,'PaperPositionMode','manual');
-            
-            saveas(gcf,[pwd,filesep,fnam],'jpg');
-            [~,foo] = lastwarn;
-            if ~isempty(foo)
-                warning('off',foo);
-            end
-            close(h2);
-        end
+%         if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
+%             fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx  'dKappa_dFF.jpg'];
+%             figure(h2);
+%             suptitle(fnam);
+%             
+%             set(gcf,'PaperUnits','inches');
+%             set(gcf,'PaperPosition',[1 1 24 10]);
+%             set(gcf, 'PaperSize', [24,10]);
+%             set(gcf,'PaperPositionMode','manual');
+%             
+%             saveas(gcf,[pwd,filesep,fnam],'jpg');
+%             [~,foo] = lastwarn;
+%             if ~isempty(foo)
+%                 warning('off',foo);
+%             end
+%             close(h2);
+%         end
         if (roicount<length(rois))
             h1 = figure('position', [1000, sc(4)/10-100, sc(3), sc(4)], 'color','w');
             ah1=axes('Parent',h1); title( 'Ca_Signal traces' );           
-            if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
-                h2 = figure('position', [300, sc(4)/10-100, sc(3), sc(4)], 'color','w');
-                ah2=axes('Parent',h2); title('dFF vs. totalKappa' );
-            end
+%             if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
+%                 h2 = figure('position', [300, sc(4)/10-100, sc(3), sc(4)], 'color','w');
+%                 ah2=axes('Parent',h2); title('dFF vs. totalKappa' );
+%             end
             count =1;count1=1;
             rois_name_tag = '';
         end

@@ -1,6 +1,5 @@
-function [ synced_sessObj ] = sync_all_session_data( sessObj)
-    %UNTITLED2 Summary of this function goes here
-    %   Detailed explanation goes 
+function [ synced_sessObj ] = sync_all_session_data( sessObj,Cadatasrc)
+
     
     if isfield(sessObj,'behavTrials')       
         bObj = sessObj.behavTrials;
@@ -26,8 +25,8 @@ function [ synced_sessObj ] = sync_all_session_data( sessObj)
         return
     end   
 
-    if isfield(sessObj,'CaTrials')       
-        cObj = sessObj.CaTrials;
+    if isfield(sessObj,[Cadatasrc 'CaTrials'])       
+        cObj = sessObj.([Cadatasrc 'CaTrials']);
         loaded =4;
     else        
         'Not Loaded CaSig trials in sessObj';       
@@ -67,7 +66,12 @@ function [ synced_sessObj ] = sync_all_session_data( sessObj)
            obj(i).CaSigTrialind = cObj(c_ind).TrialNo;
            obj(i).FileName_prefix = cObj(c_ind).FileName_prefix;
            obj(i).FileName = cObj(c_ind).FileName;
-           obj(i).TrialName = strrep(strrep( obj(i).FileName,obj(i).FileName_prefix,''),'.tif','');      
+           obj(i).TrialName = strrep(strrep( obj(i).FileName,obj(i).FileName_prefix,''),'.tif','');    
+           if(isfield(cObj,'lightstim'))
+              obj(i).lightstim = cObj(c_ind).lightstim;
+           else
+                obj(i).lightstim = 0;
+           end
         end
 
 
@@ -95,7 +99,7 @@ function [ synced_sessObj ] = sync_all_session_data( sessObj)
     end
     
     synced_sessObj = obj;
-    sessObj.synced_sessObj = obj;
-    save('sessObj.mat','sessObj');
+%     sessObj.([Cadatasrc 'synced_sessObj']) = obj;
+%     save('sessObj.mat','sessObj');
     
 
