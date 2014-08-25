@@ -293,15 +293,10 @@ if(~isempty(dffarray))
     
     if (isfield(obj,'lightstim'))
         if(obj(trNo).lightstim)
-            axis([barOnOff(1)-.2, barOnOff(2)+1,-200,600]);
-            hline(200, {'y', 'LineWidth', 1});
-            axis([0,5,-200,600]);
-%             line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','y','linewidth',1);
+            axis([[barOnOff(1)-.2, barOnOff(2)+1.2]
+            line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','y','linewidth',1);
         else
-            axis([barOnOff(1)-.2, barOnOff(2)+1,-200,600]);
-            hline(200, {'k', 'LineWidth', .5});
-            axis([0,5,-200,600]);
-%             line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','k','linewidth',1);
+            line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','k','linewidth',1);
         end
     end
     ylabel('dF/F','fontsize',15)

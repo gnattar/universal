@@ -2963,7 +2963,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     end
     disp('order = hits misses cr  fa')
     
-       plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+%        plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
     
   
     %%
@@ -2996,7 +2996,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                 count = count +length(sorted_CaTrials.notouch );
                 overlay =0;
             end
-                plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+%                 plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
             
             %% sort by bar_pos_trial
             tag_trialtypes =1;
@@ -3096,7 +3096,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
             
 
             
-         plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+%          plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
     end
 else(get(handles.contact_CaSignal_select,'Value')==1)
     
@@ -3125,7 +3125,7 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
         overlay=0;
     end
 
-      plot_roiSignals(contact_CaTrials,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+      plot_roiSignals(contact_CaTrials(trialorder),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
     
     
     %% sort by bar_pos_trial
@@ -3815,16 +3815,18 @@ names=cellfun(@(x) x.trackerFileName(length(x.trackerFileName)-21:length(x.track
 wSig_trialnums =str2num(char(names)); % from trial filenames
 [common_trialnums,ctags,wtags]=intersect(CaSig_trialnums,wSig_trialnums);
 
-ind = zeros(length(common_trialnums),1);
-[v,c,s] = intersect(ctags,sorted_CaTrials.hits);
-ind (c)=1;
-[v,c,s] = intersect(ctags,sorted_CaTrials.cr);
-ind (c)= 3;
-[v,c,s] = intersect(ctags,sorted_CaTrials.misses);
-ind (c)=2;
-[v,c,s] = intersect(ctags,sorted_CaTrials.fa);
-ind (c)=4;
-[Y,indorder] = sort(ind,'ascend');
+indorder = [1:length(ctags)];
+Y = [1:length(ctags)];
+% ind = zeros(length(common_trialnums),1);
+% [v,c,s] = intersect(ctags,sorted_CaTrials.hits);
+% ind (c)=1;
+% [v,c,s] = intersect(ctags,sorted_CaTrials.cr);
+% ind (c)= 3;
+% [v,c,s] = intersect(ctags,sorted_CaTrials.misses);
+% ind (c)=2;
+% [v,c,s] = intersect(ctags,sorted_CaTrials.fa);
+% ind (c)=4;
+% [Y,indorder] = sort(ind,'ascend');
 
 % %% removing nogo trials
 % nogotrials = find(Y>2);
@@ -3845,7 +3847,7 @@ trialinds = 1:length(trialnums);
 %% removing contacttimes outside bar available time
 contacttimes=cellfun(@(x) x.contacts{whiskerID}, wSigTrials(wSig_tags(trialinds)),'uniformoutput',false);
 for i = 1: length(trialnums)
-    s = [ CaTrials(CaSig_tags(i)).behavTrial]
+    s = [ CaTrials(CaSig_tags(i)).behavTrial];
     barOntime=[s.pinDescentOnsetTime];
     barOfftime=[s.pinAscentOnsetTime];
     firsttouches = contacttimes{i};
@@ -4148,10 +4150,10 @@ load([path filesep filename2]);
 
 contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput', false);
 nodetects =  find(cellfun(@isempty,contacts_detected));
-            contDet_param.threshDistToBarCenter = [.1   1.0]; % super lax for bad tracking files
+%             contDet_param.threshDistToBarCenter = [.1   1.0]; % super lax for bad tracking files
 %           contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
 %         contDet_param.threshDistToBarCenter = [.1   .50]; %lax
-%          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
+         contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
         contDet_param.thresh_deltaKappa = [-.1	.1];
         if isempty(wsArray.bar_time_window)
