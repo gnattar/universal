@@ -14,7 +14,7 @@ if(length(htrials)>5)
     parfor i = 1:length(htrials)
         n = find (imtrials == htrials(i));
         fname = list(n).name;
-        [im,header] = imread_multi_GR(fname, 'g'); s
+        [im,header] = imread_multi_GR(fname, 'g'); 
         if header.SI4.fastZEnable
             tpts = round(twindow / header.SI4.fastZPeriod);
         elseif (~header.SI4.fastZEnable)

@@ -586,14 +586,16 @@ if get(handles.dispMaxDelta,'Value')==1
 end
 
 if get(handles.dispMaxDelta,'Value') && get(handles.dispMeanMode, 'Value')
-    if ~isfield(CaSignal, 'h_diff_fig') || ~ishandle(CaSignal.h_diff_fig)
-        CaSignal.h_diff_fig = figure('Name','maxDelta - mean Image','Position',[960   40   480   480]);
-    else
-        figure(CaSignal.h_diff_fig);
-    end
+% % %     if ~isfield(CaSignal, 'h_diff_fig') || ~ishandle(CaSignal.h_diff_fig)
+% % %         CaSignal.h_diff_fig = figure('Name','maxDelta - mean Image','Position',[960   40   480   480]);
+% % %     else
+% % %         figure(CaSignal.h_diff_fig);
+% % %     end
+    axes(handles.Image_disp_axes);
     CaSignal.diff= CaSignal.MaxDelta - mean_im;
-    subplot(1,3,1);imagesc(CaSignal.MaxDelta);title('Maxdelta');subplot(1,3,2); imagesc(mean_im);title('mean');
-    subplot(1,3,3);imagesc(CaSignal.MaxDelta - mean_im);title('Max-mean');
+%     subplot(1,3,1);imagesc(CaSignal.MaxDelta);title('Maxdelta');subplot(1,3,2); imagesc(mean_im);title('mean');
+%     subplot(1,3,3);
+    imagesc(CaSignal.MaxDelta - mean_im);title('Max-mean');
     colormap(gray);
 %     set(gca, 'Position',[0.05 0.05 0.9 0.9], 'Visible','off');
     update_projection_image_ROIs(handles);    
