@@ -18,7 +18,7 @@ if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
 end
 
 if (strcmp(sfx , 'T') || strcmp(sfx , 'Tbarpos'))
-
+    
 
 end
     
@@ -133,9 +133,6 @@ rois_name_tag = '';
             xt=[ts ts(length(ts))+dt*1:dt:ts(length(ts))+dt*5];
             [y,temp]=min(abs(xt-s_time));
             imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet(300));xlabel('Time(s)'); ylabel('Trials');
-            if(sfx=='T') || (sfx == 'Tbarpos')
-                
-            end
 
             vline([ 1 1.5 2 2.5 3],'k-');
 

@@ -35,7 +35,7 @@ for i = 1:length(ROIs)
 
     h(i) = axes('position',[0.03, i*spacing, 0.96, 3.5*spacing]);
     plot(ts,F(ROIs(i),:), 'color', cmap((ROIs(i)-1)*colorstep +1,:),'linewidth',2);
-    vline([1 1.5 2 2.5 ],'k-');
+    vline([ 1 1.5 2 2.5 3.0],'k-');
     set(h(i),'visible','off', 'color','none','YLim',y_lim,...
         'XLim',x_lim);
 end;
@@ -50,7 +50,7 @@ set(h(1),'visible','on', 'box','off','XColor','k','YColor','k','FontSize',15);
  imagesc(ts,[1:size(F,1)],F); colormap('jet');
  set(gca,'YDir','normal');
 %  set(gca,'YDir','reverse');
- vline([1 1.5 2 2.5],'k-');
+ vline([ 1 1.5 2 2.5 3.0],'k-');
  caxis([0 300]);
  
 %  axis([0 size(F,1) 0 ts(length(ts))]); 

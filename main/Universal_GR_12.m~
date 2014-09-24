@@ -2978,7 +2978,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     end
     disp('order = hits misses cr  fa')
     
-%        plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+       plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
     
   
     %%
@@ -3018,7 +3018,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                 count = count +length(sorted_CaTrials.notouch );
                 overlay =0;
             end
-%                 plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+                plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
                 
              %% touch trials only
                 trialorder  = [touch];
@@ -3039,13 +3039,12 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                         CaTrials(trialorder(c)).licktimes{1} = [];
                         CaTrials(trialorder(c)).touchtimes{1} = [];
                     end
-                    search_w2 = find(sorted_CaTrials.touch{2} ==trialorder(c));
+                    search_w2 = find(sorted_CaTrials.touch{2} ==trialorder(c);
                     if (~isempty(search_w2))
                         CaTrials(trialorder(c)).licktimes{2} = sorted_CaTrials.licktimes{2}(search_w2);
-                        CaTrials(trialorder(c)).touchtimes{2} = sorted_CaTrials.touchtimes{2}(search_w2);
+                        CaTrials(trialorder(c)).touchtimes{1} = sorted_CaTrials.touchtimes{1}(search_w1);
                     else
                         CaTrials(trialorder(c)).licktimes{2} = [];
-                        CaTrials(trialorder(c)).touchtimes{2} = [];
                     end
                     
                 end
