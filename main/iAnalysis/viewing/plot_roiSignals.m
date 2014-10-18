@@ -1,6 +1,6 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay)
 % plot signals arranged by rois : to check roi selection in fovs
-roisperfig = 5;
+roisperfig = 3;
 % s_time = 1.0 ;
 s_time = 0;
 e_time = 5.0;
@@ -73,25 +73,25 @@ for i= 1:numtrials
       end
       
 end
-cscale=[0 300];
+cscale=[0 200];
 % a = round(linspace(1,300,20));
-a = round(linspace(1,300,34));
+a = round(linspace(1,200,34));
 if (max(overlay)>0)
     if(max(trialtypes) > 8) 
         b = [3 1 16 18  5 7 21 23 10 8  6 9 11 4 26 22 12 14 28 25 34 32 17 15 29 24 33 31 2 13 30 26 19 20];
     else
-        b = [ 10    1   34  26  16  8   28  18];
+        b = [ 10    5  26  34   16  8   28  18];
     end
 else
     if(max(trialtypes) > 8)
         b = [ 3 16 5 21  10 6 11 26 12 28 34 17 29  33 2 30 19 1 18 7 8 9 23 4 22 14 25 32 15 24 31 13 26 20];
 
     else
-        b = [ 10  34  16 28 1   26   8  18];
+        b = [ 10  26  16 28 5   34   8  18];
     end
 
 end
-scaledcol = a(b);;
+scaledcol = a(b);
 scaledcol = a(b);
 temp = jet(cscale(1,2));
 % temp = othercolor('Mrainbow',300);
@@ -132,13 +132,32 @@ rois_name_tag = '';
             count=count+1;
             xt=[ts ts(length(ts))+dt*1:dt:ts(length(ts))+dt*5];
             [y,temp]=min(abs(xt-s_time));
-            imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet(300));xlabel('Time(s)'); ylabel('Trials');
-            if(sfx=='T') || (sfx == 'Tbarpos')
-                
-            end
+         ha1= imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet(300));xlabel('Time(s)'); ylabel('Trials');
+%              ha1 = subimage(newrois(:,temp:end,rois(i)),jet(300));
+%            caxis(cscale);xlabel('Time(s)'); ylabel('Trials');
+%             set(ha1,'XData',xt(temp:end),'YData',1:numtrials);
+% %             if(strcmp(sfx,'T') || strcmp(sfx,'Tbarpos'))
+% %                 hold on; 
+% %                 N = zeros(numtrials,size(xt,2),2);
+% %                 for t = 1:numtrials
+% %                     if(~isempty(obj(t).touchtimes{1}))
+% %                      N(t,:,1) = hist(obj(t).touchtimes{1}{1},xt);
+% %                     end
+% %                     if(~isempty(obj(t).touchtimes{2}))
+% %                      N(t,:,2) = hist(obj(t).touchtimes{2}{1},xt);
+% %                     end
+% %                 end
+% %                 amap=(N(:,:,1)>1)*.9;
+% %                 ha2 = subimage(N(:,:,1),copper(20));set(ha2,'AlphaData',amap);
+% %                 amap=(N(:,:,2)>1)*.9;
+% %                 ha3 = subimage(N(:,:,1),summer(30));set(ha3,'AlphaData',amap);
+% %                 
+% %             end
 
             vline([ 1 1.5 2 2.5 3],'k-');
-
+           if (strcmp(sfx , 'Csort') || strcmp(sfx , 'Csort_barpos'))
+            vline([ 0.5],'k--');
+           end
             figure(h1);
             % plot traces
     % % %          if(tag_trialtypes ==1)         
@@ -161,7 +180,7 @@ rois_name_tag = '';
                             hold on;
                         end
                         xlabel('Time (s)'); ylabel('dFF');
-                        axis([s_time ts(length(ts)) -100 500]);set(gca,'YMinorTick','on','YTick', -100:100:500);
+                        axis([s_time ts(length(ts)) -100 300]);set(gca,'YMinorTick','on','YTick', -100:100:500);
                         vline([  1 1.5 2 2.5 3],'k-');
                     elseif isempty(trials_ktype) && (numel(overlay)>1 && overlay(k)==0)
                         count = count+1;
@@ -184,7 +203,7 @@ rois_name_tag = '';
     % % %             col=linspace(0,1,numtrials);
     % % %             for j=1:numtrials         
     % % %                  plot(ts,newrois(j,:,rois(i))','color',[.7 0 0]*col(j),'linewidth',.5);
-    % % %                  axis([0 ts(length(ts)) -50 700]);set(gca,'YMinorTick','on','YTick', 0-50:200:700);
+    % % %                  axis([0 ts(length(ts)) -50 300]);set(gca,'YMinorTick','on','YTick', 0-50:200:700);
     % % %                  hold on;
     % % %             end
     % % %             hold off;  
@@ -215,7 +234,7 @@ rois_name_tag = '';
             end
             
             temp_data=newrois(trials_ktype,1:length(ts),rois(i));
-            threshold = 1.5; %% in m.a.d
+            threshold = 35; %% dF/F absolute
             [event_detected_data,events_septs,detected] = detect_Ca_events(temp_data,frametime,threshold);
 %              detected_data= event_detected_data(find(detected),:);
             detected_data= temp_data(:,:);
@@ -229,7 +248,7 @@ rois_name_tag = '';
             %                     plot([frametime:frametime:length(detected_avg)*frametime] ,detected_avg,'color',col(types(k),:),'linewidth',1.5);
             plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(k,:),'linewidth',1);
             
-            axis([s_time ts(length(ts)) -50 250]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
+            axis([s_time ts(length(ts)) -30 150]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
             
             vline([ 1 1.5 2 2.5 3],'k-');
             text(3.5,200,[ num2str(sum(detected,1)) '/' num2str(size(event_detected_data,1)) '(' num2str(sum(detected,1)/size(event_detected_data,1)) ')']);%,'Location','NorthEast');
@@ -318,12 +337,14 @@ rois_name_tag = '';
         fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx 'CaTraces ' curr_btt' ];
         figure(h1);
         suptitle(fnam);
+  
         set(gcf,'PaperUnits','inches');
         set(gcf,'PaperPosition',[1 1 24 10]);
         set(gcf, 'PaperSize', [24,10]);
         set(gcf,'PaperPositionMode','manual');
-        
+%         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
         saveas(gcf,[pwd,filesep,fnam],'jpg');
+        saveas(gcf,[pwd,filesep,fnam],'fig');
         [~,foo] = lastwarn;
         if ~isempty(foo)
             warning('off',foo);

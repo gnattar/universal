@@ -7,6 +7,7 @@ htrials = solo_data.hitTrialNums(ismember(solo_data.hitTrialNums,imtrials));
 mtrials = solo_data.missTrialNums(ismember(solo_data.missTrialNums,imtrials));
 crtrials = solo_data.correctRejectionTrialNums(ismember(solo_data.correctRejectionTrialNums,imtrials));
 fatrials = solo_data.falseAlarmTrialNums(ismember(solo_data.falseAlarmTrialNums,imtrials));
+figure;
 
 % htrials
 if(length(htrials)>5)
