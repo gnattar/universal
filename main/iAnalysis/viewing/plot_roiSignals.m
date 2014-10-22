@@ -1,6 +1,6 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay)
 % plot signals arranged by rois : to check roi selection in fovs
-roisperfig = 3;
+roisperfig = 5;
 % s_time = 1.0 ;
 s_time = 0;
 e_time = 5.0;
@@ -344,7 +344,7 @@ rois_name_tag = '';
         set(gcf,'PaperPositionMode','manual');
 %         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
         saveas(gcf,[pwd,filesep,fnam],'jpg');
-        saveas(gcf,[pwd,filesep,fnam],'fig');
+%         saveas(gcf,[pwd,filesep,fnam],'fig');
         [~,foo] = lastwarn;
         if ~isempty(foo)
             warning('off',foo);

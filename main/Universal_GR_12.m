@@ -2244,6 +2244,7 @@ CaSignal.rois_by_IC = cell(1,ICnum);
 
 guidata(handles.figure1, handles);
 disp_ICA(handles);
+SaveResultsButton_Callback(hObject, eventdata, handles);
 
 
 function IC_num_edit_Callback(hObject, eventdata, handles)
