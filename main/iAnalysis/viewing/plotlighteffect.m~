@@ -74,8 +74,8 @@ fwhm_trials = cell2mat(cellfun(@(x) x.fwhm (:,1) ,pooled_contact_CaTrials,'unifo
 %  fwhm_trials(eventsdetected_trials==0) = 0;
 
 meaneffect.eventrate_X_hist = [0:.05:1];
-meaneffect.eventrate_NL_hist=cumsum(hist(meaneffect.alleventrate_NL,meaneffect.eventrate_X_hist));meaneffect.eventrate_L_hist=cumsum(hist(meaneffect.alleventrate_L,meaneffect.eventrate_X_hist));
-figure;fnam = [ grp 'Event Prob Cumulative Hist'];
+meaneffect.eventrate_NL_hist=cumsum(hist(meaneffect.alleventrate_NL,meaneffect.eventrate_X_hist)/sum();meaneffect.eventrate_L_hist=cumsum(hist(meaneffect.alleventrate_L,meaneffect.eventrate_X_hist));
+figure;fnam = [ grp 'Event Rate Cumulative Hist'];
 plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_L_hist,'r'); hold on; plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_NL_hist,'k');xlabel('Cumulative EventRate');ylabel('Counts'); title(fnam); 
 % text(.6,.2,[ 'Shift = ' num2str(meaneffect.eventrate_X_hist(meaneffect.eventrate_L_hist == 0.5) - meaneffect.eventrate_X_hist(meaneffect.eventrate_NL_hist == 0.5))] );
 set(findall(gcf,'type','text'),'FontSize',20)
@@ -83,7 +83,7 @@ saveas(gcf,[pwd,filesep,fnam],'jpg');
 
 meaneffect.eventrate_X_hist = [0:.05:1];
 meaneffect.eventrate_NL_hist=cumsum(hist(meaneffect.alleventrate_NL,meaneffect.eventrate_X_hist)/sum(hist(meaneffect.alleventrate_NL,meaneffect.eventrate_X_hist)));meaneffect.eventrate_L_hist=cumsum(hist(meaneffect.alleventrate_L,meaneffect.eventrate_X_hist)/sum(hist(meaneffect.alleventrate_L,meaneffect.eventrate_X_hist)));
-figure;fnam = [ grp 'Event Prob Cumulative Hist Norm'];
+figure;fnam = [ grp 'Event Rate Cumulative Hist Norm'];
 plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_L_hist,'r'); hold on; plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_NL_hist,'k');xlabel('Norm Cumulative EventRate');ylabel('Counts'); title(fnam);axis ([0 1 0 1]);
 % text(.6,.2,[ 'Shift = ' num2str(meaneffect.eventrate_X_hist(meaneffect.eventrate_L_hist == 0.5) - meaneffect.eventrate_X_hist(meaneffect.eventrate_NL_hist == 0.5))] );
 set(findall(gcf,'type','text'),'FontSize',20)
@@ -134,7 +134,7 @@ figure;fnam = [ grp 'Peak Amplitude Cumulative Hist'];
 plot(pa_t_X_hist,pa_t_L_hist,'r');hold on; plot(pa_t_X_hist,pa_t_NL_hist,'k');xlabel('Amplitude ');ylabel('Counts'); title(fnam)
 % text(300,.2,[ 'Shift = ' num2str(sum(pa_t_L_hist - pa_t_NL_hist))]);  % num2str(pa_t_X_hist(pa_t_L_hist == 0.5) - pa_t_X_hist(pa_t_NL_hist == 0.5))] );
 msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials L \n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials NL']);
-text(300,.2,msg);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+text(300,200,msg);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
 set(findall(gcf,'type','text'),'FontSize',20)
 saveas(gcf,[pwd,filesep,fnam],'jpg');
 
@@ -159,7 +159,7 @@ figure;fnam = [ grp 'FWHM Cumulative Hist '];
 plot(fwhm_t_X_hist ,fwhm_t_L_hist,'r');hold on; plot(fwhm_t_X_hist ,fwhm_t_NL_hist,'k');xlabel('FWHM ');ylabel('Counts'); title(fnam)
 % text(3,.2,[ 'Shift = ' num2str(sum(fwhm_t_L_hist - fwhm_t_NL_hist))]);   % num2str(fwhm_t_X_hist(fwhm_t_L_hist == 0.5) - fwhm_t_X_hist(fwhm_t_NL_hist == 0.5))] );
 msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials L \n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials NL']);
-text(3,.2,msg);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+text(3,200,msg);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
 set(findall(gcf,'type','text'),'FontSize',20)
 saveas(gcf,[pwd,filesep,fnam],'jpg');
 
