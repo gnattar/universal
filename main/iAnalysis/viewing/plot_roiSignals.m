@@ -1,10 +1,10 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay)
 % plot signals arranged by rois : to check roi selection in fovs
-roisperfig = 3;
+roisperfig = 4;
 % s_time = 1.0 ;
 s_time = 0;
 e_time = 5.0;
-
+cscale=[0 200];
 fovname = [nam 'fov ' fov 'rois ' roislist]; 
 frametime=obj.FrameTime;
 rois_trials  = arrayfun(@(x) x.dff, obj,'uniformoutput',false);
@@ -73,7 +73,7 @@ for i= 1:numtrials
       end
       
 end
-cscale=[0 200];
+
 % a = round(linspace(1,300,20));
 a = round(linspace(1,200,34));
 if (max(overlay)>0)
@@ -180,7 +180,7 @@ rois_name_tag = '';
                             hold on;
                         end
                         xlabel('Time (s)'); ylabel('dFF');
-                        axis([s_time ts(length(ts)) -100 300]);set(gca,'YMinorTick','on','YTick', -100:100:500);
+                        axis([s_time ts(length(ts)) -100 cscale(2)+100]);set(gca,'YMinorTick','on','YTick', -100:100:cscale(2)+100);
                         vline([  1 1.5 2 2.5 3],'k-');
                     elseif isempty(trials_ktype) && (numel(overlay)>1 && overlay(k)==0)
                         count = count+1;
@@ -248,7 +248,7 @@ rois_name_tag = '';
             %                     plot([frametime:frametime:length(detected_avg)*frametime] ,detected_avg,'color',col(types(k),:),'linewidth',1.5);
             plot([frametime:frametime:length(alltrials_avg)*frametime] ,alltrials_avg,'color',col(k,:),'linewidth',1);
             
-            axis([s_time ts(length(ts)) -30 150]);set(gca,'YMinorTick','on','YTick', -50:50:250);xlabel('Time(s)'); ylabel('mean_dFF');
+            axis([s_time ts(length(ts)) -30 round(cscale(2)+100)/2]);set(gca,'YMinorTick','on','YTick', -50:50:round(cscale(2)+100)/2);xlabel('Time(s)'); ylabel('mean_dFF');
             
             vline([ 1 1.5 2 2.5 3],'k-');
             text(3.5,200,[ num2str(sum(detected,1)) '/' num2str(size(event_detected_data,1)) '(' num2str(sum(detected,1)/size(event_detected_data,1)) ')']);%,'Location','NorthEast');
@@ -342,9 +342,9 @@ rois_name_tag = '';
         set(gcf,'PaperPosition',[1 1 24 10]);
         set(gcf, 'PaperSize', [24,10]);
         set(gcf,'PaperPositionMode','manual');
-%         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
         saveas(gcf,[pwd,filesep,fnam],'jpg');
-         saveas(gcf,[pwd,filesep,fnam],'fig');
+%          saveas(gcf,[pwd,filesep,fnam],'fig');
         [~,foo] = lastwarn;
         if ~isempty(foo)
             warning('off',foo);

@@ -21,7 +21,8 @@ h_fig1 = figure('position', [1000, sc(4)/14-100, sc(3)*3/14, sc(4)*3/4], 'color'
 hold on;
 % delete(get(h_fig,'Children'));
 % h_axes1 = axes('Position',[0 0 1 1], 'Visible','off', 'Color', 'none');
-cmap = colormap('HSV');
+% cmap = colormap('HSV');
+cmap = hsv(200);
 colorstep = floor(size(cmap,1)/(nROI+1));
 
  ht = title('CaTraces over ROIs', 'Color', 'w', 'FontSize', 21, 'Position',[.5 .94 0], 'Interpreter','none');
@@ -51,7 +52,8 @@ set(h(1),'visible','on', 'box','off','XColor','k','YColor','k','FontSize',15);
  set(gca,'YDir','normal');
 %  set(gca,'YDir','reverse');
  vline([ 1 1.5 2 2.5 3.0],'k-');
- caxis([0 300]);
+ caxis([0 max(max(F))+50]);
+%  caxis([0 300]);
  
 %  axis([0 size(F,1) 0 ts(length(ts))]); 
 

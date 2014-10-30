@@ -2146,12 +2146,18 @@ if get(hObject, 'Value') == 1
             if(isempty(list))
                 list = dir('gr*.tif');
             end
-           Ctrials =str2num(cell2mat(arrayfun(@(x) x.name(length(x.name)-6 :length(x.name)-4),list,'uniformoutput',false)));
+            
+            usr_confirm = questdlg('Use only hit trials? ');
+        if strcmpi(usr_confirm, 'Yes')          
+        Ctrials =str2num(cell2mat(arrayfun(@(x) x.name(length(x.name)-6 :length(x.name)-4),list,'uniformoutput',false)));
         [ht,ci,si] = intersect(Ctrials,Sdata.hitTrialNums);
         if(length(ci)>80)
             ci=ci(1:80);
         end
-        CaSignal.ica_data.FileNums = ci;% using filenums [1:50] for now , need to put a text box
+        CaSignal.ica_data.FileNums = ci;
+        else
+            CaSignal.ica_data.FileNums = [1:50];% using filenums [1:50] for now , need to put a text box
+        end
     
     if isfield(CaSignal, 'ica_data') && isfield(CaSignal.ica_data,'Data')%%~isempty(CaSignal.ica_data.Data)
         
