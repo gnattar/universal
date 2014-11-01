@@ -2156,7 +2156,7 @@ if get(hObject, 'Value') == 1
         end
         CaSignal.ica_data.FileNums = ci;
         else
-            CaSignal.ica_data.FileNums = [1:50];% using filenums [1:50] for now , need to put a text box
+            CaSignal.ica_data.FileNums = [1:100];% using filenums [1:100] for now , need to put a text box
         end
     
     if isfield(CaSignal, 'ica_data') && isfield(CaSignal.ica_data,'Data')%%~isempty(CaSignal.ica_data.Data)
@@ -2164,10 +2164,12 @@ if get(hObject, 'Value') == 1
         CaSignal. ica_data.FileBaseName = get(handles.batchPrefixEdit, 'String');
         CaSignal.ica_data.DataDir = pwd;
 
-        usr_confirm = questdlg('ica_data.Data exists. Reload data from first 50 data .tif files.Continue? ');
+        usr_confirm = questdlg('ica_data.Data exists. Reload data from first 100 data .tif files.Continue? ');
         if strcmpi(usr_confirm, 'Yes')
             % Load the data files
+            ['Loading Data : starting at' datestr(now)]
             CaSignal.ica_data.Data = ICA_LoadData(CaSignal.ica_data.DataDir,CaSignal.ica_data.FileBaseName, CaSignal.ica_data.FileNums,Twindow);
+            ['Done Loading :' datestr(now)]
         end
         
     else
@@ -2178,8 +2180,9 @@ if get(hObject, 'Value') == 1
         CaSignal.ica_data.DataDir = pwd;
 %         CaSignal.ica_data.FileNums = [1:150];% using filenums [1:50] for now , need to put a text box 
         % Load the data files
+         ['Loading Data : starting at' datestr(now)]
         CaSignal.ica_data.Data = ICA_LoadData( CaSignal.ica_data.DataDir,  CaSignal.ica_data.FileBaseName,  CaSignal.ica_data.FileNums,Twindow);
-        
+         ['Done Loading :' datestr(now)]
     end
     
     %if no svd data : compute svd & save it in same dir
@@ -2204,10 +2207,10 @@ if get(hObject, 'Value') == 1
     %     handles.ICA_datafile = fullfile(pth,fn);
     %     ICA_ROIs = struct;
     guidata(hObject, handles);
+    ['Running ICA : starting at' datestr(now)]
     runICA_button_Callback(handles.runICA_button, eventdata, handles);
-    
-    
-    
+     ['Done ICA :' datestr(now)]
+     
 end
 
 
