@@ -5439,19 +5439,29 @@ trialtype_select = 'nogo';
 count =1;
 data_to_analyze =  strsplit(get(handles.wSigSum_toplot,'String'),',');
 G = data_to_analyze(2);
-fieldnames = {['meandev_' data_to_analyze{1}] ;['peakdev_' data_to_analyze{1}];['meanpole_' data_to_analyze{1}];'prcoccupancy';'meandev_whiskamp'}; 
+fieldnames = {['meandev_' data_to_analyze{1}] ;['peakdev_' data_to_analyze{1}];['meanpole_' data_to_analyze{1}];'prcoccupancy';'meandev_whiskamp';'meanpole_whiskamp';'totalTouchKappa'}; 
 
 for k = 1:length(fieldnames)
-    current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
-    if(strcmp(current_field,'nogo_prcoccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp') )
+    if strcmp(fieldnames(k),'totalTouchKappa')
+        current_field = strcat('go','_',fieldnames(k));
+        plot_subdelta = 2;    
+    elseif k<4
+        current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
+        plot_subdelta = 1;
+    elseif strcmp(fieldnames(k),'prcoccupancy')
+        current_field = strcat(trialtype_select,'_',fieldnames(k));
         plot_subdelta = 0;
-    else
-        plot_subdelta =1;
-    end    
+    elseif strcmp(fieldnames(k),'meandev_whiskamp')||  strcmp(fieldnames(k),'meanpole_whiskamp')
+        current_field = strcat(trialtype_select,'_',fieldnames(k));
+        plot_subdelta = 2; 
+    end
+    
     [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,current_field{1},plot_subdelta);
     wSigSessSum_anm.(propname) = tempobj;
     numanm = length(tempobj);
-end   
+end
+
+%% totalKappa alone from go trials
 
 for i = 1:numanm    
     temp = '';
@@ -5461,6 +5471,9 @@ for i = 1:numanm
          wSigSessSum_anm.biased_barpos{i}{j}=wSigSum_anm{i}{j}.nogo_biased_barpos{1}{1};
          wSigSessSum_anm.mean_barpos{i}{j}=wSigSum_anm{i}{j}.nogo_mean_barpos{1}{1};
          wSigSessSum_anm.switchmag{i}{j}=wSigSum_anm{i}{j}.nogo_biased_barpos{1}{1}-wSigSum_anm{i}{j}.nogo_baseline_barpos{1}{1};
+         wSigSessSum_anm.numgoContacts{i}{j} = sum(wSigSum_anm{i}{j}.go_totalTouchKappa{1}{1}(:,2)~=0);
+         wSigSessSum_anm.numgoTrials{i}{j} = length(wSigSum_anm{i}{j}.go_totalTouchKappa{1}{1}(:,2));
+         wSigSessSum_anm.numRewards{i}{j} = length(wSigSum_anm{i}{j}.hit_totalTouchKappa{1}{1}(:,2));
     end
     wSigSessSum_anm.sesstype{i}{1}=temp'; 
 
@@ -5469,16 +5482,27 @@ save('wSigSessSum_anm.mat','wSigSessSum_anm');
 
 colr(:,:,1) = lines(numanm);
 
-for k = 1:length(fieldnames)  
-    current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
-    
-    if(strcmp(current_field,'nogo_prcoccupancy_binned')||strcmp(current_field,'nogo_meandev_whiskamp_binned'))
+for k =1:length(fieldnames)  
+
+    if strcmp(fieldnames(k),'totalTouchKappa')
+        current_field = strcat('go','_',fieldnames(k));
+        plot_subdelta = 2;   
+        propname = strrep(current_field,'','');    
+    elseif strcmp(fieldnames(k),'prcoccupancy') % k==4
+        current_field = strcat(trialtype_select,'_',fieldnames(k));
         propname = strrep(current_field,'_binned','');      
         plot_subdelta = 0;
-    else
+    elseif(k<4)
+        current_field = strcat(trialtype_select,'_',fieldnames(k),'_binned');
         propname = strrep(current_field,'_binned',''); 
         plot_subdelta = 1;
+    elseif strcmp(fieldnames(k),'meandev_whiskamp')||  strcmp(fieldnames(k),'meanpole_whiskamp')
+        current_field = strcat(trialtype_select,'_',fieldnames(k));
+        propname = strrep(current_field,'','');     
+        plot_subdelta = 2;       
     end
+
+
     pname=strrep(propname{1},'_',' ')
     
     propname= propname{1};
@@ -5601,6 +5625,87 @@ for k = 1:length(fieldnames)
     print(gcf,'-depsc2','-painters','-loose',['avg' pname])  
      
 end
+
+%% Plotting changes in Rate of Contacts and Rate of Rewards with switch
+
+
+tempgoTrials = wSigSessSum_anm.numgoTrials ;
+tempRewards = wSigSessSum_anm.numRewards ;
+tempgoContacts = wSigSessSum_anm.numgoContacts ;
+
+ContactFr = nan(numanm,8,1);
+RewardFr= nan(numanm,8,1);
+
+sc = get(0,'ScreenSize');
+f1=figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
+a1=axes('Parent',f1);
+for i = 1:numanm
+    tempContactFr = cell2mat(tempgoContacts{1,i})./cell2mat(tempgoTrials{1,i});
+   plot(tempContactFr,'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1),'linewidth',2);  hold on;
+   ContactFr(i,1:length(tempContactFr),1) = tempContactFr(:,:);    
+end
+axis([0 9 0 1]);
+ title(' Rate of Contacts ');
+    ylabel('Fraction of Go Trials with Contacts');
+    xlabel('Sessions');
+    set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
+     saveas(gcf,(' Rate of Contacts '),'fig');
+      saveas(gcf,(' Rate of Contacts '),'tif');
+    print(gcf,'-depsc2','-painters','-loose',' Rate of Contacts ') 
+
+
+figure;
+t=errorbar(nanmean(ContactFr,1),std(ContactFr,[],1)/sqrt(7),'k');
+set(t,'Marker','o','Markersize',8,'MarkerFaceColor',[.5 .5 .5],'linewidth',2);
+axis([0 9 0 1]);
+    title(' Average Rate of Contacts / Go Trials ');
+    ylabel('Fraction of Go Trials with Contacts');
+    xlabel('Sessions');
+    set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
+     saveas(gcf,'Avg Rate of Contacts','fig');
+      saveas(gcf,'Avg Rate of Contacts','tif');
+    print(gcf,'-depsc2','-painters','-loose','Avg Rate of Contacts') 
+    
+wSigSessSum_anm.ContactFr = ContactFr;
+wSigSessSum_anm.avgContactFr  = [nanmean(ContactFr,1);nanstd(ContactFr,[],1)/sqrt(numanm)];
+
+
+    
+    
+
+sc = get(0,'ScreenSize');
+f1=figure('position', [1000, sc(4)/10-100, sc(3)*1/3, sc(4)*1/3], 'color','w');
+a1=axes('Parent',f1);title(' Rate of Rewards ');
+for i = 1:numanm
+    tempRewardFr = cell2mat(tempRewards{1,i})./cell2mat(tempgoTrials{1,i});
+   plot(tempRewardFr,'color',colr(i,:,1),'Marker','o','Markersize',8,'MarkerFaceColor',colr(i,:,1),'linewidth',2);  hold on;
+   RewardFr(i,1:length(tempRewardFr),1) = tempRewardFr(:,:);    
+end
+axis([0 9 0 1]);
+ title(' Rate of Rewards ');
+    ylabel('Fraction of Go Trials with Rewards');
+    xlabel('Sessions');
+    set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
+     saveas(gcf,(' Rate of Rewards '),'fig');
+      saveas(gcf,(' Rate of Rewards '),'tif');
+    print(gcf,'-depsc2','-painters','-loose',' Rate of Rewards ') 
+
+figure;title(' Average Rate of Rewards / Go Trials ')
+t=errorbar(mean(RewardFr,1),std(RewardFr,[],1)/sqrt(7),'k');
+set(t,'Marker','o','Markersize',8,'MarkerFaceColor',[.5 .5 .5],'linewidth',2);
+axis([0 9 0 1]);
+    title(' Average Rate of Rewards / Go Trials ');
+    ylabel('Fraction of Go Trials with Rewards');
+    xlabel('Sessions');
+    set(gcf,'PaperPositionMode','auto');set(gca,'FontSize',18);
+     saveas(gcf,'Avg Rate of Rewards','fig');
+      saveas(gcf,'Avg Rate of Rewards','tif');
+    print(gcf,'-depsc2','-painters','-loose','Avg Rate of Rewards') 
+    
+
+wSigSessSum_anm.RewardFr = RewardFr;
+wSigSessSum_anm.avgRewardFr  = [nanmean(RewardFr,1);nanstd(RewardFr,[],1)/sqrt(numanm)];
+
 save('wSigSessSum_anm.mat','wSigSessSum_anm');
 
 
@@ -5650,11 +5755,13 @@ function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,
 % % % %                 target_barpos = target_barpos{block};
 % % %             end
             x = curr_data(:,1); %+ (numskips*100);
-            if(plot_subdelta)
+            if(plot_subdelta == 1)
 %                 y=curr_data(:,2)-target_barpos;  
                   y=curr_data(:,2)-mean_baseline;       % subtractive normalization
-            else
+            elseif(plot_subdelta == 0)
                   y=curr_data(:,2)/mean_baseline;       % divisive normalization
+            elseif(plot_subdelta == 2)
+                  y=curr_data(:,2);  
             end
             [p,S] = polyfit(x,y,1); %st line fit
             [yfit,delta] = polyval(p,x,S); %delta is the error estimate in prediction
