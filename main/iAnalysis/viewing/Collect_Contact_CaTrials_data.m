@@ -1,6 +1,6 @@
 function [collected_data,collected_summary] = Collect_Contact_CaTrials_data()
-global collected_data
-global collected_summary
+% global collected_data
+% global collected_summary
 collected_data = {};
 collected_summary = {};
 % basedatapath = get(handles.contact_Sig_datapath,'String');

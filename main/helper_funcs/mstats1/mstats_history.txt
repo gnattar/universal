@@ -1,0 +1,6 @@
+MSTATS - Version History
+-----------------------------------------------------------------------------------------------------------
+Version 1, uploaded to Matlab Central File Exchange on July 15, 2014
+V1 contains 10 functions:
+binocof, binoform, cell2vectors, fishertest, rci, rddiffci, ridiffci, sem, semipartialcorr, sep
+-----------------------------------------------------------------------------------------------------------

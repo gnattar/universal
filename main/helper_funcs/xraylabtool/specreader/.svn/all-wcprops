@@ -1,0 +1,275 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/xpcs/!svn/ver/84/xraylabtool/specreader
+END
+selectscan.m
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/xpcs/!svn/ver/84/xraylabtool/specreader/selectscan.m
+END
+invertxaxis.m
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/xpcs/!svn/ver/84/xraylabtool/specreader/invertxaxis.m
+END
+showscan.m
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/xpcs/!svn/ver/84/xraylabtool/specreader/showscan.m
+END
+engwav.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/xpcs/!svn/ver/84/xraylabtool/specreader/engwav.m
+END
+georocking.m
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/xpcs/!svn/ver/84/xraylabtool/specreader/georocking.m
+END
+mrgker.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/xpcs/!svn/ver/84/xraylabtool/specreader/mrgker.m
+END
+smoothspeccurve.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/xpcs/!svn/ver/84/xraylabtool/specreader/smoothspeccurve.m
+END
+truerefcal.m
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/xpcs/!svn/ver/84/xraylabtool/specreader/truerefcal.m
+END
+truerefmerge.m
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/xpcs/!svn/ver/84/xraylabtool/specreader/truerefmerge.m
+END
+save2workspace.m
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/xpcs/!svn/ver/84/xraylabtool/specreader/save2workspace.m
+END
+plotstyle.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/plotstyle.m
+END
+icons.mat
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/xpcs/!svn/ver/109/xraylabtool/specreader/icons.mat
+END
+foldxaxis.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/foldxaxis.m
+END
+refreshscanplot.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/xpcs/!svn/ver/84/xraylabtool/specreader/refreshscanplot.m
+END
+mergescan.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/mergescan.m
+END
+curvenormalize.m
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/xpcs/!svn/ver/84/xraylabtool/specreader/curvenormalize.m
+END
+resetfigspecr.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/xpcs/!svn/ver/84/xraylabtool/specreader/resetfigspecr.m
+END
+resettoolbar.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/xpcs/!svn/ver/109/xraylabtool/specreader/resettoolbar.m
+END
+truerefimport.m
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/xpcs/!svn/ver/84/xraylabtool/specreader/truerefimport.m
+END
+curvederivative.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/xpcs/!svn/ver/84/xraylabtool/specreader/curvederivative.m
+END
+subtractbkg.m
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/xpcs/!svn/ver/84/xraylabtool/specreader/subtractbkg.m
+END
+trueref.m
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/xpcs/!svn/ver/109/xraylabtool/specreader/trueref.m
+END
+specr.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/xpcs/!svn/ver/109/xraylabtool/specreader/specr.m
+END
+norm2maxi.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/norm2maxi.m
+END
+resettrueref.m
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/xpcs/!svn/ver/84/xraylabtool/specreader/resettrueref.m
+END
+rdspec.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/xpcs/!svn/ver/84/xraylabtool/specreader/rdspec.m
+END
+timebar.m
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/xpcs/!svn/ver/84/xraylabtool/specreader/timebar.m
+END
+scanplot.m
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/xpcs/!svn/ver/84/xraylabtool/specreader/scanplot.m
+END
+footprint.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/footprint.m
+END
+convert2theta2qz.m
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/xpcs/!svn/ver/84/xraylabtool/specreader/convert2theta2qz.m
+END
+showmotorposition.m
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/xpcs/!svn/ver/84/xraylabtool/specreader/showmotorposition.m
+END
+monitorscan.m
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/xpcs/!svn/ver/109/xraylabtool/specreader/monitorscan.m
+END
+specrsettings.m
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/xpcs/!svn/ver/109/xraylabtool/specreader/specrsettings.m
+END
+litcount.m
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/xpcs/!svn/ver/84/xraylabtool/specreader/litcount.m
+END
+curvelegend.m
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/xpcs/!svn/ver/84/xraylabtool/specreader/curvelegend.m
+END
+curvesave.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/curvesave.m
+END
+scanmerge.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/scanmerge.m
+END
+smooth.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/xpcs/!svn/ver/84/xraylabtool/specreader/smooth.m
+END
+titlestr.m
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/xpcs/!svn/ver/84/xraylabtool/specreader/titlestr.m
+END
+truerefplot.m
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/xpcs/!svn/ver/84/xraylabtool/specreader/truerefplot.m
+END
+openspec.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/109/xraylabtool/specreader/openspec.m
+END
+curvesmooth.m
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/xpcs/!svn/ver/84/xraylabtool/specreader/curvesmooth.m
+END
+print2figure.m
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/xpcs/!svn/ver/84/xraylabtool/specreader/print2figure.m
+END
+varycolor.m
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/xpcs/!svn/ver/84/xraylabtool/specreader/varycolor.m
+END
+params.m
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/xpcs/!svn/ver/84/xraylabtool/specreader/params.m
+END

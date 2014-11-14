@@ -9,11 +9,21 @@ for i = 1:size(src_data,1)
     %        if (nanstd(current_trace(1:floor(2.5/sampling_time))) > threshold * mad(current_trace(1:floor(.8/sampling_time)))) && ...
     %                 (nanmean(prctile(current_trace(1:floor(2.5/sampling_time)),95)) > mad(current_trace(1:floor(.8/sampling_time))))
     ct = current_trace(1:round(3/sampling_time));
-    thrcrossing =  find( ct > mad(current_trace(1:floor(.8/sampling_time))*1.25) & (ct> threshold));
+%     rel_thr = current_trace(1:floor(.8/sampling_time))*1.25;
+    thrcrossing =  find((ct> threshold));
+%         thrcrossing =  find( ct > mad(current_trace(1:floor(.8/sampling_time))*1.25) & (ct> threshold));
     d = [0,diff(thrcrossing)==1,0];
     startind = strfind(d,[0 1]); endind = strfind(d,[1 0]);
-    if(length(thrcrossing)>10)
-        if(max(endind-startind) >3) %% there are points above 80% and the points are not just noise
+% %     if(10>length(thrcrossing)) & (length(thrcrossing)> round(0.3/sampling_time))
+% %         i
+% %         length(thrcrossing)
+% %     end
+    
+    if(length(thrcrossing)>round(0.3/sampling_time))
+        if(max(endind-startind) >round(0.3/sampling_time))
+%          if(max(endind-startind) >3) %% there are points above 80% and the
+%         points are not just noise %% commented out to check for 1:365b
+%         data discrepancy
             
             [ind,hval] = hist(current_trace);
             F0 = mean(hval(1:4));
