@@ -24,17 +24,20 @@ for d=1:length(dends)
         
         x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(protract)));
         y =pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(protract));
-        sigmag_kappa_NL(i,1,1) = nanmean(y)./nanmean(x);
-        sigmag_kappa_NL(i,2,1) = nanstd(y)./nanmean(x);
-        sigmag_kappa_NL(i,3,1) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        sigmag_kappa_NL(i,1,1) = nanmean(y./x);
+        sigmag_kappa_NL(i,2,1) = nanstd(y./x);
+        sigmag_kappa_NL(i,3,1) = (nanstd(y./x))/sqrt(length(x)+1);
+%         sigmag_kappa_NL(i,1,1) = nanmean(y)./nanmean(x);
+%         sigmag_kappa_NL(i,2,1) = nanstd(y)./nanmean(x);
+%         sigmag_kappa_NL(i,3,1) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
         p_NL(i,:,1) = polyfit(x,y,1);
         sigmag_kappa_NL_trials{n,i,1} = y./x;
         
         x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(retract)));
         y =pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(retract));
-        sigmag_kappa_NL(i,1,2) = nanmean(y)./nanmean(x);
-        sigmag_kappa_NL(i,2,2) = nanstd(y)./nanmean(x);
-        sigmag_kappa_NL(i,3,2) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        sigmag_kappa_NL(i,1,2) = nanmean(y./x);
+        sigmag_kappa_NL(i,2,2) = nanstd(y./x);
+        sigmag_kappa_NL(i,3,2) = (nanstd(y./x))/sqrt(length(x)+1);
         p_NL(i,:,2) = polyfit(x,y,1);
         sigmag_kappa_NL_trials{n,i,2} = y./x;      
 
@@ -46,14 +49,12 @@ for d=1:length(dends)
         plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind(retract))),pooled_contactCaTrials_thetadep{n}.sigmag(L_ind(retract)),'ro','Markersize',4);%axis( [0 5 -50 150]);
         plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind(protract))),pooled_contactCaTrials_thetadep{n}.sigmag(L_ind(protract)),'ro','Markersize',4);
        
-        
-        
-        
+      
         x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind(protract)));
         y =pooled_contactCaTrials_thetadep{n}.sigmag(L_ind(protract));
-        sigmag_kappa_L(i,1,1) = nanmean(y)./nanmean(x);
-        sigmag_kappa_L(i,2,1) = nanstd(y)./nanmean(x);
-        sigmag_kappa_L(i,3,1) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        sigmag_kappa_L(i,1,1) = nanmean(y./x);
+        sigmag_kappa_L(i,2,1) = nanstd(y./x);
+        sigmag_kappa_L(i,3,1) = (nanstd(y./x))/sqrt(length(x)+1);
         p_NL(i,:,1) = polyfit(x,y,1);
         sigmag_kappa_L_trials{n,i,1} = y./x;
         

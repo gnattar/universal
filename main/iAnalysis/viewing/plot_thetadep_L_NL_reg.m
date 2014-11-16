@@ -18,7 +18,7 @@ for d=1:length(dends)
         protract =  find(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind) >0);
         
         plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(retract))),pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(retract)),'ko','Markersize',4); hold on; 
-        plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(protract))),pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(protract)),'ko','Markersize',4, 'Markerfacecolor',k); hold on; 
+        plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(protract))),pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(protract)),'ko','Markersize',4, 'Markerfacecolor','k'); hold on; 
         
         retract = find(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind) <0);
         protract =  find(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind) >0);
