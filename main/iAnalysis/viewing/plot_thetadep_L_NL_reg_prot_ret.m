@@ -19,6 +19,26 @@ for d=1:length(dends)
         
         plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(retract))),pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(retract)),'ko','Markersize',4); hold on; 
         plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(protract))),pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(protract)),'ko','Markersize',4, 'Markerfacecolor',k); hold on; 
+
+        
+        
+        x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(protract)));
+        y =pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(protract));
+        sigmag_kappa_NL(i,1,1) = nanmean(y)./nanmean(x);
+        sigmag_kappa_NL(i,2,1) = nanstd(y)./nanmean(x);
+        sigmag_kappa_NL(i,3,1) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_NL(i,:,1) = polyfit(x,y,1);
+        sigmag_kappa_NL_trials{n,i,1} = y./x;
+        
+        x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(retract)));
+        y =pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(retract));
+        sigmag_kappa_NL(i,1,2) = nanmean(y)./nanmean(x);
+        sigmag_kappa_NL(i,2,2) = nanstd(y)./nanmean(x);
+        sigmag_kappa_NL(i,3,2) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_NL(i,:,2) = polyfit(x,y,1);
+        sigmag_kappa_NL_trials{n,i,2} = y./x;      
+
+        
         
         retract = find(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind) <0);
         protract =  find(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind) >0);
@@ -27,29 +47,32 @@ for d=1:length(dends)
         plot(abs(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind(protract))),pooled_contactCaTrials_thetadep{n}.sigmag(L_ind(protract)),'ro','Markersize',4);
        
         
+        
+        
+        x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind(protract)));
+        y =pooled_contactCaTrials_thetadep{n}.sigmag(L_ind(protract));
+        sigmag_kappa_L(i,1,1) = nanmean(y)./nanmean(x);
+        sigmag_kappa_L(i,2,1) = nanstd(y)./nanmean(x);
+        sigmag_kappa_L(i,3,1) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_NL(i,:,1) = polyfit(x,y,1);
+        sigmag_kappa_L_trials{n,i,1} = y./x;
+        
+        x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind(retract)));
+        y =pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind(retract));
+        sigmag_kappa_L(i,1,2) = nanmean(y)./nanmean(x);
+        sigmag_kappa_L(i,2,2) = nanstd(y)./nanmean(x);
+        sigmag_kappa_L(i,3,2) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_NL(i,:,2) = polyfit(x,y,1);
+        sigmag_kappa_L_trials{n,i,2} = y./x;      
+
+        
         mx = max([abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind)); abs(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind))]);
         my = max([pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind); pooled_contactCaTrials_thetadep{n}.sigmag(L_ind)]);
         title([ 'D ' num2str(n) '  '  num2str(pooled_contactCaTrials_thetadep{n}.num_trials(1,i)) ' NL ' num2str(pooled_contactCaTrials_thetadep{n}.num_trials(2,i)) ' L ' ]);
 %         axis([0  mx+5 -50 my+100]);
-    axis([0 50 0 12000]);
+        axis([0 50 0 12000]);
         count = count+1;
     
-        x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(NL_ind));
-        y =pooled_contactCaTrials_thetadep{n}.sigmag(NL_ind);
-        sigmag_kappa_L(i,1) = nanmean(y)./nanmean(x);
-        sigmag_kappa_L(i,2) = nanstd(y)./nanmean(x);
-        sigmag_kappa_L(i,3) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
-        p_NL(i,:) = polyfit(x,y,1);
-        sigmag_kappa_L_trials{n,i} = y./x;
-        
-        x=abs(pooled_contactCaTrials_thetadep{n}.totalKappa(L_ind));
-        y =pooled_contactCaTrials_thetadep{n}.sigmag(L_ind);
-        sigmag_kappa_NL(i,1) = nanmean(y)./nanmean(x);
-        sigmag_kappa_NL(i,2) = nanstd(y)./nanmean(x);
-        sigmag_kappa_NL(i,3) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
-        p_L(i,:) = polyfit(x,y,1);
-         
-        sigmag_kappa_NL_trials{n,i} = y./x;
        
         
         plot([1:50],polyval(p_NL(i,:) ,[1:50]),'k-');
