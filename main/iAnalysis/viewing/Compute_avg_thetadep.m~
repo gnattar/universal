@@ -7,7 +7,7 @@ for i = 1: size(collected_summary,2)
     
         temp_solotrial = cell2mat(arrayfun(@(x) x.solo_trial(1), collected_data{1,i},'uniformoutput',0)');
         temp_contactdir = arrayfun(@(x) x.contactdir{1}, collected_data{1,i},'uniformoutput',0)';
-        temp_contacts = arrayfun(@(x) x.contacts{1}, collected_data{1,i},'uniformoutput',0);
+        temp_contacts = arrayfun(@(x) x.contacts{1}, collected_data{1,i},'uniformoutput',0)';
         temp_tws = arrayfun(@(x) x.ts_wsk{1}, collected_data{1,i},'uniformoutput',0)';
         temp_touchSetpoint = arrayfun(@(x) x.Setpoint{1}, collected_data{1,i},'uniformoutput',0)'; 
         temp_touchdeltaKappa = arrayfun(@(x) x.deltaKappa{1}, collected_data{1,i},'uniformoutput',0)';         
@@ -94,7 +94,7 @@ for i = 1: size(collected_summary,2)
         pooled_contactCaTrials_thetadep {count}.FrameTime = sampling_time;
         pooled_contactCaTrials_thetadep {count}.totalKappa = temp_totalKappa;
         pooled_contactCaTrials_thetadep {count}.touchSetpoint = temp_touchSetpoint;
-        pooled_contactCaTrials_thetadep {count}.touchdeltaKappa = temp_touchdeltaKappa;
+         pooled_contactCaTrials_thetadep {count}.touchdelta = temp_touchSetpoint;
         pooled_contactCaTrials_thetadep{count}.poleloc= temp_poleloc ;
         pooled_contactCaTrials_thetadep{count}.lightstim=   temp_lightstim ;
         pooled_contactCaTrials_thetadep{count}.num_trials=   num_trials;
