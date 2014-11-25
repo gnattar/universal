@@ -7,7 +7,7 @@ for n = 1:length(pooled_contactCaTrials_thetadep_Silenced_SW)
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.totalKappa_RE = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.totalKappa;
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.AbstotalKappa_RE = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.totalKappa;
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag_RE = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag;
-    pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata_RE = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata;
+    pooled_contactCaTrials_thetadep_Silencesigmagd_SW_RE{n}.rawdata_RE =  pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata;
     
    
     a = []; ac = {};
@@ -61,11 +61,12 @@ for n = 1:length(pooled_contactCaTrials_thetadep_Silenced_SW)
         end
         FrameTime = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.FrameTime;
         npts = 1:floor(0.5/FrameTime);
-        if abs(nanmean(pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata(j,npts)))>15
+        if abs(nanmean(pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata(j,npts)))>30
             rebase = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata(j,:);
             rebase = rebase - nanmean(pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata(j,npts));
-            pooled_contactCaTrials_thetadep_Silenced_SW{n}.rawdata_RE_RE (j,:) = rebase;
+            pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata_RE(j,:) = rebase;
         else
+            pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata_RE(j,:) =  pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata(j,:);
         end
         smag = nansum(pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata_RE(j,:));
         RE(j,1) = Peakpercontact;
