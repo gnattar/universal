@@ -4001,7 +4001,7 @@ numpts=ceil((dur+baseline)*wSigframerate);% 4.5 seconds worth of data
 numframes = ceil((dur+baseline)/Caframetime);% 4.5 seconds worth of data
 
 numcontacts =0;
-contact_CaTrials=struct('solo_trial',[],'dff',{},'dff_complete',{},'ts',{},'FrameTime',{},'nframes',{},'trialtype',[],'trialCorrect',[],'FileName_prefix',{},'FileName',{},...
+contact_CaTrials=struct('solo_trial',[],'dff',{},'ts',{},'FrameTime',{},'nframes',{},'trialtype',[],'trialCorrect',[],'FileName_prefix',{},'FileName',{},...
     'TrialName',{},   'licks', {},'poleposition',{},'nROIs',{},'theta',{},'kappa',{},...
     'deltaKappa',{},'ts_wsk',{},'contactdir',{},'contacts',{},'barpos',[],'Setpoint',{},'Amplitude',{},'Velocity',{},'total_touchKappa',{},'max_touchKappa',{});
 count=0;
@@ -4158,7 +4158,7 @@ for i = 1:numtrials
         TrialName=strrep(TrialName,'.tif','');
         contact_CaTrials(count).solo_trial = str2num(TrialName);
         contact_CaTrials(count).dff = extractedCaSig;
-        contact_CaTrials(count).dff_complete = CaSig;
+        contact_CaTrials(count).dff_complete = 
         contact_CaTrials(count).ts = [strframe:endframe].*Caframetime;
         contact_CaTrials(count).theta = {extractedTheta};
         contact_CaTrials(count).kappa = {extractedKappa};

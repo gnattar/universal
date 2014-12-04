@@ -238,7 +238,7 @@ end
 [dffarray] = obj(trNo).dff;
 if(~isempty(dffarray))
     %         ~isempty( obj(trNo).dff)
-    yl_dff = [-50 350];
+    yl_dff = [-20 150];
     
     numtrials = size(obj,2);
     numrois= obj(1).nROIs;
@@ -254,6 +254,10 @@ if(~isempty(dffarray))
     % % %          %% remove for data after Dec 28,2012 and uncomment the following statements
     
     dff = mean(dffarray(roiNo,:),1);
+
+    sampling_time = obj(trNo).FrameTime;
+        winsize =round(0.2/sampling_time);  
+    dff = filter(ones(1,winsize)/winsize,1,dff,[],2);
     
     if  iscell(obj(trNo).ts)
         ts = obj(trNo).ts{1};
@@ -265,6 +269,9 @@ if(~isempty(dffarray))
     
     
     ha(3) = subaxis(5,1,3, 'MarginTop', 0.1);
+    
+
+        
     plot(ts, dff, 'color',[1 .6 0],'linewidth',1.5)
     title(sprintf('dFFmean(%s)',roiName), 'fontsize',20);
     line([lickTime_trial'; lickTime_trial'], ...
@@ -294,12 +301,12 @@ if(~isempty(dffarray))
     if (isfield(obj,'lightstim'))
         if(obj(trNo).lightstim)
             axis([barOnOff(1)-.2, barOnOff(2)+1,-200,600]);
-            hline(200, {'y', 'LineWidth', 1});
+            hline(100, {'y', 'LineWidth', 1});
             axis([0,5,-200,600]);
 %             line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','y','linewidth',1);
         else
             axis([barOnOff(1)-.2, barOnOff(2)+1,-200,600]);
-            hline(200, {'k', 'LineWidth', .5});
+            hline(100, {'k', 'LineWidth', .5});
             axis([0,5,-200,600]);
 %             line([barOnOff(1)-.2; barOnOff(1)-.2], [0 0; 200 200], 'color','k','linewidth',1);
         end

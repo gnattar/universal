@@ -7,8 +7,11 @@ for d=1:length(dends)
     n = dends(d);
     xcol =0;
     polelocs = unique(pooled_contactCaTrials_thetadep{n}.poleloc);
+%     polelocs(polelocs<50) = [];
+    subzero = find(pooled_contactCaTrials_thetadep{n}.sigmag_RE(:) <0);
+    pooled_contactCaTrials_thetadep{n}.sigmag_RE(subzero) = 0;
     numloc =length(polelocs);
-%     numloc = 5
+%     numloc = 6
     a = 1;
     z = numloc;
     for i = 1:numloc
@@ -17,8 +20,8 @@ for d=1:length(dends)
         subplot(length(dends),numloc+xcol,count);
         
         
-        retract = NL_ind(find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(NL_ind) >0));
-        protract = NL_ind( find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(NL_ind) <0));
+        retract = NL_ind(find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(NL_ind) >= 0));
+        protract = NL_ind( find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(NL_ind) <= 0));
         if tag
             plot(pooled_contactCaTrials_thetadep{n}.AbstotalKappa_RE(retract),pooled_contactCaTrials_thetadep{n}.sigmag_RE(retract),'o','color',[.5 .5 .5],'Markersize',10, 'Markerfacecolor',[.5 .5 .5]); hold on;
             plot(pooled_contactCaTrials_thetadep{n}.AbstotalKappa_RE(protract).*-1,pooled_contactCaTrials_thetadep{n}.sigmag_RE(protract),'ko','Markersize',10, 'Markerfacecolor','k'); hold on;
@@ -60,8 +63,8 @@ for d=1:length(dends)
             
         end
         
-        retract = L_ind(find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(L_ind) >0));
-        protract = L_ind( find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(L_ind)<0));
+        retract = L_ind(find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(L_ind) >=0));
+        protract = L_ind( find(pooled_contactCaTrials_thetadep{n}.totalKappa_RE(L_ind)<=0));
         
         if tag
             
@@ -100,14 +103,18 @@ for d=1:length(dends)
             sigmag_kappa_L_trials{n,i,1} = y./x;
             
         end
-        
-        title([ 'D ' num2str(n) '  PL ' num2str(polelocs(i)) '  ' num2str(pooled_contactCaTrials_thetadep{n}.num_trials(1,i)) ' NL ' num2str(pooled_contactCaTrials_thetadep{n}.num_trials(2,i)) ' L ' ]);
-        %           axis([0  mx+5 -50 my+100]);
+
+%         title([ 'D ' num2str(n) '  PL ' num2str(polelocs(i)) '  ' num2str(pooled_contactCaTrials_thetadep{n}.num_trials(1,i)) ' NL ' num2str(pooled_contactCaTrials_thetadep{n}.num_trials(2,i)) ' L ' ]);
+        title([ 'D ' num2str(n) '  PL ' num2str(polelocs(i)) '  ' num2str(length(NL_ind)) ' NL ' num2str(length(L_ind)) ' L ' ]);
+       
+%           axis([0  mx+5 -50 my+100]);
         if tag
-            axis([-80 80 0 12000]);
+            axis([-80 80 -1000 4000]);
         else
-            axis([0 80 0 12000])
+            axis([0 80 -1000 5000])
         end
+        vline(0,'k--');
+        hline(0,'k--');
         count = count+1;
         
         %%plotting st line fits to points
