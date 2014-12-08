@@ -72,12 +72,12 @@ smag = nansum(pooled_contactCaTrials_thetadep_Silenced_SW{n}.rawdata(j,:))
 %%
 %
 %% 
-n=1
+n=4
 a = []; ac = {};
 a(:,1) = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.lightstim;
 a(:,2)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.poleloc;
 a(:,3)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.AbstotalKappa_RE;
-a(:,4)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag_RE;
+a(:,4)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigpeak_RE;
 a(:,5)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.trialnum;
 a(:,6)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.totalKappa_RE;
 a(:,7)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag;
@@ -93,16 +93,16 @@ x=1
 id = find((a(:,1)==0) & (a(:,2)==ploc(x)))
 stemp = a(id,4);
 ktemp = a(id,3).* sign(a(id,6));
-figure;plot(ktemp,stemp,'o');vline(0,'k--');hold on;
-% stemp = a(id,7);plot(ktemp,stemp,'g*');
+figure;plot(ktemp,stemp,'o');hold on;
+% vline(0,'k--');stemp = a(id,7);plot(ktemp,stemp,'g*');
 title(['Prox Cell' num2str(n) ' poleloc' num2str(x) ' ' num2str(ploc(x)) ', ' num2str(length(stemp)) ' NL'])
 axis auto;
 %%
 id = find((a(:,1)==01) & (a(:,2)==ploc(x)));
 stemp = a(id,4);
 ktemp = a(id,3).* sign(a(id,6));
-hold on ; plot(ktemp,stemp,'ro');vline(0,'k--')
-% stemp = a(id,7);plot(ktemp,stemp,'m*');
+hold on ; plot(ktemp,stemp,'ro');
+% vline(0,'k--');stemp = a(id,7);plot(ktemp,stemp,'m*');
 title(['Prox Cell' num2str(n) ' poleloc' num2str(x) ' ' num2str(ploc(x)) ', ' num2str(length(stemp)) ' L'])
 
 axis auto;
@@ -113,8 +113,9 @@ for z = 1:length(id)
     %%
     FrameTime =pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.FrameTime(1);
     figure;plot(ac{j,4}*500,ac{j,1}); title(num2str(a(j,5)));
+    touchind =unique(cell2mat(ac{j,2}));
     if (~isempty(touchind))
-        touchind =unique(ac{j,2}(:));
+        
         temp = unique(round(ac{j,4}*500));
         [ri,ti,ci]= intersect(temp,touchind);
     end
@@ -167,7 +168,7 @@ for z = 1:length(id)
     end
     plot([spt:FrameTime:ept], Cadata,'b');hline(0,'k-');
     title(['j=' num2str(j) ' ' num2str(a(j,5)) ' K' num2str(sign(Peakpercontact).*Peakpercontact_abs) ' S' num2str(smag )] );
-end
+end 
 %%
 
 b(:,1) = arrayfun(@(x) x.lightstim, contact_CaTrials);

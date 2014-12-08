@@ -2596,6 +2596,7 @@ cd ..
    def={'0'};
    w = inputdlg(prompt,name,1,def) ;
 %%
+sessionInfo.pxPerMm =24.57;
 sessionInfo.whisker_trajIDs =str2num(w{1})';
 sessionInfo. bar_coordsall = barposmatall(:,[1,2]);
 sessionInfo.bar_coords = [];
@@ -3199,7 +3200,7 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
 % % % %         tag_trialtypes = 1;
     else
         trialtypes = ones(length(contact_CaTrials),1);
-        trialorder =[ 1:size(contact_CaTrials,1)];
+        trialorder =[ 1:length(contact_CaTrials)];
         overlay=0;
     end
 
@@ -4158,7 +4159,7 @@ for i = 1:numtrials
         TrialName=strrep(TrialName,'.tif','');
         contact_CaTrials(count).solo_trial = str2num(TrialName);
         contact_CaTrials(count).dff = extractedCaSig;
-        contact_CaTrials(count).dff_complete = CaSig;
+        contact_CaTrials(count).dff_complete = CaSig(:,:,i);
         contact_CaTrials(count).ts = [strframe:endframe].*Caframetime;
         contact_CaTrials(count).theta = {extractedTheta};
         contact_CaTrials(count).kappa = {extractedKappa};
@@ -4269,7 +4270,7 @@ nodetects =  find(cellfun(@isempty,contacts_detected));
 %         contDet_param.threshDistToBarCenter = [.1   .50]; %lax
          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
-        contDet_param.thresh_deltaKappa = [-.1	.1];
+        contDet_param.thresh_deltaKappa = [-.2	.2];
         if isempty(wsArray.bar_time_window)
             barTimeWindow = str2num(get(handles.barTimeWindow,'String'));
         else

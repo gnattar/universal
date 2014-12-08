@@ -238,7 +238,7 @@ end
 [dffarray] = obj(trNo).dff;
 if(~isempty(dffarray))
     %         ~isempty( obj(trNo).dff)
-    yl_dff = [-20 150];
+    yl_dff = [-20 100];
     
     numtrials = size(obj,2);
     numrois= obj(1).nROIs;

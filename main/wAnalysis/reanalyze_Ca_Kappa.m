@@ -8,7 +8,7 @@ for n = 1:length(pooled_contactCaTrials_thetadep_Silenced_SW)
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.AbstotalKappa_RE = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.totalKappa;
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag_RE = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag;
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata_RE =  pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata;
-    
+    pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigpeak_RE = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag;
    
     a = []; ac = {};
     a(:,1) = pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.lightstim;
@@ -19,7 +19,7 @@ for n = 1:length(pooled_contactCaTrials_thetadep_Silenced_SW)
     a(:,4)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag;
     a(:,5)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.trialnum;
 
-    RE = zeros(size(a,1),5);
+    RE = zeros(size(a,1),6);
     
     ac(:,1)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.touchdeltaKappa;
     ac(:,2)=pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.contacts';
@@ -83,9 +83,11 @@ for n = 1:length(pooled_contactCaTrials_thetadep_Silenced_SW)
         RE(j,1) = Peakpercontact;
         RE(j,2) = Peakpercontact_abs;
         RE(j,3) = smag;
+        RE(j,6) = nanmean(prctile(pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.rawdata_RE(j,Ca_poleperiod),95));
         RE(j,4) = ac{j,4}(ti(1));
     end
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigmag_RE = RE(:,3);
+     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.sigpeak_RE = RE(:,6);
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.AbstotalKappa_RE = RE(:,2);
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.totalKappa_RE = RE(:,1);
     pooled_contactCaTrials_thetadep_Silenced_SW_RE{n}.time_firsttouch_RE =RE(:,4);
