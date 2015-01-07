@@ -4270,7 +4270,7 @@ nodetects =  find(cellfun(@isempty,contacts_detected));
 %         contDet_param.threshDistToBarCenter = [.1   .50]; %lax
          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
-        contDet_param.thresh_deltaKappa = [-.2	.2];
+        contDet_param.thresh_deltaKappa = [-.1	.1];
         if isempty(wsArray.bar_time_window)
             barTimeWindow = str2num(get(handles.barTimeWindow,'String'));
         else

@@ -17,7 +17,7 @@ for d=1:length(dends)
         end
 
     numloc =length(polelocs);
-    %     numloc = 6
+%         numloc = 5;
     a = 1;
     z = numloc;
     for i = 1:numloc
@@ -187,7 +187,7 @@ for d=1:length(dends)
         %           axis([0  mx+5 -50 my+100]);
         if tag
             if (p == 'peak')
-                axis([-80 80 -10 400]);
+                axis([-80 80 -10 250]);
             elseif (p =='mag')
                 axis([-80 80 -1000 4000]);
             end
