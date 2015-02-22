@@ -1,4 +1,8 @@
 function sort_imtrialsbyBdata(d,solo_data,twindow,s)
+%% d = pwd
+%% solo_data
+%% twindow = interested time window
+%% s = resolution
 cd (d);
 list = dir('Image*.tif');
 filenames =cell2mat(arrayfun(@(x) x.name(length(x.name)-6 :length(x.name)-4),list,'uniformoutput',false));

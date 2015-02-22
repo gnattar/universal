@@ -101,6 +101,9 @@ if(tag_trialtypes ==1)
     temp = permute(temprois,[3,2,1]);
     newrois=zeros(size(temp,1),size(temp,2)+1,size(temp,3));
     newrois(:,1:size(temp,2),:) = temp;
+    windowSize = round(0.1/frametime);
+%     filt_newrois  = filter(ones(1,windowSize)/windowSize,1, newrois);
+%     newrois = filt_newrois;
     temp2 =repmat(scaledcol(trialtypes)',1,1,size(temp,3));
     temp2 = [temp2 temp2 temp2 temp2 temp2];
     newrois(:,size(temp,2)+1:size(temp,2)+5,:) = temp2;
@@ -132,6 +135,7 @@ rois_name_tag = '';
             count=count+1;
             xt=[ts ts(length(ts))+dt*1:dt:ts(length(ts))+dt*5];
             [y,temp]=min(abs(xt-s_time));
+
          ha1= imagesc(xt(temp:end),1:numtrials,newrois(:,temp:end,rois(i)));caxis(cscale);colormap(jet(300));xlabel('Time(s)'); ylabel('Trials');
 %              ha1 = subimage(newrois(:,temp:end,rois(i)),jet(300));
 %            caxis(cscale);xlabel('Time(s)'); ylabel('Trials');
