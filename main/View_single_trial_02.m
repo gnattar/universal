@@ -478,11 +478,17 @@ function open_whiskmp4_Callback(hObject, eventdata, handles)
    
 % --- Executes on slider movement.
 function whiskmp4_sl_Callback(hObject, eventdata, handles)
+    global obj
     trNo  = str2num(get(handles.currenttrial,'String'));
     ts_wsk = obj(trNo).ts_wsk{1};
+    wrate = 1/(ts_wsk(2)-ts_wsk(1));
+    tracked_frames = size(ts_wsk,2);
     sl_pos=get(handles.whiskmp4_sl,'Value');
-    set(handles.whiskmp4_tag,'String',['Fr No' num2str(1) 'Time' num2str(ts_wsk(1))]);
-   
+    pos = floor(sl_pos*tracked_frames);
+    current_frame = ts_wsk(pos)*wrate;
+    new_sl_pos = pos/tracked_frames;
+    set(handles.whiskmp4_tag,'String',['Fr No' num2str(current_frame) ' Tracked ' num2str(tracked_frames) ' Time' num2str(ts_wsk(pos))]);
+    set(handles.whiskmp4_sl,'Value',new_sl_pos);
 
 
 % --- Executes during object creation, after setting all properties.
