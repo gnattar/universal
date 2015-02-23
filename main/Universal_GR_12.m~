@@ -4382,7 +4382,7 @@ wSig_trialnums =str2num(char(names));
         save([sessObjname '.mat'],'sessObj','-v7.3');
     else
         load('sessObj.mat');
-        sessObj.wSigTrials = wSigTrials;;
+        sessObj.wSigTrials = wSigTrials;
         save([sessObjname '.mat'],'sessObj','-v7.3');
     end
 
