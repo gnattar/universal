@@ -2156,7 +2156,7 @@ if get(hObject, 'Value') == 1
         end
         CaSignal.ica_data.FileNums = ci;
         else
-            CaSignal.ica_data.FileNums = [1:100];% using filenums [1:100] for now , need to put a text box
+            CaSignal.ica_data.FileNums = [1:250];% using filenums [1:250] for now , need to put a text box
         end
     
     if isfield(CaSignal, 'ica_data') && isfield(CaSignal.ica_data,'Data')%%~isempty(CaSignal.ica_data.Data)
@@ -2164,7 +2164,7 @@ if get(hObject, 'Value') == 1
         CaSignal. ica_data.FileBaseName = get(handles.batchPrefixEdit, 'String');
         CaSignal.ica_data.DataDir = pwd;
 
-        usr_confirm = questdlg('ica_data.Data exists. Reload data from first 100 data .tif files.Continue? ');
+        usr_confirm = questdlg('ica_data.Data exists. Reload data from first 250 data .tif files.Continue? ');
         if strcmpi(usr_confirm, 'Yes')
             % Load the data files
             ['Loading Data : starting at' datestr(now)]
@@ -2247,7 +2247,7 @@ V = CaSignal.ica_data.V;
 S = CaSignal.ica_data.S;
 ICnum = str2num(get(handles.IC_num_edit,'String'));
 % CaSignal.ICnum = str2num(get(handles.IC_num_edit,'String'));
-CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 30, ICnum});
+CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 40, ICnum});
 CaSignal.rois_by_IC = cell(1,ICnum);
 % CaSignal.ICnum_prev = ICnum;
 
@@ -2803,7 +2803,9 @@ if(get(handles.CaTrials_select,'Value')==1)
     
     set(handles.CaSignal_datapath,'String',pathName);
     cd(pathName);
-    load( [pathName filesep filename], '-mat');
+     m=matfile(filename);
+     CaTrials = m.CaTrials;
+%     load( [pathName filesep filename], '-mat');
     
     if (strcmp(filename(1:6),'sorted'))
         msgbox('Change settings before loading sorted_CaTrials');
@@ -2818,12 +2820,17 @@ elseif (get(handles.sorted_CaTrials_select,'Value')==1)
     set(handles.CaSignal_datapath,'String',pathName);
     cd(pathName);
     load( [pathName filesep filename], '-mat');
-    
-    [filename,pathName]=uigetfile('CaSignal*.mat','Also Load CaSignal.mat file')
-    if isequal(filename, 0) || isequal(pathName,0)
-        return
+    if(isempty(CaTrials))
+        [filename,pathName]=uigetfile('CaSignal*.mat','Also Load CaSignal.mat file')
+        if isequal(filename, 0) || isequal(pathName,0)
+            return
+        end
+             m=matfile(filename);
+             CaTrials = m.CaTrials;
+%         load( [pathName filesep filename], '-mat');
+    else
     end
-    load( [pathName filesep filename], '-mat');
+    
     numrois = CaTrials(1,1).nROIs;
 elseif(get(handles.contact_CaSignal_select,'Value')==1)
     
@@ -2902,7 +2909,7 @@ if (length(rois) > CaTrials(1).nROIs)
 end
 if(get(handles.CaTrials_select,'Value') ==1)
     sfx='Unsort';
-    if isfield(CaTrials,'lightstim')
+    if isfield(CaTrials,'lightstim') && (max(arrayfun(@(x) x.lightstim,CaTrials))>0)
          lightstim = arrayfun(@(x) x.lightstim,CaTrials);
          [trialtypes,trialorder] = sort(lightstim,2,'descend');  
          trialtypes(trialtypes==0) = 2;
@@ -2921,7 +2928,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     sfx = 'Bsort';
     count =0;
     overlay = zeros(8,1);
-    if isfield(sorted_CaTrials,'lightstim')
+    if isfield(sorted_CaTrials,'lightstim') && (max(arrayfun(@(x) x.lightstim,CaTrials))>0)
         trialorder  = [intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.hits), intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.hits),intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.misses),intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.misses),...
                 intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.cr) ,intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.cr),intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.fa),intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.fa) ];                   
 
@@ -3010,7 +3017,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
             tag_trialtypes =1;
             sfx = 'Tsort';
             count =0;
-            if isfield(sorted_CaTrials,'lightstim')
+            if isfield(sorted_CaTrials,'lightstim') && (max(arrayfun(@(x) x.lightstim,CaTrials))>0)
                 trialorder  = [intersect(sorted_CaTrials.lightstim ,touch ),intersect(sorted_CaTrials.nolightstim ,touch), intersect(sorted_CaTrials.lightstim ,sorted_CaTrials.notouch ),intersect(sorted_CaTrials.nolightstim ,sorted_CaTrials.notouch)];
                 disp('order = touch notouch')
                 trialtypes = zeros(length(trialorder),1);
@@ -3090,7 +3097,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
             barpositions1 = [ unique(touch_barpos')];
             barpositions2 = unique(sorted_CaTrials.notouch_barpos');
             barpos_all = unique( [barpositions1; barpositions2]);
-            if isfield(sorted_CaTrials,'lightstim')
+            if isfield(sorted_CaTrials,'lightstim') && (max(arrayfun(@(x) x.lightstim,CaTrials))>0)
 %                 temp = [length(barpositions1)+length(barpositions2)];
                 temp = [length(barpos_all)];
                 overlay=zeros(temp,1);
@@ -3181,13 +3188,19 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
     global contact_CaTrials
     tag_trialtypes =0;
     sfx ='Csort';
-    if isfield(contact_CaTrials,'lightstim') && ~isempty(contact_CaTrials(1).lightstim)
+
+    if isfield(contact_CaTrials,'lightstim') && ~isempty(CaTrials(1).lightstim)
+        if(max(cell2mat(arrayfun(@(x) x.lightstim,CaTrials,'uniformoutput',0)))>0)
          lightstim = cell2mat(arrayfun(@(x) x.lightstim,contact_CaTrials,'Uniformoutput',0));
          [trialtypes,trialorder] = sort(lightstim,2,'descend');  
          trialtypes(trialtypes==0) = 2;
          overlay = [0; 1];
          tag_trialtypes = 1;
-         
+        else
+         trialtypes = ones(length(contact_CaTrials),1);
+        trialorder =[ 1:length(contact_CaTrials)];
+        overlay=0;
+        end
 % % % %         contact_CaTrials_inds = arrayfun(@(x) x.CaSigTrialind,contact_CaTrials);
 % % % %         [v1,c1,l1]  = intersect(contact_CaTrials_inds,sorted_CaTrials.lightstim);
 % % % %         [v2,c2,l2]  = intersect(contact_CaTrials_inds,sorted_CaTrials.nolightstim);
@@ -3248,7 +3261,7 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
     plot_roiSignals(contact_CaTrials(touchinds),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
 
     
-end
+ end
     javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar')
     jheapcl(1)
 
@@ -4267,10 +4280,10 @@ contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput
 nodetects =  find(cellfun(@isempty,contacts_detected));
 %             contDet_param.threshDistToBarCenter = [.1   1.0]; % super lax for bad tracking files
 %           contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
-%         contDet_param.threshDistToBarCenter = [.1   .50]; %lax
-         contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
+        contDet_param.threshDistToBarCenter = [.1   .50]; %lax
+%          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
-        contDet_param.thresh_deltaKappa = [-.1	.1];
+        contDet_param.thresh_deltaKappa = [-.25	.25];
         if isempty(wsArray.bar_time_window)
             barTimeWindow = str2num(get(handles.barTimeWindow,'String'));
         else
@@ -4382,7 +4395,7 @@ wSig_trialnums =str2num(char(names));
         save([sessObjname '.mat'],'sessObj','-v7.3');
     else
         load('sessObj.mat');
-        sessObj.wSigTrials = wSigTrials;
+        sessObj.wSigTrials = wSigTrials;;
         save([sessObjname '.mat'],'sessObj','-v7.3');
     end
 

@@ -74,9 +74,11 @@ for i = 1: size(collected_summary,2)
                 std_totmodKappa(1,k) = nanstd(abs(curr_loc_NL_Kappa));
 
             else
-                num_trials (1,k) = size(curr_loc_NL_Kappa ,1);
+                
+                
                 curr_loc_NL_trials = temp_data (curr_poleloc_trials & ~temp_lightstim);
                 curr_loc_NL_Kappa = temp_totalKappa (curr_poleloc_trials & ~temp_lightstim);
+                num_trials (1,k) = size(curr_loc_NL_Kappa ,1);
                 avg_loc(:,k,1) = nanmean(curr_loc_NL_trials,1);
                 std_loc(:,k,1) = nanstd(curr_loc_NL_trials,[],1)./sqrt(num_trials (1,k)+1);                
                 avg_sigmag(1,k,1) = nansum(avg_loc(:,k,1));
