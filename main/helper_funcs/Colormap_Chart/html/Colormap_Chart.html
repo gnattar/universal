@@ -1,0 +1,160 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Colormap_Chart</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-06"><meta name="DC.source" content="Colormap_Chart.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><p>This is an example of creating a chart of built-in colormaps in MATLAB&reg;.</p><p>Read about the <a href="http://www.mathworks.com/help/matlab/ref/colormap.html"><tt>colormap</tt></a> function in the MATLAB documentation.</p><p>For more examples, go to <a href="http://www.mathworks.com/discovery/gallery.html">MATLAB Plot Gallery</a></p><pre class="codeinput"><span class="comment">% Define built-in colormaps</span>
+maps = {};
+<span class="keyword">if</span> exist(<span class="string">'parula'</span>, <span class="string">'file'</span>)
+    maps = {<span class="string">'parula'</span>};
+<span class="keyword">end</span>
+maps = [maps <span class="string">'jet'</span>, <span class="string">'hsv'</span>, <span class="string">'hot'</span>, <span class="string">'cool'</span>, <span class="string">'spring'</span>, <span class="string">'summer'</span>, <span class="string">'autumn'</span>, <span class="keyword">...</span>
+    <span class="string">'winter'</span>, <span class="string">'gray'</span>, <span class="string">'bone'</span>, <span class="string">'copper'</span>, <span class="string">'pink'</span>, <span class="string">'lines'</span>];
+
+<span class="comment">% Number of color levels to create</span>
+nLevels = 16;
+
+figure
+
+<span class="comment">% X data points for color patches</span>
+xData = [linspace(0, 15, nLevels); linspace(1, 16, nLevels); <span class="keyword">...</span>
+    linspace(1, 16, nLevels); linspace(0, 15, nLevels)];
+
+<span class="comment">% Create each color bar</span>
+<span class="keyword">for</span> iMap = 1:length(maps)
+    offset = 2*(length(maps) - iMap);
+    yData = [zeros(2, nLevels); 1.5*ones(2, nLevels)] + offset;
+
+    <span class="comment">% Construct appropriate colormap.</span>
+    cData = feval(maps{iMap}, nLevels);
+
+    <span class="comment">% Display colormap chart</span>
+    patch(<span class="string">'XData'</span>, xData, <span class="string">'YData'</span>, yData, <span class="keyword">...</span>
+        <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+        <span class="string">'FaceColor'</span>, <span class="string">'flat'</span>, <span class="keyword">...</span>
+        <span class="string">'FaceVertexCData'</span>, cData)
+    rectangle(<span class="string">'Position'</span>, [0, offset, 16, 1.5], <span class="keyword">...</span>
+        <span class="string">'Curvature'</span>, [0 0])
+    text(16, offset, sprintf(<span class="string">' %s'</span>, maps{iMap}), <span class="keyword">...</span>
+        <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="keyword">...</span>
+        <span class="string">'FontSize'</span>, 12)
+<span class="keyword">end</span>
+
+axis <span class="string">equal</span> <span class="string">off</span>
+title(<span class="string">'Built-in Colormaps'</span>)
+</pre><img vspace="5" hspace="5" src="Colormap_Chart_01.png" alt=""> <p class="footer">Copyright 2012-2014 The MathWorks, Inc.<br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% This is an example of creating a chart of built-in colormaps in MATLAB&#174;.
+% 
+% Read about the <http://www.mathworks.com/help/matlab/ref/colormap.html |colormap|> function in the MATLAB documentation.
+%
+% For more examples, go to <http://www.mathworks.com/discovery/gallery.html MATLAB Plot Gallery>
+%
+% Copyright 2012-2014 The MathWorks, Inc.
+
+% Define built-in colormaps
+maps = {};
+if exist('parula', 'file')
+    maps = {'parula'};
+end
+maps = [maps 'jet', 'hsv', 'hot', 'cool', 'spring', 'summer', 'autumn', ...
+    'winter', 'gray', 'bone', 'copper', 'pink', 'lines'];
+
+% Number of color levels to create
+nLevels = 16;
+
+figure
+
+% X data points for color patches
+xData = [linspace(0, 15, nLevels); linspace(1, 16, nLevels); ...
+    linspace(1, 16, nLevels); linspace(0, 15, nLevels)];
+
+% Create each color bar
+for iMap = 1:length(maps)
+    offset = 2*(length(maps) - iMap);
+    yData = [zeros(2, nLevels); 1.5*ones(2, nLevels)] + offset;
+    
+    % Construct appropriate colormap.
+    cData = feval(maps{iMap}, nLevels);
+    
+    % Display colormap chart
+    patch('XData', xData, 'YData', yData, ...
+        'EdgeColor', 'none', ...
+        'FaceColor', 'flat', ...
+        'FaceVertexCData', cData)
+    rectangle('Position', [0, offset, 16, 1.5], ...
+        'Curvature', [0 0])
+    text(16, offset, sprintf(' %s', maps{iMap}), ...
+        'VerticalAlignment', 'bottom', ...
+        'FontSize', 12)
+end
+
+axis equal off
+title('Built-in Colormaps')
+
+##### SOURCE END #####
+--></body></html>

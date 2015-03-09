@@ -121,7 +121,7 @@ function c = othercolor(n,m)
 %  colors = othercolor();
 %  figure;
 %   l = 50;
-%   s=0;
+%   s=50;
 %   for i=s+1:s+l
 %   subplot(ceil(l/10),10,i-s);
 %   c = othercolor(i);
@@ -129,7 +129,7 @@ function c = othercolor(n,m)
 %   title(char(colors(i)),'interpreter','none');
 %   axis off;
 %   end
-%
+
 %   Author: Joshua Atkins
 %   Date: March 1, 2011
 

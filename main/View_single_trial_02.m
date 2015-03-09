@@ -257,8 +257,8 @@ if(~isempty(dffarray))
     dff = mean(dffarray(roiNo,:),1);
 
     sampling_time = obj(trNo).FrameTime;
-        winsize =round(0.2/sampling_time);  
-    dff = filter(ones(1,winsize)/winsize,1,dff,[],2);
+        winsize =round(0.06/sampling_time);  
+%     dff = filter(ones(1,winsize)/winsize,1,dff,[],2);
     
     if  iscell(obj(trNo).ts)
         ts = obj(trNo).ts{1};

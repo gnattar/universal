@@ -9,7 +9,7 @@ collected_summary = {};
 % end
 % cd (basedatapath);
 count=0;
-  def={'87','140827','1','1','1'};
+  def={'131','150201','1','1','1'};
 while(count>=0)
     [filename,pathName]=uigetfile('contact_CaTrial*.mat','Load contact_CaTrials*.mat file');
     if isequal(filename, 0) || isequal(pathName,0)
