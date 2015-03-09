@@ -3896,15 +3896,18 @@ global CaTrials
 global sorted_CaTrials
 global contact_CaTrials
 global sessionObj
-framerate = 500; % Hz
+framerate = 501; % Hz
 
 W = {'1';'2'};
 [Selection,ok] = listdlg('PromptString','Select whisker ID','ListString',W,'SelectionMode','single','ListSize',[160,100]);
 whiskerID = str2num(W{Selection});
 S = {'Protract';'Retract'};
 [Selection,ok] = listdlg('PromptString','Select direction of touch','ListString',S,'SelectionMode','single','ListSize',[160,100])
-
 selected_contact_direct = S{Selection};
+T = {'Single touch';'Multi touch'};
+[Selection,ok] = listdlg('PromptString','Select mode of touch','ListString',T,'SelectionMode','single','ListSize',[160,100])
+selected_contact_mode = T{Selection};
+
 if(isempty(wSigTrials))
     [filename,pathname]=uigetfile('wSigTrials*.mat','Load wSigTrials.mat file');
     load([pathname filesep filename]);
@@ -4009,10 +4012,10 @@ end
 
 Caframetime = CaTrials.FrameTime;
 baseline = 0.5;
-dur = 4.5;
-wSigframerate = 500;
-numpts=ceil((dur+baseline)*wSigframerate);% 4.5 seconds worth of data
-numframes = ceil((dur+baseline)/Caframetime);% 4.5 seconds worth of data
+dur = 2.5;
+wSigframerate = 501;
+numpts=ceil((dur+baseline)*wSigframerate);% 2.5 seconds worth of data
+numframes = ceil((dur+baseline)/Caframetime);% 2.5 seconds worth of data
 
 numcontacts =0;
 contact_CaTrials=struct('solo_trial',[],'dff',{},'dff_complete',{},'ts',{},'FrameTime',{},'nframes',{},'trialtype',[],'trialCorrect',[],'FileName_prefix',{},'FileName',{},...
