@@ -162,7 +162,7 @@ rois_name_tag = '';
 % %                 
 % %             end
 
-            vline([ 1 1.5 2 2.5 3],'k-');
+            vline([ 1 1.5 2 2.5 3],'k--');
            if (strcmp(sfx , 'Csort') || strcmp(sfx , 'Csort_barpos'))
             vline([ 0.5],'k--');
            end
@@ -189,7 +189,7 @@ rois_name_tag = '';
                         end
                         xlabel('Time (s)'); ylabel('dFF');
                         axis([s_time ts(length(ts)) -100 cscale(2)+100]);set(gca,'YMinorTick','on','YTick', -100:100:cscale(2)+100);
-                        vline([  1 1.5 2 2.5 3],'k-');
+                        vline([  1 1.5 2 2.5 3],'k--');
                     elseif isempty(trials_ktype) && (numel(overlay)>1 && overlay(k)==0)
                         count = count+1;
                     elseif isempty(trials_ktype) && numel(overlay)==1
@@ -258,7 +258,7 @@ rois_name_tag = '';
             
             axis([s_time ts(length(ts)) -30 round(cscale(2)+100)/2]);set(gca,'YMinorTick','on','YTick', -50:50:round(cscale(2)+100)/2);xlabel('Time(s)'); ylabel('mean_dFF');
             
-            vline([ 1 1.5 2 2.5 3],'k-');
+            vline([ 1 1.5 2 2.5 3],'k--');
             text(3.5,200,[ num2str(sum(detected,1)) '/' num2str(size(event_detected_data,1)) '(' num2str(sum(detected,1)/size(event_detected_data,1)) ')']);%,'Location','NorthEast');
         elseif isempty(trials_ktype) && (numel(overlay)>1 && overlay(k)==0)
             count = count+1;

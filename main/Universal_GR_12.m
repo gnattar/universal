@@ -2156,7 +2156,7 @@ if get(hObject, 'Value') == 1
         end
         CaSignal.ica_data.FileNums = ci;
         else
-            CaSignal.ica_data.FileNums = [1:250];% using filenums [1:250] for now , need to put a text box
+            CaSignal.ica_data.FileNums = [1:150];% using filenums [1:250] for now , need to put a text box
         end
     
     if isfield(CaSignal, 'ica_data') && isfield(CaSignal.ica_data,'Data')%%~isempty(CaSignal.ica_data.Data)
@@ -5372,7 +5372,7 @@ else
 end
 
 
-if length(commontrials) ~= str2num(get(handles.TotTrialNum, 'String'))
+if length(commontrials) ~= length(trials) %% str2num(get(handles.TotTrialNum, 'String'))
     disp('Number of ephus trials NOT equal to Number of Ca Image Trials!')
    [v,c] = setdiff(trials,commontrials);
     CaSignal.CaTrials(c).ephusTrial = [];
