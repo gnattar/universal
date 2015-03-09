@@ -9,7 +9,7 @@ for i = 1: num_comp
     suptitle(['Comp' num2str(i)]);
 %     temp_im = mean(squeeze(comp_mat(i,:,:,:)),3);
     temp_im = squeeze(comp_mat(i,:,:));
-    imagesc(temp_im); caxis(clim); colormap(jet);
+    imagesc(temp_im); caxis(clim); colormap(othercolor('BuDRd_18'));
     fnam = [type '_Comp' num2str(i)];
     saveas(gcf,[comp_path,filesep,fnam],'jpg');
     close(h1);

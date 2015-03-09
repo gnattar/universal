@@ -51,7 +51,7 @@ function batch_processing_whisker_file_dir(animalName, sessionName, extrap_dista
 % barOffset = cellfun(@(x) x.pinAscentOnsetTime, imArray.SoloTrials);
 % 
 if matlabpool('size')<1
-    matlabpool open 12
+    matlabpool open 4
 end
 
 if ~exist(fullfile(results_save_dir, sprintf('wsArray_%s.mat',sessionName)),'file')

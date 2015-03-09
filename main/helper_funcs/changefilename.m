@@ -1,5 +1,7 @@
 function changefilename(d)
+
 files = dir('*.xsg');
+
 
 %% to change file number for new = old +1; !!!!  i =length(files):-1:1
 %% if new = old-1 change iteration to 1:length(files) !!!!

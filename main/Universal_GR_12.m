@@ -3890,8 +3890,9 @@ W = {'1';'2'};
 whiskerID = str2num(W{Selection});
 S = {'Protract';'Retract'};
 [Selection,ok] = listdlg('PromptString','Select direction of touch','ListString',S,'SelectionMode','single','ListSize',[160,100])
-
-selected_contact_direct = S{Selection};
+T = {'First Touch';'Multi Touch'};
+[Selection,ok] = listdlg('PromptString','Select touch detection mode','ListString',T,'DetectionMode','single','ListSize',[160,100])
+selected_detection_mode = T{Selection};
 if(isempty(wSigTrials))
     [filename,pathname]=uigetfile('wSigTrials*.mat','Load wSigTrials.mat file');
     load([pathname filesep filename]);
