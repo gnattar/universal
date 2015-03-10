@@ -16,7 +16,7 @@ classdef WhiskerTrial < handle
         trackerData = {};
         barPos = []; % [frameNum XPosition YPosition]
         barPosClean = [];
-        barRadius = 17; % In pixels. Must be radius of bar tracked by the bar tracker.
+        barRadius = 12; % In pixels. Must be radius of bar tracked by the bar tracker.
         barPosOffset = [0 0]; % In pixels. Displacement from the center of the large pole to the 'contact point'
         % (either on the edge of the large pole or small pole).
         % polyFits: Time-consuming to compute; not computed upon object construction;
@@ -40,7 +40,7 @@ classdef WhiskerTrial < handle
         protractionDirection = 'rightward'; % 'downward', 'upward', 'rightward','leftward'
         imagePixelDimsXY = [150 200]; % [NumberOfXPixels NumberOfYPixels]
         
-        pxPerMm = 22.68;
+        pxPerMm = 24.38;
         
         % polyFitsMask:
         % Cell array of length length(trajectoryIDs), of format:

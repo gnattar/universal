@@ -1,10 +1,11 @@
 function whiskloc_dependence_plotdata(pooled_contactCaTrials_locdep,dends,par)
 sc = get(0,'ScreenSize');
-h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
+% h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
+h_fig1 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
 count =1;
 for d=1:length(dends)
     n = dends(d);
-    xcol =2;
+    xcol =0;
     polelocs = unique(pooled_contactCaTrials_locdep{n}.poleloc);
     numloc =length(polelocs);
     a = 1;
@@ -35,9 +36,9 @@ for d=1:length(dends)
         end
                 %         axis([0  mx+5 -50 my+100]);
         if strcmp(par,'sigmag')
-            axis([-0.1 1 0 5000]);
+            axis([-0.1 1.0 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([-0.1 1 0 400]);
+            axis([-0.1 1.0 0 600]);
         end
         count = count+1;
         
@@ -86,13 +87,13 @@ for d=1:length(dends)
         % %        plot([-20:-1],polyval(p_L(i,:,1),[-20:-1]),'r-'); hold on; plot([1:20],polyval(p_L(i,:,2),[1:20]),'r-');
     end
     
-    subplot(length(dends),numloc+xcol,count:count+1);
-    h= plot([1:numloc],p_NL(:,1),'k-o'); set(h,'linewidth',1.5);hold on;
-    h= plot([1:numloc],p_L(:,1),'r-o');set(h,'linewidth',1.5);
-    hline(0,'k:');
-    title( ' slopes'); axis([0 6 min(min(p_NL([a:z],1)),min(p_L([a:z],1)))-50  max(max(p_NL([a:z],1)),max(p_L([a:z],1)))+50]);
-    
-    count = count+2;
+%     subplot(length(dends),numloc+xcol,count:count+1);
+%     h= plot([1:numloc],p_NL(:,1),'k-o'); set(h,'linewidth',1.5);hold on;
+%     h= plot([1:numloc],p_L(:,1),'r-o');set(h,'linewidth',1.5);
+%     hline(0,'k:');
+%     title( ' slopes'); axis([0 6 min(min(p_NL([a:z],1)),min(p_L([a:z],1)))-50  max(max(p_NL([a:z],1)),max(p_L([a:z],1)))+50]);
+%     
+%     count = count+2;
 end
 set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 18 24]);
@@ -101,7 +102,8 @@ set(gcf,'PaperPositionMode','manual');
 %         print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
 saveas(gcf,[' Loc Dep ' par ' reg  D ' num2str(dends)],'jpg');
 
-h_fig2= figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
+% h_fig2= figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
+h_fig2= figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
 count=1;
 for d=1:length(dends)
     n = dends(d);
@@ -151,7 +153,7 @@ col = othercolor('MIndexed24',10);
                 plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(L_ind(protract(r)),:),'color',col(colind,:),'linewidth',.15);
             end
         end
-        axis([0 5 0 350]);
+        axis([0 2.5 0 600]);
         
         hline(30,'k.');
         hline(0,'k--');

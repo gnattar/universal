@@ -96,7 +96,7 @@ classdef WhiskerSignalTrial < handle
         barPosOffset = []; % [x y], either 1X2 or nframesX2
         barRadius = []; % Inherited from WhiskerTrial.  In pixels. Must be radius of bar tracked by the bar tracker.
         time = {};
-        pxPerMm = 22.68; %  Inherited from WhiskerTrial, but give default value.
+        pxPerMm = 24.38; %  Inherited from WhiskerTrial, but give default value.
         faceSideInImage = 'top'; % Inherited from WhiskerTrial, but give default value.
         % Can be: 'top', 'bottom', 'left','right'.
         % May need to make this a cell array of strings, one per trajectory ID

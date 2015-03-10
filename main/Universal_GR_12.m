@@ -3903,7 +3903,11 @@ W = {'1';'2'};
 whiskerID = str2num(W{Selection});
 S = {'Protract';'Retract'};
 [Selection,ok] = listdlg('PromptString','Select direction of touch','ListString',S,'SelectionMode','single','ListSize',[160,100])
-selected_detection_direct = S{Selection};
+selected_contact_direct = S{Selection};
+T = {'Single touch';'Multi touch'};
+[Selection,ok] = listdlg('PromptString','Select mode of touch','ListString',T,'SelectionMode','single','ListSize',[160,100])
+selected_contact_mode = T{Selection};
+
 if(isempty(wSigTrials))
     [filename,pathname]=uigetfile('wSigTrials*.mat','Load wSigTrials.mat file');
     load([pathname filesep filename]);
@@ -4008,10 +4012,10 @@ end
 
 Caframetime = CaTrials.FrameTime;
 baseline = 0.5;
-dur = 4.5;
+dur = 2.5;
 wSigframerate = 500;
-numpts=ceil((dur+baseline)*wSigframerate);% 4.5 seconds worth of data
-numframes = ceil((dur+baseline)/Caframetime);% 4.5 seconds worth of data
+numpts=ceil((dur+baseline)*wSigframerate);% 2.5 seconds worth of data
+numframes = ceil((dur+baseline)/Caframetime);% 2.5 seconds worth of data
 
 numcontacts =0;
 contact_CaTrials=struct('solo_trial',[],'dff',{},'dff_complete',{},'ts',{},'FrameTime',{},'nframes',{},'trialtype',[],'trialCorrect',[],'FileName_prefix',{},'FileName',{},...
@@ -4033,27 +4037,35 @@ for i = 1:numtrials
     allcontacts = size(contacttimes{i},2);
     if get(handles.align_to_first_touch,'Value')
         pickedcontact=1; %first contact
-        contact_CaSig_tag = 'Ftouch';
+        contact_CaSig_tag = 'F';
     elseif get(handles.align_to_last_touch,'Value');
         pickedcontact=allcontacts;%last contact
-        contact_CaSig_tag = 'Ltouch';
+        contact_CaSig_tag = 'L';
     end
-    numcontacts = 1;
-    contactind = zeros(numcontacts,1);
-    for j=1:numcontacts
-        ind= 1; %first ind
-        
-        %                   ind= length(contacttimes{i}{1,pickedcontact(j)}); %last ind
-        temp=contacttimes{i}{1,pickedcontact(j)}(ind);%for now just the first contact after bartime
-        if(temp/wSigframerate<=baseline)&&(allcontacts>1)
-            contactind(j) = contacttimes{i}{1,(j+1)}(1);
-        elseif(temp/wSigframerate<=baseline)&&(allcontacts==1)
-            contactind(j) = ceil(baseline*wSigframerate)+1;
-        else
-            contactind(j) =temp;% for now just the first contact
-        end
-        % for now just the first contact
+    contact_CaSig_tag = [ contact_CaSig_tag selected_contact_mode];
+    contacttimes_mat = cell2mat(contacttimes{i});
+    if strcmp(selected_contact_mode,'Single touch')
+        contactind = contacttimes_mat(1);
+        numcontacts =1;
+    elseif strcmp(selected_contact_mode,'Multi touch')
+        discreet_contacts= [1,(find(diff(contacttimes_mat)>wSigframerate * 1.0)+1)];
+        numcontacts = length(discreet_contacts);
+        contactind = zeros(numcontacts,1);
+        contactind = contacttimes_mat(discreet_contacts);
     end
+% % %     for j=1:numcontacts
+% % %         ind= 1; %first ind
+% % %         %                   ind= length(contacttimes{i}{1,pickedcontact(j)}); %last ind
+% % %         temp=contacttimes{i}{1,pickedcontact(j)}(ind);%for now just the first contact after bartime
+% % %         if(temp/wSigframerate<=baseline)&&(allcontacts>1)
+% % %             contactind(j) = contacttimes{i}{1,(j+1)}(1);
+% % %         elseif(temp/wSigframerate<=baseline)&&(allcontacts==1)
+% % %             contactind(j) = ceil(baseline*wSigframerate)+1;
+% % %         else
+% % %             contactind(j) =temp;% for now just the first contact
+% % %         end
+% % %         % for now just the first contact
+% % %     end
     extractedCaSig = zeros(numrois,numframes);
     extractedTheta=zeros(1,numpts);
     extractedKappa=zeros(1,numpts);
@@ -4076,7 +4088,7 @@ for i = 1:numtrials
         wdata_indtimes = (timepoint - baseline)+ (1/wSigframerate) :1/wSigframerate: timepoint+dur;
         wdata_indtimes = round (wdata_indtimes*1000)/1000;
         wdata_temp = nan(round((baseline+dur)*wSigframerate),1);
-        diff=[0,0];
+
         if ( timepoint < baseline)
             
         else
@@ -4084,33 +4096,6 @@ for i = 1:numtrials
              wdata_src_inds = find(lia);
              wdata_dest_inds = loc(find(lia));
         end
-       
-%         strp = contactind(j)-floor(baseline*wSigframerate);
-%         endp=contactind(j)+ceil(dur*wSigframerate);
-        
-% %         if(strp<1)
-% %             diff(1,1)=strp*-1+1;
-% %             strp=1;
-% %         elseif(endp>length(temp))
-% %             diff(1,2)=endp-length(temp);
-% %             endp=length(temp);
-% %         end
-% %         temp=thetavals{i};
-% %         extractedTheta(diff(1,1)+1:numpts-diff(1,2))= temp(strp+1:endp);
-% %         temp=kappavals{i};
-% %         extractedKappa(diff(1,1)+1:numpts-diff(1,2))= temp(strp+1:endp);
-% %         
-% %         temp=Velocity{i};
-% %         extractedVelocity(diff(1,1)+1:numpts-diff(1,2))= temp(strp+1:endp);
-% %         temp=Setpoint{i};
-% %         extractedSetpoint(diff(1,1)+1:numpts-diff(1,2))= temp(strp+1:endp);
-% %         temp=Amplitude{i};
-% %         extractedAmplitude(diff(1,1)+1:numpts-diff(1,2))= temp(strp+1:endp);
-% %         temp=deltaKappa{i};
-% %         extracteddeltaKappa(diff(1,1)+1:numpts-diff(1,2))= temp(strp+1:endp);
-% %         temp=ts_wsk{i};
-% %         extractedts_wsk(diff(1,1)+1:numpts-diff(1,2))= temp(strp+1:endp);
-
 
         temp=thetavals{i};
         wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
@@ -4149,7 +4134,7 @@ for i = 1:numtrials
         
         if(timepoint<=.5) 
             strframe=1;
-            diff=ceil((0.5-timepoint)/Caframetime);
+            diff_t=ceil((0.5-timepoint)/Caframetime);
         else
             strframe=ceil((timepoint-baseline)/Caframetime);
         end
@@ -4160,7 +4145,7 @@ for i = 1:numtrials
             extractedCaSig(:,1:size(CaSig,2)-strframe+1) = CaSig(:,strframe:size(CaSig,2),i);
         elseif(timepoint<=baseline)
             
-            extractedCaSig(:,diff+strframe:diff+endframe)= CaSig(:,strframe:endframe,i);
+            extractedCaSig(:,diff_t+strframe:diff_t+endframe)= CaSig(:,strframe:endframe,i);
         else
             extractedCaSig = CaSig(:,strframe:endframe,i);
         end
