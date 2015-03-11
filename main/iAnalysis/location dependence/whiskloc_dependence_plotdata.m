@@ -38,7 +38,7 @@ for d=1:length(dends)
         if strcmp(par,'sigmag')
             axis([-0.1 1.0 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([-0.1 1.0 0 600]);
+            axis([-0.1 1.0 0 900]);
         end
         count = count+1;
         

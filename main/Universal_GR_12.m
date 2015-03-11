@@ -4012,7 +4012,7 @@ end
 
 Caframetime = CaTrials.FrameTime;
 baseline = 0.5;
-dur = 2.5;
+dur = 2.0;
 wSigframerate = 500;
 numpts=ceil((dur+baseline)*wSigframerate);% 2.5 seconds worth of data
 numframes = ceil((dur+baseline)/Caframetime);% 2.5 seconds worth of data
@@ -4034,6 +4034,7 @@ mismatch =0;
 % % % end %
   temp_sortedCa = {};
 for i = 1:numtrials
+
     allcontacts = size(contacttimes{i},2);
     if get(handles.align_to_first_touch,'Value')
         pickedcontact=1; %first contact
@@ -4044,7 +4045,19 @@ for i = 1:numtrials
     end
     contact_CaSig_tag = [ contact_CaSig_tag selected_contact_mode];
     contacttimes_mat = cell2mat(contacttimes{i});
+    contactdir_mat = [];count1 = 0 ;
+     temp_dir= contactdir{i};
+     temp_contacts = contacttimes{i};
+    for c = 1: length(contacttimes{i})
+        num_fr_touch = temp_contacts{c};
+        contactdir_c =temp_dir(c);
+        temp_contactdir_c = repmat(contactdir_c,1,length(num_fr_touch));
+        contactdir_mat(count1+1:count1+length(num_fr_touch)) = temp_contactdir_c;
+        count1 = count1 + length(num_fr_touch);
+    end
+    
     if strcmp(selected_contact_mode,'Single touch')
+        discreet_contacts=[1,(find(diff(contacttimes_mat)>wSigframerate * 5.0)+1)]; %% making it ridiculously long so all contacts gets counted together
         contactind = contacttimes_mat(1);
         numcontacts =1;
     elseif strcmp(selected_contact_mode,'Multi touch')
@@ -4053,19 +4066,7 @@ for i = 1:numtrials
         contactind = zeros(numcontacts,1);
         contactind = contacttimes_mat(discreet_contacts);
     end
-% % %     for j=1:numcontacts
-% % %         ind= 1; %first ind
-% % %         %                   ind= length(contacttimes{i}{1,pickedcontact(j)}); %last ind
-% % %         temp=contacttimes{i}{1,pickedcontact(j)}(ind);%for now just the first contact after bartime
-% % %         if(temp/wSigframerate<=baseline)&&(allcontacts>1)
-% % %             contactind(j) = contacttimes{i}{1,(j+1)}(1);
-% % %         elseif(temp/wSigframerate<=baseline)&&(allcontacts==1)
-% % %             contactind(j) = ceil(baseline*wSigframerate)+1;
-% % %         else
-% % %             contactind(j) =temp;% for now just the first contact
-% % %         end
-% % %         % for now just the first contact
-% % %     end
+
     extractedCaSig = zeros(numrois,numframes);
     extractedTheta=zeros(1,numpts);
     extractedKappa=zeros(1,numpts);
@@ -4076,49 +4077,47 @@ for i = 1:numtrials
     extractedts_wsk=zeros(1,numpts);
     contact_sorted_CaSig = zeros(numrois,numframes,numcontacts);
     
-    
     for j= 1:numcontacts
         temp_ts_wsk = round(ts_wsk{i}*1000)/1000;
         if mismatch
             temp_ts_wsk = temp_ts_wsk +.5;
         end
 %         timepoint = temp_ts_wsk(contactind(j));
-        timepoint = contactind(j)/wSigframerate;
+        timepoint = contacttimes_mat(discreet_contacts(j))/wSigframerate;
        
-        wdata_indtimes = (timepoint - baseline)+ (1/wSigframerate) :1/wSigframerate: timepoint+dur;
-        wdata_indtimes = round (wdata_indtimes*1000)/1000;
-        wdata_temp = nan(round((baseline+dur)*wSigframerate),1);
-
-        if ( timepoint < baseline)
-            
-        else
-             [lia,loc] = ismember(temp_ts_wsk,wdata_indtimes);
-             wdata_src_inds = find(lia);
-             wdata_dest_inds = loc(find(lia));
-        end
+        wdata_indtimes = temp_ts_wsk((timepoint-baseline < temp_ts_wsk ) & (temp_ts_wsk < timepoint+dur));
+        wdata_src_inds = find((timepoint-baseline < temp_ts_wsk ) & (temp_ts_wsk < timepoint+dur));
+        wdata_dest_inds = [1:length(wdata_src_inds)];
 
         temp=thetavals{i};
-        wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
-        extractedTheta = inpaint_nans(wdata_temp);
+        extractedTheta =  temp(wdata_src_inds);
         
-
-        temp=kappavals{i};wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
-        extractedKappa=inpaint_nans(wdata_temp);
+        temp=kappavals{i};
+        extractedKappa= temp(wdata_src_inds);
         
-        temp=Velocity{i};wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
-        extractedVelocity= inpaint_nans(wdata_temp);
-        temp=Setpoint{i};wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
-        extractedSetpoint= inpaint_nans(wdata_temp);
-        temp=Amplitude{i};wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
-        extractedAmplitude= inpaint_nans(wdata_temp);
-        temp=deltaKappa{i};wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
-        extracteddeltaKappa= inpaint_nans(wdata_temp);
-        temp=ts_wsk{i};wdata_temp(wdata_dest_inds) = temp(wdata_src_inds);
-        extractedts_wsk= inpaint_nans(wdata_temp);
+        temp=Velocity{i};
+        extractedVelocity= temp(wdata_src_inds);
         
+        temp=Setpoint{i};
+        extractedSetpoint= temp(wdata_src_inds);
         
-        extractedcontactdir=contactdir{i};
-        extractedcontacts=contacts{i};
+        temp=Amplitude{i};
+        extractedAmplitude= temp(wdata_src_inds);
+        
+        temp=deltaKappa{i};        
+        extracteddeltaKappa= temp(wdata_src_inds);
+        
+        temp=ts_wsk{i};
+        extractedts_wsk= temp(wdata_src_inds);
+               
+        if (j < numcontacts)
+            extractedcontacts=contacttimes_mat(discreet_contacts(j): discreet_contacts(j+1)-1);
+            extractedcontactdir=contactdir_mat(discreet_contacts(j): discreet_contacts(j+1)-1);
+        else
+            extractedcontacts=contacttimes_mat(discreet_contacts(j):end);
+            extractedcontactdir=contactdir_mat(discreet_contacts(j):end);
+        end
+        
         if( isfield(CaTrials, 'ephusTrial') && ~isempty(CaTrials(i).ephusTrial.ephuststep))
             ephussamplerate = 1/CaTrials(i).ephusTrial.ephuststep(1);
             ephusattimepoint = ceil(timepoint*ephussamplerate);
@@ -4149,7 +4148,40 @@ for i = 1:numtrials
         else
             extractedCaSig = CaSig(:,strframe:endframe,i);
         end
-        count=count+1;
+        
+        %% recompute total touch dKappa
+   
+        touchind =unique(extractedcontacts)-wdata_src_inds(1)+1;
+        timeind = wdata_src_inds;
+        
+%         [ri,ti,ci]= intersect(timeind,touchind);
+         discreet_contacts_2= unique([1,find(diff(touchind)~=1)]);
+        
+        
+        Peakpercontact=0;Peakpercontact_abs=0; 
+        
+         for p = 1:length(discreet_contacts_2)
+            
+            if(p == length(discreet_contacts_2))
+                vals = extracteddeltaKappa(touchind(discreet_contacts_2(p):end)) ;
+              
+            else
+                vals = extracteddeltaKappa(touchind( discreet_contacts_2(p): discreet_contacts_2(p+1)-1) );
+               
+            end
+            
+            contdir = (abs(max(vals)) > abs(min(vals))) *0 +   (abs(max(vals)) < abs(min(vals)))  *1;
+            
+            if (contdir)
+                Peakpercontact = Peakpercontact + min(vals );
+                Peakpercontact_abs = Peakpercontact_abs + abs(min(vals));
+            else
+                Peakpercontact = Peakpercontact + max(vals );
+                Peakpercontact_abs = Peakpercontact_abs + abs(max(vals));
+            end
+
+        end
+        count = count +1;
         % % %             contact_CaTrials{count}=struct{'dff',{extractedCaSig},'FrameTime',CaTrials(CaSig_tags(i)).FrameTime,'nFrames',numframes,...
         % % %                                        'Trialind', CaTrials(CaSig_tags(i)).TrialNo,'TrialNo',trialnums(i),'nROIs',numrois};
         TrialName = strrep(CaTrials(CaSig_tags(i)).FileName,CaTrials(CaSig_tags(i)).FileName_prefix,'');
@@ -4167,6 +4199,7 @@ for i = 1:numtrials
         contact_CaTrials(count).ts_wsk={extractedts_wsk};
         contact_CaTrials(count).contactdir = {extractedcontactdir};
         contact_CaTrials(count).contacts = {extractedcontacts};
+        contact_CaTrials(count).contacts_shifted = {extractedcontacts-wdata_src_inds(1)+1};
         contact_CaTrials(count).FrameTime = CaTrials(CaSig_tags(i)).FrameTime;
         contact_CaTrials(count).nFrames = numframes;
         contact_CaTrials(count).CaSigTrialind=CaSig_tags(i); %% contact_CaTrials(count).CaSigTrialind=CaTrials(CaSig_tags(i)).TrialNo;
@@ -4176,6 +4209,9 @@ for i = 1:numtrials
         %             contact_CaTrials(count).contacts={contactind};
         contact_CaTrials(count).contacts={horzcat(contacttimes{i}{:})};
         contact_CaTrials(count).barpos = wSigTrials{wSig_tags(i)}.bar_pos_trial(1,1);%cellfun(@(x) x.bar_pos_trial(1,1), wSigTrials(wSig_tags),'uniformoutput',false);
+       contact_CaTrials(count).total_touchKappa_epoch = Peakpercontact;
+       contact_CaTrials(count).total_touchKappa_epoch_abs = Peakpercontact_abs;
+       
         contact_CaTrials(count).total_touchKappa = wSigTrials{wSig_tags(i)}.totalTouchKappaTrial (1,1);
         contact_CaTrials(count).max_touchKappa = wSigTrials{wSig_tags(i)}.maxTouchKappaTrial(1,1);
         contact_CaTrials(count).lightstim = CaTrials(CaSig_tags(i)).lightstim;
