@@ -33,16 +33,20 @@ for i = 1: size(collected_summary,2)
         polelocs = unique(temp_poleloc);
        
         if max(temp_lightstim) >0
-          CaSig_mag = cell(length(polelocs),2); %% NL, L
+          CaSig_mag = cell(length(polelocs),2); %% NL, L 
           CaSig_peak = cell(length(polelocs),2);
           CaSig_dur = cell(length(polelocs),2); %fwhm 
+          CaSig_data=cell(length(polelocs),2);
           wSig_totmodKappa = cell(length(polelocs),2);
+          wSig_dKappadata = cell(length(polelocs),2);
           num_trials =  zeros(length(polelocs),2);          
         else
           CaSig_mag = cell(length(polelocs),1); %NL
           CaSig_peak = cell(length(polelocs),1);
           CaSig_dur = cell(length(polelocs),1); %fwhm 
+          CaSig_data=cell(length(polelocs),1);
           wSig_totmodKappa = cell(length(polelocs),1);
+          wSig_dKappadata = cell(length(polelocs),1);
           num_trials =  zeros(length(polelocs),1);
         end
         
@@ -61,12 +65,15 @@ for i = 1: size(collected_summary,2)
                 CaSig_mag{k,1} = nansum(curr_loc_NL_trials,2);
                 CaSig_peak{k,1} =events_amp';
                 CaSig_dur{k,1} = events_dur';
+                CaSig_data{k,1}= curr_loc_NL_trials;
                 [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_L_trials,sampling_time,threshold);
                 CaSig_mag{k,2} = nansum(curr_loc_L_trials,2);
                 CaSig_peak{k,2} = events_amp';
                 CaSig_dur{k,2} = events_dur';
+                CaSig_data{k,2}= curr_loc_L_trials;
                 wSig_totmodKappa{k,1} = curr_loc_NL_Kappa./pxlpermm;
                 wSig_totmodKappa{k,2} = curr_loc_L_Kappa ./pxlpermm;
+                wSig_dKappadata{k,1}= curr_loc_NL_trials;
 
             else
                 curr_loc_NL_trials = temp_data (find(curr_poleloc_trials & ~temp_lightstim),:);
@@ -77,6 +84,7 @@ for i = 1: size(collected_summary,2)
                 CaSig_mag{k,1} = nansum(curr_loc_NL_trials,2);
                 CaSig_peak{k,1} =events_amp';
                 CaSig_dur{k,1} = events_dur';
+                CaSig_data{k,1}= curr_loc_NL_trials;
                 wSig_totmodKappa{k,1} = curr_loc_NL_Kappa./pxlpermm;
                 num_trials (k,1) = size(curr_loc_NL_Kappa ,1);
             end
@@ -98,6 +106,7 @@ for i = 1: size(collected_summary,2)
         pooled_contactCaTrials_locdep{count}.CaSig_peak= CaSig_peak;
         pooled_contactCaTrials_locdep{count}.CaSig_dur= CaSig_dur;
         pooled_contactCaTrials_locdep{count}.wSig_totmodKappa = wSig_totmodKappa;
+        
         pooled_contactCaTrials_locdep{count}.mousename= collected_summary{i}.mousename;
         pooled_contactCaTrials_locdep{count}.sessionname= collected_summary{i}.sessionname;
         pooled_contactCaTrials_locdep{count}.reg= collected_summary{i}.reg;
