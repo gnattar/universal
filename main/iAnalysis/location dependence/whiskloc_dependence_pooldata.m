@@ -56,7 +56,11 @@ for i = 1: size(collected_summary,2)
                 curr_loc_L_trials = temp_data (find(curr_poleloc_trials & temp_lightstim),:);
                 curr_loc_NL_trials = temp_data (find(curr_poleloc_trials & ~temp_lightstim),:);
                 curr_loc_L_Kappa = temp_totalKappa_epoch (find(curr_poleloc_trials & temp_lightstim));
-                curr_loc_NL_Kappa = temp_totalKappa_epoch (find(curr_poleloc_trials & ~temp_lightstim)); 
+                curr_loc_NL_Kappa = temp_totalKappa_epoch (find(curr_poleloc_trials & ~temp_lightstim));
+                curr_loc_L_dKappatrials = temp_touchdeltaKappa (find(curr_poleloc_trials & temp_lightstim));
+                curr_loc_NL_dKappatrials = temp_touchdeltaKappa (find(curr_poleloc_trials & ~temp_lightstim));     
+                curr_loc_L_dKappatrials_ts = temp_tws (find(curr_poleloc_trials & temp_lightstim));
+                curr_loc_NL_dKappatrials_ts = temp_tws (find(curr_poleloc_trials & ~temp_lightstim));   
                 num_trials (k,2) = size(curr_loc_L_Kappa ,1);
                 num_trials (k,1) = size(curr_loc_NL_Kappa ,1);
                 threshold = 35;
@@ -66,18 +70,25 @@ for i = 1: size(collected_summary,2)
                 CaSig_peak{k,1} =events_amp';
                 CaSig_dur{k,1} = events_dur';
                 CaSig_data{k,1}= curr_loc_NL_trials;
+                CaSig_time{k,1} = [1:size(curr_loc_NL_trials,2)].* sampling_time;
                 [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_L_trials,sampling_time,threshold);
                 CaSig_mag{k,2} = nansum(curr_loc_L_trials,2);
                 CaSig_peak{k,2} = events_amp';
                 CaSig_dur{k,2} = events_dur';
                 CaSig_data{k,2}= curr_loc_L_trials;
+                CaSig_time{k,2} = [1:size(curr_loc_L_trials,2)].* sampling_time
                 wSig_totmodKappa{k,1} = curr_loc_NL_Kappa./pxlpermm;
                 wSig_totmodKappa{k,2} = curr_loc_L_Kappa ./pxlpermm;
-                wSig_dKappadata{k,1}= curr_loc_NL_trials;
-
+                wSig_dKappadata{k,1}= curr_loc_NL_dKappatrials;
+                wSig_dKappadata{k,2}= curr_loc_L_dKappatrials;
+                wSig_dKappatime{k,1}= curr_loc_NL_dKappatrials_ts;
+                wSig_dKappatime{k,2}= curr_loc_L_dKappatrials_ts; 
             else
                 curr_loc_NL_trials = temp_data (find(curr_poleloc_trials & ~temp_lightstim),:);
                 curr_loc_NL_Kappa = temp_totalKappa_epoch (find(curr_poleloc_trials & ~temp_lightstim));
+                curr_loc_NL_dKappatrials = temp_touchdeltaKappa (find(curr_poleloc_trials & ~temp_lightstim));                                
+                curr_loc_NL_dKappatrials_ts = temp_tws (find(curr_poleloc_trials & ~temp_lightstim));   
+
                  threshold=35;
                  
                 [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_NL_trials,sampling_time,threshold);
@@ -85,7 +96,10 @@ for i = 1: size(collected_summary,2)
                 CaSig_peak{k,1} =events_amp';
                 CaSig_dur{k,1} = events_dur';
                 CaSig_data{k,1}= curr_loc_NL_trials;
+                CaSig_time{k,1} = [1:size(curr_loc_NL_trials,2)].* sampling_time;
                 wSig_totmodKappa{k,1} = curr_loc_NL_Kappa./pxlpermm;
+                wSig_dKappadata{k,1}= curr_loc_NL_dKappatrials;
+                wSig_dKappatime{k,1}= curr_loc_NL_dKappatrials_ts;
                 num_trials (k,1) = size(curr_loc_NL_Kappa ,1);
             end
 
@@ -106,6 +120,10 @@ for i = 1: size(collected_summary,2)
         pooled_contactCaTrials_locdep{count}.CaSig_peak= CaSig_peak;
         pooled_contactCaTrials_locdep{count}.CaSig_dur= CaSig_dur;
         pooled_contactCaTrials_locdep{count}.wSig_totmodKappa = wSig_totmodKappa;
+        pooled_contactCaTrials_locdep{count}.CaSig_data= CaSig_data;
+        pooled_contactCaTrials_locdep{count}.CaSig_time = CaSig_time;
+        pooled_contactCaTrials_locdep{count}.wSig_dKappadata = wSig_dKappadata;        
+        pooled_contactCaTrials_locdep{count}.wSig_dKappatime = wSig_dKappatime;
         
         pooled_contactCaTrials_locdep{count}.mousename= collected_summary{i}.mousename;
         pooled_contactCaTrials_locdep{count}.sessionname= collected_summary{i}.sessionname;
@@ -117,8 +135,8 @@ for i = 1: size(collected_summary,2)
         pooled_contactCaTrials_locdep{count}.contacts= temp_contacts;
         pooled_contactCaTrials_locdep{count}.timews=temp_tws;  
         
-        pooled_contactCaTrials_locdep {count}.totalKappa_ephoch = temp_totalKappa_epoch./pxlpermm;
-        pooled_contactCaTrials_locdep {count}.totalKappa_ephoch = temp_totalKappa_epoch_abs./pxlpermm;
+        pooled_contactCaTrials_locdep {count}.totalKappa_epoch = temp_totalKappa_epoch./pxlpermm;
+        pooled_contactCaTrials_locdep {count}.totalKappa_epoch_abs = temp_totalKappa_epoch_abs./pxlpermm;
         
         count = count+1;
     end

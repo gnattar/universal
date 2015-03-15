@@ -174,3 +174,18 @@ set(gcf,'PaperPositionMode','manual');
 %         print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
 saveas(gcf,[' Loc Dep Traces  D ' num2str(dends)],'jpg');
 % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
+
+
+% % %% to check trial by trial
+% % obj = pooled_contactCaTrials_locdep{3};
+% % loc =1;
+% % figure
+% % for j = 1:obj.num_trials(loc)
+% %     ts = obj.wSig_dKappatime{loc}{j}(2)-obj.wSig_dKappatime{loc}{j}(1) ; 
+% %     dKaapa_time = obj.wSig_dKappatime{loc}{j} - obj.wSig_dKappatime{loc}{j}(1) + ts;
+% % [ax,h1,h2] = plotyy(obj.CaSig_time{loc},obj.CaSig_data{loc}(j,:)',dKaapa_time,(obj.wSig_dKappadata{loc}{j}./24.38)); 
+% % set(ax(1),'YLim',[-50, 500])
+% % set(ax(2),'YLim',[-.5,.5])% plot(dKaapa_time,obj.wSig_dKappadata{loc}{j},'r'); hold off;
+% % text(1,100,num2str(obj.wSig_totmodKappa{loc}(j)));
+% % waitforbuttonpress
+% % end
