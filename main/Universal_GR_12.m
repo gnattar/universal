@@ -2151,8 +2151,8 @@ if get(hObject, 'Value') == 1
         if strcmpi(usr_confirm, 'Yes')          
         Ctrials =str2num(cell2mat(arrayfun(@(x) x.name(length(x.name)-6 :length(x.name)-4),list,'uniformoutput',false)));
         [ht,ci,si] = intersect(Ctrials,Sdata.hitTrialNums);
-        if(length(ci)>80)
-            ci=ci(1:80);
+        if(length(ci)>100)
+            ci=ci(1:100);
         end
         CaSignal.ica_data.FileNums = ci;
         else
