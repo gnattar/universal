@@ -12,7 +12,7 @@ for i = 1: size(collected_summary,2)
         src_data = filter(ones(1,winsize)/winsize,1,temp_data,[],2);
 %         src_data2 = conv(temp_data,ones(1,winsize)/winsize);
         [event_detected_data,events_septs,detected] = detect_Ca_events(src_data,sampling_time,event_detection_threshold);
-        lightstim=arrayfun(@(x) x.lightstim, collected_data{1,i})';
+        lightstim=arrayfun(@(x) x.lightstim, collected_data{1,i},'uniformoutput',0)';
 
         numtrials = size(temp_data,1);
         intarea = nan(numtrials,1);
