@@ -131,7 +131,7 @@ for d=1:length(dends)
 %                 pooled_contactCaTrials_locdep{n}.totalKappa(NL_ind(retract(r)))
                 [ mval, colind] = min(abs(touchmag - abs(pooled_contactCaTrials_locdep{n}.totalKappa(NL_ind(retract(r))))));
                 figure(h_fig2); subplot(length(dends),numloc+xcol,count);  
-                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(retract(r)),:),'color',colr(colind,:),'linewidth',.5); hold on;
+                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(retract(r)),:),'color',colr(colind,:),'linewidth',.15); hold on;
 %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count); 
 %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(retract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{NL_ind(retract(r))},'color',colr(colind,:),'linewidth',.15); hold on;
 %         
@@ -142,7 +142,7 @@ for d=1:length(dends)
 %                 pooled_contactCaTrials_locdep{n}.totalKappa(NL_ind(protract(r)))
                  [ mval, colind]=min(abs((touchmag - abs(pooled_contactCaTrials_locdep{n}.totalKappa(NL_ind(protract(r)))))));
                 figure(h_fig2); subplot(length(dends),numloc+xcol,count);                  
-                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract(r)),:),'color',colp(colind,:),'linewidth',.5);hold on;
+                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract(r)),:),'color',colp(colind,:),'linewidth',.15);hold on;
 %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count); 
 %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(protract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{NL_ind(protract(r))},'color',colp(colind,:),'linewidth',.15); hold on;
   
@@ -156,7 +156,7 @@ for d=1:length(dends)
             for r=1:length(retract)
                  [ mval, colind] = min(abs(touchmag - abs(pooled_contactCaTrials_locdep{n}.totalKappa(L_ind(retract(r))))));
                  figure(h_fig2); subplot(length(dends),numloc+xcol,count);  
-                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(L_ind(retract(r)),:),'-','color',col(colind,:),'linewidth',.5); hold on;
+                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(L_ind(retract(r)),:),'-','color',col(colind,:),'linewidth',.15); hold on;
 %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count); 
 %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(retract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{L_ind(retract(r))},'color',col(colind,:),'linewidth',.15); hold on;
 
@@ -166,7 +166,7 @@ for d=1:length(dends)
             for r=1:length(protract)
                  [ mval, colind]=min(abs((touchmag - abs(pooled_contactCaTrials_locdep{n}.totalKappa(L_ind(protract(r)))))));
                  figure(h_fig2); subplot(length(dends),numloc+xcol,count);  
-                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(L_ind(protract(r)),:),'color',col(colind,:),'linewidth',.5);
+                plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(L_ind(protract(r)),:),'color',col(colind,:),'linewidth',.15);
 %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count); 
 %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(protract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{L_ind(protract(r))},'color',col(colind,:),'linewidth',.15); hold on;
 

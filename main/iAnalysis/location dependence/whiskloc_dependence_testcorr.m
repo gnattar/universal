@@ -17,6 +17,8 @@ for i =1:numcells
         r(count,1,1) = corr2(temp1,temp2);
         r(count,2,1) = obj{i}.dend;
         r(count,3,1) = obj{j}.dend;
+        r(count,4,1) = i;
+        r(count,5,1) = j;
         
 % %         r(count,2,1) = obj{i}.eventrate_NL(1,1);
 % %         r(count,3,1) = obj{j}.eventrate_NL(1,1);
