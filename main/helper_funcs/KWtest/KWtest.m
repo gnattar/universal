@@ -1,4 +1,4 @@
-function [KWtest] = KWtest(X,alpha)
+function [X2,F,P1,P2] = KWtest(X,alpha)
 %Kruskal-Wallis' nonparametric analysis of variance.
 %(This file is applicable for equal or unequal sample sizes and if there are tied ranks.)
 %
