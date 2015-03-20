@@ -4153,7 +4153,7 @@ for i = 1:numtrials
             extractedCaSig = CaSig(:,strframe:endframe,i);
         end
         
-        %% recompute total touch dKappa
+        %% recompute total touch dKappa and setpoint at touch
    
         touchind =unique(extractedcontacts)-wdata_src_inds(1)+1;
         timeind = wdata_src_inds;
@@ -4163,15 +4163,16 @@ for i = 1:numtrials
         
         
         Peakpercontact=0;Peakpercontact_abs=0; 
+        Setpoint_at_contact = [];cS=0;
         
          for p = 1:length(discreet_contacts_2)
             
             if(p == length(discreet_contacts_2))
                 vals = extracteddeltaKappa(touchind(discreet_contacts_2(p):end)) ;
-              
+                valsSetpoint = extractedSetpoint(touchind(discreet_contacts_2(p):end)) ;
             else
                 vals = extracteddeltaKappa(touchind( discreet_contacts_2(p): discreet_contacts_2(p+1)-1) );
-               
+               valsSetpoint = extractedSetpoint(touchind( discreet_contacts_2(p): discreet_contacts_2(p+1)-1) );
             end
             
             contdir = (abs(max(vals)) > abs(min(vals))) *0 +   (abs(max(vals)) < abs(min(vals)))  *1;
@@ -4179,11 +4180,13 @@ for i = 1:numtrials
             if (contdir)
                 Peakpercontact = Peakpercontact + min(vals );
                 Peakpercontact_abs = Peakpercontact_abs + abs(min(vals));
+                
             else
                 Peakpercontact = Peakpercontact + max(vals );
                 Peakpercontact_abs = Peakpercontact_abs + abs(max(vals));
             end
-
+                Setpoint_at_contact(cS+1:cS+length(vals)) = valsSetpoint;
+                cS=cS+length(vals);
         end
         count = count +1;
         % % %             contact_CaTrials{count}=struct{'dff',{extractedCaSig},'FrameTime',CaTrials(CaSig_tags(i)).FrameTime,'nFrames',numframes,...
@@ -4215,7 +4218,8 @@ for i = 1:numtrials
         contact_CaTrials(count).barpos = wSigTrials{wSig_tags(i)}.bar_pos_trial(1,1);%cellfun(@(x) x.bar_pos_trial(1,1), wSigTrials(wSig_tags),'uniformoutput',false);
        contact_CaTrials(count).total_touchKappa_epoch = Peakpercontact;
        contact_CaTrials(count).total_touchKappa_epoch_abs = Peakpercontact_abs;
-       
+       contact_CaTrials(count).Setpoint_at_contact= {Setpoint_at_contact};
+        contact_CaTrials(count).Setpoint_at_contact_Mean = {mean(Setpoint_at_contact)};
         contact_CaTrials(count).total_touchKappa = wSigTrials{wSig_tags(i)}.totalTouchKappaTrial (1,1);
         contact_CaTrials(count).max_touchKappa = wSigTrials{wSig_tags(i)}.maxTouchKappaTrial(1,1);
         contact_CaTrials(count).lightstim = CaTrials(CaSig_tags(i)).lightstim;

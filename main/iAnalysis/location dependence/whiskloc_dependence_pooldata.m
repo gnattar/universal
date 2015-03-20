@@ -11,6 +11,7 @@ for i = 1: size(collected_summary,2)
         temp_tws = arrayfun(@(x) x.ts_wsk{1}, collected_data{1,i},'uniformoutput',0)';
         temp_touchSetpoint = arrayfun(@(x) x.Setpoint{1}, collected_data{1,i},'uniformoutput',0)'; 
         temp_touchdeltaKappa = arrayfun(@(x) x.deltaKappa{1}, collected_data{1,i},'uniformoutput',0)';         
+        temp_Setpoint_at_contact = arrayfun(@(x) x.Setpoint_at_contact{1}, collected_data{1,i},'uniformoutput',0)'; 
         
     for j = 1:d
         data = cell2mat(arrayfun(@(x) x.dff(j,:), collected_data{1,i},'uniformoutput',0)');
@@ -22,6 +23,7 @@ for i = 1: size(collected_summary,2)
         temp_totalKappa = cell2mat(arrayfun(@(x) x.total_touchKappa(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch_abs  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch_abs(1), collected_data{1,i},'uniformoutput',0)');
+        temp_Setpoint_at_contact_Mean =cell2mat( arrayfun(@(x) x.Setpoint_at_contact_Mean{1}, collected_data{1,i},'uniformoutput',0)'); 
 
         temp_poleloc = cell2mat(arrayfun(@(x) x.barpos(1), collected_data{1,i},'uniformoutput',0)');
         a = collected_data{1,i}.lightstim;
@@ -137,6 +139,8 @@ for i = 1: size(collected_summary,2)
         
         pooled_contactCaTrials_locdep {count}.totalKappa_epoch = temp_totalKappa_epoch./pxlpermm;
         pooled_contactCaTrials_locdep {count}.totalKappa_epoch_abs = temp_totalKappa_epoch_abs./pxlpermm;
+        pooled_contactCaTrials_locdep {count}.Setpoint_at_contact = temp_Setpoint_at_contact;
+        pooled_contactCaTrials_locdep {count}.Setpoint_at_contact_Mean = temp_Setpoint_at_contact_Mean;
         
         count = count+1;
     end
