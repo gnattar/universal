@@ -2151,12 +2151,12 @@ if get(hObject, 'Value') == 1
         if strcmpi(usr_confirm, 'Yes')          
         Ctrials =str2num(cell2mat(arrayfun(@(x) x.name(length(x.name)-6 :length(x.name)-4),list,'uniformoutput',false)));
         [ht,ci,si] = intersect(Ctrials,Sdata.hitTrialNums);
-        if(length(ci)>100)
-            ci=ci(1:100);
+        if(length(ci)>250)
+            ci=ci(1:250);
         end
         CaSignal.ica_data.FileNums = ci;
         else
-            CaSignal.ica_data.FileNums = [1:150];% using filenums [1:250] for now , need to put a text box
+            CaSignal.ica_data.FileNums = [1:250];% using filenums [1:250] for now , need to put a text box
         end
     
     if isfield(CaSignal, 'ica_data') && isfield(CaSignal.ica_data,'Data')%%~isempty(CaSignal.ica_data.Data)
@@ -4187,7 +4187,16 @@ for i = 1:numtrials
             end
                 Setpoint_at_contact(cS+1:cS+length(vals)) = valsSetpoint;
                 cS=cS+length(vals);
-        end
+         end
+         tempS=Setpoint_at_contact;
+         tempS=tempS(tempS~=0);
+         if ~isempty(tempS)
+        Setpoint_at_contact_mean =  tempS(1);  % mean(tempS(1,1:2),2); % just the first frame, no means
+         else
+            Setpoint_at_contact_mean = nan ;
+            
+            waitforbuttonpress%
+         end
         count = count +1;
         % % %             contact_CaTrials{count}=struct{'dff',{extractedCaSig},'FrameTime',CaTrials(CaSig_tags(i)).FrameTime,'nFrames',numframes,...
         % % %                                        'Trialind', CaTrials(CaSig_tags(i)).TrialNo,'TrialNo',trialnums(i),'nROIs',numrois};
@@ -4216,10 +4225,10 @@ for i = 1:numtrials
         %             contact_CaTrials(count).contacts={contactind};
         contact_CaTrials(count).contacts={horzcat(contacttimes{i}{:})};
         contact_CaTrials(count).barpos = wSigTrials{wSig_tags(i)}.bar_pos_trial(1,1);%cellfun(@(x) x.bar_pos_trial(1,1), wSigTrials(wSig_tags),'uniformoutput',false);
-       contact_CaTrials(count).total_touchKappa_epoch = Peakpercontact;
-       contact_CaTrials(count).total_touchKappa_epoch_abs = Peakpercontact_abs;
-       contact_CaTrials(count).Setpoint_at_contact= {Setpoint_at_contact};
-        contact_CaTrials(count).Setpoint_at_contact_Mean = {mean(Setpoint_at_contact)};
+        contact_CaTrials(count).total_touchKappa_epoch = Peakpercontact;
+        contact_CaTrials(count).total_touchKappa_epoch_abs = Peakpercontact_abs;
+        contact_CaTrials(count).Setpoint_at_contact= {Setpoint_at_contact};    
+        contact_CaTrials(count).Setpoint_at_contact_Mean = {Setpoint_at_contact_mean};
         contact_CaTrials(count).total_touchKappa = wSigTrials{wSig_tags(i)}.totalTouchKappaTrial (1,1);
         contact_CaTrials(count).max_touchKappa = wSigTrials{wSig_tags(i)}.maxTouchKappaTrial(1,1);
         contact_CaTrials(count).lightstim = CaTrials(CaSig_tags(i)).lightstim;
@@ -4323,7 +4332,7 @@ nodetects =  find(cellfun(@isempty,contacts_detected));
 if(size(contacts_detected,2)> size(nodetects,2))
     ButtonName = questdlg('Re-do overwrite contacts?', ...
                          'Contacts question', ...
-                         'Yes', 'No', 'Yes');
+                         'Yes','Yes, just few trials', 'No', 'Yes');
     switch ButtonName,
      case 'Yes',
         contact_inds = cell(wsArray.nTrials,1);
@@ -4336,6 +4345,23 @@ if(size(contacts_detected,2)> size(nodetects,2))
         wSigTrials =wsArray.ws_trials;
         save(filename1, 'wsArray');
         save (filename2,'wSigTrials');
+     case 'Yes, just few trials'
+         prompt={'Enter the trials'};
+         name='Trials to redo contacts';
+         def={'1'};
+         w = inputdlg(prompt,name,1,def) ;
+         
+        contact_inds = cell(wsArray.nTrials,1);
+        contact_direct = cell(wsArray.nTrials,1);
+        [contact_inds, contact_direct] = Contact_detection_session_auto(wsArray, contDet_param);
+        for i = w
+            wsArray.ws_trials{i}.contacts = contact_inds{i};
+            wsArray.ws_trials{i}.contact_direct = contact_direct{i};
+        end
+        wSigTrials =wsArray.ws_trials;
+        save(filename1, 'wsArray');
+        save (filename2,'wSigTrials');
+            
      case 'No',
          
     end

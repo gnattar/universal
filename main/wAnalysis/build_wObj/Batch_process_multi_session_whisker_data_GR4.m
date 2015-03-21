@@ -3,6 +3,7 @@ function Batch_process_multi_session_whisker_data_GR4(data_base_dir, varargin)
 
 
  cd(data_base_dir);
+
 % date_dir = dir('20*');
 % for i = 1:length(date_dir)
 %     cd(date_dir(i).name);

@@ -112,7 +112,8 @@ cd(d)
 fnall = arrayfun(@(x) x.name(1:(end-9)), dir([d '*.whiskers']),'UniformOutput',false);
 
 if ~isempty(p.Results.include_files) % Make sure files are found. If not, ignored.
-    ind = ismember(p.Results.include_files,fnall);
+    [v,allf,inc] = intersect(fnall,p.Results.include_files) %% ind = ismember(p.Results.include_files,fnall);
+    ind = inc;
     fnall = p.Results.include_files(ind);
     if sum(ind) ~= numel(ind)
         disp('The following files in ''include_files'' were not found in directory ''d'' and will be skipped:')
@@ -145,35 +146,35 @@ else
 end
 
 if ~isempty(fnall)
-    if exist('parfor','builtin') % Parallel Computing Toolbox is installed
-        parfor k=1:nfiles
-            fn = fnall{k};
-            disp(['Processing .whiskers file ' fn ', ' int2str(k) ' of ' int2str(nfiles)])
-            
-            w = Whisker.WhiskerTrial(fn, trial_nums(k), p.Results.trajectory_nums, p.Results.mouseName, p.Results.sessionName);
-            
-            
-            w.barRadius = p.Results.barRadius;
-            w.barPosOffset = p.Results.barPosOffset;
-            w.faceSideInImage = p.Results.faceSideInImage;
-            w.protractionDirection = p.Results.protractionDirection;
-            w.imagePixelDimsXY = p.Results.imagePixelDimsXY;
-            w.pxPerMm = p.Results.pxPerMm;
-            w.framePeriodInSec = p.Results.framePeriodInSec;
-            if ~isempty(p.Results.mask)
-                if iscell(p.Results.mask)
-                    for q=1:numel(w.trajectoryIDs)
-                        w.set_mask_from_points(w.trajectoryIDs(q),p.Results.mask{q}(1,:),p.Results.mask{q}(2,:));
-                    end
-                else
-                    w.set_mask_from_points(w.trajectoryIDs,p.Results.mask(1,:),p.Results.mask(2,:));
-                end
-            end
-            
-            outfn = [fn '_WT.mat'];
-            pctsave(outfn,w)
-        end
-    else
+%     if exist('parfor','builtin') % Parallel Computing Toolbox is installed
+%         parfor k=1:nfiles
+%             fn = fnall{k};
+%             disp(['Processing .whiskers file ' fn ', ' int2str(k) ' of ' int2str(nfiles)])
+%             
+%             w = Whisker.WhiskerTrial(fn, trial_nums(k), p.Results.trajectory_nums, p.Results.mouseName, p.Results.sessionName);
+%             
+%             
+%             w.barRadius = p.Results.barRadius;
+%             w.barPosOffset = p.Results.barPosOffset;
+%             w.faceSideInImage = p.Results.faceSideInImage;
+%             w.protractionDirection = p.Results.protractionDirection;
+%             w.imagePixelDimsXY = p.Results.imagePixelDimsXY;
+%             w.pxPerMm = p.Results.pxPerMm;
+%             w.framePeriodInSec = p.Results.framePeriodInSec;
+%             if ~isempty(p.Results.mask)
+%                 if iscell(p.Results.mask)
+%                     for q=1:numel(w.trajectoryIDs)
+%                         w.set_mask_from_points(w.trajectoryIDs(q),p.Results.mask{q}(1,:),p.Results.mask{q}(2,:));
+%                     end
+%                 else
+%                     w.set_mask_from_points(w.trajectoryIDs,p.Results.mask(1,:),p.Results.mask(2,:));
+%                 end
+%             end
+%             
+%             outfn = [fn '_WT.mat'];
+%             pctsave(outfn,w)
+%         end
+%     else
         for k=1:nfiles
             fn = fnall{k};
             disp(['Processing .whiskers file ' fn ', ' int2str(k) ' of ' int2str(nfiles)])
@@ -200,7 +201,7 @@ if ~isempty(fnall)
             outfn = [fn '_WT.mat'];
             save(outfn,'w');
         end
-    end
+%     end
 end
 
 cd(currentDir)
