@@ -1,6 +1,6 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay)
 % plot signals arranged by rois : to check roi selection in fovs
-roisperfig = 5;
+roisperfig = 6;
 pxlpermm = 24.38; %% 18-7.5 mm = 298-42 pixels
 % s_time = 1.0 ;
 s_time = 0;
@@ -10,7 +10,7 @@ fovname = [nam 'fov ' fov 'rois ' roislist];
 frametime=obj.FrameTime;
 rois_trials  = arrayfun(@(x) x.dff, obj,'uniformoutput',false);
 if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
-    wsk_frametime =1/500;
+%     wsk_frametime =1/500;
     dKappa = cell2mat(arrayfun(@(x) x.deltaKappa{1}, obj,'uniformoutput',false)');
     velocity =cell2mat(arrayfun(@(x) x.Velocity{1}, obj,'uniformoutput',false)');
     ts_wsk = cell2mat(arrayfun(@(x) x.ts_wsk{1}, obj,'uniformoutput',false)');

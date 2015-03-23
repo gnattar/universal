@@ -21,6 +21,22 @@ for d=1:length(dends)
         
         semilogx(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract)),'ko','Markersize',7); hold on;
         semilogx(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract)),'ko','Markersize',7, 'Markerfacecolor',[.5 .5 .5]); hold on;
+       
+        x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(protract)));
+        y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract));
+        sig_kappa_NL(i,1,1) = nanmean(y)./nanmean(x);
+        sig_kappa_NL(i,2,1) = nanstd(y)./nanmean(x);
+        sig_kappa_NL(i,3,1) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_NL(i,:,1) = polyfit(x,y,1);
+        sig_kappa_NL_trials{n,i,1} = y./x;
+        
+        x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(retract)));
+        y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract));
+        sig_kappa_NL(i,1,2) = nanmean(y)./nanmean(x);
+        sig_kappa_NL(i,2,2) = nanstd(y)./nanmean(x);
+        sig_kappa_NL(i,3,2) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_NL(i,:,2) = polyfit(x,y,1);
+        sig_kappa_NL_trials{n,i,2} = y./x;
         
         retract = find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind) >0);
         protract =  find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind)<0);
@@ -28,6 +44,22 @@ for d=1:length(dends)
         semilogx(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(retract)),'ro','Markersize',7); hold on;%axis( [0 5 -50 150]);
         semilogx(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract)),'ro','Markersize',7); hold on;
         
+                           
+        x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(protract)));
+        y =pooled_contactCaTrials_locdep{n}.sigmag(L_ind(protract));
+        sig_kappa_L(i,1,1) = nanmean(y)./nanmean(x);
+        sig_kappa_L(i,2,1) = nanstd(y)./nanmean(x);
+        sig_kappa_L(i,3,1) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_L(i,:,1) = polyfit(x,y,1);        
+        sig_kappa_L_trials{n,i,1} = y./x;
+        
+        x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(retract)));
+        y =pooled_contactCaTrials_locdep{n}.sigmag(L_ind(retract));
+        sig_kappa_L(i,1,2) = nanmean(y)./nanmean(x);
+        sig_kappa_L(i,2,2) = nanstd(y)./nanmean(x);
+        sig_kappa_L(i,3,2) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
+        p_L(i,:,2) = polyfit(x,y,1);        
+        sig_kappa_L_trials{n,i,2} = y./x;
 
         mx = max([abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind)); abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind))]);
         my = max([pooled_contactCaTrials_locdep{n}.sigmag(NL_ind); pooled_contactCaTrials_locdep{n}.sigmag(L_ind)]);
@@ -38,35 +70,21 @@ for d=1:length(dends)
         end
                 %         axis([0  mx+5 -50 my+100]);
         if strcmp(par,'sigmag')
-            axis([0 1.0 0 5000]);
+            axis([10e-4 1.0 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([0 1.0 0 650]);
+            axis([10e-4 1.0 0 400]);
         end
         count = count+1;
+  
         
-        x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind));
-        y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind);
-        sig_kappa_NL(i,1) = nanmean(y)./nanmean(x);
-        sig_kappa_NL(i,2) = nanstd(y)./nanmean(x);
-        sig_kappa_NL(i,3) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
-        p_NL(i,:) = polyfit(x,y,1);
-        sig_kappa_NL_trials{n,i} = y./x;
-        
-        x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind));
-        y =pooled_contactCaTrials_locdep{n}.sigmag(L_ind);
-        sig_kappa_L(i,1) = nanmean(y)./nanmean(x);
-        sig_kappa_L(i,2) = nanstd(y)./nanmean(x);
-
-        sig_kappa_L(i,3) = (nanstd(y)./nanmean(x))/sqrt(length(x)+1);
-        p_L(i,:) = polyfit(x,y,1);
-        
-        sig_kappa_L_trials{n,i} = y./x;
-         hline(30,'k:');
+        hline(30,'k:');
         hline(0,'k--');
         
-        plot([0.01:.01:1.0],polyval(p_NL(i,:) ,[0.01:.01:1.0]),'k-');hold on;
-        plot([0.01:.01:1.0],polyval(p_L(i,:),[0.01:.01:1.0]),'r-');
+        plot([0.01:.01:1.0],polyval(p_NL(i,:,1) ,[0.01:.01:1.0]),'k-','linewidth',2);hold on;
+        plot([0.01:.01:1.0],polyval(p_L(i,:,1),[0.01:.01:1.0]),'r-','linewidth',2);hold on;
         
+         plot([0.01:.01:1.0],polyval(p_NL(i,:,2) ,[0.01:.01:1.0]),'color',[.5 .5 .5],'linewidth',2);hold on;
+        plot([0.01:.01:1.0],polyval(p_L(i,:,2),[0.01:.01:1.0]),'color',[.85 .5 .5],'linewidth',2);       
 % % %                  separating protraction and retracrion
 % % %                 x=pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind);
 % % %                 y =pooled_contactCaTrials_locdep{n}.sigmag(NL_ind);
@@ -123,8 +141,8 @@ for d=1:length(dends)
 %     touchmag = [0.01,0.05,0.1,0.2,.3,.4,.5,1];
         touchmag = [.025:.025:.25];
 
-    colr = othercolor('YlGnBu9',10);
-    colp = othercolor('YlOrRd9',10);
+    colr = othercolor('Paired3',10);
+    colp = othercolor('PuOr4',10);
     for i = 1:numloc
         ts = [1:size(pooled_contactCaTrials_locdep{n}.rawdata,2)].*samp_time;
         NL_ind = find(( pooled_contactCaTrials_locdep{n}.poleloc == polelocs(i))& (pooled_contactCaTrials_locdep{n}.lightstim ==0));
@@ -203,16 +221,16 @@ for d=1:length(dends)
         end
     end
     
-    subplot(length(dends),numloc+xcol,count:count+1);
-    
-    h= plot([1:numloc],p_NL(:,1),'k-o'); set(h,'linewidth',1.5);hold on;
-    h= plot([1:numloc],p_L(:,1),'r-o');set(h,'linewidth',1.5);
-    hline(0,'k:');
-    title( ' slopes'); axis([0 6 min(min(p_NL([a:z],1)),min(p_L([a:z],1)))-50  max(max(p_NL([a:z],1)),max(p_L([a:z],1)))+50]);
-    
-    count = count+2;    
-    
-    
+%     subplot(length(dends),numloc+xcol,count:count+1);
+%     
+%     h= plot([1:numloc],p_NL(:,1),'k-o'); set(h,'linewidth',1.5);hold on;
+%     h= plot([1:numloc],p_L(:,1),'r-o');set(h,'linewidth',1.5);
+%     hline(0,'k:');
+%     title( ' slopes'); axis([0 6 min(min(p_NL([a:z],1)),min(p_L([a:z],1)))-50  max(max(p_NL([a:z],1)),max(p_L([a:z],1)))+50]);
+%     
+%     count = count+2;    
+%     
+%     
 end
 figure(h_fig2);
 set(gcf,'PaperUnits','inches');

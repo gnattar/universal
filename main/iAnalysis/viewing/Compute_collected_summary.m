@@ -20,7 +20,7 @@ for i = 1: size(collected_summary,2)
         fwhm = nan(numtrials,1);
         for k = 1:numtrials
             
-            if (detected(k,1))
+            if (detected(k))
                 bl = nanmean (temp_data(k,[1:round(0.5./sampling_time)]));
                 bl_std = nanstd (temp_data(k,[1:round(0.5./sampling_time)]));
 % %                 if(bl>bl_std*2)                  

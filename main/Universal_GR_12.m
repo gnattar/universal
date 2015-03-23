@@ -4083,10 +4083,12 @@ for i = 1:numtrials
             temp_ts_wsk = temp_ts_wsk +.5;
         end
 %         timepoint = temp_ts_wsk(contactind(j));
-        timepoint = round((contacttimes_mat(discreet_contacts(j))/wSigframerate)*1000)/1000;
+%         timepoint = round((contacttimes_mat(discreet_contacts(j))/wSigframerate)*1000)/1000; %% temporariliy increasing to 2x wSigframerate for #136
+        timepoint = temp_ts_wsk(contacttimes_mat(discreet_contacts(j))); 
+
         st_round = round((timepoint-baseline)*1000)/1000;
         fin_round = round((timepoint+dur)*1000)/1000;
-        ideal_indtimes = round([(st_round + (1/wSigframerate)) : (1/wSigframerate):(fin_round)].*1000)/1000;
+        ideal_indtimes = round([(st_round + (1/(2*wSigframerate))) : (1/(2*wSigframerate)):(fin_round)].*1000)/1000; %% temporariliy increasing to 2x wSigframerate for #136
         wdata_indtimes = temp_ts_wsk((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
         wdata_indtimes = round(wdata_indtimes .*1000)/1000;
         wdata_src_inds = find((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
