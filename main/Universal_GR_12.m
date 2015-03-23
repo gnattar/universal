@@ -4068,13 +4068,13 @@ for i = 1:numtrials
     end
 
     extractedCaSig = zeros(numrois,numframes);
-    extractedTheta=zeros(1,numpts);
-    extractedKappa=zeros(1,numpts);
-    extractedVelocity=zeros(1,numpts);
-    extractedSetpoint=zeros(1,numpts);
-    extractedAmplitude=zeros(1,numpts);
-    extracteddeltaKappa=zeros(1,numpts);
-    extractedts_wsk=zeros(1,numpts);
+    extractedTheta=nan(1,numpts);
+    extractedKappa=nan(1,numpts);
+    extractedVelocity=nan(1,numpts);
+    extractedSetpoint=nan(1,numpts);
+    extractedAmplitude=nan(1,numpts);
+    extracteddeltaKappa=nan(1,numpts);
+    extractedts_wsk=nan(1,numpts);
     contact_sorted_CaSig = zeros(numrois,numframes,numcontacts);
     
     for j= 1:numcontacts
@@ -4088,7 +4088,7 @@ for i = 1:numtrials
 
         st_round = round((timepoint-baseline)*1000)/1000;
         fin_round = round((timepoint+dur)*1000)/1000;
-        ideal_indtimes = round([(st_round + (1/(2*wSigframerate))) : (1/(2*wSigframerate)):(fin_round)].*1000)/1000; %% temporariliy increasing to 2x wSigframerate for #136
+        ideal_indtimes = round([(st_round + (1/(1*wSigframerate))) : (1/(1*wSigframerate)):(fin_round)].*1000)/1000; %% temporariliy increasing to 2x wSigframerate for #136
         wdata_indtimes = temp_ts_wsk((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
         wdata_indtimes = round(wdata_indtimes .*1000)/1000;
         wdata_src_inds = find((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
