@@ -4163,7 +4163,7 @@ for i = 1:numtrials
         timeind = wdata_src_inds;
         
 %         [ri,ti,ci]= intersect(timeind,touchind);
-         discreet_contacts_2= unique([1;find(diff(touchind)>2)]);
+         discreet_contacts_2= unique([1,find(diff(touchind)~=1)]);
         
         
         Peakpercontact=0;Peakpercontact_abs=0; 
@@ -4219,7 +4219,7 @@ for i = 1:numtrials
         contact_CaTrials(count).ts_wsk={extractedts_wsk};
         contact_CaTrials(count).contactdir = {extractedcontactdir};
         contact_CaTrials(count).contacts = {extractedcontacts};
-        contact_CaTrials(count).contacts_shifted = {touchind};
+        contact_CaTrials(count).contacts_shifted = {extractedcontacts-wdata_src_inds(1)+1};
         contact_CaTrials(count).FrameTime = CaTrials(CaSig_tags(i)).FrameTime;
         contact_CaTrials(count).nFrames = numframes;
         contact_CaTrials(count).CaSigTrialind=CaSig_tags(i); %% contact_CaTrials(count).CaSigTrialind=CaTrials(CaSig_tags(i)).TrialNo;
