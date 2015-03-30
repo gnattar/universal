@@ -1,6 +1,6 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay)
 % plot signals arranged by rois : to check roi selection in fovs
-roisperfig = 6;
+roisperfig = 5;
 pxlpermm = 24.38; %% 18-7.5 mm = 298-42 pixels
 % s_time = 1.0 ;
 s_time = 0;
@@ -128,7 +128,7 @@ ah1=axes('Parent',h1); title( 'Ca_Signal traces' );
      h2 = figure('position', [300, sc(4)/10-100, sc(3), sc(4)], 'color','w');
      ah2=axes('Parent',h2); title('dFF vs. totalKappa' );
  end
-rois_name_tag = '';
+rois_name_tag = ''; 
     for i = 1:length(rois)
                figure(h1);
             rois_name_tag = [rois_name_tag,num2str(rois(i)),','];

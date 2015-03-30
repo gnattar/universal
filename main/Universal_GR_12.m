@@ -2151,12 +2151,12 @@ if get(hObject, 'Value') == 1
         if strcmpi(usr_confirm, 'Yes')          
         Ctrials =str2num(cell2mat(arrayfun(@(x) x.name(length(x.name)-6 :length(x.name)-4),list,'uniformoutput',false)));
         [ht,ci,si] = intersect(Ctrials,Sdata.hitTrialNums);
-        if(length(ci)>250)
-            ci=ci(1:250);
+        if(length(ci)>100)
+            ci=ci(1:100);
         end
         CaSignal.ica_data.FileNums = ci;
         else
-            CaSignal.ica_data.FileNums = [1:250];% using filenums [1:250] for now , need to put a text box
+            CaSignal.ica_data.FileNums = [1:100];% using filenums [1:250] for now , need to put a text box
         end
     
     if isfield(CaSignal, 'ica_data') && isfield(CaSignal.ica_data,'Data')%%~isempty(CaSignal.ica_data.Data)
@@ -2164,7 +2164,7 @@ if get(hObject, 'Value') == 1
         CaSignal. ica_data.FileBaseName = get(handles.batchPrefixEdit, 'String');
         CaSignal.ica_data.DataDir = pwd;
 
-        usr_confirm = questdlg('ica_data.Data exists. Reload data from first 250 data .tif files.Continue? ');
+        usr_confirm = questdlg('ica_data.Data exists. Reload data from first 100 data .tif files.Continue? ');
         if strcmpi(usr_confirm, 'Yes')
             % Load the data files
             ['Loading Data : starting at' datestr(now)]
@@ -2247,7 +2247,7 @@ V = CaSignal.ica_data.V;
 S = CaSignal.ica_data.S;
 ICnum = str2num(get(handles.IC_num_edit,'String'));
 % CaSignal.ICnum = str2num(get(handles.IC_num_edit,'String'));
-CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 40, ICnum});
+CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 25, ICnum});
 CaSignal.rois_by_IC = cell(1,ICnum);
 % CaSignal.ICnum_prev = ICnum;
 
