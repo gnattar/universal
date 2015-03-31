@@ -184,17 +184,19 @@ if ~isempty( obj(trNo).ts_wsk)
     ylabel('Velocity','fontsize',15);  xlim([0 max(ts_wsk)]);
     set(gca,'XMinorTick','on','XTick',0:.2:6);
     
-    ha(6) = subaxis(6,1,6, 'sv', 0.05);
+    ha(2) = subaxis(6,1,2, 'sv', 0.05);
     Amplitude=obj(trNo).Amplitude{1}(goodind);
-    plot(ts_wsk, Amplitude,'k','linewidth',1.5);    
+    plot(ts_wsk, Amplitude,'k','linewidth',1.5);
+    
     ylabel('Amplitude','fontsize',15);
     xlabel('Time (s)','fontsize',20);xlim([0 max(ts_wsk)])
     %      set(ha, 'box','off', 'xlim',[0 max(ts_wsk)]);
     set(gca,'XMinorTick','on','XTick',0:.2:6); %
     
-    ha(2) = subaxis(6,1,2, 'sv', 0.05);
-    theta=obj(trNo).theta{1}(goodind);
-    plot(ts_wsk, theta,'k','linewidth',1.5);    
+    ha(6) = subaxis(6,1,6, 'sv', 0.05);
+    Theta=obj(trNo).theta{1}(goodind);
+    plot(ts_wsk, theta,'k','linewidth',1.5);
+    
     ylabel('Theta','fontsize',15);
     xlabel('Time (s)','fontsize',20);xlim([0 max(ts_wsk)])
     %      set(ha, 'box','off', 'xlim',[0 max(ts_wsk)]);
