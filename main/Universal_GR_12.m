@@ -4014,7 +4014,7 @@ Caframetime = CaTrials.FrameTime;
 baseline = 0.5;
 dur = 2.0;
 wSigframerate = 500;
-numpts=ceil((dur+baseline)*wSigframerate);% 2.5 seconds worth of data
+numpts=ceil((dur+baseline)*wSigframerate*2);% 2.5 seconds worth of data
 numframes = ceil((dur+baseline)/Caframetime);% 2.5 seconds worth of data
 
 numcontacts =0;

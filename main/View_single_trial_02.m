@@ -117,8 +117,9 @@ end
 % winfo and einfo
 if ~isempty( obj(trNo).ts_wsk)
     wskNo = '2';
-    ts_wsk = obj(trNo).ts_wsk{1};
-    ts_wsk =ts_wsk-ts_wsk(1);
+     goodind = find(~isnan(obj(trNo).ts_wsk{1}) & ~(obj(trNo).ts_wsk{1} == 0));
+    ts_wsk = obj(trNo).ts_wsk{1}(goodind);
+%     ts_wsk =ts_wsk-ts_wsk(1);
     
     contacts=obj(trNo).contacts{1};
     
@@ -137,7 +138,7 @@ if ~isempty( obj(trNo).ts_wsk)
     
     ha(1) = subaxis(5,1,1, 'sv', 0.05);
     
-    Setpoint = obj(trNo).Setpoint{1};
+    Setpoint = obj(trNo).Setpoint{1}(goodind);
     plot(ts_wsk, Setpoint,'k','linewidth',1.5);
     line([lickTime_trial'; lickTime_trial'], ...
         [zeros(1,length(lickTime_trial)); ones(1,length(lickTime_trial))*10],'color','m','linewidth',.5)
@@ -171,20 +172,20 @@ if ~isempty( obj(trNo).ts_wsk)
         condir='nocontact';
     end
     if(strcmp(target,'contact_CaTrials'))
-        title(sprintf('%d:Trial %d, Type %s,  %s ',trNo,soloTrNo,trType,condir), 'fontsize',20);
+        title(sprintf('%d:Trial %d, Type %s, \n  %s ',trNo,soloTrNo,trType,condir), 'fontsize',20);
     else
-        title(sprintf('%d:Trial %d, Type %d, C/NC %d,  %s ',trNo,soloTrNo,trType,trCorrect,condir), 'fontsize',20);
+        title(sprintf('%d:Trial %d, Type %d, \n C/NC %d,  %s ',trNo,soloTrNo,trType,trCorrect,condir), 'fontsize',20);
     end
     
     ha(5) = subaxis(5,1,5, 'sv', 0.05);
     
-    vel =  obj(trNo).Velocity{1};
+    vel =  obj(trNo).Velocity{1}(goodind);
     plot(ts_wsk, vel, 'r','linewidth',1.5);
     ylabel('Velocity','fontsize',15);  xlim([0 max(ts_wsk)]);
     set(gca,'XMinorTick','on','XTick',0:.2:6);
     
     ha(2) = subaxis(5,1,2, 'sv', 0.05);
-    Amplitude=obj(trNo).Amplitude{1};
+    Amplitude=obj(trNo).Amplitude{1}(goodind);
     plot(ts_wsk, Amplitude,'k','linewidth',1.5);
     
     ylabel('Amplitude','fontsize',15);
@@ -193,7 +194,7 @@ if ~isempty( obj(trNo).ts_wsk)
     set(gca,'XMinorTick','on','XTick',0:.2:6); %
     
     ha(4) = subaxis(5,1,4, 'sv', 0.05);
-    dKappa = obj(trNo).deltaKappa{1};
+    dKappa = obj(trNo).deltaKappa{1}(goodind);
     plot(ts_wsk,dKappa,'b','linewidth',1.5);
     line([lickTime_trial'; lickTime_trial'], ...
         [zeros(1,length(lickTime_trial)); ones(1,length(lickTime_trial))*.5],'color','m','linewidth',1)
