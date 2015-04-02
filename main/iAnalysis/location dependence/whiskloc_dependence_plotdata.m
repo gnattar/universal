@@ -95,7 +95,7 @@ for d=1:length(dends)
         
     end
     
-    setpoint_at_contact = pooled_contactCaTrials_locdep{n}.Setpoint_at_contact_Mean; %%% use ths for joint plot
+    theta_at_contact = pooled_contactCaTrials_locdep{n}.Theta_at_contact_Mean; %%% use ths for joint plot
     
     subplot(length(dends),numloc+xcol,count:count+1);
     h= plot([1:numloc],p_NL(:,1),'k-o'); set(h,'linewidth',1.5);hold on;

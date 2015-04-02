@@ -4091,9 +4091,10 @@ for i = 1:numtrials
         ideal_indtimes = round([(st_round + (1/(2*wSigframerate))) : (1/(2*wSigframerate)):(fin_round)].*1000)/1000; %% temporariliy increasing to 2x wSigframerate for #136
         wdata_indtimes = temp_ts_wsk((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
         wdata_indtimes = round(wdata_indtimes .*1000)/1000;
-%         wdata_src_inds = find((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
         [val,id,wd]= intersect(ideal_indtimes,wdata_indtimes);
-        wdata_src_inds = wd;
+%         wdata_src_inds = wd;
+        wdata_src_inds = find((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
+
         wdata_dest_inds = id;
 
         temp=thetavals{i};
