@@ -145,7 +145,7 @@ for i = 1: size(collected_summary,2)
         count = count+1;
     end
 end
-save('pooled_contactCaTrials_locdep','pooled_contactCaTrials_locdep');
+save('pooled_contactCaTrials_locdep','pooled_contactCaTrials_locdep','-v7.3');
 
 
 
