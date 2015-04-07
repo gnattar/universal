@@ -41,6 +41,7 @@ for i = 1: size(collected_summary,2)
           CaSig_data=cell(length(polelocs),2);
           wSig_totmodKappa = cell(length(polelocs),2);
           wSig_dKappadata = cell(length(polelocs),2);
+          trialnames=cell(length(polelocs),2);
           num_trials =  zeros(length(polelocs),2);          
         else
           CaSig_mag = cell(length(polelocs),1); %NL
@@ -49,6 +50,7 @@ for i = 1: size(collected_summary,2)
           CaSig_data=cell(length(polelocs),1);
           wSig_totmodKappa = cell(length(polelocs),1);
           wSig_dKappadata = cell(length(polelocs),1);
+          trialnames = cell(length(polelocs),1);
           num_trials =  zeros(length(polelocs),1);
         end
         
@@ -62,10 +64,13 @@ for i = 1: size(collected_summary,2)
                 curr_loc_L_dKappatrials = temp_touchdeltaKappa (find(curr_poleloc_trials & temp_lightstim));
                 curr_loc_NL_dKappatrials = temp_touchdeltaKappa (find(curr_poleloc_trials & ~temp_lightstim));     
                 curr_loc_L_dKappatrials_ts = temp_tws (find(curr_poleloc_trials & temp_lightstim));
+      
                 curr_loc_NL_dKappatrials_ts = temp_tws (find(curr_poleloc_trials & ~temp_lightstim));   
                 num_trials (k,2) = size(curr_loc_L_Kappa ,1);
-                num_trials (k,1) = size(curr_loc_NL_Kappa ,1);
+                num_trials (k,1) = size(curr_loc_NL_Kappa ,1);               
                 threshold = 35;
+                trialnames{k,1} =  temp_solotrial(find(curr_poleloc_trials & ~temp_lightstim));
+                trialnames{k,2} =  temp_solotrial(find(curr_poleloc_trials & temp_lightstim));
                 
                 [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_NL_trials,sampling_time,threshold)
                 CaSig_mag{k,1} = nansum(curr_loc_NL_trials,2);
@@ -73,6 +78,7 @@ for i = 1: size(collected_summary,2)
                 CaSig_dur{k,1} = events_dur';
                 CaSig_data{k,1}= curr_loc_NL_trials;
                 CaSig_time{k,1} = [1:size(curr_loc_NL_trials,2)].* sampling_time;
+                
                 [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_L_trials,sampling_time,threshold);
                 CaSig_mag{k,2} = nansum(curr_loc_L_trials,2);
                 CaSig_peak{k,2} = events_amp';
@@ -92,6 +98,7 @@ for i = 1: size(collected_summary,2)
                 curr_loc_NL_dKappatrials_ts = temp_tws (find(curr_poleloc_trials & ~temp_lightstim));   
 
                  threshold=35;
+                 trialnames{k,1} =  temp_solotrial(find(curr_poleloc_trials & ~temp_lightstim));
                  
                 [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_NL_trials,sampling_time,threshold);
                 CaSig_mag{k,1} = nansum(curr_loc_NL_trials,2);
@@ -118,6 +125,7 @@ for i = 1: size(collected_summary,2)
         pooled_contactCaTrials_locdep{count}.poleloc= temp_poleloc ;
         pooled_contactCaTrials_locdep{count}.lightstim=   temp_lightstim ;
         pooled_contactCaTrials_locdep{count}.num_trials=   num_trials;
+        pooled_contactCaTrials_locdep{count}.trialnames=   trialnames;
         pooled_contactCaTrials_locdep{count}.CaSig_mag = CaSig_mag;
         pooled_contactCaTrials_locdep{count}.CaSig_peak= CaSig_peak;
         pooled_contactCaTrials_locdep{count}.CaSig_dur= CaSig_dur;

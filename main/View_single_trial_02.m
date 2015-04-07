@@ -119,7 +119,7 @@ if ~isempty( obj(trNo).ts_wsk)
     wskNo = '2';
      goodind = find(~isnan(obj(trNo).ts_wsk{1}) & ~(obj(trNo).ts_wsk{1} == 0));
     ts_wsk = obj(trNo).ts_wsk{1}(goodind);
-%     ts_wsk =ts_wsk-ts_wsk(1);
+     ts_wsk =ts_wsk-ts_wsk(1);
     
     contacts=obj(trNo).contacts{1};
     

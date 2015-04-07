@@ -4034,7 +4034,6 @@ mismatch =0;
 % % % end %
   temp_sortedCa = {};
 for i = 1:numtrials
-
     allcontacts = size(contacttimes{i},2);
     if get(handles.align_to_first_touch,'Value')
         pickedcontact=1; %first contact
@@ -4078,6 +4077,7 @@ for i = 1:numtrials
     contact_sorted_CaSig = zeros(numrois,numframes,numcontacts);
     
     for j= 1:numcontacts
+
         temp_ts_wsk = round(ts_wsk{i}*1000)/1000;
         if mismatch
             temp_ts_wsk = temp_ts_wsk +.5;
