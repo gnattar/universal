@@ -94,10 +94,11 @@ for Tpos = 1:length(ThKmid{1})
     end
     ind = find(ThKloc(:,1) == Tpos);  if ~isempty(ind) T(Tpos) = mean( r(ind)); else T(Tpos) = 0; end
 end
-            
-          
-figure;surf(ThKmid{2},ThKmid{1},R);
+                    
+figure;subplot(2,3,1);surf(ThKmid{2},ThKmid{1},R);subplot(2,3,2); plot(ThKmid{1},T);subplot(2,3,3); plot(ThKmid{2},K);
 TK = T*K';
  Lw = R./TK;
  [U S V]= svd(R);
 
+subplot(2,3,4);surf(ThKmid{2},ThKmid{1},S);subplot(2,3,5); plot(ThKmid{1},U);subplot(2,3,6); plot(ThKmid{2},V);
+size(U)
