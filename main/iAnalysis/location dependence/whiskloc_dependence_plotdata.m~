@@ -19,10 +19,11 @@ for d=1:length(dends)
         L_ind =  find(( pooled_contactCaTrials_locdep{n}.poleloc == polelocs(i))& (pooled_contactCaTrials_locdep{n}.lightstim ==1));
         subplot(length(dends),numloc+xcol,count);
         %% No light
-%         cdir= cellfun( @(x) (sum(x==1)>sum(x==0))*1+(sum(x ==1)<sum(x==0)*0), pooled_contactCaTrials_locdep{n}.contactdir);
-%         retract = find(cdir(NL_ind)==0);
-%         protract = find(cdir(NL_ind)==1);
-         
+        cdir= cellfun( @(x) (sum(x==1)>sum(x==0))*1+(sum(x ==1)<sum(x==0)*0), pooled_contactCaTrials_locdep{n}.contactdir);
+        protrials_ind = find(cdir==1);
+        rettrials_ind = find(cdir==0);
+
+        
         retract = find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind) >0);
         protract =  find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind) <0);
         

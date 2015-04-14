@@ -81,23 +81,22 @@ end
 pR_K = temp;
 
 R = zeros(size(pThK)); 
-K = zeros(length(ThKmid{2}),1);
-T = zeros(length(ThKmid{1}),1);
+K = zeros(length(ThKmid{2}),1);countK = zeros(length(ThKmid{2}),1);
+T = zeros(length(ThKmid{1}),1);countT = zeros(length(ThKmid{1}),1);
 
+countK = 0; countT = 0;
 for Tpos = 1:length(ThKmid{1})
     for Kpos = 1:length(ThKmid{2})
         ind = find( (ThKloc(:,1) == Tpos) & (ThKloc(:,2) == Kpos));
         if ~isempty(ind)
             R(Tpos,Kpos) = mean(r(ind));
+            K(Kpos) = K(Kpos) + r(find(ThKloc(:,2) == Kpos));countK(Kpos) = countK(Kpos)+1;
+            T(Tpos) = T(Tpos)+ r(find(ThKloc(:,1) == Tpos));countT(Tpos) = countT(Tpos)+1;
         end
-        ind = find(ThKloc(:,2) == Kpos); if ~isempty(ind) K(Kpos) = mean( r(ind)); else  K(Kpos) = 0; end
     end
-    ind = find(ThKloc(:,1) == Tpos);  if ~isempty(ind) T(Tpos) = mean( r(ind)); else T(Tpos) = 0; end
 end
-            
-          
+K = K./countK; T
 figure;surf(ThKmid{2},ThKmid{1},R);
-TK = T*K';
- Lw = R./TK;
- [U S V]= svd(R);
+% Lw = R./
+
 

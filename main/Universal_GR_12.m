@@ -4055,6 +4055,7 @@ for i = 1:numtrials
         count1 = count1 + length(num_fr_touch);
     end
     
+
     if strcmp(selected_contact_mode,'Single touch')
         discreet_contacts=[1,(find(diff(contacttimes_mat)>wSigframerate * 5.0)+1)]; %% making it ridiculously long so all contacts gets counted together
         contactind = contacttimes_mat(1);
@@ -4077,14 +4078,13 @@ for i = 1:numtrials
     contact_sorted_CaSig = zeros(numrois,numframes,numcontacts);
     
     for j= 1:numcontacts
-
         temp_ts_wsk = round(ts_wsk{i}*1000)/1000;
         if mismatch
             temp_ts_wsk = temp_ts_wsk +.5;
         end
 %         timepoint = temp_ts_wsk(contactind(j));
-%         timepoint = round((contacttimes_mat(discreet_contacts(j))/wSigframerate)*1000)/1000; %% temporariliy increasing to 2x wSigframerate for #136
-        timepoint = temp_ts_wsk(contacttimes_mat(discreet_contacts(j))); 
+        timepoint = round((contacttimes_mat(discreet_contacts(j))/wSigframerate)*1000)/1000; %% temporariliy increasing to 2x wSigframerate for #136
+%         timepoint = temp_ts_wsk(contacttimes_mat(discreet_contacts(j))); 
 
         st_round = round((timepoint-baseline)*1000)/1000;
         fin_round = round((timepoint+dur)*1000)/1000;
@@ -4099,6 +4099,7 @@ for i = 1:numtrials
 
         temp=thetavals{i};
         extractedTheta (wdata_dest_inds)=  temp(wdata_src_inds);
+        Theta_at_contact_mean =  thetavals{i}( find(temp_ts_wsk == timepoint));
         
         temp=kappavals{i};
         extractedKappa(wdata_dest_inds)= temp(wdata_src_inds);
@@ -4157,7 +4158,7 @@ for i = 1:numtrials
             extractedCaSig = CaSig(:,strframe:endframe,i);
         end
         
-        %% recompute total touch dKappa and setpoint at touch
+        %% recompute total touch dKappa and theta at touch
    
 %         touchind =unique(extractedcontacts)-wdata_src_inds(1)+1;
         [tval,touchind,contactind] = intersect(ideal_indtimes,temp_ts_wsk(unique(extractedcontacts)));
@@ -4195,13 +4196,13 @@ for i = 1:numtrials
          end
          tempT=Theta_at_contact;
          tempT=tempT(tempT~=0);
-         if ~isempty(tempT)
-         Theta_at_contact_mean =  tempT(1);  % mean(tempS(1,1:2),2); % just the first frame, no means
-         else
-            Theta_at_contact_mean = nan ;
-            
-            waitforbuttonpress%
-         end
+%          if ~isempty(tempT)
+%              Theta_at_contact_mean =  tempT(1);  % mean(tempS(1,1:2),2); % just the first frame, no means
+%          else
+%             Theta_at_contact_mean = nan ;
+%             
+%             waitforbuttonpress%
+%          end
         count = count +1;
         % % %             contact_CaTrials{count}=struct{'dff',{extractedCaSig},'FrameTime',CaTrials(CaSig_tags(i)).FrameTime,'nFrames',numframes,...
         % % %                                        'Trialind', CaTrials(CaSig_tags(i)).TrialNo,'TrialNo',trialnums(i),'nROIs',numrois};
@@ -5899,8 +5900,10 @@ function calc_meanbartheta_Callback(hObject, eventdata, handles)
 global sessionInfo
 global wSigTrials
 
+
 [filename1,pathName]=uigetfile('SessionInfo*.mat','Load SessionInfo.mat file');
 load( [pathName filesep filename1],'-mat');
+
 
 [filename2,pathName]=uigetfile('wSigTrials*.mat','Load wSigTrials.mat file');
 load( [pathName filesep filename2],'-mat');
@@ -5918,7 +5921,8 @@ wSig_gotrials=ismember(wSig_trials,sessionInfo.gotrials);
 go_bartheta = zeros(size(sessionInfo.gopos));
 
 for k = 1: length( sessionInfo.gopos)
-    gotrials_at_currentpos = find(sessionInfo.bar_coordsall(:,1) == sessionInfo.gopix(k,1));
+    
+    gotrials_at_currentpos = find((sessionInfo.bar_coords(:,1) == sessionInfo.gopix(k,1)));
     go_bartheta (k) = nanmean(cell2mat(bartheta_all(gotrials_at_currentpos)));
 end
 
