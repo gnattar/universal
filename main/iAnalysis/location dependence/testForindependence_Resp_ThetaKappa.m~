@@ -11,17 +11,11 @@ function [pR_ThK,pR_Th,pR_K] = testForindependence_Resp_ThetaKappa(pooled_contac
 % k=pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs(protrials_ind);
 % r=pooled_contactCaTrials_locdep{d}.sigpeak(protrials_ind);
 
-tall=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(:);
-kall=pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs(:);
-rall=pooled_contactCaTrials_locdep{d}.sigpeak(:);
-lall=pooled_contactCaTrials_locdep{d}.poleloc(:);
-pos = unique(l); cp = 1;
-ind = find(l==pos(cp));
+pos = unique(;
 
-t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(ind);
-k=pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs(ind);
-r=pooled_contactCaTrials_locdep{d}.sigpeak(ind);
-l=pooled_contactCaTrials_locdep{d}.poleloc(ind);
+t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(:);
+k=pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs(:);
+r=pooled_contactCaTrials_locdep{d}.sigpeak(:);
 
 vals(:,1) = t;vals(:,2) = k;vals(:,3) = r;
 bins(1) = {[-25:10:45]}; % theta bins
