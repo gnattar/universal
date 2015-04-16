@@ -7,7 +7,7 @@ switch fittype
     case 'lin'
 % st line fit
         [param,S]  = polyfit(x,y,1);
-        paramCI = polyparci(param,S); 
+        paramCI = polyparci(param,S,0.95); 
         f =  polyval(param,x);
         sse = sum((y-f).^2);
         ssr =sum( (f - mean(y)).^2);
@@ -27,7 +27,7 @@ switch fittype
         
     case 'sig'
 %         %Sigmoid fit
-        [param,stat]=sigm_fit(x,y,[0 nan nan nan],[0, max(y) , 0.0125 , 500]);
+        [param,stat]=sigm_fit(x,y,[50 nan nan nan],[50, max(y) , 0.05 , 10]);
  %         fsigm = @(param,xval) param(1)+(param(2)-param(1))./(1+10.^((param(3)-xval)*param(4)));
 %         f=fsigm(param,x);
         f = stat.ypred;
@@ -36,7 +36,7 @@ switch fittype
         num = length(x); m = 4;
         adjR= 1 - ((sse *(num-1) )/(sst* (num-m)));
         
-     case 'cubic'
+     case 'slm'
          % order 5 poly
         [param,S]  = polyfit(x,y,3);
         paramCI = polyparci(param,S); 

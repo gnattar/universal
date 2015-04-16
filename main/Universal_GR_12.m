@@ -2880,7 +2880,9 @@ global sorted_CaTrials
 fov = get(handles.fov,'String');
 roislist = get(handles.roislist,'String');
 rois = str2num(roislist);
-if(isempty(CaTrials))
+
+
+if(isempty(CaTrials) && get(handles.sorted_CaTrials_select,'Value') ==1)
     [filename,pathName]=uigetfile('CaTrials*.mat','Load CaTrials.mat file')
     if isequal(filename, 0) || isequal(pathName,0)
         'No CaTrial loaded!'
@@ -2889,9 +2891,23 @@ if(isempty(CaTrials))
     load( [pathName filesep filename], '-mat');
 end
 
-nam = strrep(CaTrials(1).FileName_prefix,'Image_Registration_5_','');
-nam = strrep(nam,'_main_','');
-nam = strrep(nam,'_',' ');
+if (get(handles.contact_CaSignal_select,'Value')==1)
+    global contact_CaTrials
+    nam = strrep(contact_CaTrials(1).FileName_prefix,'Image_Registration_5_','');
+    nam = strrep(nam,'_main_','');
+    nam = strrep(nam,'_',' ');
+    if (length(rois) > contact_CaTrials(1).nROIs)
+        rois = 1:contact_CaTrials(1).nROIs;
+    end
+else
+    nam = strrep(CaTrials(1).FileName_prefix,'Image_Registration_5_','');
+    nam = strrep(nam,'_main_','');
+    nam = strrep(nam,'_',' ');
+    if (length(rois) > CaTrials(1).nROIs)
+        rois = 1:CaTrials(1).nROIs;
+    end
+
+end
 
 if(isempty(sorted_CaTrials) && (get(handles.CaTrials_select,'Value')~=1) )
     [filename,pathName]=uigetfile('sorted_CaTrials*.mat','Load sorted_CaTrials.mat file')
@@ -2903,10 +2919,8 @@ if(isempty(sorted_CaTrials) && (get(handles.CaTrials_select,'Value')~=1) )
 end
 
 
-if (length(rois) > CaTrials(1).nROIs)
-    rois = 1:CaTrials(1).nROIs;
-    set(handles.roislist,'String',num2str(rois));
-end
+
+set(handles.roislist,'String',num2str(rois));
 if(get(handles.CaTrials_select,'Value') ==1)
     sfx='Unsort';
     if isfield(CaTrials,'lightstim') && (max(arrayfun(@(x) x.lightstim,CaTrials))>0)
@@ -2921,7 +2935,7 @@ if(get(handles.CaTrials_select,'Value') ==1)
         trialorder = [1:length(trialtypes)];
         overlay =0;
     end
-    plot_roiSignals(CaTrials(trialorder),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+    plot_roiSignals(CaTrials(trialorder),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,1);
 elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     %     global sorted_CaTrials
     tag_trialtypes =1;
@@ -3000,7 +3014,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     end
     disp('order = hits misses cr  fa')
     
-       plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+       plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
     
   
     %%
@@ -3040,7 +3054,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                 count = count +length(sorted_CaTrials.notouch );
                 overlay =0;
             end
-                 plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+                 plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
                 
 % % %              %% touch trials only
 % % % 
@@ -3180,17 +3194,17 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                        trialorder  = [touch(touchinds)];
 %             trialorder  = [touch(touchinds) , sorted_CaTrials.notouch(notouchinds)];
             disp('order = touch_barpos_Ant(Top)-Post(Bottom) notouch_barpos_Ant(Top)-Post(Bottom)')
-            plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+            plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
                       
     end
 else(get(handles.contact_CaSignal_select,'Value')==1)
     
-    global contact_CaTrials
+    
     tag_trialtypes =0;
     sfx ='Csort';
 
-    if isfield(contact_CaTrials,'lightstim') && ~isempty(CaTrials(1).lightstim)
-        if(max(cell2mat(arrayfun(@(x) x.lightstim,CaTrials,'uniformoutput',0)))>0)
+    if isfield(contact_CaTrials,'lightstim') && ~isempty(contact_CaTrials(1).lightstim)
+        if(max(cell2mat(arrayfun(@(x) x.lightstim,contact_CaTrials,'uniformoutput',0)))>0)
          lightstim = cell2mat(arrayfun(@(x) x.lightstim,contact_CaTrials,'Uniformoutput',0));
          [trialtypes,trialorder] = sort(lightstim,2,'descend');  
          trialtypes(trialtypes==0) = 2;
@@ -3217,7 +3231,7 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
         overlay=0;
     end
 
-      plot_roiSignals(contact_CaTrials(trialorder),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+      plot_roiSignals(contact_CaTrials(trialorder),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
     
     
     %% sort by bar_pos_trial
@@ -3258,12 +3272,12 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
     %         trialorder  = [sorted_CaTrials.touch(touchinds) ];%, sorted_CaTrials.notouch(notouchinds)];
     disp('order = touch_barpos_Ant(Top)-Post(Bottom)');% notouch_barpos_Ant(Top)-Post(Bottom)')
     
-    plot_roiSignals(contact_CaTrials(touchinds),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay);
+    plot_roiSignals(contact_CaTrials(touchinds),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
 
     
  end
-    javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar')
-    jheapcl(1)
+%     javaaddpath('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/jheapcl/jheapcl/MatlabGarbageCollector.jar')
+%     jheapcl(1)
 
 
 function wSig_datapath_Callback(hObject, eventdata, handles)
