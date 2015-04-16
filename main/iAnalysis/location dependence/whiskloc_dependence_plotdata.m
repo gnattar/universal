@@ -245,7 +245,7 @@ for d=1:length(dends)
     h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
     plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
 %     LPI = (max(p_NL1(:,1,1))-mean(p_NL1(:,1,1)))/(mean(p_NL1(:,1,1)));
-    LPI = (max(p_NL1(:,1,1))-min(p_NL1(:,1,1)))/(min(p_NL1(:,1,1)));
+    LPI = (max(p_NL1(:,1,1))-min(p_NL1(:,1,1)))/(max(p_NL1(:,1,1))+ min(p_NL1(:,1,1)));
 
     LPI = round(LPI*100)./100;
     tb=text(3,max(p_NL1(:,1,1)) +100,['LPI ' num2str(LPI)],'FontSize',18);
@@ -289,7 +289,7 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
-%         print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
+print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
 saveas(gcf,[' Loc Dep  ' par ' reg  D ' num2str(dends)],'jpg');
 
  if traces
@@ -406,7 +406,7 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
-%         print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
+        print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
 saveas(gcf,[' Loc Dep Ca Traces  D ' num2str(dends)],'jpg');
 % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
 
