@@ -244,12 +244,13 @@ for d=1:length(dends)
     subplot(length(dends),numloc+xcol,count:count+1);
     h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
     plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
-%     LPI = (max(p_NL1(:,1,1))-mean(p_NL1(:,1,1)))/(mean(p_NL1(:,1,1)));
-    LPI = (max(p_NL1(:,1,1))-min(p_NL1(:,1,1)))/(max(p_NL1(:,1,1))+ min(p_NL1(:,1,1)));
+     LPI = (max(p_NL1(:,1,1))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1))));
+    LPI_sp = (max(p_NL1(:,1,1))-mean(abs(p_NL1(:,1,1))))/(max(p_NL1(:,1,1)));
 
-    LPI = round(LPI*100)./100;
+    LPI = round(LPI*100)./100;LPI_sp = round(LPI_sp*100)./100;
     tb=text(3,max(p_NL1(:,1,1)) +100,['LPI ' num2str(LPI)],'FontSize',18);
     pooled_contactCaTrials_locdep{n}.LPI = LPI;
+    pooled_contactCaTrials_locdep{n}.LPI_sp = LPI_sp;
     if fit_separate
         h= plot([1:numloc],p_NL1(:,1,2),'-o','color',[.5 .5 .5]); set(h,'linewidth',3);
         plot([1:numloc],p_NL1CIU(:,1,2),'--','color',[.5 .5 .5]); plot([1:numloc],p_NL1CIL(:,1,2),'--','color',[.5 .5 .5]);set(h,'linewidth',3);
