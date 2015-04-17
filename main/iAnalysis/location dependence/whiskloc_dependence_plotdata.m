@@ -235,7 +235,7 @@ for d=1:length(dends)
             %             plot([0.0001:.01:1.5],fsigm(pSig_L(i,:,2),[0.0001:.01:1.5]),'color',[.85 .5 .85],'linewidth',2);
             
         end
-        
+        set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1]);
         set(gca,'xscale','log');
     end
     

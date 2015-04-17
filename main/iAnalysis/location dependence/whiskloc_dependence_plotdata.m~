@@ -235,7 +235,8 @@ for d=1:length(dends)
             %             plot([0.0001:.01:1.5],fsigm(pSig_L(i,:,2),[0.0001:.01:1.5]),'color',[.85 .5 .85],'linewidth',2);
             
         end
-        
+        set(gca,'xTick
+        set(gca,'YMinorTick','on','YTick', -100:100:cscale(2)*2 +300);
         set(gca,'xscale','log');
     end
     
@@ -244,8 +245,9 @@ for d=1:length(dends)
     subplot(length(dends),numloc+xcol,count:count+1);
     h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
     plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
-%     LPI = (max(p_NL1(:,1,1))-mean(p_NL1(:,1,1)))/mean(p_NL1(:,1,1));
-    LPI = (max(p_NL1(:,1,1))-mean(p_NL1(:,1,1)))/(mean(p_NL1(:,1,1)));
+%     LPI = (max(p_NL1(:,1,1))-mean(p_NL1(:,1,1)))/(mean(p_NL1(:,1,1)));
+    LPI = (max(p_NL1(:,1,1))-min(p_NL1(:,1,1)))/(min(p_NL1(:,1,1)));
+
     LPI = round(LPI*100)./100;
     tb=text(3,max(p_NL1(:,1,1)) +100,['LPI ' num2str(LPI)],'FontSize',18);
     pooled_contactCaTrials_locdep{n}.LPI = LPI;
@@ -340,9 +342,7 @@ for d=1:length(dends)
 
             end
         end
-        figure(h_fig3); subplot(length(dends),numloc+xcol,count);
-        plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(NL_ind,:),'color',colp(colind,:),'linewidth',1.5);hold on;
-        
+
         retract = find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind) >0);
         protract =  find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind)<0);
 
