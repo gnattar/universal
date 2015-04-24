@@ -2150,7 +2150,12 @@ if get(hObject, 'Value') == 1
             usr_confirm = questdlg('Use only hit trials? ');
         if strcmpi(usr_confirm, 'Yes')          
         Ctrials =str2num(cell2mat(arrayfun(@(x) x.name(length(x.name)-6 :length(x.name)-4),list,'uniformoutput',false)));
-        [ht,ci,si] = intersect(Ctrials,Sdata.hitTrialNums);
+        if max(handles.lightstim_template) >0
+            checktrials = find(~handles.lightstim_template(1:length(solo_data.hitTrialInds)) & solo_data.hitTrialInds');
+        else
+            checktrials = Sdata.hitTrialNums;
+        end
+        [ht,ci,si] = intersect(Ctrials,checktrials);
         if(length(ci)>100)
             ci=ci(1:100);
         end
@@ -3014,7 +3019,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
     end
     disp('order = hits misses cr  fa')
     
-       plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
+       plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,1);
     
   
     %%
@@ -3054,7 +3059,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                 count = count +length(sorted_CaTrials.notouch );
                 overlay =0;
             end
-                 plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
+                 plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,1);
                 
 % % %              %% touch trials only
 % % % 
@@ -3194,7 +3199,7 @@ elseif(get(handles.sorted_CaTrials_select,'Value') ==1)
                        trialorder  = [touch(touchinds)];
 %             trialorder  = [touch(touchinds) , sorted_CaTrials.notouch(notouchinds)];
             disp('order = touch_barpos_Ant(Top)-Post(Bottom) notouch_barpos_Ant(Top)-Post(Bottom)')
-            plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
+            plot_roiSignals(CaTrials(trialorder),fov ,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,1);
                       
     end
 else(get(handles.contact_CaSignal_select,'Value')==1)
@@ -3231,7 +3236,7 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
         overlay=0;
     end
 
-      plot_roiSignals(contact_CaTrials(trialorder),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
+      plot_roiSignals(contact_CaTrials(trialorder),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,1);
     
     
     %% sort by bar_pos_trial
@@ -3272,7 +3277,7 @@ else(get(handles.contact_CaSignal_select,'Value')==1)
     %         trialorder  = [sorted_CaTrials.touch(touchinds) ];%, sorted_CaTrials.notouch(notouchinds)];
     disp('order = touch_barpos_Ant(Top)-Post(Bottom)');% notouch_barpos_Ant(Top)-Post(Bottom)')
     
-    plot_roiSignals(contact_CaTrials(touchinds),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,0);
+    plot_roiSignals(contact_CaTrials(touchinds),fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,1);
 
     
  end

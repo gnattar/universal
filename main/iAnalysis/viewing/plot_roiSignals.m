@@ -1,11 +1,11 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,plot_traces)
 % plot signals arranged by rois : to check roi selection in fovs
-roisperfig = 3;
+roisperfig = 5;
 pxlpermm = 24.38; %% 18-7.5 mm = 298-42 pixels
 % s_time = 1.0 ;
 s_time = 0;
 e_time = 5.0;
-cscale=[0 400];
+cscale=[0 300];
 fovname = [nam 'fov ' fov 'rois ' roislist]; 
 frametime=obj.FrameTime;
 rois_trials  = arrayfun(@(x) x.dff, obj,'uniformoutput',false);
@@ -76,7 +76,7 @@ for i= 1:numtrials
 end
 
 % a = round(linspace(1,300,20));
-a = round(linspace(1,400,34));
+a = round(linspace(1,cscale(2),34));
 if (max(overlay)>0)
     if(max(trialtypes) > 8) 
         b = [3 1 16 18  5 7 21 23 10 8  6 9 11 4 26 22 12 14 28 25 34 32 17 15 29 24 33 31 2 13 30 26 19 20];
@@ -363,7 +363,7 @@ rois_name_tag = '';
         set(gcf,'PaperPosition',[1 1 24 10]);
         set(gcf, 'PaperSize', [24,10]);
         set(gcf,'PaperPositionMode','manual');
-        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+%         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
         saveas(gcf,[pwd,filesep,fnam],'jpg');
 %          saveas(gcf,[pwd,filesep,fnam],'fig');
         [~,foo] = lastwarn;
