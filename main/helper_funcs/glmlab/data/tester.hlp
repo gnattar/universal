@@ -1,0 +1,9 @@
+tester.hlp:
+
+The file  tester.txt  is a file for demonstarting the use of the
+matlab  command,  load.  It is used in ``Learning  glmlab:  Using  matlab  for
+generalised linear models'' in Section 2.3: Using Data Files.
+
+The file contains four columns and three rows of numbers.
+
+The data is obviously artificial.

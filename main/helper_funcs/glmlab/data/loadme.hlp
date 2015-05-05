@@ -1,0 +1,13 @@
+loadme.hlp:
+
+The file  loadme.mat  is a file for demonstrating the use of the
+matlab  command,  load.  It is used in ``Learning  glmlab:  Using  matlab  for
+generalised linear models'' in Section 2.3: Using Data Files.
+
+The file contains the follwoing variables:
+
+x:  An `elephant stamp' text variable.
+y:  A vector of the integers 1 to 10.
+z:  A vector of normally distributed random numbers.
+
+The data is obviously artificial.

@@ -1,0 +1,13 @@
+chemical.hlp:
+
+The file  chemical.mat  is used in ``Learning  glmlab:  Using  matlab  for
+generalised linear models''  in Section 3.2: Multiple Regression.
+
+The file contains the following variables:
+
+Cat:    The weight of catalyst (in kg)
+Method: The method used to produce the chemical (qualitative)
+Temp:   The temperature of the manufacturing process
+Vol:    The volume of toxic by-product produced.
+
+The data is artificial.
