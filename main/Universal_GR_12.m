@@ -4112,8 +4112,16 @@ for i = 1:numtrials
         wdata_indtimes = round(wdata_indtimes .*1000)/1000;
         [val,id,wd]= intersect(ideal_indtimes,wdata_indtimes);
 %         wdata_src_inds = wd;
-        wdata_src_inds = find((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
-
+        temp_src_inds = find((st_round < temp_ts_wsk ) & (temp_ts_wsk <= fin_round));
+        %% make sure it's unique vals
+        [c,ia,ic]= unique(temp_ts_wsk(temp_src_inds));
+        if( length(ia) < length(ic))
+            wdata_src_inds = temp_src_inds(ia);
+        else
+            wdata_src_inds = temp_src_inds(ia);
+        end
+            
+        
         wdata_dest_inds = id;
 
         temp=thetavals{i};
