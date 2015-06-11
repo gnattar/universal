@@ -382,19 +382,15 @@ for d=1:length(dends)
 
         count = count+1;
 
-        if(size(pooled_contactCaTrials_locdep{n}.num_trials(i),2) >1)
+        if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)
             figure(h_fig2);
-            title([ 'D ' num2str(n) '  '  num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
-            %                 figure(h_fig3);
-            %                 title([ 'D ' num2str(n) '  '  num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
-
+            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
         else
             figure(h_fig2);
-            title([ 'D ' num2str(n) '  '  num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ']);
-            %                 figure(h_fig3);
-            %                 title([ 'D ' num2str(n) '  '  num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ']);
-
+            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ']);
         end
+        
+        
     end
 
     %     subplot(length(dends),numloc+xcol,count:count+1);

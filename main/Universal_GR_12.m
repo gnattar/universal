@@ -1086,6 +1086,8 @@ for i = 1: nROI_effective
     lightonblank_ind(xt_h-3:xt_h-1) =1;
     lightoff_ind = (xt<xt(xt_l)) | (xt>xt(xt_h));
     %      end
+
+        
     
     if get(handles.AnalysisModeBGsub,'Value') && get(handles.lightstim_subtract,'Value')
         if isempty(handles.lightstim_template)
@@ -3793,7 +3795,7 @@ else
     sorted_CaTrials.missesTNames = CaSig_trialnums(sorted_CaTrials.misses );
     sorted_CaTrials.faTNames = CaSig_trialnums(sorted_CaTrials.fa);
     
-    if ~isempty(cell2mat(arrayfun(@(x) x.lightstim, CaTrials,'uniformoutput', 0)))
+    if max(cell2mat(arrayfun(@(x) x.lightstim, CaTrials,'uniformoutput', 0)))
         temp=cell2mat(arrayfun(@(x) x.lightstim(1), CaTrials,'uniformoutput',0));
         sorted_CaTrials.lightstim = find(temp);
         sorted_CaTrials.nolightstim = find(~temp);
@@ -3981,15 +3983,15 @@ trialnums=common_trialnums(indorder);% wrt CaTrials indices
 trialinds = 1:length(trialnums);
 
 
-%% removing contacttimes outside bar available time
-contacttimes=cellfun(@(x) x.contacts{whiskerID}, wSigTrials(wSig_tags(trialinds)),'uniformoutput',false);
-for i = 1: length(trialnums)
-    s = [ CaTrials(CaSig_tags(i)).behavTrial];
-    barOntime=[s.pinDescentOnsetTime];
-    barOfftime=[s.pinAscentOnsetTime];
-    firsttouches = contacttimes{i};
-    %            extraneouscontacts = contacttimes
-end
+% %% removing contacttimes outside bar available time
+% contacttimes=cellfun(@(x) x.contacts{whiskerID}, wSigTrials(wSig_tags(trialinds)),'uniformoutput',false);
+% for i = 1: length(trialnums)
+%     s = [ CaTrials(CaSig_tags(i)).behavTrial];
+%     barOntime=[s.pinDescentOnsetTime];
+%     barOfftime=[s.pinAscentOnsetTime];
+%     firsttouches = contacttimes{i};
+%     %            extraneouscontacts = contacttimes
+% end
 
 %% removing all trials with no contact (try plotting only for this later)
 contacttimes=cellfun(@(x) x.contacts{whiskerID}, wSigTrials(wSig_tags(trialinds)),'uniformoutput',false);
@@ -4030,11 +4032,11 @@ for i= 1:numtrials
 end
 
 Caframetime = CaTrials.FrameTime;
-baseline = 0.5;
-dur = 2.0;
+baseline = 0.25;
+dur = 1.25;
 wSigframerate = 500;
-numpts=ceil((dur+baseline)*wSigframerate*2);% 2.5 seconds worth of data
-numframes = ceil((dur+baseline)/Caframetime);% 2.5 seconds worth of data
+numpts=ceil((dur+baseline)*wSigframerate*2);% 1.5 seconds worth of data
+numframes = ceil((dur+baseline)/Caframetime);% 1.5 seconds worth of data
 
 numcontacts =0;
 contact_CaTrials=struct('solo_trial',[],'dff',{},'dff_complete',{},'ts',{},'FrameTime',{},'nframes',{},'trialtype',[],'trialCorrect',[],'FileName_prefix',{},'FileName',{},...
@@ -4192,7 +4194,7 @@ for i = 1:numtrials
         timeind = wdata_src_inds;
         
 %         [ri,ti,ci]= intersect(timeind,touchind);
-         discreet_contacts_2= unique([1;find(diff(touchind)>2)]);
+         discreet_contacts_2= unique([1;find(diff(touchind)>1.0)]);
         
         
         Peakpercontact=0;Peakpercontact_abs=0; 
@@ -4350,8 +4352,8 @@ contacts_detected = cellfun(@(x) x.contacts{1}, wsArray.ws_trials,'UniformOutput
 nodetects =  find(cellfun(@isempty,contacts_detected));
 %             contDet_param.threshDistToBarCenter = [.1   1.0]; % super lax for bad tracking files
 %           contDet_param.threshDistToBarCenter = [.1   .70]; %most lax
-        contDet_param.threshDistToBarCenter = [.1   .50]; %lax
-%          contDet_param.threshDistToBarCenter = [.1   .45]; % stringent
+        contDet_param.threshDistToBarCenter = [.1   .6]; %lax
+%          contDet_param.threshDistToBarCenter = [.1   .5]; % stringent
 %           contDet_param.threshDistToBarCenter = [.1   .4]; % most stringent
         contDet_param.thresh_deltaKappa = [-.25	.25];
         if isempty(wsArray.bar_time_window)
@@ -5460,9 +5462,11 @@ end
 
 
 if length(commontrials) ~= length(trials) %% str2num(get(handles.TotTrialNum, 'String'))
-    disp('Number of ephus trials NOT equal to Number of Ca Image Trials!')
+   disp('Number of ephus trials NOT equal to Number of Ca Image Trials!')
+   try
    [v,c] = setdiff(trials,commontrials);
     CaSignal.CaTrials(c).ephusTrial = [];
+   end
 end
 
 for i = 1:length(commontrials)

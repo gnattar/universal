@@ -245,8 +245,8 @@ for d=1:length(dends)
     subplot(length(dends),numloc+xcol,count:count+1);
     h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
     plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
-    LPI = (max(p_NL1(:,1,1))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1))));
-    LPI_sp = (max(p_NL1(:,1,1))-mean(abs(p_NL1(:,1,1))))/(max(p_NL1(:,1,1)));
+    LPI = (max(abs(p_NL1(:,1,1)))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+min(abs(p_NL1(:,1,1))));
+    LPI_sp = (max(abs(p_NL1(:,1,1)))-mean(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+mean(abs(p_NL1(:,1,1))));
     LPI = round(LPI*100)./100;LPI_sp = round(LPI_sp*100)./100;
     tb=text(3,max(p_NL1(:,1,1)) +100,['LPI ' num2str(LPI)],'FontSize',18);
     pooled_contactCaTrials_locdep{n}.LPI = LPI;
@@ -259,8 +259,10 @@ for d=1:length(dends)
     if ~isempty(L_ind)
         h= plot([1:numloc],p_L1(:,1,1),'r-o');set(h,'linewidth',1.5);hold on;
         plot([1:numloc],p_L1CIU(:,1,1),'r--','linewidth',2); plot([1:numloc],p_L1CIL(:,1,1),'r--','linewidth',2);
-        LPI = (max(p_L1(:,1,1))-mean(p_L1(:,1,1)))/mean(p_L1(:,1,1));
-        text(5,500,['LPI_l ' num2str(LPI)]);
+            LPI_l = (max(abs(p_L1(:,1,1)))-min(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+min(abs(p_L1(:,1,1))));
+          LPI_sp_l = (max(abs(p_L1(:,1,1)))-mean(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+mean(abs(p_L1(:,1,1))));
+            LPI_l = round(LPI_l*100)./100;LPI_sp_l = round(LPI_sp_l*100)./100;
+        tb = text(4,max(p_NL1(:,1,1)) +100,['LPI_l ' num2str(LPI_l)],'FontSize',18);set(tb,'color','r');
         if fit_separate
             h= plot([1:numloc],p_L1(:,1,2),'-o','color',[.85, .5 , .5]);set(h,'linewidth',3);
         end
@@ -380,6 +382,15 @@ for d=1:length(dends)
 
         count = count+1;
 
+        if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)
+            figure(h_fig2);
+            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
+        else
+            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ']);
+        end
+        
+        
+        
         if(size(pooled_contactCaTrials_locdep{n}.num_trials(i),2) >1)
             figure(h_fig2);
             title([ 'D ' num2str(n) '  '  num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
