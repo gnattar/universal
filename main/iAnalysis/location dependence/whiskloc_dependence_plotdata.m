@@ -60,8 +60,13 @@ for d=1:length(dends)
             x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(retract)));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract));
             fittype = 'lin';
+            if (size(x) > 1)
             [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
             temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
+            else
+                
+            end
+            
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str 'fitparam'])(i,:,1) = param;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparamCI'])(i,:,:) = paramCI;
@@ -120,8 +125,8 @@ for d=1:length(dends)
                 % separating protraction and retraction
                 %protraction
                 str = '_L_P';temp = [];
-                x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(protract)));
-                y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract));
+                x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(protract)));
+                y =pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract));
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
                 temp (:,1) = x;temp(:,2) = y; temp(:,3) = f;
