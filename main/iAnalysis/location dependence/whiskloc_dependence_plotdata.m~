@@ -331,8 +331,8 @@ for d=1:length(dends)
     
     colpL = othercolor('OrRd5',10);
     colp = othercolor('PuBu3',10);
-    colrL = othercolor('Oranges3',10);
-    colr = othercolor('Blues7',10);
+    colrL = othercolor('Blues9',10);
+    colr = othercolor('BuGn4',10);
     
     for i = 1:numloc
         ts = [1:size(pooled_contactCaTrials_locdep{n}.rawdata,2)].*samp_time;

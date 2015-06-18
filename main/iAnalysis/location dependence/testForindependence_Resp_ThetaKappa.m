@@ -41,12 +41,15 @@ l=pooled_contactCaTrials_locdep{d}.poleloc(ind);
 
 [ThKmid,R,T,K,pR_ThK,pR_Th,pR_K]=calc_p(t,k,r,l);      
 % figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
-figure;subplot(4,2,1);contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); 
-subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]); 
+sc = get(0,'ScreenSize');
+figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
+subplot(3,2,1);contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]);  set(gca,'yscale','log');set(gca,'XTick',logspace(-3,2,6));set(gca,'FontSize',16);xlabel('Loc'); ylabel('TouchMag'); 
+% subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]); 
 % subplot(2,2,4); colorbar;
-subplot(4,2,5); plot(pos,T,'o-'); xlabel('Loc');ylabel('CaSig');%axis([-25 30 -10 cscale(2)]); 
-subplot(4,2,7); plot(ThKmid{2},K,'o-');  xlabel('Touch Mag'); ylabel('CaSig'); axis([0.001 50 -10 cscale(2)]);suptitle([num2str(d) indstr]);
+subplot(3,2,3); plot(pos,T,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',16);%axis([-25 30 -10 cscale(2)]); 
+subplot(3,2,5); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 50 -10 cscale(2)]); set(gca,'xscale','log');
 TK = T*K';
+set(gca,'FontSize',16);
 % Lw = R./TK;
 % [U S V]= svd(R);
 % 
@@ -67,22 +70,22 @@ l=pooled_contactCaTrials_locdep{d}.poleloc(ind);
 
 [ThKmid,R,T,K,pR_ThK,pR_Th,pR_K]=calc_p(t,k,r,l);      
 % figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
-subplot(4,2,2);contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); 
-subplot(4,2,4);surf(ThKmid{2},pos,R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]); 
+subplot(3,2,2);contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]);  set(gca,'yscale','log');set(gca,'FontSize',16); xlabel('Loc'); ylabel('TouchMag'); 
+% subplot(4,2,4);surf(ThKmid{2},pos,R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]); 
 % subplot(2,2,4); colorbar;
-subplot(4,2,6); plot(pos,T,'o-');  xlabel('Loc');ylabel('CaSig'); %axis([-25 30 -10 cscale(2)]);
-subplot(4,2,8); plot(ThKmid{2},K,'o-'); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.001 50 -10 cscale(2)]);suptitle([num2str(d) indstr]);
+subplot(3,2,4); plot(pos,T,'o-');  xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',16); %axis([-25 30 -10 cscale(2)]);
+subplot(3,2,6); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.001 50 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',16);
+% suptitle([num2str(d) indstr]);
 TK = T*K';
 
-
+suptitle([num2str(d) indstr]);
+set(gcf,'PaperUnits','inches');
+set(gcf,'PaperPosition',[1 1 10 8]);
+% set(gcf, 'PaperSize', [10,5]);
+% set(gcf,'PaperPositionMode','manual');
+print( gcf ,'-depsc2','-painters','-loose',['D' num2str(d) indstr]);
 
 end
-
-
-
-
-
-
 
 
 
@@ -93,11 +96,11 @@ vals(:,1) = t;vals(:,2) = k;vals(:,3) = r;
 bins(1) = {[-25:5:-5,30]}; % theta bins
 
 vals(:,1) = l;vals(:,2) = k;vals(:,3) = r;
-% bins(1) = {[40 50 200 240 280 300 340]};
-bins(1) = {[40 200 240 280 310 340]};
+bins(1) = {[40 50 200 240 280 300 340]};
+% bins(1) = {[40 200 240 280 310 340]};
 
 % bins(2) = {[-.2:0.2:2.5]}; %Kappa bins
-bins(2) ={logspace(-3,2,10)}; %Kappa bins
+bins(2) ={logspace(-4,2,10)}; %Kappa bins
 bins(3) = {[0:100:800]}; % Resp peak bins
 
 [count edges mid loc] = histcn(vals,bins{1},bins{2},bins{3}); %% joint dist Theta Kappa Capeak
