@@ -1,4 +1,4 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_dependence_plotdata(pooled_contactCaTrials_locdep,dends,par,fit_separate,traces)
+function [pooled_contactCaTrials_locdep] = whiskloc_dependence_plotdata(pooled_contactCaTrials_locdep,dends,par,wpar,fit_separate,traces)
 sc = get(0,'ScreenSize');
 % h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
 h_fig1 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
@@ -23,30 +23,34 @@ for d=1:length(dends)
         %         retract = find(cdir(NL_ind)==0);
         %         protract = find(cdir(NL_ind)==1);
         
-        retract = find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind) >0);
-        protract =  find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind) <0);
+        retract = find(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind) >0);
+        protract =  find(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind) <0);
         
-        plot(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract)),'o','color',[.5 .5 .5],'Markersize',7,'Markerfacecolor',[.5 .5 .5]); hold on;
-        plot(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract)),'ko','Markersize',7, 'Markerfacecolor',[0 0 0]); hold on;
+        plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract)),'o','color',[.5 .5 .5],'Markersize',7,'Markerfacecolor',[.5 .5 .5]); hold on;
+        plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract)),'ko','Markersize',7, 'Markerfacecolor',[0 0 0]); hold on;
         
-        ka=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(retract)));
+        ka=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract)));
         ca=pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract));
         
+
         dkappa_bins = logspace(-4,2,10); %Kappa bins
+        if isempty(ka)
+             NL_Ret_mean = 0;
+        else
+            
         [valcount edges mid loc] = histcn(ka,dkappa_bins);
         NL_Ret_mean = zeros(size(loc));
         for vali = 1:max(loc)
             inds = find(loc==vali);
-            NL_Ret_mean(vali)=mean(ca(inds));
-            
+            NL_Ret_mean(vali)=mean(ca(inds));            
         end
-        
+        end
         
         if fit_separate
             % separating protraction and retraction
             %protraction
             str = '_NL_P';temp = [];
-            x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(protract)));
+            x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(protract)));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract));
             fittype = 'lin';
             [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
@@ -70,9 +74,13 @@ for d=1:length(dends)
             
             % retraction
             str = '_NL_R';temp = [];
-            x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(retract)));
+            x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract)));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract));
             fittype = 'lin';
+            if (isempty(x))
+           
+            else
+                
             [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
             temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;            
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
@@ -81,6 +89,8 @@ for d=1:length(dends)
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str 'fitevals'])(i,:,1) = fitevals;
             p_NL1(i,:,2) = param;
             p_NL1CIL(i,:,2) = paramCI(1,:);p_NL1CIU(i,:,2) = paramCI(2,:);
+            
+            end
             
             %         fittype = 'sig';
             %         [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
@@ -95,7 +105,7 @@ for d=1:length(dends)
             % pooling together protraction and retraction
             
             str = '_NL';temp = [];
-            x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind));
+            x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind);
             fittype = 'lin';
             [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
@@ -122,18 +132,18 @@ for d=1:length(dends)
         
         if ~isempty(L_ind)
             % Light trials
-            retract = find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind) >0);
-            protract =  find(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind)<0);
+            retract = find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind) >0);
+            protract =  find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind)<0);
             
             
-             plot(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(retract)),'o','color',[.85 .5 .5],'Markersize',7,'Markerfacecolor',[.85 .5 .5]); hold on;
-             plot(abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract)),'ro','Markersize',7, 'Markerfacecolor',[1 0 0]); hold on;
+             plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(retract)),'o','color',[.85 .5 .5],'Markersize',7,'Markerfacecolor',[.85 .5 .5]); hold on;
+             plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract)),'ro','Markersize',7, 'Markerfacecolor',[1 0 0]); hold on;
     
             if fit_separate
                 % separating protraction and retraction
                 %protraction
                 str = '_L_P';temp = [];
-                x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(protract)));
+                x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(protract)));
                 y =pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract));
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
@@ -157,18 +167,26 @@ for d=1:length(dends)
                 
                 % retraction
                 str = '_L_R';temp = [];
-                x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind(retract)));
+                x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(retract)));
                 y =pooled_contactCaTrials_locdep{n}.(par)(L_ind(retract));
+                if length(x) >1
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
+                 else
+                fittype = 'lin';
+                temp (:,1) = x;temp(:,2) = y;temp(:,3) = nan;
+                param = nan;
+                paramCI = [nan,nan;nan ,nan];
+                fitevals = nan;
+                end
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str 'fitparam'])(i,:,1) = param;
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparamCI'])(i,:,:) = paramCI;
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str 'fitevals'])(i,:,1) = fitevals;
                 p_L1(i,:,2) = param;
                 p_L1CIL(i,:,2) = paramCI(1,:);p_L1CIU(i,:,2) = paramCI(2,:);
-                
+
                 %         fittype = 'sig';
                 %         [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
                 %         temp (:,1) = x;temp(:,2) = y; temp(:,3) = f;
@@ -182,7 +200,7 @@ for d=1:length(dends)
                 % pooling together protraction and retraction
                 
                 str = '_L';temp = [];
-                x=abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind));
+                x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind));
                 y =pooled_contactCaTrials_locdep{n}.(par)(L_ind);
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
@@ -249,7 +267,7 @@ for d=1:length(dends)
         if strcmp(par,'sigmag')
             axis([10e-4 20 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([10e-4 20 0 900]);
+            axis([10e-4 20 0 700]);
         end        
         set(gca,'xscale','log');
     end
@@ -331,8 +349,8 @@ for d=1:length(dends)
     
     colpL = othercolor('OrRd5',10);
     colp = othercolor('PuBu3',10);
-    colrL = othercolor('Blues9',10);
-    colr = othercolor('BuGn4',10);
+    colrL = othercolor('Reds6',10);
+    colr = othercolor('Greens6',10);
     
     for i = 1:numloc
         ts = [1:size(pooled_contactCaTrials_locdep{n}.rawdata,2)].*samp_time;
@@ -388,11 +406,11 @@ for d=1:length(dends)
             end
         end
         figure(h_fig2);
-        axis([0 2.5 0 650]);
+        axis([0 1.5 0 400]);
         hline(30,'k.');
         hline(0,'k--');
         figure(h_fig3);
-        axis([0 2.5 0 650]);
+        axis([0 1.5 0 400]);
         hline(30,'k.');
         hline(0,'k--');
 
