@@ -1,4 +1,6 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_dependence_plotdata(pooled_contactCaTrials_locdep,dends,par,wpar,fit_separate,traces)
+function [pooled_contactCaTrials_locdep] = whiskloc_dependence_plotdata(pooled_contactCaTrials_locdep,dends,par,wpar,fit_separate,traces,lpv)
+%% obj, dends, par = 'sigpeak' or 'sigmag', wpar = ' re_totaldK', fit_separate = 1 (prot and ret separately', 
+
 sc = get(0,'ScreenSize');
 % h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
 h_fig1 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
@@ -14,6 +16,15 @@ for d=1:length(dends)
     p_NL2 =zeros(numloc,4,2);p_L2 =zeros(numloc,4,2);
     sig_kappa_L = zeros(numloc,3,2);
     sig_kappa_NL = zeros(numloc,3,2);
+     fittype = 'lin';
+    if fit_separate
+            pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par '_NL_R' '_fitparam']) = nan(numloc,2,2);
+            pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par '_NL_R' '_fitparamCI']) = nan(numloc,2,2);
+            pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par '_NL_R' '_fitevals']) = nan(numloc,3,2);
+            pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par '_L_R' '_fitparam']) = nan(numloc,2,2);
+            pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par '_L_R' '_fitparamCI']) = nan(numloc,2,2);
+            pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par '_L_R' '_fitevals']) = nan(numloc,3,2); 
+    end
     for i = 1:numloc
         NL_ind = find(( pooled_contactCaTrials_locdep{n}.poleloc == polelocs(i))& (pooled_contactCaTrials_locdep{n}.lightstim ==0));
         L_ind =  find(( pooled_contactCaTrials_locdep{n}.poleloc == polelocs(i))& (pooled_contactCaTrials_locdep{n}.lightstim ==1));
@@ -46,7 +57,8 @@ for d=1:length(dends)
         end
         end
         
-        if fit_separate
+        if fit_separate     
+            
             % separating protraction and retraction
             %protraction
             str = '_NL_P';temp = [];
@@ -77,12 +89,20 @@ for d=1:length(dends)
             x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract)));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract));
             fittype = 'lin';
-            if (isempty(x))
-           
+
+            if length(x) >2
+                fittype = 'lin';
+                [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
+                temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
             else
-                
-            [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
-            temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;            
+                fittype = 'lin';
+                temp (:,1) = x;temp(:,2) = y;temp(:,3) = nan;
+                param = [nan nan];
+                paramCI = [nan,nan;nan ,nan];
+                fitevals = [nan nan nan];
+            end
+            
+           
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str 'fitparam'])(i,:,1) = param;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparamCI'])(i,:,:) = paramCI;
@@ -90,7 +110,6 @@ for d=1:length(dends)
             p_NL1(i,:,2) = param;
             p_NL1CIL(i,:,2) = paramCI(1,:);p_NL1CIU(i,:,2) = paramCI(2,:);
             
-            end
             
             %         fittype = 'sig';
             %         [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
@@ -169,21 +188,23 @@ for d=1:length(dends)
                 str = '_L_R';temp = [];
                 x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(retract)));
                 y =pooled_contactCaTrials_locdep{n}.(par)(L_ind(retract));
-                if length(x) >1
+                if length(x) >2
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
                  else
                 fittype = 'lin';
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = nan;
-                param = nan;
+                param = [nan nan];
                 paramCI = [nan,nan;nan ,nan];
-                fitevals = nan;
+                fitevals = [nan nan nan];
                 end
+
+                            
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
-                pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str 'fitparam'])(i,:,1) = param;
+                pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparam'])(i,:,1) = param;
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparamCI'])(i,:,:) = paramCI;
-                pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str 'fitevals'])(i,:,1) = fitevals;
+                pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitevals'])(i,:,1) = fitevals;
                 p_L1(i,:,2) = param;
                 p_L1CIL(i,:,2) = paramCI(1,:);p_L1CIU(i,:,2) = paramCI(2,:);
 
@@ -277,8 +298,13 @@ for d=1:length(dends)
     subplot(length(dends),numloc+xcol,count:count+1);
     h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
     plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
-    LPI = (max(abs(p_NL1(:,1,1)))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+min(abs(p_NL1(:,1,1))));
-    LPI_sp = (max(abs(p_NL1(:,1,1)))-mean(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+mean(abs(p_NL1(:,1,1))));
+	if (lpv == 'v1')
+    LPI = (max(abs(p_NL1(2:end,1,1)))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+min(abs(p_NL1(:,1,1)))); 
+    LPI_sp = (max(abs(p_NL1(2:end,1,1)))-mean(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+mean(abs(p_NL1(:,1,1))));
+    elseif (lpv == 'v2')
+    LPI = (max(abs(p_NL1(2:end,1,1)))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))); 
+    LPI_sp = (max(abs(p_NL1(2:end,1,1)))-mean(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1))));
+    end
     LPI = round(LPI*100)./100;LPI_sp = round(LPI_sp*100)./100;
     tb=text(3,max(p_NL1(:,1,1)) +100,['LPI ' num2str(LPI)],'FontSize',18);
     pooled_contactCaTrials_locdep{n}.LPI = LPI;
@@ -291,9 +317,16 @@ for d=1:length(dends)
     if ~isempty(L_ind)
         h= plot([1:numloc],p_L1(:,1,1),'r-o');set(h,'linewidth',1.5);hold on;
         plot([1:numloc],p_L1CIU(:,1,1),'r--','linewidth',2); plot([1:numloc],p_L1CIL(:,1,1),'r--','linewidth',2);
-            LPI_l = (max(abs(p_L1(:,1,1)))-min(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+min(abs(p_L1(:,1,1))));
-          LPI_sp_l = (max(abs(p_L1(:,1,1)))-mean(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+mean(abs(p_L1(:,1,1))));
+        if(lpv == 'v1')
+            LPI_l = (max(abs(p_L1(2:end,1,1)))-min(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+min(abs(p_L1(:,1,1))));
+          LPI_sp_l = (max(abs(p_L1(2:end,1,1)))-mean(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+mean(abs(p_L1(:,1,1))));
+        elseif lpv== 'v2'
+          LPI_l = (max(abs(p_L1(2:end,1,1)))-min(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1))));
+          LPI_sp_l = (max(abs(p_L1(2:end,1,1)))-mean(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1))));
+        end
             LPI_l = round(LPI_l*100)./100;LPI_sp_l = round(LPI_sp_l*100)./100;
+                pooled_contactCaTrials_locdep{n}.LPI_l = LPI_l;
+                pooled_contactCaTrials_locdep{n}.LPI_sp_l = LPI_sp_l;
         tb = text(4,max(p_NL1(:,1,1)) +100,['LPI_l ' num2str(LPI_l)],'FontSize',18);set(tb,'color','r');
         if fit_separate
 %             h= plot([1:numloc],p_L1(:,1,2),'-o','color',[.85, .5 , .5]);set(h,'linewidth',3);
@@ -359,6 +392,9 @@ for d=1:length(dends)
 
         retract = find(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind) >0);
         protract =  find(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind)<0);
+        numtrials_NL_R = length(retract);
+        numtrials_NL_P = length(protract);
+        
         if(~isempty(retract))
             for r=1:length(retract)
                 %                 pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind(retract(r)))
@@ -385,6 +421,9 @@ for d=1:length(dends)
         retract = find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind) >0);
         protract =  find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind)<0);
 
+        numtrials_L_R = length(retract);
+        numtrials_L_P = length(protract);
+        
         if(~isempty(retract))
             for r=1:length(retract)
                 [ mval, colind] = min(abs(touchmag - abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(retract(r))))));
@@ -421,16 +460,14 @@ for d=1:length(dends)
 
         if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)
             figure(h_fig2);
-            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L Prot' ]);
+            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(numtrials_NL_P) ' NL ' num2str(numtrials_L_P) ' L Prot' ]);
             figure(h_fig3);
-            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L Ret' ]);
-
+            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(numtrials_NL_R) ' NL ' num2str(numtrials_L_R) ' L Ret' ]);
         else
             figure(h_fig2);
-            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ']);
+            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_P) ' NL ']);
             figure(h_fig3);
-            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ']);
-
+            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_R ) ' NL ']);
         end
         
         

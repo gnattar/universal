@@ -1,13 +1,18 @@
-function [pR_ThK,pR_Th,pR_K] = testForindependence_Resp_ThetaKappa(pooled_contactCaTrials_locdep,d,wpar,indstr,cscale)
+function [pR_ThK,pR_Th,pR_K] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,wpar,indstr,cscale,ptype)
 
 % cdir= cellfun( @(x) (sum(x==1)>sum(x==0))*1+(sum(x ==1)<sum(x==0)*0), pooled_contactCaTrials_locdep{d}.contactdir);
 % protrials_ind = find(cdir==1);
 % rettrials_ind = find(cdir==0);
-
+ pointsize = 40;
 
 ls=pooled_contactCaTrials_locdep{d}.lightstim;
 NLind = find(ls==0); 
 Lind = find(ls==1);
+if(isempty(Lind))
+    plotcols =1;
+else
+    plotcols = 2;
+end
 
 cdir=  pooled_contactCaTrials_locdep{d}.(wpar);
 protrials_ind = find(cdir<0.000001);
@@ -15,6 +20,7 @@ rettrials_ind = find(cdir>-0.000001);
 cd(protrials_ind) = 1;
 cd(rettrials_ind) = 0;
 cd = cd';
+
 % t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(protrials_ind);
 % k=pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs(protrials_ind);
 % r=pooled_contactCaTrials_locdep{d}.sigpeak(protrials_ind);
@@ -27,11 +33,11 @@ lall=pooled_contactCaTrials_locdep{d}.poleloc(:);
 pos = unique(lall); cp = 1;
 % ind = find(lall==pos(cp));
 % ind = 1:length(lall);
-%% protractions 
-if indstr == 'NL'
+%% No light control first 
+if indstr == 'P'
     ind = (ls ==0) & (cd ==1);
-elseif indstr == 'L'
-    ind=(ls == 1) & (cd == 1);
+elseif indstr == 'R'
+    ind=(ls == 0) & (cd == 0);
 end
 
 t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(ind);
@@ -42,49 +48,74 @@ l=pooled_contactCaTrials_locdep{d}.poleloc(ind);
 [ThKmid,R,T,K,pR_ThK,pR_Th,pR_K]=calc_p(t,k,r,l);      
 % figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
 sc = get(0,'ScreenSize');
-figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
-subplot(3,2,1);contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]);  set(gca,'yscale','log');set(gca,'XTick',logspace(-3,2,6));xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12);
+if ~isempty(Lind)
+    figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
+else
+    figure('position', [1000, sc(4)/10-100, sc(3)/4, sc(4)], 'color','w');
+end
+
+subplot(3,plotcols,1);
+if ptype == 'cf'
+    contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]); % axis([0 400 0.0001 2.5]);
+elseif ptype == 'cs'
+   contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;  scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
+end
+set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12); title ('Ctrl');  set(gca,'YTick',logspace(-3,2,6));
 % subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]); 
 % subplot(2,2,4); colorbar;
-subplot(3,2,3); plot(pos,T,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);%axis([-25 30 -10 cscale(2)]); 
-subplot(3,2,5); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 2.5 -10 cscale(2)]); set(gca,'xscale','log');
-TK = T*K';
+subplot(3,plotcols,plotcols+1); plot(pos,T,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([0 400 0 cscale(2)]); 
+subplot(3,plotcols,2*plotcols+1); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 2.5 -10 cscale(2)]); set(gca,'xscale','log');
 set(gca,'FontSize',12);
+TK = T*K';
 % Lw = R./TK;
 % [U S V]= svd(R);
 % 
 % subplot(2,3,4);surf(ThKmid{2},ThKmid{1},S);subplot(2,3,5); plot(ThKmid{1},U);subplot(2,3,6); plot(ThKmid{2},V);
 % size(U)
 
-%% retractions
-if indstr == 'NL'
-    ind = (ls ==0) & (cd ==0);
-elseif indstr == 'L'
-    ind=(ls == 1) & (cd == 0);
+if ~isempty(Lind)
+    %% Light condition
+    if indstr == 'P'
+        ind = (ls ==1) & (cd ==1);
+    elseif indstr == 'R'
+        ind=(ls == 1) & (cd == 0);
+    end
+    
+    t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(ind);
+    k=abs(pooled_contactCaTrials_locdep{d}.(wpar)(ind));
+    r=pooled_contactCaTrials_locdep{d}.sigpeak(ind);
+    l=pooled_contactCaTrials_locdep{d}.poleloc(ind);
+    
+    [ThKmid,R,T,K,pR_ThK,pR_Th,pR_K]=calc_p(t,k,r,l);
+    % figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
+    subplot(3,plotcols,plotcols);
+    if ptype == 'cf'
+    contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]);   %axis([0 400 0.0001 2.5]);
+    elseif ptype == 'cs'
+    contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;   scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
+    end
+    set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12); title ('Silenced');set(gca,'YTick',logspace(-3,2,6));
+    % subplot(4,2,4);surf(ThKmid{2},pos,R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
+    % subplot(2,2,4); colorbar;
+    subplot(3,plotcols,2*plotcols); plot(pos,T,'o-');  xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12); axis([0 400 0 cscale(2)]);
+    subplot(3,plotcols,3*plotcols); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.0001 2.5 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',12);
+    % suptitle([num2str(d) indstr]);
+    TK = T*K';
+        suptitle([num2str(d) indstr]);
+    set(gcf,'PaperUnits','inches');
+    set(gcf,'PaperPosition',[1 1 6 8]);
+    % set(gcf, 'PaperSize', [10,5]);
+    % set(gcf,'PaperPositionMode','manual');
+else
+    suptitle([num2str(d) indstr]);
+    set(gcf,'PaperUnits','inches');
+    set(gcf,'PaperPosition',[1 1 6 8]);
+    % set(gcf, 'PaperSize', [10,5]);
+    % set(gcf,'PaperPositionMode','manual');
+
 end
 
-t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(ind);
-k=abs(pooled_contactCaTrials_locdep{d}.(wpar)(ind));
-r=pooled_contactCaTrials_locdep{d}.sigpeak(ind);
-l=pooled_contactCaTrials_locdep{d}.poleloc(ind);
-
-[ThKmid,R,T,K,pR_ThK,pR_Th,pR_K]=calc_p(t,k,r,l);      
-% figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
-subplot(3,2,2);contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]);  set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12);
-% subplot(4,2,4);surf(ThKmid{2},pos,R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]); 
-% subplot(2,2,4); colorbar;
-subplot(3,2,4); plot(pos,T,'o-');  xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12); %axis([-25 30 -10 cscale(2)]);
-subplot(3,2,6); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.001 2.5 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',12);
-% suptitle([num2str(d) indstr]);
-TK = T*K';
-
-suptitle([num2str(d) indstr]);
-set(gcf,'PaperUnits','inches');
-set(gcf,'PaperPosition',[1 1 6 8]);
-% set(gcf, 'PaperSize', [10,5]);
-% set(gcf,'PaperPositionMode','manual');
-print( gcf ,'-depsc2','-painters','-loose',['D' num2str(d) indstr]);
-
+    print( gcf ,'-depsc2','-painters','-loose',['D' num2str(d) indstr '_' ptype]);
 end
 
 

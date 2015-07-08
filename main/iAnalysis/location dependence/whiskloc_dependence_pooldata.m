@@ -81,7 +81,7 @@ for i = 1: size(collected_summary,2)
                 trialnames{k,1} =  temp_solotrial(find(curr_poleloc_trials & ~temp_lightstim));
                 trialnames{k,2} =  temp_solotrial(find(curr_poleloc_trials & temp_lightstim));
                 
-                [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_NL_trials,sampling_time,threshold)
+                [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(curr_loc_NL_trials,sampling_time,threshold);
                 CaSig_mag{k,1} = nansum(curr_loc_NL_trials,2);
                 CaSig_peak{k,1} =events_amp';
                 CaSig_dur{k,1} = events_dur';
@@ -93,7 +93,7 @@ for i = 1: size(collected_summary,2)
                 CaSig_peak{k,2} = events_amp';
                 CaSig_dur{k,2} = events_dur';
                 CaSig_data{k,2}= curr_loc_L_trials;
-                CaSig_time{k,2} = [1:size(curr_loc_L_trials,2)].* sampling_time
+                CaSig_time{k,2} = [1:size(curr_loc_L_trials,2)].* sampling_time;
                 wSig_totmodKappa{k,1} = curr_loc_NL_Kappa./pxlpermm;
                 wSig_totmodKappa{k,2} = curr_loc_L_Kappa ./pxlpermm;
                 wSig_dKappadata{k,1}= curr_loc_NL_dKappatrials;
@@ -172,6 +172,57 @@ for i = 1: size(collected_summary,2)
         count = count+1;
     end
 end
+
+
+pxlpermm = 24.38;
+      for d = 1:size(pooled_contactCaTrials_locdep,2);
+          pooled_contactCaTrials_locdep{d}.re_maxdK = [];
+          pooled_contactCaTrials_locdep{d}.re_totaldK = [];
+          numtr= size( pooled_contactCaTrials_locdep{d}.totalKappa,1);
+          for t = 1:numtr
+              curr_dkappa = pooled_contactCaTrials_locdep{d}.touchdeltaKappa{t};
+              curr_dkappa_t = pooled_contactCaTrials_locdep{d}.timews{t};
+              curr_contacts = pooled_contactCaTrials_locdep{d}.contacts{t};
+              curr_contacts = curr_contacts(curr_contacts < 1190); %% within the first 1 sec
+              touchdkappa = curr_dkappa(curr_contacts);
+              touchdir = pooled_contactCaTrials_locdep{d}.contactdir{t};
+              [maxval,maxind] =  max(abs(touchdkappa));            
+              %% recompute total touch dKappa
+              discreet_contacts_2= unique([1;find(diff(curr_contacts)>2.0)]);
+              Peakpercontact=0;Peakpercontact_abs=0;
+              for p = 1:length(discreet_contacts_2)                 
+                  if(p == length(discreet_contacts_2))
+                      vals = curr_dkappa(curr_contacts(discreet_contacts_2(p):end)) ;
+                  else
+                      vals = curr_dkappa(curr_contacts( discreet_contacts_2(p): discreet_contacts_2(p+1)-1) );
+                  end
+                  contdir = (abs(max(vals)) > abs(min(vals))) *0 +   (abs(max(vals)) < abs(min(vals)))  *1;
+                  if (contdir)
+                      Peakpercontact = Peakpercontact + min(vals );
+                      Peakpercontact_abs = Peakpercontact_abs + abs(min(vals));
+                  else
+                      Peakpercontact = Peakpercontact + max(vals );
+                      Peakpercontact_abs = Peakpercontact_abs + abs(max(vals));
+                  end
+                  
+              end
+                          
+              if contdir
+                  pooled_contactCaTrials_locdep{d}.re_totaldK(t,1) = Peakpercontact./pxlpermm;
+              else
+                  pooled_contactCaTrials_locdep{d}.re_totaldK(t,1) = Peakpercontact./pxlpermm;
+              end            
+              
+              if touchdir(maxind) == 1
+                  pooled_contactCaTrials_locdep{d}.re_maxdK(t,1) = (maxval * -1)./pxlpermm;
+                  
+              elseif touchdir(maxind) == 0
+                  pooled_contactCaTrials_locdep{d}.re_maxdK(t,1) = (maxval)./pxlpermm;
+              end
+          end
+      end
+
+
 save('pooled_contactCaTrials_locdep','pooled_contactCaTrials_locdep','-v7.3');
 
 
