@@ -65,8 +65,19 @@ for d=1:length(dends)
             x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(protract)));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract));
             fittype = 'lin';
-            [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
-            temp (:,1) = x;temp(:,2) = y; temp(:,3) = f;
+            
+            if length(x) >2
+                fittype = 'lin';
+                [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
+                temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
+            else
+                fittype = 'lin';
+                temp (:,1) = x;temp(:,2) = y;temp(:,3) = nan;
+                param = [nan nan];
+                paramCI = [nan,nan;nan ,nan];
+                fitevals = [nan nan nan];
+            end
+            
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparam'])(i,:,1) = param;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparamCI'])(i,:,:) = paramCI;
@@ -165,8 +176,19 @@ for d=1:length(dends)
                 x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(protract)));
                 y =pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract));
                 fittype = 'lin';
+                
+                 if length(x) >2
+                fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
-                temp (:,1) = x;temp(:,2) = y; temp(:,3) = f;
+                temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
+                 else
+                fittype = 'lin';
+                temp (:,1) = x;temp(:,2) = y;temp(:,3) = nan;
+                param = [nan nan];
+                paramCI = [nan,nan;nan ,nan];
+                fitevals = [nan nan nan];
+                end
+
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparam'])(i,:,1) = param;
                 pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparamCI'])(i,:,:) = paramCI;
