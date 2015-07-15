@@ -61,7 +61,10 @@ for i = 1:size(src_data,1)
                     else
                         events_septs (i,2) = j ;
                         eventscount = eventscount+1;
-                        temp_events_amp {i,eventscount} = prctile(current_trace (inds:j),99);
+                        ct = current_trace(inds:j);
+                        ct_nonnan = ct(~isnan(ct));
+%                         temp_events_amp {i,eventscount} = prctile(current_trace(inds:j),99);
+                        temp_events_amp {i,eventscount} = prctile(ct_nonnan,99);
                         temp_events_dur {i,eventscount}  = (events_septs (i,2) -  events_septs (i,1)).*sampling_time;
                         found = 0;inds = j;
                     end
@@ -69,7 +72,9 @@ for i = 1:size(src_data,1)
                     if(j+1>length(current_trace)-length(F1)+1)
                         events_septs (i,2) = length(current_trace);
                         eventscount = eventscount+1;
-                        temp_events_amp {i,eventscount} = prctile(current_trace (inds:end),99);
+                        ct = current_trace(inds:end);
+                        ct_nonnan = ct(~isnan(ct));
+                        temp_events_amp {i,eventscount} = prctile(ct_nonnan,99);
                         temp_events_dur {i,eventscount}  = (events_septs (i,2) -  events_septs (i,1)).*sampling_time;
                         found = 0;
                         break
@@ -77,7 +82,9 @@ for i = 1:size(src_data,1)
                 elseif (found ==1) & j == length(current_trace)
                     events_septs (i,2) = j ;
                     eventscount = eventscount+1;
-                    temp_events_amp {i,eventscount} = prctile(current_trace (inds:end),99);
+                    ct = current_trace(inds:end);
+                    ct_nonnan = ct(~isnan(ct));
+                    temp_events_amp {i,eventscount} = prctile(ct_nonnan,99);
                     temp_events_dur {i,eventscount}  = (events_septs (i,2) -  events_septs (i,1)).*sampling_time;
                     found = 0;
                     break
