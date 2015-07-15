@@ -216,7 +216,7 @@ for d=1:length(dends)
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
                  else
                 fittype = 'lin';
-                temp (:,1) = x;temp(:,2) = y;temp(:,3) = nan;
+                temp (:,1) = 0;temp(:,2) = 0;temp(:,3) = nan;
                 param = [nan nan];
                 paramCI = [nan,nan;nan ,nan];
                 fitevals = [nan nan nan];
