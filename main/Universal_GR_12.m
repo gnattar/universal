@@ -2254,7 +2254,7 @@ V = CaSignal.ica_data.V;
 S = CaSignal.ica_data.S;
 ICnum = str2num(get(handles.IC_num_edit,'String'));
 % CaSignal.ICnum = str2num(get(handles.IC_num_edit,'String'));
-CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 25, ICnum});
+CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 50, ICnum});
 CaSignal.rois_by_IC = cell(1,ICnum);
 % CaSignal.ICnum_prev = ICnum;
 
@@ -4099,7 +4099,9 @@ for i = 1:numtrials
     contact_sorted_CaSig = zeros(numrois,numframes,numcontacts);
     
     for j= 1:numcontacts
-        temp_ts_wsk = round(ts_wsk{i}*1000)/1000;
+%         temp_ts_wsk = round(ts_wsk{i}*1000)/1000;
+        temp_ts_wsk = round([0:.002:7]*1000)/1000;
+
         if mismatch
             temp_ts_wsk = temp_ts_wsk +.5;
         end
@@ -4194,7 +4196,7 @@ for i = 1:numtrials
         timeind = wdata_src_inds;
         
 %         [ri,ti,ci]= intersect(timeind,touchind);
-         discreet_contacts_2= unique([1;find(diff(touchind)>1.0)]);
+         discreet_contacts_2= unique([1;find(diff(touchind)>2.0)]); 
         
         
         Peakpercontact=0;Peakpercontact_abs=0; 
