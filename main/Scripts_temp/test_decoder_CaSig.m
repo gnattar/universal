@@ -3,6 +3,8 @@ function [] = test_decoder_CaSig(pooled_contactCaTrials_locdep,cond,str)
 l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
 l_trials = l_trials(:,1);
 
+p = [12.0 10.5 9.0 7.5 6.0];
+ 
 if strcmp(cond,'ctrl' )   
     tk = cell2mat(cellfun(@(x) x.totalKappa_epoch_abs, pooled_contactCaTrials_locdep,'uniformoutput',0));
     pl = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
@@ -11,7 +13,7 @@ if strcmp(cond,'ctrl' )
     
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
-    p = [ 18.0 12 10.5 9.0 7.5 6.0];
+    
     pos = p(valsid)';
     
     run_classify(numtrials,resp,pos,tk)
@@ -36,7 +38,7 @@ elseif strcmp(cond,'ctrl_mani')
     
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
-    p = [ 18.0 12 10.5 9.0 7.5 6.0];
+    
     pos = p(valsid)';
     run_classify(numtrials,resp,pos,tk)
     suptitle([str ' CTRL']);
@@ -57,7 +59,7 @@ elseif strcmp(cond,'ctrl_mani')
     
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
-     p = [ 18.0 12 10.5 9.0 7.5 6.0];
+    
     pos = p(valsid)';
     run_classify(numtrials,resp,pos,tk)
     suptitle([str ' SIL']);
