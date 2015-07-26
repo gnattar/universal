@@ -447,7 +447,7 @@ for d=1:length(dends)
 
             end
             figure(h_fig4); subplot(length(dends),numloc+xcol,count);           
-            plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract),:)),'color',[1 1 1 ],'linewidth',1.5); hold on;
+            plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract),:)),'color',[0 0 0 ],'linewidth',1.5); hold on;
         end
 
         retract = find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind) >0);
@@ -466,7 +466,7 @@ for d=1:length(dends)
 
             end
             figure(h_fig5); subplot(length(dends),numloc+xcol,count);           
-            plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(retract),:)),'color',[.85 .5 .5],'linewidth',1.5); hold on;
+            plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(L_ind(retract),:)),'color',[.85 .5 .5],'linewidth',1.5); hold on;
         end
         if(~isempty(protract))
             for r=1:length(protract)
@@ -478,7 +478,7 @@ for d=1:length(dends)
 
             end
              figure(h_fig4); subplot(length(dends),numloc+xcol,count);           
-            plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract),:)),'color',[1 0 0],'linewidth',1.5); hold on;
+            plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(L_ind(protract),:)),'color',[1 0 0],'linewidth',1.5); hold on;
         end
         figure(h_fig2);
         axis([0 1.5 0 400]);
@@ -489,8 +489,14 @@ for d=1:length(dends)
         hline(30,'k.');
         hline(0,'k--');
 
-        %         figure(h_fig3);
-        %         axis([0 2.5 -.5 0.5]);
+        figure(h_fig4);
+        axis([0 1.5 0 250]);
+        hline(30,'k.');
+        hline(0,'k--');
+        figure(h_fig5);
+        axis([0 1.5 0 250]);
+        hline(30,'k.');
+        hline(0,'k--');
 
         count = count+1;
 
@@ -499,10 +505,18 @@ for d=1:length(dends)
             title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(numtrials_NL_P) ' NL ' num2str(numtrials_L_P) ' L Prot' ]);
             figure(h_fig3);
             title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(numtrials_NL_R) ' NL ' num2str(numtrials_L_R) ' L Ret' ]);
+            figure(h_fig4);
+            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(numtrials_NL_P) ' NL ' num2str(numtrials_L_P) ' L Prot' ]);
+            figure(h_fig5);
+            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(numtrials_NL_R) ' NL ' num2str(numtrials_L_R) ' L Ret' ]);
         else
             figure(h_fig2);
             title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_P) ' NL ']);
             figure(h_fig3);
+            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_R ) ' NL ']);
+            figure(h_fig4);
+            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_P) ' NL ']);
+            figure(h_fig5);
             title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_R ) ' NL ']);
         end
         
@@ -525,7 +539,7 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
-%         print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
+% print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Traces  D ' num2str(dends) 'Prot']);
 saveas(gcf,[' Loc Dep Ca Traces  D ' num2str(dends) 'Prot'],'jpg');
 % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
 
@@ -534,19 +548,30 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
-%         print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
+% print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Traces  D ' num2str(dends) 'Ret']);
 saveas(gcf,[' Loc Dep Ca Traces  D ' num2str(dends) 'Ret'],'jpg');
+% saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
+
+figure(h_fig4);
+set(gcf,'PaperUnits','inches');
+set(gcf,'PaperPosition',[1 1 24 18]);
+set(gcf, 'PaperSize', [10,24]);
+set(gcf,'PaperPositionMode','manual');
+print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Prot']);
+saveas(gcf,[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Prot'],'jpg');
+% saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
+
+figure(h_fig5);
+set(gcf,'PaperUnits','inches');
+set(gcf,'PaperPosition',[1 1 24 18]);
+set(gcf, 'PaperSize', [10,24]);
+set(gcf,'PaperPositionMode','manual');
+print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Ret']);
+saveas(gcf,[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Ret'],'jpg');
 % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
 end
 
 % 
-
-
-
-
-
-
-
 
 
 

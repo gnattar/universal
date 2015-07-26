@@ -1,6 +1,6 @@
 function [] = test_decoder_loc(pooled_contactCaTrials_locdep,cond,str,train_test)
 
-p = [15 13.5 12 10.5 9 7.5];
+p = [15 10.5 9 7.5];
 l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
 l_trials = l_trials(:,1);
  
