@@ -65,10 +65,14 @@ for d=1:length(dends)
             x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(protract)));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract));
             fittype = 'lin';
+            baselinepts = floor(0.25./pooled_contactCaTrials_locdep{n}.FrameTime);
+            baselinevals = pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract),[1:baselinepts]);
+%             baselinevals = reshape(baselinevals,(size(baselinevals,1)*size(baselinevals,2)),1);
+            noisethr = mean(prctile(baselinevals,99));
             
             if length(x) >2
                 fittype = 'lin';
-                [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
+                [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr);
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
             else
                 fittype = 'lin';
@@ -100,10 +104,14 @@ for d=1:length(dends)
             x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract)));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract));
             fittype = 'lin';
-
+            baselinepts = floor(0.25./pooled_contactCaTrials_locdep{n}.FrameTime);
+            baselinevals = pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(retract),[1:baselinepts]);
+%             baselinevals = reshape(baselinevals,(size(baselinevals,1)*size(baselinevals,2)),1);
+            noisethr = mean(prctile(baselinevals,99));
+            
             if length(x) >2
                 fittype = 'lin';
-                [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
+                [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr);
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
             else
                 fittype = 'lin';
@@ -138,7 +146,12 @@ for d=1:length(dends)
             x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind));
             y =pooled_contactCaTrials_locdep{n}.(par)(NL_ind);
             fittype = 'lin';
-            [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
+            baselinepts = floor(0.25./pooled_contactCaTrials_locdep{n}.FrameTime);
+            baselinevals = pooled_contactCaTrials_locdep{n}.filtdata(NL_ind,[1:baselinepts]);
+%             baselinevals = reshape(baselinevals,(size(baselinevals,1)*size(baselinevals,2)),1);
+            noisethr = mean(prctile(baselinevals,99));
+            
+            [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr);
             temp (:,1) = x;temp(:,2) = y; temp(:,3) = f;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype 'waves' str ]){i} = temp;
             pooled_contactCaTrials_locdep{n}.(['Fit_' fittype par str '_fitparam'])(i,:,1) = param;
@@ -176,10 +189,14 @@ for d=1:length(dends)
                 x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(protract)));
                 y =pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract));
                 fittype = 'lin';
+                baselinepts = floor(0.25./pooled_contactCaTrials_locdep{n}.FrameTime);
+                baselinevals = pooled_contactCaTrials_locdep{n}.filtdata(L_ind(protract),[1:baselinepts]);
+%                 baselinevals = reshape(baselinevals,(size(baselinevals,1)*size(baselinevals,2)),1);
+                noisethr = mean(prctile(baselinevals,99));
                 
                  if length(x) >2
                 fittype = 'lin';
-                [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
+                [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr);
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
                  else
                 fittype = 'lin';
@@ -210,9 +227,13 @@ for d=1:length(dends)
                 str = '_L_R';temp = [];
                 x=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(retract)));
                 y =pooled_contactCaTrials_locdep{n}.(par)(L_ind(retract));
+                baselinepts = floor(0.25./pooled_contactCaTrials_locdep{n}.FrameTime);
+                baselinevals = pooled_contactCaTrials_locdep{n}.filtdata(L_ind(retract),[1:baselinepts]);
+%                 baselinevals = reshape(baselinevals,(size(baselinevals,1)*size(baselinevals,2)),1);
+                noisethr = mean(prctile(baselinevals,99));
                 if length(x) >2
                 fittype = 'lin';
-                [param,paramCI,fitevals,f] = FitEval(x,y,fittype);
+                [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr);
                 temp (:,1) = x;temp(:,2) = y;temp(:,3) = f;
                  else
                 fittype = 'lin';

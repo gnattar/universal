@@ -1,5 +1,9 @@
 function [pR_ThK,pR_Th,pR_K] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,wpar,indstr,cscale,ptype)
 
+% peakloc =       % location at which least touch gives most amp
+% peakamp = 
+%%[pR_ThK,pR_Th,pR_K] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,wpar,indstr,cscale,ptype)
+
 % cdir= cellfun( @(x) (sum(x==1)>sum(x==0))*1+(sum(x ==1)<sum(x==0)*0), pooled_contactCaTrials_locdep{d}.contactdir);
 % protrials_ind = find(cdir==1);
 % rettrials_ind = find(cdir==0);
@@ -56,7 +60,9 @@ end
 
 subplot(3,plotcols,1);
 if ptype == 'cf'
-    contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]); % axis([0 400 0.0001 2.5]);
+    Rtemp = R;
+    Rtemp(isnan(R)) = 0;
+    contourf(pos,ThKmid{2},Rtemp');caxis([0 cscale(2)]); % axis([0 400 0.0001 2.5]);
 elseif ptype == 'cs'
    contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;  scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
 end
@@ -90,7 +96,9 @@ if ~isempty(Lind)
     % figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
     subplot(3,plotcols,plotcols);
     if ptype == 'cf'
-    contourf(pos,ThKmid{2},R');caxis([0 cscale(2)]);   %axis([0 400 0.0001 2.5]);
+    Rtemp = R;
+    Rtemp(isnan(R)) = 0;
+    contourf(pos,ThKmid{2},Rtemp');caxis([0 cscale(2)]);   %axis([0 400 0.0001 2.5]);
     elseif ptype == 'cs'
     contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;   scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
     end
@@ -128,9 +136,12 @@ bins(1) = {[-25:5:-5,30]}; % theta bins
 
 vals(:,1) = l;vals(:,2) = k;vals(:,3) = r;
 
-bins(1) = {[50 200 250 270 300]};
 
-bins(2) ={logspace(-4,2.5,10)}; %Kappa bins
+ bins(1) = {[210 250 280 310 350 ]};
+
+
+
+bins(2) ={logspace(-4,.5,6)}; %Kappa bins
 bins(3) = {[0:100:800]}; % Resp peak bins
 
 [count edges mid loc] = histcn(vals,bins{1},bins{2},bins{3}); %% joint dist Theta Kappa Capeak
@@ -196,9 +207,9 @@ temp(:,i)  = temp(:,i) ./pK;
 end
 pR_K = temp;
 
-R = zeros(size(pThK)); 
+R = nan(size(pThK)); 
 K = nan(length(ThKmid{2}),1);
-T = zeros(length(ThKmid{1}),1);
+T = nan(length(ThKmid{1}),1);
 
 for Tpos = 1:length(ThKmid{1})
     for Kpos = 1:length(ThKmid{2})

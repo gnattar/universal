@@ -1,4 +1,4 @@
-function [param,paramCI,fitevals,f] = FitEval(x,y,fittype)
+function [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr)
 f = [];
 fitevals =[];
 param =[];
@@ -6,7 +6,8 @@ paramCI = [];
 switch fittype
     case 'lin'
 % st line fit
-        [param,S]  = polyfit(x,y,1);
+        [param,S]  = polyfitB(x,y,1,noisethr); %% forcing intercept to zero as no resp for non-touches
+%         [param,S]  = polyfit(x,y,1);
         paramCI = polyparci(param,S,0.95); 
         f =  polyval(param,x);
         sse = sum((y-f).^2);

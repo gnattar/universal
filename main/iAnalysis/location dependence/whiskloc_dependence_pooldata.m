@@ -19,7 +19,7 @@ for i = 1: size(collected_summary,2)
         winsize = round(.2/sampling_time);
         temp_data = data;
         temp_data_filt = filter(ones(1,winsize)/winsize,1,data,[],2);
-
+%         temp_data = temp_data_filt;
         temp_totalKappa = cell2mat(arrayfun(@(x) x.total_touchKappa(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch_abs  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch_abs(1), collected_data{1,i},'uniformoutput',0)');
