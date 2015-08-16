@@ -1,4 +1,4 @@
-function [] = test_decoder_loc(pooled_contactCaTrials_locdep,cond,str,train_test)
+function [pooled_contactCaTrials_locdep] = test_decoder_loc(pooled_contactCaTrials_locdep,cond,str,train_test)
 
 
 p = [15 13.5 12 10.5 9 7.5];
@@ -39,6 +39,7 @@ if strcmp(cond,'ctrl' )
     summary.ctrl.percentoverlap = pOL_all;
     summary.info =  [str];
     save([str ' decoder results'],'summary');
+    
     
 elseif strcmp(cond,'ctrl_mani')    
     

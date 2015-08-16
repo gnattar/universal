@@ -6,8 +6,15 @@ paramCI = [];
 switch fittype
     case 'lin'
 % st line fit
-        [param,S]  = polyfitB(x,y,1,noisethr); %% forcing intercept to zero as no resp for non-touches
-%         [param,S]  = polyfit(x,y,1);
+        if noisethr >0
+            [param,S]  = polyfitB(x,y,1,noisethr); %% forcing intercept to noise threshold as no resp for non-touches
+        else
+            [param,S]  = polyfit(x,y,1);
+            if (param(1) <0)
+                [param,S]  = polyfitB(x,y,1,min(y));
+            end
+                
+        end
         paramCI = polyparci(param,S,0.95); 
         f =  polyval(param,x);
         sse = sum((y-f).^2);

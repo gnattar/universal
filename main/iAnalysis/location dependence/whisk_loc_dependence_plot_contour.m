@@ -42,6 +42,8 @@ if indstr == 'P'
     ind = (ls ==0) & (cd ==1);
 elseif indstr == 'R'
     ind=(ls == 0) & (cd == 0);
+elseif indstr == 'PR'
+     ind=(ls == 0);
 end
 
 t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(ind);
@@ -70,7 +72,7 @@ set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',1
 % subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]); 
 % subplot(2,2,4); colorbar;
 subplot(3,plotcols,plotcols+1); plot(pos,T,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([0 400 0 cscale(2)]); 
-subplot(3,plotcols,2*plotcols+1); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 2.5 -10 cscale(2)]); set(gca,'xscale','log');
+subplot(3,plotcols,2*plotcols+1); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');
 set(gca,'FontSize',12);
 TK = T*K';
 % Lw = R./TK;
@@ -85,6 +87,8 @@ if ~isempty(Lind)
         ind = (ls ==1) & (cd ==1);
     elseif indstr == 'R'
         ind=(ls == 1) & (cd == 0);
+    elseif indstr == 'PR'
+        ind=(ls == 1);
     end
     
     t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(ind);
@@ -106,7 +110,7 @@ if ~isempty(Lind)
     % subplot(4,2,4);surf(ThKmid{2},pos,R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
     % subplot(2,2,4); colorbar;
     subplot(3,plotcols,2*plotcols); plot(pos,T,'o-');  xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12); axis([0 400 0 cscale(2)]);
-    subplot(3,plotcols,3*plotcols); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.0001 2.5 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',12);
+    subplot(3,plotcols,3*plotcols); plot(ThKmid{2},K,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',12);
     % suptitle([num2str(d) indstr]);
     TK = T*K';
     suptitle([num2str(d) indstr]);
@@ -137,11 +141,11 @@ bins(1) = {[-25:5:-5,30]}; % theta bins
 vals(:,1) = l;vals(:,2) = k;vals(:,3) = r;
 
 
- bins(1) = {[210 250 280 310 350 ]};
+ bins(1) = {[40 180 210 250 280 310 350 ]};
 
 
 
-bins(2) ={logspace(-4,.5,6)}; %Kappa bins
+bins(2) ={logspace(-4,2,6)}; % dKappa bins
 bins(3) = {[0:100:800]}; % Resp peak bins
 
 [count edges mid loc] = histcn(vals,bins{1},bins{2},bins{3}); %% joint dist Theta Kappa Capeak
