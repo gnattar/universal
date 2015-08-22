@@ -86,6 +86,7 @@ for d=1:length(dends)
                     [y,sortiNL] = sort(ka,'descend');
                     tattind=[1 1]; % theta at touch ind
                     tatt = mean(pooled_contactCaTrials_locdep{n}.Theta_at_contact_Mean(NL_ind));
+%                     if i ==1 tatt = -3.9062; end % for sess 156_150711
                 case 'L'
                     ka=abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind));
                     ca=pooled_contactCaTrials_locdep{n}.(capar)(L_ind);
@@ -148,10 +149,11 @@ for d=1:length(dends)
             figure(h_fig1);subplot(length(dends),numloc+xcol,count);
             if strcmp(str,'NL_P') | strcmp(str,'L_P')
                 errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
-            elseif strcmp(str,'NL')
+            elseif strcmp(str,'NL') | strcmp(str,'L')
                 errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
             end
             hold on;
+%             if i ==2 tatt = abs(tatt); end % for sess 157_150723
             pooled_contactCaTrials_locdep{n}.fitmean.([str '_theta_at_touch'])(i,tattind(1),tattind(2)) = tatt;
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,1) = ca_l_m;
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,2) = ca_l_sd;
@@ -183,7 +185,7 @@ for d=1:length(dends)
             
             if strcmp(str,'NL_P') | strcmp(str,'L_P')
                 plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);
-            elseif strcmp(str,'NL')
+            elseif strcmp(str,'NL') | strcmp(str,'L')
                 plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);
             end
             hold on;
@@ -299,13 +301,15 @@ for d=1:length(dends)
         plot([1:numloc],slopesCI(:,slopes_column,1)./mean(slopes(:,slopes_column,1)),'--o','color',col);  plot([1:numloc],slopesCI(:,slopes_column,2)./mean(slopes(:,slopes_column,1)),'k--o','color',col);
         %     LPI = (max(abs(e(:,2)))-min(abs(slopes(:,2))))/(max(abs(slopes(:,2)))+min(abs(slopes(:,2))));
         LPI = max(abs(slopes(:,slopes_column,1)))/(mean(abs(slopes(:,slopes_column,1))));
+        LPI_diff = max(abs(slopes(:,slopes_column,1)))-(min(abs(slopes(:,slopes_column,1))));
         [v,LP] = max(abs(slopes(:,slopes_column,1)));
 %         LPI2 = max(abs(slopes(:,slopes_column,1)))/(mean(abs(slopes(:,slopes_column,1))));
         
         
-        LPI = round(LPI*100)./100;
-        tb=text(tp,LPI+1,['LPI ' num2str(LPI)],'FontSize',18);set(tb,'color',col);
+        LPI = round(LPI*100)./100; LPI_diff = round(LPI_diff*100)./100;
+        tb=text(tp,LPI+1,['LPI_d ' num2str(LPI_diff)],'FontSize',18);set(tb,'color',col);
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_LPI']) = LPI;
+        pooled_contactCaTrials_locdep{n}.fitmean.([str '_LPI_diff']) = LPI_diff;
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_LP_pos']) = pos(LP);
         tatt_all =  pooled_contactCaTrials_locdep{n}.fitmean.([str '_theta_at_touch']);
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_Pref_thetaattouch']) =  tatt_all(LP,:);
@@ -321,7 +325,7 @@ for d=1:length(dends)
         % % % % % % % % % %         tb = text(4,max(slopes(:,1,1)) +100,['LPI_l ' num2str(LPI_l)],'FontSize',18);set(tb,'color','r');
         % % % % % % % % % %
         % % % % % % % % % %     end
-        pooled_contactCaTrials_locdep{n}.fitmean.([str 'slopes']) =slopes;
+        pooled_contactCaTrials_locdep{n}.fitmean.([str 'slopes']) =slopes(:,slopes_column,:);
     end
     
     %     axis([0  numloc+1 -100  max(slopes(:,2))+200]);

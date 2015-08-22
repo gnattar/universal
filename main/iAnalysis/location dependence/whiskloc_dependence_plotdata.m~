@@ -598,11 +598,9 @@ if disp
                 figure(h_fig4);
   
                 if fit_separate
-                    title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_P) ' NL ']);
+                                  title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_P) ' NL ']);
                     figure(h_fig5);
                     title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL_R ) ' NL ']);
-                else
-                     title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' num2str(numtrials_NL) ' NL ']);
                     
                 end
             end

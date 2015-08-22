@@ -313,6 +313,7 @@ for i=1:length(child)
         filetype{j} = get(child(i),'String');
     end
 end
+filetype = strrep(filetype,'eps', 'epsc');
 
 if isempty(filetype)
     errordlg('No format selected! Aborted.')
