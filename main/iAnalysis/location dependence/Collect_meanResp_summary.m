@@ -1,6 +1,13 @@
 function [collected_meanRespPref_summary_stats,data] = Collect_meanResp_summary(PrefLocFixed)
 % [collected_meanRespPref_summary_stats,data] = Collect_meanResp_summary(PrefLocFixed)
 %Always have PrefLocFixed=1, doesnt make sense otherwise
+%% you need to have run whiskloc_dep_stats & whisk_locdep_plot_contour before this 
+% toquickly run them
+% [pooled_contactCaTrials_locdep]= whiskloc_dependence_stats(pooled_contactCaTrials_locdep,[1:size(pooled_contactCaTrials_locdep,2)],'re_totaldK','sigpeak', [12 11 10 9 8],0,0);
+% for d = 1: size(pooled_contactCaTrials_locdep,2)
+%     [ThKmid,R,T,K,Tk,pooled_contactCaTrials_locdep] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,'re_totaldK','PR',[0 400],'cf',0,[180 210 230 250 270 300]);
+% end
+
 collected_meanResp_summary_stats = {};
 count=0;
 def={'136','150322','self'};

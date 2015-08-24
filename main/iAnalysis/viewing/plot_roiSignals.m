@@ -1,6 +1,6 @@
 function plot_roiSignals(obj,fov,rois,roislist,tag_trialtypes,trialtypes,sfx,nam,overlay,plot_traces)
 % plot signals arranged by rois : to check roi selection in fovs
-roisperfig = 5;
+roisperfig = 7;
 pxlpermm = 24.38; %% 18-7.5 mm = 298-42 pixels
 % s_time = 1.0 ;
 s_time = 0;

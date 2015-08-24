@@ -80,11 +80,12 @@ plat(rejects,:) = [];
         
         save(['cd_' num2str(n)], 'cd');
 
-        %% plotting raw data
+
+%%        %% plotting raw data
  k = 1;
  clim = [0 150];
  
-cd = corr_dend_data{k};
+% cd = corr_dend_data{k};
 n = cd.corr_dend_ID;
 % a =find(corr_dend==n);
 a = cd.rois;
@@ -122,7 +123,7 @@ tempnl= mean(avg_rawdata_nl,3);
 templ= mean(avg_rawdata_l,3);
 
 xt = [1:size(avg_rawdata_l,2)].*obj{1}.FrameTime;
-
+if size(a,1)>1 a=a'; end
 figure;subplot(1,2,1); imagesc(xt,[1:size(templ,1)],tempnl);colorbar ;caxis(clim);
 subplot(1,2,2);imagesc(xt,[1:size(templ,1)],templ);caxis(clim); colorbar 
 title([num2str(k)  ' Avg_traces ID ' num2str(n)  ' mean of rois ' num2str(a)]);

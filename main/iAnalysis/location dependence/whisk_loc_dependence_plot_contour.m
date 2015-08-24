@@ -1,5 +1,5 @@
 function [ThKmid,R,T,K,Tk,pooled_contactCaTrials_locdep] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,wpar,indstr,cscale,ptype,disp,locbins)
-
+%  [ThKmid,R,T,K,Tk,pooled_contactCaTrials_locdep] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,wpar,indstr,cscale,ptype,disp,locbins)
 % peakloc =       % location at which least touch gives most amp
 % peakamp =
 %%[pR_ThK,pR_Th,pR_K] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,wpar,indstr,cscale,ptype)
@@ -79,8 +79,8 @@ set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',1
 % subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
 % subplot(2,2,4); colorbar;
 subplot(4,plotcols,plotcols+1); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');
-subplot(4,plotcols,2*plotcols+1); errorbar(pos,T,Ts,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([0 400 0 cscale(2)]);
-subplot(4,plotcols,3*plotcols+1); errorbar(pos,Tk,Tks,'o-'); xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12);axis([0 400 0 .35]);
+subplot(4,plotcols,2*plotcols+1); errorbar(pos,T,Ts,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([100 350 0 cscale(2)]);
+subplot(4,plotcols,3*plotcols+1); errorbar(pos,Tk,Tks,'o-'); xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12);axis([100 350 0 .5]);
 
 set(gca,'FontSize',12);
 TK = T*K';
@@ -128,8 +128,8 @@ if ~isempty(Lind)
     % subplot(4,2,4);surf(ThKmid{2},pos,R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
     % subplot(2,2,4); colorbar;
     subplot(4,plotcols,2*plotcols); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',12);
-    subplot(4,plotcols,3*plotcols); errorbar(pos,T,Ts,'o-');  xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12); axis([0 400 0 cscale(2)]);
-    subplot(4,plotcols,4*plotcols); errorbar(pos,Tk,Tks,'o-');  xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12); axis([0 400 0 .35]);
+    subplot(4,plotcols,3*plotcols); errorbar(pos,T,Ts,'o-');  xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12); axis([100 350 0 cscale(2)]);
+    subplot(4,plotcols,4*plotcols); errorbar(pos,Tk,Tks,'o-');  xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12); axis([100 350 0 .5]);
     
     % suptitle([num2str(d) indstr]);
     TK = T*K';

@@ -11,8 +11,9 @@ for i = 1: size(collected_summary,2)
         temp_tws = arrayfun(@(x) x.ts_wsk{1}, collected_data{1,i},'uniformoutput',0)';
         temp_touchTheta = arrayfun(@(x) x.theta{1}, collected_data{1,i},'uniformoutput',0)'; 
         temp_touchdeltaKappa = arrayfun(@(x) x.deltaKappa{1}, collected_data{1,i},'uniformoutput',0)';         
-        temp_Theta_at_contact = arrayfun(@(x) x.Theta_at_contact{1}, collected_data{1,i},'uniformoutput',0)'; 
-        
+
+            temp_Theta_at_contact = arrayfun(@(x) x.Theta_at_contact{1}, collected_data{1,i},'uniformoutput',0)'; 
+
     for j = 1:d
         data = cell2mat(arrayfun(@(x) x.dff(j,:), collected_data{1,i},'uniformoutput',0)');
         sampling_time = collected_data{1,i}(1).FrameTime;
@@ -23,7 +24,8 @@ for i = 1: size(collected_summary,2)
         temp_totalKappa = cell2mat(arrayfun(@(x) x.total_touchKappa(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch_abs  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch_abs(1), collected_data{1,i},'uniformoutput',0)');
-        temp_Theta_at_contact_Mean =cell2mat( arrayfun(@(x) x.Theta_at_contact_Mean{1}, collected_data{1,i},'uniformoutput',0)'); 
+        
+         temp_Theta_at_contact_Mean =cell2mat( arrayfun(@(x) x.Theta_at_contact_Mean{1}, collected_data{1,i},'uniformoutput',0)'); 
         temp_contacts = arrayfun(@(x) x.contacts_shifted{1}, collected_data{1,i},'uniformoutput',0)'; 
         temp_contactdir = arrayfun(@(x) x.contactdir{1}, collected_data{1,i},'uniformoutput',0)'; 
    
@@ -166,8 +168,10 @@ for i = 1: size(collected_summary,2)
         
         pooled_contactCaTrials_locdep {count}.totalKappa_epoch = temp_totalKappa_epoch./pxlpermm;
         pooled_contactCaTrials_locdep {count}.totalKappa_epoch_abs = temp_totalKappa_epoch_abs./pxlpermm;
+
         pooled_contactCaTrials_locdep {count}.Theta_at_contact = temp_Theta_at_contact;
         pooled_contactCaTrials_locdep {count}.Theta_at_contact_Mean = temp_Theta_at_contact_Mean;
+
         
         count = count+1;
     end
