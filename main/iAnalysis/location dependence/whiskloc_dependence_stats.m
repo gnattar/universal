@@ -43,6 +43,7 @@ for d=1:length(dends)
         pooled_contactCaTrials_locdep{n}.fitmean.(['L_fitparamCI']) = nan(numloc,2,2);
         pooled_contactCaTrials_locdep{n}.fitmean.(['L_fitevals']) = nan(numloc,3,2);
     end
+    
     dKappa_bins=(logspace(-4,0,10));
     theta_at_touch = nan(numloc,2,2);
     for i = 1:numloc
@@ -141,25 +142,43 @@ for d=1:length(dends)
             
             [h,edges,mid,l] = histcn(ka,dKappa_bins);
             for cn = 1: length(h)
-                ca_l_m(cn)  = mean(ca(find(l==cn)));
-                ca_l_sd(cn) = std(ca(find(l==cn)))./sqrt(h(cn)+1);
-                ka_l_m(cn)  = mean(ka(find(l==cn)));
-                ka_l_sd(cn) = std(ka(find(l==cn)))./sqrt(h(cn)+1);
+                if (h(cn) > 1)
+                    ca_l_m(cn)  = nanmean(ca(find(l==cn)));
+                    ca_l_sd(cn) = nanstd(ca(find(l==cn)))./sqrt(h(cn)+1);
+                    ka_l_m(cn)  = nanmean(ka(find(l==cn)));
+                    ka_l_sd(cn) = nanstd(ka(find(l==cn)))./sqrt(h(cn)+1);
+                else
+                    ca_l_m(cn)  =nan;
+                    ca_l_sd(cn) = nan;
+                    ka_l_m(cn)  = nan;
+                    ka_l_sd(cn) = nan;
+                end
             end
             figure(h_fig1);subplot(length(dends),numloc+xcol,count);
             if strcmp(str,'NL_P') | strcmp(str,'L_P')
-                errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
+%                 errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
+                    plot(mid{1},ca_l_m,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
             elseif strcmp(str,'NL') | strcmp(str,'L')
-                errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
+%                 errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
+                plot(mid{1},ca_l_m,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
             end
             hold on;
 %             if i ==2 tatt = abs(tatt); end % for sess 157_150723
             pooled_contactCaTrials_locdep{n}.fitmean.([str '_theta_at_touch'])(i,tattind(1),tattind(2)) = tatt;
-            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,1) = ca_l_m;
-            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,2) = ca_l_sd;
-            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar])(:,1) = ka_l_m;
-            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar])(:,2) = ka_l_sd;
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,i,1) = ca_l_m;
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,i,2) = ca_l_sd;
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar])(:,i,1) = ka_l_m;
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar])(:,i,2) = ka_l_sd;
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' 'mid'])(:,1) = mid;
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' 'npts'])(:,1) = h;
+           
+%             pooled_contactCaTrials_locdep{n}.pointslope.([ str '_']){i} = ca./ka;
+%             pooled_contactCaTrials_locdep{n}.pointslope.([ str '_mean'])(i,1) = nanmean(ca./ka);
+%             pooled_contactCaTrials_locdep{n}.pointslope.([ str '_std'])(i,1) = nanstd(ca./ka);
+            
+            pooled_contactCaTrials_locdep{n}.pointslope.([ str '_B']){i} = ca_l_m./ ka_l_m;
+            pooled_contactCaTrials_locdep{n}.pointslope.([ str '_meanB'])(i,1) = nanmean(ca_l_m./ ka_l_m);
+            pooled_contactCaTrials_locdep{n}.pointslope.([ str '_stdB'])(i,1) = nanstd(ca_l_m./ ka_l_m);
             
             temp = [];
             notnan = ~isnan(ka_l_m);
@@ -220,7 +239,7 @@ for d=1:length(dends)
             imdata = pooled_contactCaTrials_locdep{n}.rawdata(inds_all,:);
             im_data_t = [1:size(imdata,2)].* pooled_contactCaTrials_locdep{n}.FrameTime;
             trials = [1:length(inds_all)];
-            imagesc(im_data_t,trials,imdata); caxis([0,400]);colormap(jet);%colormap([1-gray]);
+            imagesc(im_data_t,trials,imdata); caxis([0,250]);colormap(jet);%colormap([1-gray]);
             hline(length(NL_ind),'w-');
             t=[1,length(inds_all)];
             set(gca,'YTick',t);
@@ -299,8 +318,10 @@ for d=1:length(dends)
         
         %     h= plot([1:numloc],slopes(:,1),'--o','color',[.5 .5 .5]); set(h,'linewidth',3);hold on; % Ret
         h= plot([1:numloc],slopes(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col,'linewidth',2); hold on; % Prot
-        plot([1:numloc],slopesCI(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col);  plot([1:numloc],slopesCI(:,slopes_column,2)./mean(slopes(:,1,1)),'k--o','color',col); %(normalizing wrt ctrl)
-       
+         pntslp = pooled_contactCaTrials_locdep{n}.pointslope.([ str '_meanB'])(:,1); 
+         pntslpctrl=  pooled_contactCaTrials_locdep{n}.pointslope.(['NL_meanB'])(:,1); 
+%          plot([1:numloc],pntslp(:,1)./mean(pntslpctrl(:,1)),'-o','color',col,'linewidth',2);
+%         plot([1:numloc],slopesCI(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col);  plot([1:numloc],slopesCI(:,slopes_column,2)./mean(slopes(:,1,1)),'k--o','color',col); %(normalizing wrt ctrl)
         %     LPI = (max(abs(e(:,2)))-min(abs(slopes(:,2))))/(max(abs(slopes(:,2)))+min(abs(slopes(:,2))));
         LPI = max(abs(slopes(:,slopes_column,1)))/(mean(abs(slopes(:,slopes_column,1))));
         LPI_diff = max(abs(slopes(:,slopes_column,1)))-(min(abs(slopes(:,slopes_column,1))));
@@ -312,13 +333,20 @@ for d=1:length(dends)
 %         tb=text(tp,LPI+1,['LPI_d ' num2str(LPI_diff)],'FontSize',18);set(tb,'color',col);
         if strcmp(str,'NL')
            lpinorm = max(slopes(:,slopes_column,1)./mean(slopes(:,1,1)));
+           pslnorm = max(pntslp(:,1))./mean(pntslp(:,1));
         elseif strcmp(str,'L')
             [ctrlnormslope,ctrllp] = max( slopes(:,1,1)./mean(slopes(:,1,1)));
             tempw=slopes(:,slopes_column,1)./mean(slopes(:,1,1));
-            lpinorm = tempw(ctrllp);
+            lpinorm = max(tempw);
+%             lpinorm = tempw(ctrllp); %at lp of ctrl
+            pslnorm = max(pntslp(:,1))./mean(pntslpctrl(:,1));
         end
-        tb=text(tp,2,['LPInCTRL ' num2str(lpinorm)],'FontSize',18);set(tb,'color',col);
+        lpinorm=round(lpinorm*100)./100;
+        pslpnorm = round(pslnorm*100)./100;
+        tb=text(tp-1,tp-.5,['FS' num2str(lpinorm)],'FontSize',14);set(tb,'color',col);
+%         tb=text(tp-1,tp+.5,['PS' num2str(pslpnorm)],'FontSize',14);set(tb,'color',col);
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_LPI']) = LPI;
+        pooled_contactCaTrials_locdep{n}.pointslope.([str '_LPI']) = pslpnorm;
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_LPI_diff']) = LPI_diff;
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_LP_pos']) = pos(LP);
         tatt_all =  pooled_contactCaTrials_locdep{n}.fitmean.([str '_theta_at_touch']);
@@ -339,7 +367,7 @@ for d=1:length(dends)
     end
     
     %     axis([0  numloc+1 -100  max(slopes(:,2))+200]);
-    axis([1  numloc 0 3.5]);
+    axis([1  numloc 0 4]);
     hline(0,'k:'); hline(1,'b:');
     title( ' slopes');
     

@@ -1,4 +1,4 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_dependence_pooldata(collected_data,collected_summary)
+function [pooled_contactCaTrials_locdep] = whiskloc_dependence_pooldata(collected_data,collected_summary,src_smoothed)
 pooled_contactCaTrials_locdep = [];
 count =1;
 pxlpermm = 24.38; %% 18-7.5 mm = 298-42 pixels
@@ -20,7 +20,9 @@ for i = 1: size(collected_summary,2)
         winsize = round(.2/sampling_time);
         temp_data = data;
         temp_data_filt = filter(ones(1,winsize)/winsize,1,data,[],2);
-%         temp_data = temp_data_filt;
+        if src_smoothed
+         temp_data = temp_data_filt;
+        end
         temp_totalKappa = cell2mat(arrayfun(@(x) x.total_touchKappa(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch(1), collected_data{1,i},'uniformoutput',0)');
         temp_totalKappa_epoch_abs  =cell2mat(arrayfun(@(x) x.total_touchKappa_epoch_abs(1), collected_data{1,i},'uniformoutput',0)');
@@ -133,7 +135,7 @@ for i = 1: size(collected_summary,2)
 
         end
 
-        pooled_contactCaTrials_locdep {count}.rawdata = temp_data;
+        pooled_contactCaTrials_locdep {count}.rawdata = data;
         pooled_contactCaTrials_locdep {count}.filtdata =temp_data_filt ;
         pooled_contactCaTrials_locdep {count}.sigmag = nansum(temp_data,2);
         pooled_contactCaTrials_locdep {count}.sigpeak = prctile(temp_data,99,2);
@@ -226,8 +228,11 @@ pxlpermm = 24.38;
           end
       end
 
-
-save('pooled_contactCaTrials_locdep','pooled_contactCaTrials_locdep','-v7.3');
+if src_smoothed
+    save('pooled_contactCaTrials_locdep_smth','pooled_contactCaTrials_locdep','-v7.3');
+else
+    save('pooled_contactCaTrials_locdep_raw','pooled_contactCaTrials_locdep','-v7.3');
+end
 
 
 

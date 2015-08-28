@@ -4033,7 +4033,7 @@ end
 
 Caframetime = CaTrials.FrameTime;
 baseline = 0.25; %New tg data to .25
-dur = 4; % for old data change to 4.0 New tg data to 1.25
+dur = 1.25; % for old data change to 4.0 New tg data to 1.25
 wSigframerate = 500;
 numpts=ceil((dur+baseline)*wSigframerate*2);% 1.5 seconds worth of data 5s for old data
 numframes = ceil((dur+baseline)/Caframetime);% 1.5 seconds worth of data

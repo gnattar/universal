@@ -1,4 +1,4 @@
-function [Sil_sameLP,Sil_diffLP,Inc_sameLP,Inc_diffLP]= Analyze_meanResp_summary(data)
+function [Sil_sameLP,Sil_diffLP,Inc_sameLP,Inc_diffLP]= Analyze_meanResp_summary(data,lightcond,group)
 %%Analyze_meanResp_summary(data)
 %% you need to have run whiskloc_dep_stats & whisk_locdep_plot_contour before this 
 % toquickly run them
@@ -16,36 +16,48 @@ mRPrefLoc_nl=arrayfun(@(x) x.meanRespPrefLoc_ctrl(1,:)', data,'uni',0)';mRPrefLo
 PTh_nl= arrayfun(@(x) x.PTh_ctrl(1,:)', data,'uni',0)';PTh_nl=cell2mat(PTh_nl{1});
 PLoc_nl= arrayfun(@(x) x.PLoc_ctrl(1,:)', data,'uni',0)';PLoc_nl=cell2mat(PLoc_nl{1});
 
-LPI_l=arrayfun(@(x) x.LPI_mani(1,:)', data,'uni',0)';LPI_l = cell2mat(LPI_l{1});
+if lightcond
+  LPI_l=arrayfun(@(x) x.LPI_mani(1,:)', data,'uni',0)';LPI_l = cell2mat(LPI_l{1});
 LPInCTRL_l=arrayfun(@(x) x.LPInCTRL_mani(1,:)', data,'uni',0)';LPInCTRL_l = cell2mat(LPInCTRL_l{1});
 LPId_l=arrayfun(@(x) x.LPId_mani(1,:)', data,'uni',0)';LPId_l = cell2mat(LPId_l{1});% this has max - mean
 diffmR_l=arrayfun(@(x) x.diffmeanResp_mani(1,:)', data,'uni',0)';diffmR_l = cell2mat(diffmR_l{1});% this has max - min
 mRPrefLoc_l=arrayfun(@(x) x.meanRespPrefLoc_mani(1,:)', data,'uni',0)';mRPrefLoc_l = cell2mat(mRPrefLoc_l{1}); 
 PTh_l= arrayfun(@(x) x.PTh_mani(1,:)', data,'uni',0)';PTh_l=cell2mat(PTh_l{1});
-PLoc_l= arrayfun(@(x) x.PLoc_mani(1,:)', data,'uni',0)';PLoc_l=cell2mat(PLoc_l{1});
-
+PLoc_l= arrayfun(@(x) x.PLoc_mani(1,:)', data,'uni',0)';PLoc_l=cell2mat(PLoc_l{1});  
 
 % LPI from norm slopes wrt ctrl data
+
 effect = (LPInCTRL_nl(:,1)>LPInCTRL_l(:,1));
+if lightcond & ~group
+    effect(:,1) = 1;
+end
 sil = find(effect==1);
 inc= find(effect==0);
 
-% % % LPI from norm slopes 
-% % effect = (LPI_nl(:,1)>LPI_l(:,1));
-% % sil = find(effect==1);
-% % inc= find(effect==0);
+else
+    effect = ones(size(LPInCTRL_nl,1));
+    sil = find(effect==1);
+    inc =[];
+end
+
+
 
 %Norm Slope at PRef Loc
 bins = [0:.25:10];
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 subplot(1,2,1);hnl=hist(LPInCTRL_nl(:,1),bins);plot(bins,hnl,'k');hold on ;
-hl=hist(LPInCTRL_l(:,1),bins); plot(bins,hl,'r');set(gca,'yscale','lin');
+if lightcond
+hl=hist(LPInCTRL_l(:,1),bins); plot(bins,hl,'r');
+end
+set(gca,'yscale','lin');
 xlabel('Loc Pref normalized Slope Max/Mean','Fontsize',16);title('Hist LPI NormSlope Max/Mean','Fontsize',16);
 set(gca,'Fontsize',16);
 
 subplot(1,2,2);plot(bins,cumsum(hnl),'k');hold on ;
+if lightcond
 plot(bins,cumsum(hl),'r');set(gca,'yscale','lin');
+end
 xlabel('Loc Pref normalized Slope Max/Mean','Fontsize',16);title('Cum Hist LPI NormSlope Max/Mean','Fontsize',16);
 set(gca,'Fontsize',16);
 text(5,80,['Sil ' num2str(length(sil))  ' cells']);
@@ -56,21 +68,28 @@ bins = [0:25:600];
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 subplot(1,2,1);hnl=hist(mRPrefLoc_nl(:,1),bins);plot(bins,hnl,'k');hold on ;
-hl=hist(mRPrefLoc_l(:,1),bins); plot(bins,hl,'r');set(gca,'yscale','lin');
+if lightcond
+hl=hist(mRPrefLoc_l(:,1),bins); plot(bins,hl,'r');
+end
+set(gca,'yscale','lin');
 xlabel('mean Resp Amp at Pref Loc','Fontsize',16);title('Hist mean Resp Amp at Pref Loc','Fontsize',16);
 set(gca,'Fontsize',16);
 
 subplot(1,2,2);plot(bins,cumsum(hnl),'k');hold on ;
+if lightcond
 plot(bins,cumsum(hl),'r');set(gca,'yscale','lin');
+end
 xlabel('mean Resp Amp at Pref Loc','Fontsize',16);title('Cum Hist mean Resp Amp at Pref Loc','Fontsize',16);
 set(gca,'Fontsize',16);
 text(100,200,['Sil ' num2str(length(sil))  ' cells']);
 text(100,180,['Inc ' num2str(length(inc))  ' cells']);
 
-
+% plotting norm slopes ctrl
 totaldends = size(LPInCTRL_nl,1);
 hsil=figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w'); hold on;
+if lightcond
 hinc=figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w'); hold on;
+end
 count = 1;
 thetabins = [-50:5:50];
 tempdata= nan(totaldends,length(thetabins),2);
@@ -82,6 +101,7 @@ for sess = 1: size(data.NormSlopesnCTRL_ctrl,2)
         temp = touch_th-Pref_touch_th;
         x = 5.*round(temp/5); % rounding to nearest 5
         y = data.NormSlopesnCTRL_ctrl{sess}(d,:,1);
+        
         if effect(count)==1
             figure(hsil);ind = 1;
         else
@@ -117,7 +137,7 @@ set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
 NormSlopesnCTRL_PTcentered_nl = tempdata;
 
 count = 1;
-
+% plotting Norm slopes mani
 tempdata= nan(totaldends,length(thetabins),2);
 for sess = 1: size(data.NormSlopes_mani,2)
     dends = size(data.Slopes_mani{sess},1);
@@ -161,6 +181,107 @@ set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
 
 NormSlopesnCTRL_PTcentered_l = tempdata;
 
+% plotting mResp ctrl
+totaldends = size(LPInCTRL_nl,1);
+hsil=figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w'); hold on;
+hinc=figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w'); hold on;
+count = 1;
+thetabins = [-50:5:50];
+tempdata= nan(totaldends,length(thetabins),2);
+for sess = 1: size(data.meanResp_ctrl,2)
+    dends = size(data.meanResp_ctrl{sess},1);
+    for d = 1:dends
+        y = data.meanResp_ctrl{sess}(d,:,1);
+        [maxval,LP] = max(y); 
+        touch_th = data.TouchTh_ctrl{sess}(d,:);
+        Pref_touch_th = touch_th(LP);
+        temp = touch_th-Pref_touch_th;
+        x = 5.*round(temp/5); % rounding to nearest 5
+%         y=y./nanmin(data.meanResp_ctrl{sess}(d,:,1)); % if you want to normalize
+        if effect(count)==1
+            figure(hsil);ind = 1;
+        else
+            figure(hinc);ind =2;
+        end               
+        subplot(1,2,1);plot(x,y,'o-','color',[.5 .5 .5],'MarkerEdgeColor',[.5 .5 .5],'MarkerFaceColor',[.5 .5 .5],'linewidth',.05); hold on;
+        for t = 1:length(x)
+            tempdata (count,find(thetabins==x(t)),ind) = y(t);
+        end
+        count = count+1;
+    end
+end
+figure(hsil);
+subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ko-');
+set(h,'linewidth',2,'markersize',6);
+set(gca,'yscale','lin');
+axis([-20 20 50 300]);
+title('Theta preference ctrl');
+xlabel('dTheta (deg from max)','Fontsize',10);
+ylabel('mean Resp Amp','Fontsize',10);
+set(gca,'Fontsize',16,'Xtick',[-50:10:50]); 
+
+
+figure(hinc);
+subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
+set(h,'linewidth',2,'markersize',6);
+set(gca,'yscale','lin');
+axis([-20 20 50 300]);
+title('Theta preference ctrl');
+xlabel('dTheta (deg from max)','Fontsize',10);
+ylabel('mean Resp Amp','Fontsize',10);
+set(gca,'Fontsize',16,'Xtick',[-50:10:50]); 
+
+NormmeanResp_PTcentered_nl = tempdata;
+
+% plotting mResp mani
+count = 1;
+tempdata= nan(totaldends,length(thetabins),2);
+for sess = 1: size(data.NormSlopes_mani,2)
+    dends = size(data.Slopes_mani{sess},1);
+    for d = 1:dends
+         y = data.meanResp_mani{sess}(d,:,1);
+         [maxval,LP] = max(y); 
+        touch_th = data.TouchTh_mani{sess}(d,:);
+        Pref_touch_th = touch_th(LP);
+        temp = touch_th-Pref_touch_th;
+        x = 5.*round(temp/5); % rounding to nearest 5
+%         y = y./nanmin(data.meanResp_ctrl{sess}(d,:,1)); % to normalize9
+        if effect(count)==1
+            figure(hsil);ind = 1;
+        else
+            figure(hinc);ind = 2;
+        end           
+        subplot(1,2,2);plot(x,y,'o-','color',[.85 .5 .5],'MarkerEdgeColor',[.85 .5 .5],'MarkerFaceColor',[.85 .5 .5],'linewidth',.05); hold on;
+        for t = 1:length(x)
+            tempdata (count,find(thetabins==x(t)),ind) = y(t);
+        end
+        count = count+1;
+    end
+end
+figure(hsil);
+subplot(1,2,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ro-')
+set(h,'linewidth',2,'markersize',6);
+set(gca,'yscale','lin');
+axis([-20 20 .5 300]);
+title('Theta preference mani');
+xlabel('dTheta (deg from max)','Fontsize',10);
+ylabel('mean Resp Amp','Fontsize',10);
+set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
+
+
+figure(hinc);
+subplot(1,2,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ro-')
+set(h,'linewidth',2,'markersize',6);
+set(gca,'yscale','lin');
+axis([-20 20 .5 3]);
+title('Theta preference mani');
+xlabel('dTheta (deg from max)','Fontsize',10);
+ylabel('mean Resp Amp','Fontsize',10);
+set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
+
+NormmeanResp_PTcentered_l = tempdata;
+
+
 nl=nanmax(NormSlopesnCTRL_PTcentered_nl(sil,:,1)'); 
 l=nanmax(NormSlopesnCTRL_PTcentered_l(sil,:,1)');
 
@@ -182,17 +303,22 @@ bins = [0:20:240];
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 subplot(1,2,1);
 hnl=hist(diffmR_nl(sil,1),bins);plot(bins,hnl,'k');hold on ;
+if lightcond
 hl=hist(diffmR_l(sil,1),bins); plot(bins,hl,'r');set(gca,'yscale','lin');
+end
 xlabel('Diff in meanResp Max-Min ','Fontsize',16);title('Hist of diff in meanResp between most and least prefered location','Fontsize',16);
 set(gca,'Fontsize',16);
 
 subplot(1,2,2);
 plot(bins,cumsum(hnl),'k');hold on ;
+if lightcond
 plot(bins,cumsum(hl),'r');set(gca,'yscale','lin');
+end
 xlabel('Diff in meanResp Max-Min ','Fontsize',16);title('Cum Hist of diff in meanResp between most and least prefered location','Fontsize',16);
 set(gca,'Fontsize',16);
 text(100,50,['Sil ' num2str(length(sil)) ' cells']);
 
+if lightcond
 %% Inc scells
 % use diffmR_nl(:,1) for Max-Min and LPId_nl(:,2) for Max-mean
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
@@ -208,7 +334,9 @@ plot(bins,cumsum(hl),'r');set(gca,'yscale','lin');
 xlabel('Diff in meanResp Max-Min ','Fontsize',16);title('Cum Hist of diff in meanResp between most and least prefered location','Fontsize',16);
 set(gca,'Fontsize',16);
 text(100,20,['Inc ' num2str(length(inc)) ' cells']);
+end
 
+if lightcond
 %% difference betwee NL and L
 % Norm Slope at prefered location
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
@@ -237,6 +365,7 @@ set(h,'linewidth',1.5);
 title('mean Resp Amp at prefered location','Fontsize',16);
 text(1,225,['p=' num2str(p)]);
 
+
 %Diff in mean REsp between most and least prefered locations 
 % use diffmR_nl(:,1) for max - min LPId_nl(:,2) for Max-mean
 tempdata = [diffmR_nl(:,1),diffmR_l(:,1)];
@@ -249,15 +378,85 @@ h=errorbar(m,s,'ko-');
 set(h,'linewidth',1.5);
 title('Diff in mean Resp Most-least prefered location','Fontsize',16);
 text(1,180,['p=' num2str(p)]);
+end 
 
+% Plot tuning from slopes on normalized dTouchTheta
+sc = get(0,'ScreenSize');
+figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
+numcells = size(LPI_nl,1);
+subplot(1,2,1);
+thetabins=[0:.05:1];
+thetabins=round(thetabins.*100)./100;
+tempdatay =nan(numcells,length(thetabins)); 
+tempdatax =nan(numcells,length(thetabins)); 
+count =0;
+for sess = 1: size(data.meanResp_ctrl,2)
+t =data.TouchTh_ctrl{sess}
+mi=min(data.TouchTh_ctrl{sess}')'
+numdends=size(t,1);
+temp = t-repmat(mi,1,size(t,2));
+ma=max(max(temp));
+temp2= temp ./ ma(1);
+x = temp2;
+x=.05.*round(x./.05); % rounding to nearest 0.05;
+y = data.NormSlopesnCTRL_ctrl{sess};
+if lightcond
+NS= data.LPInCTRL_ctrl{sess}-data.LPInCTRL_mani{sess};
+sil = find(NS>0);
+else
+    sil =[1:size(y,1)];
+end
+tempx = round(x(1,:).*100)./100;
+ind = (count +sil);
+        for t = 1:size(x,2)           
+            tempdatay (ind,find(thetabins==tempx(t))) = y(sil,t);
+            tempdatax (ind,find(thetabins==tempx(t))) = 1;
+        end
 
+plot(x(sil,:)',y(sil,:)','o-','color',[.5 .5 .5]);hold on;
+count = count+numdends;
+end
+my = nanmean(tempdatay);
+sy = nanstd(tempdatay);
+numy = nansum(tempdatax);
+h=errorbar(thetabins,my,sy./sqrt(numy),'ko');set(h,'linewidth',2);
+ axis([0 1 0 5]);
+subplot(1,2,2);
+thetabins=[0:.05:1];
+thetabins=round(thetabins.*100)./100;
+tempdatay =nan(numcells,length(thetabins)); 
+tempdatax =nan(numcells,length(thetabins)); 
+count =0;
+for sess = 1: size(data.meanResp_ctrl,2)
+t =data.TouchTh_ctrl{sess}
+mi=min(data.TouchTh_ctrl{sess}')'
+numdends=size(t,1);
+temp = t-repmat(mi,1,size(t,2));
+ma=max(max(temp));
+temp2= temp ./ ma(1);
+x = temp2;
+x=.05.*round(x./.05); % rounding to nearest 0.05;
+y = data.NormSlopesnCTRL_mani{sess};
+NS= data.LPInCTRL_ctrl{sess}-data.LPInCTRL_mani{sess};
+% NS= max(data.NormSlopesnCTRL_ctrl{sess},[],2)-max(data.NormSlopesnCTRL_mani{sess},[],2);
+sil = find(NS>0);
+tempx = round(x(1,:).*100)./100;
+ind = (count +sil);
+        for t = 1:size(x,2)           
+            tempdatay (ind,find(thetabins==tempx(t))) = y(sil,t);
+            tempdatax (ind,find(thetabins==tempx(t))) = 1;
+        end
 
-
-
-
-
-
-
+plot(x(sil,:)',y(sil,:)','o-','color',[.85 .5 .5]);hold on;
+count = count+numdends;
+end
+my = nanmean(tempdatay);
+sy = nanstd(tempdatay);
+numy = nansum(tempdatax);
+h=errorbar(thetabins,my,sy./sqrt(numy),'ko');set(h,'linewidth',2);
+axis([0 1 0 5]);
+xlabel('Normalized whisker angle for location ','Fontsize',16);title('Normalized tuning for location');
+text(0.7,4,['Sil ' num2str(length(sil)) ' cells']);
 
 
 % 

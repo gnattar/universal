@@ -1,4 +1,17 @@
-for d = 2:28
+id1=[6	7	12	16	21	24	26	29	32	33	37	42	44	45	50	51	53	55	58	60	69	74	80	84	85	86	128	88];
+d=cell2mat(cellfun(@(x) x.dend,pooled_contactCaTrials_locdep1,'uni',0));
+[v,id]=setxor(d,id1);
+pooled_contactCaTrials_locdep1(id) = [];
+id2=[6	7	9	12	16	18	20	21	24	25	27	29	31	32	36	37	38	40	41	42	44	48	51	54	55	56	57	58];
+d=cell2mat(cellfun(@(x) x.dend,pooled_contactCaTrials_locdep2,'uni',0));
+[v,id]=setxor(d,id2);
+pooled_contactCaTrials_locdep2(id) = [];
+
+p=pooled_contactCaTrials_locdep2{1}.poleloc;
+l2=unique(p)
+remtrials=find(p==152)
+
+for d = 1:28
     pooled_contactCaTrials_locdep2{d}.rawdata(remtrials,:) = [];
     pooled_contactCaTrials_locdep2{d}.filtdata(remtrials,:) = [];
     pooled_contactCaTrials_locdep2{d}.sigmag(remtrials) = [];
@@ -33,9 +46,14 @@ for d = 2:28
           pooled_contactCaTrials_locdep2{d}.wSig_contactdir(2) = [];
 end
 
-for d = 1:26
-     pooled_contactCaTrials_locdep{d}.rawdata = [ pooled_contactCaTrials_locdep1{d1}.rawdata; pooled_contactCaTrials_locdep2{d2}.rawdata];
-    pooled_contactCaTrials_locdep{d}.filtdata = [ pooled_contactCaTrials_locdep1{d1}.filtdata; pooled_contactCaTrials_locdep2{d2}.filtdata];
+id1=[1:26,28,27];
+id2=[1:28];
+for d = 1:28
+    d1=id1(d);
+    d2=id2(d);
+     pooled_contactCaTrials_locdep{d}.rawdata = [pooled_contactCaTrials_locdep1{d1}.rawdata; pooled_contactCaTrials_locdep2{d2}.rawdata];
+    pooled_contactCaTrials_locdep{d}.filtdata = [pooled_contactCaTrials_locdep1{d1}.filtdata; pooled_contactCaTrials_locdep2{d2}.filtdata];
+    pooled_contactCaTrials_locdep{d}.FrameTime = [pooled_contactCaTrials_locdep1{d1}.FrameTime];
     pooled_contactCaTrials_locdep{d}.sigmag = [pooled_contactCaTrials_locdep1{d1}.sigmag;pooled_contactCaTrials_locdep2{d2}.sigmag];
     pooled_contactCaTrials_locdep{d}.sigpeak= [pooled_contactCaTrials_locdep1{d1}.sigpeak;pooled_contactCaTrials_locdep2{d2}.sigpeak];
     pooled_contactCaTrials_locdep{d}.totalKappa = [ pooled_contactCaTrials_locdep1{d1}.totalKappa; pooled_contactCaTrials_locdep2{d2}.totalKappa];
@@ -43,6 +61,12 @@ for d = 1:26
       pooled_contactCaTrials_locdep{d}.touchdeltaKappa= [ pooled_contactCaTrials_locdep1{d1}.touchdeltaKappa; pooled_contactCaTrials_locdep2{d2}.touchdeltaKappa];
        pooled_contactCaTrials_locdep{d}.poleloc = [pooled_contactCaTrials_locdep1{d1}.poleloc;pooled_contactCaTrials_locdep2{d2}.poleloc];
         pooled_contactCaTrials_locdep{d}.lightstim = [pooled_contactCaTrials_locdep1{d1}.lightstim;pooled_contactCaTrials_locdep2{d2}.lightstim];
+        
+        pooled_contactCaTrials_locdep{d}.mousename =pooled_contactCaTrials_locdep1{d1}.mousename;
+        pooled_contactCaTrials_locdep{d}.sessionname =pooled_contactCaTrials_locdep1{d1}.sessionname;
+        pooled_contactCaTrials_locdep{d}.reg =pooled_contactCaTrials_locdep1{d1}.reg;
+        pooled_contactCaTrials_locdep{d}.fov =pooled_contactCaTrials_locdep1{d1}.fov;
+        pooled_contactCaTrials_locdep{d}.dend =pooled_contactCaTrials_locdep1{d1}.dend;
         
      pooled_contactCaTrials_locdep{d}.trialnum = [ pooled_contactCaTrials_locdep1{d1}.trialnum; pooled_contactCaTrials_locdep2{d2}.trialnum];
       pooled_contactCaTrials_locdep{d}.contactdir = [ pooled_contactCaTrials_locdep1{d1}.contactdir; pooled_contactCaTrials_locdep2{d2}.contactdir];
@@ -52,7 +76,9 @@ for d = 1:26
       pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs = [pooled_contactCaTrials_locdep1{d1}.totalKappa_epoch_abs;pooled_contactCaTrials_locdep2{d2}.totalKappa_epoch_abs];
       pooled_contactCaTrials_locdep{d}.Theta_at_contact = [pooled_contactCaTrials_locdep1{d1}.Theta_at_contact;pooled_contactCaTrials_locdep2{d2}.Theta_at_contact];
       pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean = [pooled_contactCaTrials_locdep1{d1}.Theta_at_contact_Mean;pooled_contactCaTrials_locdep2{d2}.Theta_at_contact_Mean];
-     
+     pooled_contactCaTrials_locdep{d}.re_maxdK = [pooled_contactCaTrials_locdep1{d1}.re_maxdK;pooled_contactCaTrials_locdep2{d2}.re_maxdK];
+     pooled_contactCaTrials_locdep{d}.re_totaldK = [pooled_contactCaTrials_locdep1{d1}.re_maxdK;pooled_contactCaTrials_locdep2{d2}.re_totaldK];
+
      
       for k =1:6 
          pooled_contactCaTrials_locdep{d}.num_trials(k) = [ pooled_contactCaTrials_locdep1{d1}.num_trials(k)+ pooled_contactCaTrials_locdep2{d2}.num_trials(k)];

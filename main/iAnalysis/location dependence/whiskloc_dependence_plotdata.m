@@ -413,7 +413,7 @@ set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
 print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
-saveas(gcf,[' Loc Dep  ' par ' reg  D ' num2str(dends)],'jpg');
+saveas(gcf,[' Loc Dep Pnts ' par ' reg  D ' num2str(dends)],'jpg');
 
 if traces
     % h_fig2= figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');

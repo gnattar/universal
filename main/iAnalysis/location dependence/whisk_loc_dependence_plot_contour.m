@@ -97,6 +97,12 @@ end
     pooled_contactCaTrials_locdep{d}.meanResp.NL_touPI_diff = nanmax(K)-nanmean(K);
     [v,vind] = max(T);
     pooled_contactCaTrials_locdep{d}.meanResp.NL_PrefLoc = vind;
+    locs = unique(l);
+    numloc = length(locs);
+    T2 = zeros(numloc,1);
+    for loc = 1:numloc
+        T2(loc,1)= nanmean(r(l==locs(loc)));
+    end
     pooled_contactCaTrials_locdep{d}.meanResp.NL= T;
 if ~isempty(Lind)
     %% Light condition
@@ -146,6 +152,12 @@ if ~isempty(Lind)
     pooled_contactCaTrials_locdep{d}.meanResp.L_touPI_diff = nanmax(K)-nanmean(K);
     [v,vind] = max(T);
     pooled_contactCaTrials_locdep{d}.meanResp.L_PrefLoc = vind;
+    locs = unique(l);
+    numloc = length(locs);
+    T2 = zeros(numloc,1);
+    for loc = 1:numloc
+        T2(loc,1)= nanmean(r(l==locs(loc)));
+    end
     pooled_contactCaTrials_locdep{d}.meanResp.L= T;
 else
     if disp

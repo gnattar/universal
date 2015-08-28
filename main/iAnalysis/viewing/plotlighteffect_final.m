@@ -105,7 +105,7 @@ end
 figure;fnam = [ grp 'Event Integral Area '];
 hold on; plot(x',[meaneffect.allintarea_NL(:,1)';meaneffect.allintarea_L(:,1)'],'-o','color',[.5 .5 .5], 'Markersize',10);hold on;
 hold on; h=errorbar([1;1.5],[nanmean(meaneffect.allintarea_NL(:,1));nanmean(meaneffect.allintarea_L(:,1))],[nanstd(meaneffect.allintarea_NL(:,1))/sqrt(size(meaneffect.allintarea_NL,1));nanstd(meaneffect.allintarea_L(:,1))/sqrt(size(meaneffect.allintarea_L,1))],'or');
-axis([ .5 2 0 600]);
+axis([ .5 2 0 200]);
 set(h, 'linewidth',0.2,'Markersize',10);
 
 
@@ -151,7 +151,7 @@ end
 figure;fnam = [ grp 'Event Integral Area '];
 hold on; plot(x',[meaneffect.allintarea_NL(:,1)';meaneffect.allintarea_L(:,1)'],'-o','color',[.5 .5 .5], 'Markersize',10);hold on;
 hold on; h=errorbar([1;1.5],[nanmean(meaneffect.allintarea_NL(:,1));nanmean(meaneffect.allintarea_L(:,1))],[nanstd(meaneffect.allintarea_NL(:,1))/sqrt(size(meaneffect.allintarea_NL,1));nanstd(meaneffect.allintarea_L(:,1))/sqrt(size(meaneffect.allintarea_L,1))],'or');
-axis([ .5 2 0 600]);
+axis([ .5 2 0 200]);
 set(h, 'linewidth',0.2,'Markersize',10);
 
 
@@ -295,8 +295,8 @@ end
 % print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
  
- peakamp_trials_L= peakamp_trials(eventsdetected_trials&lightstim_trials);
- peakamp_trials_NL= peakamp_trials(eventsdetected_trials & ~lightstim_trials);
+peakamp_trials_L= peakamp_trials(eventsdetected_trials&lightstim_trials);
+peakamp_trials_NL= peakamp_trials(eventsdetected_trials & ~lightstim_trials);
 
 meaneffect.peakamp_trials_L = peakamp_trials_L;
 meaneffect.peakamp_trials_NL = peakamp_trials_NL;

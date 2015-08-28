@@ -155,23 +155,33 @@ for sess = 1: num_sessions
     data.NormSlopesnCTRL_ctrl{sess}=data.Slopes_ctrl{sess}./tempmat;
     data.NormSlopesnCTRL_mani{sess}=data.Slopes_mani{sess}./tempmat;
     
+    if ~PrefLocFixed
+        [val,ind] = max(data.NormSlopesnCTRL_mani{sess}');
+        data.LPInCTRL_mani{sess} = val';
+    end
     [val,ind] = max(data.NormSlopesnCTRL_ctrl{sess}');
     data.LPInCTRL_ctrl{sess} = val';
+    if PrefLocFixed
     for d = 1:num_dends
     data.LPInCTRL_mani{sess}(d,1) = data.NormSlopesnCTRL_mani{sess}(d,ind(d));  
     end
-    
+    end
     
     [maxval,maxind] = max(data.meanResp_mani{sess}');
     [minval,minind] = min(data.meanResp_mani{sess}');
     data.diffmeanResp_mani{sess} = (maxval-minval)';
-    
+    if ~PrefLocFixed
+         data.meanRespPrefLoc_mani{sess} = maxval';  
+    end
     [maxval,maxind] = max(data.meanResp_ctrl{sess}');
     [minval,minind] = min(data.meanResp_ctrl{sess}');
     data.diffmeanResp_ctrl{sess} = (maxval-minval)';
-    data.meanRespPrefLoc_ctrl{sess} = maxval';   
+    data.meanRespPrefLoc_ctrl{sess} = maxval';  
+    if PrefLocFixed
     for d = 1:num_dends   
     data.meanRespPrefLoc_mani{sess}(d,1) = data.meanResp_mani{sess}(d,maxind(d));
+    end
+
     end
     
     
