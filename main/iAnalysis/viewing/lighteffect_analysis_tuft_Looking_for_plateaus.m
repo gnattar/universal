@@ -1,10 +1,10 @@
-function lighteffect_analysis_tuft_Looking_for_plateaus(pooled_contact_CaTrials,corr_dend,n)
+function [cd]=lighteffect_analysis_tuft_Looking_for_plateaus(pooled_contact_CaTrials,corr_dend,n)
 %% plotting trials 
 a =find(corr_dend==n);
 obj=pooled_contact_CaTrials(a);
 
 rois= obj;
-put_plat = find((rois{1}.intarea>50))
+put_plat = find((rois{1}.intarea>20))
 plat = zeros(length(put_plat),2);
 plat(:,1) = put_plat;
 events =0;
@@ -14,7 +14,7 @@ for i = 1:length(put_plat)
         subplot(length(rois),1,r)
         plot([1:size(rois{r}.rawdata_smth,2)].*rois{r}.FrameTime,rois{r}.rawdata_smth(put_plat(i),:),'linewidth',2);
         title(['trial ' num2str(put_plat(i)) ' Event ' num2str(rois{r}.eventsdetected(put_plat(i))) ' Light '  num2str(rois{r}.lightstim(put_plat(i)))]);
-        axis([0 5 -30 250]);
+        axis([0 2 -30 250]);
         hline(30,'k');
         events=events + rois{r}.eventsdetected(put_plat(i)); 
     end
@@ -130,8 +130,8 @@ subplot(1,2,2);imagesc(xt,[1:size(templ,1)],templ);caxis(clim); colorbar
 title([num2str(k)  ' Avg_traces ID ' num2str(n)  ' mean of rois ' num2str(a)]);
 print( gcf ,'-depsc2','-painters','-loose',[num2str(k)  ' Avg_traces ID ' num2str(n)  ' mean of rois ' num2str(a)]);
 
-figure;subplot(1,2,1); plot(xt, nanmean(tempnl),'b','linewidth',2); axis([0 5 -20 50]);hline(0,'k--');vline(0.5,'k--');vline(2.0,'k--');
-subplot(1,2,2); plot(xt, nanmean(templ),'b','linewidth',2); axis([0 5 -20 50]);
+figure;subplot(1,2,1); plot(xt, nanmean(tempnl),'b','linewidth',2); axis([0 2 -20 50]);hline(0,'k--');vline(0.5,'k--');vline(2.0,'k--');
+subplot(1,2,2); plot(xt, nanmean(templ),'b','linewidth',2); axis([0 2 -20 50]);
 hline(0,'k--');vline(0.5,'k--');vline(2.0,'k--');
 title([num2str(k)  ' Avg_traces ID ' num2str(n)  ' mean of rois ' num2str(a)]);
 print( gcf ,'-depsc2','-painters','-loose',[num2str(k)  ' Avg  ID ' num2str(n)  ' mean of rois ' num2str(a)]);
@@ -141,11 +141,11 @@ trial = [ 15, 123 ];  % nl nl l l 21 , ,65
 figure;
 for i = 1:length(a)
     subplot(length(a),2,i*2);
-    plot(xt,rawdata(trial(2),:,i),'b','linewidth',1.5); axis([0 5 -50 250]);
+    plot(xt,rawdata(trial(2),:,i),'b','linewidth',1.5); axis([0 2 -50 250]);
 end
 
 for i = 1:length(a)
     subplot(length(a),2,i*2-1);
-    plot(xt,rawdata(trial(1),:,i),'b','linewidth',1.5); axis([0 5 -50 250]);
+    plot(xt,rawdata(trial(1),:,i),'b','linewidth',1.5); axis([0 2 -50 250]);
 end
 print( gcf ,'-depsc2','-painters','-loose',[num2str(k)  ' Traces T ' num2str(trial) ' ID ' num2str(n)  ' mean of rois ' num2str(a)]);

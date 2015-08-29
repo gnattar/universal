@@ -81,7 +81,7 @@ for i = 1: size(collected_summary,2)
                 curr_loc_L_contactdir =  temp_contactdir (find(curr_poleloc_trials & ~temp_lightstim));   
                 num_trials (k,2) = size(curr_loc_L_Kappa ,1);
                 num_trials (k,1) = size(curr_loc_NL_Kappa ,1);               
-                threshold = 35;
+                threshold = 15;
                 trialnames{k,1} =  temp_solotrial(find(curr_poleloc_trials & ~temp_lightstim));
                 trialnames{k,2} =  temp_solotrial(find(curr_poleloc_trials & temp_lightstim));
                 

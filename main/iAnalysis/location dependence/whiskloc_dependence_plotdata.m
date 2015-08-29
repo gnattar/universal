@@ -304,6 +304,11 @@ for d=1:length(dends)
         
         %         mx = max([abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(NL_ind)); abs(pooled_contactCaTrials_locdep{n}.totalKappa_epoch(L_ind))]);
         %         my = max([pooled_contactCaTrials_locdep{n}.sigmag(NL_ind); pooled_contactCaTrials_locdep{n}.sigmag(L_ind)]);
+       % has to be a column vector
+        if size(pooled_contactCaTrials_locdep{n}.num_trials,2)>2
+            pooled_contactCaTrials_locdep{n}.num_trials=pooled_contactCaTrials_locdep{n}.num_trials';
+        end
+
         if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)
             title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  '  ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
         else
@@ -412,7 +417,7 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
-print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
+print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  Pnts reg temp D ' num2str(dends)]);
 saveas(gcf,[' Loc Dep Pnts ' par ' reg  D ' num2str(dends)],'jpg');
 
 if traces

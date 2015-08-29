@@ -2,9 +2,12 @@ function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_co
 %[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
 
 p = pos; %[15 13.5 12 10.5 9 7.5];
-
+if strcmp(cond,'ctrl' )
+   l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
+else
 l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
 l_trials = l_trials(:,1);
+end
 
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.totalKappa_epoch_abs, pooled_contactCaTrials_locdep,'uniformoutput',0));
@@ -156,7 +159,7 @@ end
 
 
 testsetsize = 50;
-uL = 5;
+uL = 8;
 bw=0.1;
 bins = [ 0:bw:uL];
 numbins = size(bins,2);

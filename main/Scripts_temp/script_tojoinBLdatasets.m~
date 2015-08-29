@@ -97,24 +97,24 @@ end
 end
 
 
-    pooled_contactCaTrials_locdep{d}.rawdata(remtrials,:) = [];
-    pooled_contactCaTrials_locdep{d}.filtdata(remtrials,:) = [];
-    pooled_contactCaTrials_locdep{d}.sigmag(remtrials) = [];
-    pooled_contactCaTrials_locdep{d}.sigpeak(remtrials) = [];
-    pooled_contactCaTrials_locdep{d}.totalKappa(remtrials) = [];
-     pooled_contactCaTrials_locdep{d}.touchTheta(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.touchdeltaKappa(remtrials) = [];
-       pooled_contactCaTrials_locdep{d}.poleloc(remtrials) = [];
-        pooled_contactCaTrials_locdep{d}.lightstim(remtrials) = [];
-        
-     pooled_contactCaTrials_locdep{d}.trialnum(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.contactdir(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.contacts(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.timews(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.totalKappa_epoch(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.Theta_at_contact(remtrials) = [];
-      pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(remtrials) = [];
+%     pooled_contactCaTrials_locdep{d}.rawdata(remtrials,:) = [];
+%     pooled_contactCaTrials_locdep{d}.filtdata(remtrials,:) = [];
+%     pooled_contactCaTrials_locdep{d}.sigmag(remtrials) = [];
+%     pooled_contactCaTrials_locdep{d}.sigpeak(remtrials) = [];
+%     pooled_contactCaTrials_locdep{d}.totalKappa(remtrials) = [];
+%      pooled_contactCaTrials_locdep{d}.touchTheta(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.touchdeltaKappa(remtrials) = [];
+%        pooled_contactCaTrials_locdep{d}.poleloc(remtrials) = [];
+%         pooled_contactCaTrials_locdep{d}.lightstim(remtrials) = [];
+%         
+%      pooled_contactCaTrials_locdep{d}.trialnum(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.contactdir(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.contacts(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.timews(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.totalKappa_epoch(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.totalKappa_epoch_abs(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.Theta_at_contact(remtrials) = [];
+%       pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(remtrials) = [];
       
       pxlpermm = 24.38;
       for d = 1:28
