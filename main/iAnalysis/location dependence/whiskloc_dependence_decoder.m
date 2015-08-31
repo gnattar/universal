@@ -32,7 +32,7 @@ if strcmp(cond,'ctrl' )
     pause(.5);
     suptitle([str ' CTRL']);
     print( gcf ,'-depsc2','-painters','-loose',[str ' CTRL']);
-    saveas(gcf,[str ' CTRL'],'jpg');
+    saveas(gcf,[str ' CTRL'],'fig');
     
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
@@ -80,7 +80,7 @@ elseif strcmp(cond,'ctrl_mani')
     pause(.5);
     suptitle([str ' CTRL' tag]);
     print( gcf ,'-depsc2','-painters','-loose',[str ' CTRL' tag]);
-    saveas(gcf,[str ' CTRL' tag ],'jpg');
+    saveas(gcf,[str ' CTRL' tag ],'fig');
     
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
@@ -126,7 +126,7 @@ elseif strcmp(cond,'ctrl_mani')
     pause(.5);
     suptitle([str ' SIL ' tag]);
     print( gcf ,'-depsc2','-painters','-loose',[str ' SIL ' tag]);
-    saveas(gcf,[str ' SIL ' tag],'jpg');
+    saveas(gcf,[str ' SIL ' tag],'fig');
     
     summary.mani.hist = hist_all;
     summary.mani.dist=dist_all;
@@ -159,7 +159,7 @@ end
 
 
 testsetsize = 50;
-uL = 8;
+uL = 4;
 bw=0.1;
 bins = [ 0:bw:uL];
 numbins = size(bins,2);

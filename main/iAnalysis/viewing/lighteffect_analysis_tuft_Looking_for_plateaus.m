@@ -50,6 +50,11 @@ plat(rejects,:) = [];
         l_trialscount = sum((rois{1}.lightstim==1),1);
         nl_trialscount = sum((rois{1}.lightstim==0),1);
      
+        all_trials_rois =  cell2mat(cellfun(@(x) x.intarea,pooled_contact_CaTrials,'uni',0));
+        
+        cd.avg_resp_L = mean(mean(all_trials_rois((rois{1}.lightstim==1),:)));
+        cd.avg_resp_NL =  mean(mean(all_trials_rois((rois{1}.lightstim==0),:)));
+        
         cd.corr_dend_ID = n;
         cd.rois = a;
         cd.put_plat = put_plat;

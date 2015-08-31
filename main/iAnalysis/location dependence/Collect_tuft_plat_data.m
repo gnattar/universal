@@ -29,6 +29,9 @@ while(count>=0)
     data{count}.cd_id = count;
     data{count}.rois= cd.rois;
 
+    data{count}.avg_Resp_L=cd.avg_resp_L;
+    data{count}.avg_Resp_NL=cd.avg_resp_NL;
+    
     data{count}.intarea_plat_L=cd.intarea_plat_L;
     data{count}.intarea_plat_NL=cd.intarea_plat_NL;
     
@@ -42,18 +45,34 @@ end
 
 % data.info=info;
 folder = uigetdir;
+save('Tuft plat data','data');
 cd (folder);
 save('Tuft plat data','data');
 
 %%
-% quick plot
+% % quick plot
+
+avgresp(:,1)=cellfun(@(x) x.avg_Resp_NL,data);
+avgresp(:,2)=cellfun(@(x) x.avg_Resp_L,data);
+[h,p]=ttest2(avgresp(:,1),avgresp(:,2));
+figure;plot(avgresp','color',[.5 .5 .5]);
+m=mean(avgresp);
+s=std(avgresp)./sqrt(size(data,2)+1);
+hold on ; h=errorbar(m,s,'ko-');set(h,'linewidth',1.5);
+text(2,100,['p=' num2str(p)]);
+title('Tuft plateau avg resp');
+set(gca,'Xtick',[ 1 2]);
+set(gca,'XtickLabel',{ 'NL'; 'L'});
+axis([0 3 0 300]);
+
 Rate(:,1)=cellfun(@(x) x.plat_rate_NL,data);
 Rate(:,2)=cellfun(@(x) x.plat_rate_L,data);
-figure;plot(Rate')
+[h,p]=ttest2(Rate(:,1),Rate(:,2));
 figure;plot(Rate','color',[.5 .5 .5]);
 m=mean(Rate);
 s=std(Rate)./sqrt(size(data,2)+1);
 hold on ; h=errorbar(m,s,'ko-');set(h,'linewidth',1.5);
+text(2,.6,['p=' num2str(p)]);
 title('Tuft plateau rate');
 set(gca,'Xtick',[ 1 2]);
 set(gca,'XtickLabel',{ 'NL'; 'L'});
@@ -62,13 +81,14 @@ axis([0 3 0 .8]);
 temp=cell2mat(cellfun(@(x) x.mean_intarea_plat_NL',data,'uni',0));mag(:,1)=temp(1,:)';
 temp=cell2mat(cellfun(@(x) x.mean_intarea_plat_NL',data,'uni',0));mag(:,2)=temp(2,:)';
 
-figure;plot(mag')
-figure;plot(Rate','color',[.5 .5 .5]);
-m=mean(Rate);
-s=std(Rate)./sqrt(size(data,2)+1);
+[h,p]=ttest2(mag(:,1),mag(:,2));
+figure;plot(mag','color',[.5 .5 .5]);
+m=mean(mag);
+s=std(mag)./sqrt(size(data,2)+1);
 hold on ; h=errorbar(m,s,'ko-');set(h,'linewidth',1.5);
-title('Tuft plateau rate');
+text(2,100,['p=' num2str(p)]);
+title('Tuft plateau mag');
 set(gca,'Xtick',[ 1 2]);
 set(gca,'XtickLabel',{ 'NL'; 'L'});
-axis([0 3 0 .8])
+axis([0 3 0 350])
 

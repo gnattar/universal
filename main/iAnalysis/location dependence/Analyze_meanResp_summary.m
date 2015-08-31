@@ -35,7 +35,7 @@ sil = find(effect==1);
 inc= find(effect==0);
 
 else
-    effect = ones(size(LPInCTRL_nl,1));
+    effect = ones(size(LPInCTRL_nl,1),1);
     sil = find(effect==1);
     inc =[];
 end
@@ -124,6 +124,7 @@ xlabel('dTheta (deg from max)','Fontsize',10);
 ylabel('Slope dFF vs |dK|','Fontsize',10);
 set(gca,'Fontsize',16,'Xtick',[-50:10:50]); 
 
+if lightcond
 figure(hinc);
 subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
 set(h,'linewidth',2,'markersize',6);
@@ -133,9 +134,10 @@ title('Theta preference ctrl');
 xlabel('dTheta (deg from max)','Fontsize',10);
 ylabel('Slope dFF vs |dK|','Fontsize',10);
 set(gca,'Fontsize',16,'Xtick',[-50:10:50]); 
-
+end
 NormSlopesnCTRL_PTcentered_nl = tempdata;
 
+if lightcond
 count = 1;
 % plotting Norm slopes mani
 tempdata= nan(totaldends,length(thetabins),2);
@@ -180,6 +182,7 @@ ylabel('Slope dFF vs |dK|','Fontsize',10);
 set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
 
 NormSlopesnCTRL_PTcentered_l = tempdata;
+end
 
 % plotting mResp ctrl
 totaldends = size(LPInCTRL_nl,1);
@@ -220,7 +223,7 @@ xlabel('dTheta (deg from max)','Fontsize',10);
 ylabel('mean Resp Amp','Fontsize',10);
 set(gca,'Fontsize',16,'Xtick',[-50:10:50]); 
 
-
+if lightcond
 figure(hinc);
 subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
 set(h,'linewidth',2,'markersize',6);
@@ -230,9 +233,10 @@ title('Theta preference ctrl');
 xlabel('dTheta (deg from max)','Fontsize',10);
 ylabel('mean Resp Amp','Fontsize',10);
 set(gca,'Fontsize',16,'Xtick',[-50:10:50]); 
-
+end
 NormmeanResp_PTcentered_nl = tempdata;
 
+if lightcond
 % plotting mResp mani
 count = 1;
 tempdata= nan(totaldends,length(thetabins),2);
@@ -280,8 +284,9 @@ ylabel('mean Resp Amp','Fontsize',10);
 set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
 
 NormmeanResp_PTcentered_l = tempdata;
+end
 
-
+if lightcond
 nl=nanmax(NormSlopesnCTRL_PTcentered_nl(sil,:,1)'); 
 l=nanmax(NormSlopesnCTRL_PTcentered_l(sil,:,1)');
 
@@ -293,7 +298,7 @@ Sil_diffLP = length(find(nl<l));
 
 Inc_sameLP = length(find(lpnl==lpl));
 Inc_diffLP = length(find(lpnl~=lpl));
-
+end
 
 %% Diff in mean Resp between most and least prefered locations 
 
@@ -419,7 +424,7 @@ end
 my = nanmean(tempdatay);
 sy = nanstd(tempdatay);
 numy = nansum(tempdatax);
-h=errorbar(thetabins,my,sy./sqrt(numy),'ko');set(h,'linewidth',2);
+% h=errorbar(thetabins,my,sy./sqrt(numy),'ko');set(h,'linewidth',2);
  axis([0 1 0 5]);
 subplot(1,2,2);
 thetabins=[0:.05:1];
@@ -427,6 +432,7 @@ thetabins=round(thetabins.*100)./100;
 tempdatay =nan(numcells,length(thetabins)); 
 tempdatax =nan(numcells,length(thetabins)); 
 count =0;
+if lightcond
 for sess = 1: size(data.meanResp_ctrl,2)
 t =data.TouchTh_ctrl{sess}
 mi=min(data.TouchTh_ctrl{sess}')'
@@ -453,11 +459,11 @@ end
 my = nanmean(tempdatay);
 sy = nanstd(tempdatay);
 numy = nansum(tempdatax);
-h=errorbar(thetabins,my,sy./sqrt(numy),'ko');set(h,'linewidth',2);
+% h=errorbar(thetabins,my,sy./sqrt(numy),'ko');set(h,'linewidth',2);
 axis([0 1 0 5]);
 xlabel('Normalized whisker angle for location ','Fontsize',16);title('Normalized tuning for location');
 text(0.7,4,['Sil ' num2str(length(sil)) ' cells']);
-
+end
 
 % 
 % 
