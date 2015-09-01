@@ -46,7 +46,7 @@ for d=1:length(dends)
         
         plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract)),'o','color',[.5 .5 .5],'Markersize',7,'Markerfacecolor',[.5 .5 .5]); hold on;
         plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(NL_ind(protract)),'ko','Markersize',7, 'Markerfacecolor',[0 0 0]); hold on;
-        
+        set(gca,'ticklength',[.05 .05]);
         ka=abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract)));
         ca=pooled_contactCaTrials_locdep{n}.(par)(NL_ind(retract));
         
@@ -188,7 +188,7 @@ for d=1:length(dends)
             
             plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(retract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(retract)),'o','color',[.85 .5 .5],'Markersize',7,'Markerfacecolor',[.85 .5 .5]); hold on;
             plot(abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(protract))),pooled_contactCaTrials_locdep{n}.(par)(L_ind(protract)),'ro','Markersize',7, 'Markerfacecolor',[1 0 0]); hold on;
-            
+            set(gca,'ticklength',[.05 .05]);
             if fit_separate
                 % separating protraction and retraction
                 %protraction
@@ -322,7 +322,7 @@ for d=1:length(dends)
         hline(30,'k:');
         hline(0,'k--');
         
-        plot([0.0001:.01:10],polyval(p_NL1(i,:,1) ,[0.0001:.01:10]),'k-','linewidth',2);hold on;
+        plot([0.0001:.01:10],polyval(p_NL1(i,:,1) ,[0.0001:.01:10]),'k-','linewidth',2);hold on;set(gca,'ticklength',[.05 .05]);
         if fit_separate
             %             plot([0.0001:.01:10],polyval(p_NL1(i,:,2) ,[0.0001:.01:10]),'color',[.5 .5 .5 ],'linewidth',2);
         end
@@ -347,9 +347,9 @@ for d=1:length(dends)
         if strcmp(par,'sigmag')
             axis([10e-4 2 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([10e-4 2 0 700]);
+            axis([10e-4 2 0 600]);
         end
-        set(gca,'xscale','log');
+        set(gca,'xscale','log');set(gca,'ticklength',[.05 .05]);
     end
     
     theta_at_contact = pooled_contactCaTrials_locdep{n}.Theta_at_contact_Mean; %%% use ths for joint plot
@@ -357,6 +357,7 @@ for d=1:length(dends)
     subplot(length(dends),numloc+xcol,count:count+1);
     h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
     plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
+    set(gca,'ticklength',[.05 .05]);
     if (lpv == 'v2')
         LPI = (max(abs(p_NL1(1:end,1,1)))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+min(abs(p_NL1(:,1,1))));
         %     LPI_sp = (max(abs(p_NL1(2:end,1,1)))-mean(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+mean(abs(p_NL1(:,1,1))));
@@ -376,6 +377,7 @@ for d=1:length(dends)
     if ~isempty(L_ind)
         h= plot([1:numloc],p_L1(:,1,1),'r-o');set(h,'linewidth',1.5);hold on;
         plot([1:numloc],p_L1CIU(:,1,1),'r--','linewidth',2); plot([1:numloc],p_L1CIL(:,1,1),'r--','linewidth',2);
+        set(gca,'ticklength',[.05 .05]);
         if(lpv == 'v1')
             LPI_l = (max(abs(p_L1(1:end,1,1))))/(mean(abs(p_L1(:,1,1))));
             %           LPI_sp_l = (max(abs(p_L1(2:end,1,1)))-mean(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+mean(abs(p_L1(:,1,1))));
@@ -391,7 +393,7 @@ for d=1:length(dends)
             %             h= plot([1:numloc],p_L1(:,1,2),'-o','color',[.85, .5 , .5]);set(h,'linewidth',3);
         end
     end
-    axis([0  numloc+1 -100  max(p_NL1(:,1,1))+200]);
+    axis([0  numloc+1 -100  max(p_NL1(:,1,1))+200]);set(gca,'ticklength',[.05 .05]);
     
     
     
@@ -475,6 +477,7 @@ if disp
                         [ mval, colind] = min(abs(touchmag - abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(retract(r))))));
                         figure(h_fig3); subplot(length(dends),numloc+xcol,count);
                         plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(retract(r)),:),'color',colr(colind,:),'linewidth',1.5); hold on;
+                        set(gca,'ticklength',[.05 .05]);
                         %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count);
                         %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(retract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{NL_ind(retract(r))},'color',colr(colind,:),'linewidth',.15); hold on;
                         %
@@ -483,6 +486,7 @@ if disp
                 if  fit_separate
                     figure(h_fig5); subplot(length(dends),numloc+xcol,count);
                     plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(retract),:)),'color',[.5 .5 .5],'linewidth',1.5); hold on;
+                    set(gca,'ticklength',[.05 .05]);
                 end
             end
             
@@ -493,6 +497,7 @@ if disp
                         [ mval, colind]=min(abs((touchmag - abs(pooled_contactCaTrials_locdep{n}.(wpar)(NL_ind(protract(r)))))));
                         figure(h_fig2); subplot(length(dends),numloc+xcol,count);
                         plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract(r)),:),'color',colp(colind,:),'linewidth',1.5);hold on;
+                        set(gca,'ticklength',[.05 .05]);
                         %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count);
                         %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(protract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{NL_ind(protract(r))},'color',colp(colind,:),'linewidth',.15); hold on;
                         
@@ -501,12 +506,14 @@ if disp
                 if fit_separate
                     figure(h_fig4); subplot(length(dends),numloc+xcol,count);
                     plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind(protract),:)),'color',[0 0 0 ],'linewidth',1.5); hold on;
+                    set(gca,'ticklength',[.05 .05]);
                 end
             end
             
             if ~fit_separate
                 figure(h_fig4); subplot(length(dends),numloc+xcol,count);
                 plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind,:)),'color',[0 0 0 ],'linewidth',1.5); hold on;
+                set(gca,'ticklength',[.05 .05]);
             end
             retract = find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind) >0);
             protract =  find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind)<0);
@@ -520,6 +527,7 @@ if disp
                         [ mval, colind] = min(abs(touchmag - abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(retract(r))))));
                         figure(h_fig3); subplot(length(dends),numloc+xcol,count);
                         plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(L_ind(retract(r)),:),'-','color',colrL(colind,:),'linewidth',1.5); hold on;
+                        set(gca,'ticklength',[.05 .05]);
                         %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count);
                         %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(retract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{L_ind(retract(r))},'color',col(colind,:),'linewidth',.15); hold on;
                         
@@ -528,6 +536,7 @@ if disp
                 if fit_separate
                     figure(h_fig5); subplot(length(dends),numloc+xcol,count);
                     plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(L_ind(retract),:)),'color',[.85 .5 .5],'linewidth',1.5); hold on;
+                    set(gca,'ticklength',[.05 .05]);
                 end
             end
             if(~isempty(protract))
@@ -536,6 +545,7 @@ if disp
                         [ mval, colind]=min(abs((touchmag - abs(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind(protract(r)))))));
                         figure(h_fig2); subplot(length(dends),numloc+xcol,count);
                         plot(ts,pooled_contactCaTrials_locdep{n}.filtdata(L_ind(protract(r)),:),'color',colpL(colind,:),'linewidth',1.5);
+                        set(gca,'ticklength',[.05 .05]);
                         %                 figure(h_fig3); subplot(length(dends),numloc+xcol,count);
                         %                 plot(pooled_contactCaTrials_locdep{n}.timews{NL_ind(protract(r))},pooled_contactCaTrials_locdep{n}.touchdeltaKappa{L_ind(protract(r))},'color',col(colind,:),'linewidth',.15); hold on;
                         
@@ -544,21 +554,23 @@ if disp
                 if fit_separate
                     figure(h_fig4); subplot(length(dends),numloc+xcol,count);
                     plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(L_ind(protract),:)),'color',[1 0 0],'linewidth',1.5); hold on;
+                    set(gca,'ticklength',[.05 .05]);
                 end
             end
             
             if ~fit_separate
                 figure(h_fig4); subplot(length(dends),numloc+xcol,count);
                 plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(L_ind,:)),'color',[1 0 0],'linewidth',1.5); hold on;
+                set(gca,'ticklength',[.05 .05]);
             end
             
             if traces
                 figure(h_fig2);
-                axis([0 1.5 0 800]);
+                axis([0 1.5 0 600]);
                 hline(30,'k.');
                 hline(0,'k--');
                 figure(h_fig3);
-                axis([0 1.5 0 800]);
+                axis([0 1.5 0 600]);
                 hline(30,'k.');
                 hline(0,'k--');
             end
@@ -573,7 +585,7 @@ if disp
                 hline(30,'k.');
                 hline(0,'k--');
             end
-            
+            set(gca,'ticklength',[.05 .05]);
             count = count+1;
             
             if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)

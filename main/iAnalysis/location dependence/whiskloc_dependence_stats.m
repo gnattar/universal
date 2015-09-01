@@ -1,5 +1,5 @@
 function [pooled_contactCaTrials_locdep]= whiskloc_dependence_stats(pooled_contactCaTrials_locdep,dends,wpar,capar,pos,traces,fit_separate)
-
+load('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/mycmap3.mat');
 sc = get(0,'ScreenSize');
 h_fig1 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
 if traces
@@ -142,7 +142,7 @@ for d=1:length(dends)
             
             [h,edges,mid,l] = histcn(ka,dKappa_bins);
             for cn = 1: length(h)
-                if (h(cn) > 1)
+                if (h(cn) > 2)
                     ca_l_m(cn)  = nanmean(ca(find(l==cn)));
                     ca_l_sd(cn) = nanstd(ca(find(l==cn)))./sqrt(h(cn)+1);
                     ka_l_m(cn)  = nanmean(ka(find(l==cn)));
@@ -154,13 +154,14 @@ for d=1:length(dends)
                     ka_l_sd(cn) = nan;
                 end
             end
+%             ca_l_m(9) = .2511 % fix for 158_150712 cell6
             figure(h_fig1);subplot(length(dends),numloc+xcol,count);
             if strcmp(str,'NL_P') | strcmp(str,'L_P')
 %                 errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
-                    plot(mid{1},ca_l_m,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
+                    plot(mid{1},ca_l_m,'o-','color',col,'Markersize',7,'Markerfacecolor',col);set(gca,'ticklength',[.05 .05]);
             elseif strcmp(str,'NL') | strcmp(str,'L')
 %                 errorbar(mid{1},ca_l_m,ca_l_m-ca_l_sd,ca_l_m+ca_l_sd,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
-                plot(mid{1},ca_l_m,'o-','color',col,'Markersize',7,'Markerfacecolor',col);
+                plot(mid{1},ca_l_m,'o-','color',col,'Markersize',7,'Markerfacecolor',col);set(gca,'ticklength',[.05 .05]);
             end
             hold on;
 %             if i ==2 tatt = abs(tatt); end % for sess 157_150723
@@ -185,7 +186,7 @@ for d=1:length(dends)
             x=ka_l_m;
             y =ca_l_m;
             fittype = 'lin';
-            if length(x(notnan)) >2
+            if length(x(notnan)) >1
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x(notnan),y(notnan),fittype,-1);
                 f_all = nan(size(x));f_all(notnan) = f;
@@ -203,9 +204,9 @@ for d=1:length(dends)
             pooled_contactCaTrials_locdep{n}.fitmean.([str '_fitevals'])(i,:,1) = fitevals;
             
             if strcmp(str,'NL_P') | strcmp(str,'L_P')
-                plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);
+                plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);set(gca,'ticklength',[.05 .05]);
             elseif strcmp(str,'NL') | strcmp(str,'L')
-                plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);
+                plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);set(gca,'ticklength',[.05 .05]);
             end
             hold on;
             % s = nl ; l; or nl_p;nl_r;l_p;l_r; - these are the slopes_columns
@@ -231,18 +232,21 @@ for d=1:length(dends)
             if fit_separate
                 inds_all = [NL_P_ind(sortiNLP); NL_R_ind(sortiNLR);L_P_ind(sortiLP);L_R_ind(sortiLR)];
             elseif ~isempty(L_ind)
-                inds_all = [NL_ind(sortiNL);L_ind(sortiL)];
+%                 inds_all = [NL_ind(sortiNL);L_ind(sortiL)];
+                inds_all = [NL_ind;L_ind];
             else
-                inds_all = [NL_ind(sortiNL)];
+%                 inds_all = [NL_ind(sortiNL)];
+                inds_all = [NL_ind]; % if just by order of trial
                 
             end
             imdata = pooled_contactCaTrials_locdep{n}.rawdata(inds_all,:);
             im_data_t = [1:size(imdata,2)].* pooled_contactCaTrials_locdep{n}.FrameTime;
             trials = [1:length(inds_all)];
-            imagesc(im_data_t,trials,imdata); caxis([0,250]);colormap(jet);%colormap([1-gray]);
+            imagesc(im_data_t,trials,imdata); caxis([0,500]);colormap(mycmap3);%colormap([1-gray]);
+%             axis([0.25 2.0 0 length(NL_ind)])
             hline(length(NL_ind),'w-');
             t=[1,length(inds_all)];
-            set(gca,'YTick',t);
+            set(gca,'YTick',t);set(gca,'ticklength',[.05 .05]);
             %         set(gca,'YTickLabels',round(abs(pooled_contactCaTrials_locdep{n}.re_totaldK(inds_all(t)))*1000)./1000);
             % % %
             % % %         figure(h_fig5);subplot(length(dends),numloc+xcol,count);
@@ -267,6 +271,14 @@ for d=1:length(dends)
             %         end
             
         end
+         if traces
+        figure(h_fig3);
+        if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)
+            title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  ' ' str ' ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
+        else
+            title([ ' ' num2str(n) ' D '  num2str(pooled_contactCaTrials_locdep{n}.dend) ' ' str ' ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ']);
+        end
+         end
         figure(h_fig1);
         if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)
             title([ ' ' num2str(n)   ' D ' num2str(pooled_contactCaTrials_locdep{n}.dend)  ' ' str ' ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,1)) ' NL ' num2str(pooled_contactCaTrials_locdep{n}.num_trials(i,2)) ' L ' ]);
@@ -277,7 +289,11 @@ for d=1:length(dends)
         count = count+1;
         set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1]);
         figure(h_fig1);
-        axis([10e-4 2 0 700]);
+        if strcmp(capar,'sigpeak')
+        axis([10e-4 1 0 600]);
+        elseif strcmp(capar,'sigmag')
+            axis([10e-4 1 0 6000]);
+        end
         set(gca,'xscale','log');
     end
     
@@ -317,7 +333,7 @@ for d=1:length(dends)
         
         
         %     h= plot([1:numloc],slopes(:,1),'--o','color',[.5 .5 .5]); set(h,'linewidth',3);hold on; % Ret
-        h= plot([1:numloc],slopes(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col,'linewidth',2); hold on; % Prot
+        h= plot([1:numloc],slopes(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col,'linewidth',2); hold on;set(gca,'ticklength',[.05 .05]); % Prot
          pntslp = pooled_contactCaTrials_locdep{n}.pointslope.([ str '_meanB'])(:,1); 
          pntslpctrl=  pooled_contactCaTrials_locdep{n}.pointslope.(['NL_meanB'])(:,1); 
 %          plot([1:numloc],pntslp(:,1)./mean(pntslpctrl(:,1)),'-o','color',col,'linewidth',2);
@@ -367,7 +383,7 @@ for d=1:length(dends)
     end
     
     %     axis([0  numloc+1 -100  max(slopes(:,2))+200]);
-    axis([1  numloc 0 4]);
+    axis([1  numloc 0 8]);set(gca,'ticklength',[.05 .05]);
     hline(0,'k:'); hline(1,'b:');
     title( ' slopes');
     

@@ -37,14 +37,14 @@ while(count>=0)
     
     collected_decoder_summary_stats{count}.info = summary.info;
     collected_decoder_summary_stats{count}.pOL_ctrl = summary.ctrl.percentoverlap(1,1,1);
-    collected_decoder_summary_stats{count}.p50_ctrl = summary.ctrl.p50(1,:,1);
+    collected_decoder_summary_stats{count}.p50_ctrl = summary.ctrl.p50(1,:,1)';
     
     pOL_ctrl(count) =summary.ctrl.percentoverlap(1,1,1);
     p50_ctrl(count,:) =summary.ctrl.p50(1,:,1);
     pV_ctrl(count) =summary.ctrl.pvalue(1,1,1);
     if lightcond
         collected_decoder_summary_stats{count}.pOL_mani = summary.mani.percentoverlap(1,1,1);
-        collected_decoder_summary_stats{count}.p50_mani = summary.mani.p50(1,:,1);
+        collected_decoder_summary_stats{count}.p50_mani = summary.mani.p50(1,:,1)';
         pOL_mani(count) =summary.mani.percentoverlap(1,1,1);
         p50_mani(count,:) =summary.mani.p50(1,:,1);
         pV_mani(count) =summary.mani.pvalue(1,1,1);
@@ -126,3 +126,19 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 %  h=errorbar(m,sem,'ko-');set(h,'linewidth',2)
 %  text(1.6,.7,['Self trained p =' num2str(p)]);
 %  title('Self trained');
+
+
+% to ceck if individual sessions are decoding under ctrl cond
+temp = data.p50_ctrl(:,[1:2]);
+ m=mean(temp);
+s=std(temp)./sqrt(11);
+
+figure; plot(temp','color',[.5 .5 .5]);
+hold on;
+errorbar(m,s,'ko-')
+[h,p] = ttest(temp(:,1),temp(:,2));
+text(1.5,2.8,['p=' num2str(p)]);
+ title('Decoder mean error Ctrl and shuffled under NL cond');
+  set(gca,'ticklength',[.025 .025]);
+  set(gca,'XTick',[1 2]);axis([.5 2.5 1 5]);
+  set(gca,'XTicklabel',{'Aligned';'SHuffled'});

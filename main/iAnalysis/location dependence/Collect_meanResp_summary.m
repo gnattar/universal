@@ -1,4 +1,4 @@
-function [collected_meanRespPref_summary_stats,data] = Collect_meanResp_summary(PrefLocFixed)
+function [collected_meanResp_summary_stats,data] = Collect_meanResp_summary(PrefLocFixed)
 % [collected_meanRespPref_summary_stats,data] = Collect_meanResp_summary(PrefLocFixed)
 %Always have PrefLocFixed=1, doesnt make sense otherwise
 %% you need to have run whiskloc_dep_stats & whisk_locdep_plot_contour before this

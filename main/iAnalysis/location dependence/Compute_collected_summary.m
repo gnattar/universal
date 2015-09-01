@@ -5,11 +5,12 @@ count =1;
 for i = 1: size(collected_summary,2) 
     d = length(collected_summary{1,i}.dends);
     for j = 1:d
-        temp_data = cell2mat(arrayfun(@(x) x.dff(j,:), collected_data{1,i},'uniformoutput',0)');
+        temp_data_raw = cell2mat(arrayfun(@(x) x.dff(j,:), collected_data{1,i},'uniformoutput',0)');
         sampling_time = collected_data{1,i}(1).FrameTime;
         winsize =round(0.4/sampling_time); %% fixed to match 200 ms of time window
 %         winsize = 5;
-        src_data = filter(ones(1,winsize)/winsize,1,temp_data,[],2);
+        src_data = filter(ones(1,winsize)/winsize,1,temp_data_raw,[],2);
+        temp_data = src_data;
 %         src_data2 = conv(temp_data,ones(1,winsize)/winsize);
 %         [event_detected_data,events_septs,detected] = detect_Ca_events(src_data,sampling_time,event_detection_threshold);
        [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(src_data,sampling_time,event_detection_threshold(j));
@@ -47,7 +48,7 @@ for i = 1: size(collected_summary,2)
 %                 fwhm(k) = nan;
             end
         end
-        pooled_contact_CaTrials{count}.rawdata = temp_data;
+        pooled_contact_CaTrials{count}.rawdata = temp_data_raw;
          pooled_contact_CaTrials{count}.rawdata_smth = src_data;
          pooled_contact_CaTrials{count}.eventdetectionthreshold= event_detection_threshold(d);
         pooled_contact_CaTrials{count}.eventsdetected= detected;
@@ -94,4 +95,4 @@ for i = 1: size(collected_summary,2)
         count = count+1;
     end
 end
-save('pooled_contact_CaTrials','pooled_contact_CaTrials');
+save('pooled_contact_CaTrials_smth','pooled_contact_CaTrials');
