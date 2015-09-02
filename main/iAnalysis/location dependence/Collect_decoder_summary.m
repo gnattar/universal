@@ -117,15 +117,15 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 % % % set(gca,'Fontsize',16)
 
 
-% temp = [data.pOL_ctrl',data.pOL_mani'];
-% diff = temp(:,1)-temp(:,2);
-% [h,p]=ttest(diff);
-% figure; plot(temp','color',[.5 .5 .5]); hold on;
-%  m=mean(temp);
-%  sem=std(temp)./sqrt(size(temp,1)+1);
-%  h=errorbar(m,sem,'ko-');set(h,'linewidth',2)
-%  text(1.6,.7,['Self trained p =' num2str(p)]);
-%  title('Self trained');
+temp = [data.pOL_ctrl',data.pOL_mani'];
+diff = temp(:,1)-temp(:,2);
+[h,p]=ttest(diff);
+figure; plot(temp','color',[.5 .5 .5]); hold on;
+ m=mean(temp);
+ sem=std(temp)./sqrt(size(temp,1)+1);
+ h=errorbar(m,sem,'ko-');set(h,'linewidth',2)
+ text(1.6,.7,['Ctrl trained p =' num2str(p)]);
+ title('Ctrl trained');
 
 
 % to ceck if individual sessions are decoding under ctrl cond

@@ -13,6 +13,17 @@ l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uni
 l_trials = l_trials(:,1);
 end
 
+R=cell2mat(cellfun(@(x) x.sigpeak',pooled_contactCaTrials_locdep,'uni',0)')';
+[r,pval]=corrcoef(R);
+temp=tril(r,-1);
+r_collect=r(find(temp~=0));
+map = brewermap(100,'YlOrRd');
+figure; subplot(1,2,1); imagesc(r,[0 1.2]);colormap(map);subplot(1,2,2); plot([0:.1:1],hist(r_collect,[0:.1:1])); suptitle([str]);
+saveas(gcf,[str ' Corrcoef'],'fig');
+saveas(gcf,[str ' Corrcoef'],'jpg');
+save([str ' Corrcoef'],'r');
+save([ str ' PValues'],'pval');
+
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.totalKappa_epoch_abs, pooled_contactCaTrials_locdep,'uniformoutput',0));
     pl = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
@@ -35,8 +46,9 @@ if strcmp(cond,'ctrl' )
     set(gcf,'PaperPositionMode','manual');
     pause(.5);
     suptitle([str ' ' disc_func ' CTRL']);
-    print( gcf ,'-depsc2','-painters','-loose',[str ' ' disc_func ' CTRL']);
+%     print( gcf ,'-depsc2','-painters','-loose',[str ' ' disc_func ' CTRL']);
     saveas(gcf,[str ' CTRL'],'fig');
+    saveas(gcf,[str ' CTRL'],'jpg');
     
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
@@ -83,8 +95,9 @@ elseif strcmp(cond,'ctrl_mani')
     set(gcf,'PaperPositionMode','auto');
     pause(.5);
     suptitle([str ' ' disc_func ' CTRL' tag]);
-    print( gcf ,'-depsc2','-painters','-loose',[str ' ' disc_func ' CTRL' tag]);
+%     print( gcf ,'-depsc2','-painters','-loose',[str ' ' disc_func ' CTRL' tag]);
     saveas(gcf,[str ' ' disc_func  ' CTRL' tag ],'fig');
+    saveas(gcf,[str ' ' disc_func  ' CTRL' tag ],'jpg');
     
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
@@ -129,8 +142,9 @@ elseif strcmp(cond,'ctrl_mani')
     set(gcf,'PaperPositionMode','auto');
     pause(.5);
     suptitle([str ' SIL ' tag]);
-    print( gcf ,'-depsc2','-painters','-loose',[str ' SIL ' tag]);
+%     print( gcf ,'-depsc2','-painters','-loose',[str ' SIL ' tag]);
     saveas(gcf,[str ' ' disc_func ' SIL ' tag],'fig');
+    saveas(gcf,[str ' ' disc_func ' SIL ' tag],'jpg');
     
     summary.mani.hist = hist_all;
     summary.mani.dist=dist_all;
@@ -227,7 +241,7 @@ format long
 p_all(1,1,1) = p;
 temp = min([hista;hists]);
 pOL_all(1,1,1) = sum(temp);
-tb = text(2,.175, ['pO = ' num2str(sum(temp))],'FontSize',12);set(tb,'color','k');
+tb = text(2,.105, ['pO = ' num2str(sum(temp))],'FontSize',12);set(tb,'color','k');
 tb = text(2,.125, ['p = ' num2str(p)],'FontSize',12);set(tb,'color','k');
 chista = cumsum(hista);chists = cumsum(hists);
 figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],chista,'k','linewidth',2); hold on; plot([0:bw:uL],chists,'r','linewidth',2);  set(gca,'FontSize',16); axis([0 uL 0 1]);plotcount=plotcount+1;
