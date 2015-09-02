@@ -49,13 +49,13 @@ set(gcf,'paperposition',currposition);
 set(gcf, 'PaperSize', [24,10]);
 set(gcf,'PaperPositionMode','manual');
 if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    saveas(gcf,[pwd,filesep,fnam],'fig');
+    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 end
 
 figure;fnam = [ grp ' Event Probability '];
 x = ones(size(meaneffect.alleventrate_L,1),2);x(:,2) = 1.5;
-hold on; 
+hold on;
 plot(x',[meaneffect.alleventrate_NL(:,1)';meaneffect.alleventrate_L(:,1)'],'-o','color',[ .5 .5 .5], 'Markersize',10,'linewidth',.1);hold on;set(gca,'ticklength',[.025 .025]);
 hold on;
 h=errorbar([1;1.5],[nanmean(meaneffect.alleventrate_NL(:,1));nanmean(meaneffect.alleventrate_L(:,1))],[nanstd(meaneffect.alleventrate_NL(:,1))/sqrt(size(meaneffect.alleventrate_NL,1)); nanstd(meaneffect.alleventrate_L(:,1))/sqrt(size(meaneffect.alleventrate_L,1))],'or');
@@ -71,8 +71,8 @@ set(gcf,'paperposition',currposition);
 set(gcf, 'PaperSize', [24,10]);
 set(gcf,'PaperPositionMode','manual');
 if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    saveas(gcf,[pwd,filesep,fnam],'fig');
+    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 end
 % figure;fnam = [ grp 'FWHM Scatter'];
 % plot(meaneffect.allfwhm_L(:,1),meaneffect.allfwhm_NL(:,1),'bo','Markersize',10,'Markerfacecolor','b');
@@ -85,7 +85,7 @@ end
 % saveas(gcf,[pwd,filesep,fnam],'jpg');
 
 if strcmp(par,'area')
-
+    
     figure;fnam = [ grp 'Event Integral Area Bar'];
     hold on; bar([1],[nanmean(meaneffect.allintarea_NL(:,1))],0.25,'k');
     hold on; bar([1.5],[nanmean(meaneffect.allintarea_L(:,1))],0.25,'r');
@@ -95,7 +95,7 @@ if strcmp(par,'area')
     axis([ .5 2 0 200]);
     ylabel('Event Size (Integral Area) '); title(fnam)
     set(findall(gcf,'type','text'),'FontSize',20)
-
+    
     set(gcf,'PaperUnits','inches');
     currposition = get(gcf,'paperposition');
     currposition(3) = currposition(3)/2;
@@ -103,8 +103,8 @@ if strcmp(par,'area')
     set(gcf, 'PaperSize', [24,10]);
     set(gcf,'PaperPositionMode','manual');
     if tosave
-    saveas(gcf,[pwd,filesep,fnam],'fig');
-    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
     end
     % plot(meaneffect.allintarea_L(:,1),meaneffect.allintarea_NL(:,1),'bo','Markersize',10,'Markerfacecolor','b');
     figure;fnam = [ grp 'Event Integral Area '];
@@ -113,12 +113,12 @@ if strcmp(par,'area')
     set(gca,'ticklength',[.025 .025]);
     axis([ .5 2 0 200]);
     set(h, 'linewidth',0.2,'Markersize',10);
-
-
+    
+    
     set(gca,'XTick',[1 2],'XTickLabel',{'NL','L'},'YTick',[0:100:800]);
     ylabel('Event Size (Integral Area) '); title(fnam)
     set(findall(gcf,'type','text'),'FontSize',20)
-
+    
     set(gcf,'PaperUnits','inches');
     currposition = get(gcf,'paperposition');
     currposition(3) = currposition(3)/2;
@@ -126,13 +126,13 @@ if strcmp(par,'area')
     set(gcf, 'PaperSize', [24,10]);
     set(gcf,'PaperPositionMode','manual');
     if tosave
-    saveas(gcf,[pwd,filesep,fnam],'fig');
-    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
     end
-    % 
-
-
-
+    %
+    
+    
+    
     figure;fnam = [ grp 'Integral Area Bar'];
     hold on; bar([1],[nanmean(meaneffect.allintarea_NL(:,1))],0.25,'k');
     hold on; bar([1.5],[nanmean(meaneffect.allintarea_L(:,1))],0.25,'r');
@@ -142,7 +142,7 @@ if strcmp(par,'area')
     axis([ .5 2 0 200]);
     ylabel('Event Size (Integral Area) '); title(fnam)
     set(findall(gcf,'type','text'),'FontSize',20)
-
+    
     set(gcf,'PaperUnits','inches');
     currposition = get(gcf,'paperposition');
     currposition(3) = currposition(3)/2;
@@ -150,8 +150,8 @@ if strcmp(par,'area')
     set(gcf, 'PaperSize', [24,10]);
     set(gcf,'PaperPositionMode','manual');
     if tosave
-    saveas(gcf,[pwd,filesep,fnam],'fig');
-    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
     end
     % plot(meaneffect.allintarea_L(:,1),meaneffect.allintarea_NL(:,1),'bo','Markersize',10,'Markerfacecolor','b');
     figure;fnam = [ grp 'Event Integral Area '];
@@ -160,12 +160,12 @@ if strcmp(par,'area')
     set(gca,'ticklength',[.025 .025]);
     axis([ .5 2 0 200]);
     set(h, 'linewidth',0.2,'Markersize',10);
-
-
+    
+    
     set(gca,'XTick',[1 2],'XTickLabel',{'NL','L'},'YTick',[0:100:800]);
     ylabel('Event Size (Integral Area) '); title(fnam)
     set(findall(gcf,'type','text'),'FontSize',20)
-
+    
     set(gcf,'PaperUnits','inches');
     currposition = get(gcf,'paperposition');
     currposition(3) = currposition(3)/2;
@@ -173,10 +173,10 @@ if strcmp(par,'area')
     set(gcf, 'PaperSize', [24,10]);
     set(gcf,'PaperPositionMode','manual');
     if tosave
-    saveas(gcf,[pwd,filesep,fnam],'fig');
-    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
     end
-
+    
 elseif strcmp(par,'peak')
     
     figure;fnam = [ grp 'Event Peak Amplitude Bar'];
@@ -224,52 +224,52 @@ elseif strcmp(par,'peak')
     end
     %
     
-
-
-figure;fnam = [ grp 'Peak Amplitude Bar'];
-hold on; bar([1],[nanmean(meaneffect.allpeakamp_NL(:,1))],0.25,'k');
-hold on; bar([1.5],[nanmean(meaneffect.allpeakamp_L(:,1))],0.25,'r');
-hold on; h=errorbar([1;1.5],[nanmean(meaneffect.allpeakamp_NL(:,1));nanmean(meaneffect.allpeakamp_L(:,1))],[nanstd(meaneffect.allpeakamp_NL(:,1))/sqrt(size(meaneffect.allpeakamp_NL,1));nanstd(meaneffect.allpeakamp_L(:,1))/sqrt(size(meaneffect.allpeakamp_L,1))],'.r');
-set(h, 'linewidth',0.2,'Markersize',1,'Markerfacecolor','k');
-set(gca,'XTick',[1 2],'XTickLabel',{'NL','L'},'YTick',[0:100:800]);
-axis([ .5 2 0 200]);
-ylabel('Event Amplitude (Peak) '); title(fnam)
-set(findall(gcf,'type','text'),'FontSize',20)
-
-set(gcf,'PaperUnits','inches');
-currposition = get(gcf,'paperposition');
-currposition(3) = currposition(3)/2;
-set(gcf,'paperposition',currposition);
-set(gcf, 'PaperSize', [24,10]);
-set(gcf,'PaperPositionMode','manual');
-if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
-end
-% plot(meaneffect.allintarea_L(:,1),meaneffect.allintarea_NL(:,1),'bo','Markersize',10,'Markerfacecolor','b');
-figure;fnam = [ grp 'Event Amplitude  '];
-hold on; plot(x',[meaneffect.allpeakamp_NL(:,1)';meaneffect.allpeakamp_L(:,1)'],'-o','color',[.5 .5 .5], 'Markersize',10);hold on;
-hold on; h=errorbar([1;1.5],[nanmean(meaneffect.allpeakamp_NL(:,1));nanmean(meaneffect.allpeakamp_L(:,1))],[nanstd(meaneffect.allpeakamp_NL(:,1))/sqrt(size(meaneffect.allpeakamp_NL,1));nanstd(meaneffect.allpeakamp_L(:,1))/sqrt(size(meaneffect.allpeakamp_L,1))],'or');
-set(gca,'ticklength',[.025 .025]);
-axis([ .5 2 0 200]);
-set(h, 'linewidth',0.2,'Markersize',10);
-
-
-set(gca,'XTick',[1 2],'XTickLabel',{'NL','L'},'YTick',[0:100:800]);
-ylabel('Event Amplitude (Peak) '); title(fnam)
-set(findall(gcf,'type','text'),'FontSize',20)
-
-set(gcf,'PaperUnits','inches');
-currposition = get(gcf,'paperposition');
-currposition(3) = currposition(3)/2;
-set(gcf,'paperposition',currposition);
-set(gcf, 'PaperSize', [24,10]);
-set(gcf,'PaperPositionMode','manual');
-if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
-end
-
+    
+    
+    figure;fnam = [ grp 'Peak Amplitude Bar'];
+    hold on; bar([1],[nanmean(meaneffect.allpeakamp_NL(:,1))],0.25,'k');
+    hold on; bar([1.5],[nanmean(meaneffect.allpeakamp_L(:,1))],0.25,'r');
+    hold on; h=errorbar([1;1.5],[nanmean(meaneffect.allpeakamp_NL(:,1));nanmean(meaneffect.allpeakamp_L(:,1))],[nanstd(meaneffect.allpeakamp_NL(:,1))/sqrt(size(meaneffect.allpeakamp_NL,1));nanstd(meaneffect.allpeakamp_L(:,1))/sqrt(size(meaneffect.allpeakamp_L,1))],'.r');
+    set(h, 'linewidth',0.2,'Markersize',1,'Markerfacecolor','k');
+    set(gca,'XTick',[1 2],'XTickLabel',{'NL','L'},'YTick',[0:100:800]);
+    axis([ .5 2 0 200]);
+    ylabel('Event Amplitude (Peak) '); title(fnam)
+    set(findall(gcf,'type','text'),'FontSize',20)
+    
+    set(gcf,'PaperUnits','inches');
+    currposition = get(gcf,'paperposition');
+    currposition(3) = currposition(3)/2;
+    set(gcf,'paperposition',currposition);
+    set(gcf, 'PaperSize', [24,10]);
+    set(gcf,'PaperPositionMode','manual');
+    if tosave
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    end
+    % plot(meaneffect.allintarea_L(:,1),meaneffect.allintarea_NL(:,1),'bo','Markersize',10,'Markerfacecolor','b');
+    figure;fnam = [ grp 'Event Amplitude  '];
+    hold on; plot(x',[meaneffect.allpeakamp_NL(:,1)';meaneffect.allpeakamp_L(:,1)'],'-o','color',[.5 .5 .5], 'Markersize',10);hold on;
+    hold on; h=errorbar([1;1.5],[nanmean(meaneffect.allpeakamp_NL(:,1));nanmean(meaneffect.allpeakamp_L(:,1))],[nanstd(meaneffect.allpeakamp_NL(:,1))/sqrt(size(meaneffect.allpeakamp_NL,1));nanstd(meaneffect.allpeakamp_L(:,1))/sqrt(size(meaneffect.allpeakamp_L,1))],'or');
+    set(gca,'ticklength',[.025 .025]);
+    axis([ .5 2 0 200]);
+    set(h, 'linewidth',0.2,'Markersize',10);
+    
+    
+    set(gca,'XTick',[1 2],'XTickLabel',{'NL','L'},'YTick',[0:100:800]);
+    ylabel('Event Amplitude (Peak) '); title(fnam)
+    set(findall(gcf,'type','text'),'FontSize',20)
+    
+    set(gcf,'PaperUnits','inches');
+    currposition = get(gcf,'paperposition');
+    currposition(3) = currposition(3)/2;
+    set(gcf,'paperposition',currposition);
+    set(gcf, 'PaperSize', [24,10]);
+    set(gcf,'PaperPositionMode','manual');
+    if tosave
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    end
+    
     
 end
 
@@ -290,10 +290,10 @@ intarea_trials = cell2mat(cellfun(@(x) x.intarea (:,1),pooled_contact_CaTrials,'
 lightstim_trials = cell2mat(cellfun(@(x) x.lightstim (:,1) ,pooled_contact_CaTrials,'uniformoutput',0)');
 peakamp_trials = cell2mat(cellfun(@(x) x.peakamp (:,1) ,pooled_contact_CaTrials,'uniformoutput',0)');
 fwhm_trials = cell2mat(cellfun(@(x) x.fwhm (:,1) ,pooled_contact_CaTrials,'uniformoutput',0)');
- eventsdetected_trials = cell2mat(cellfun(@(x) x.eventsdetected (:,1) ,pooled_contact_CaTrials,'uniformoutput',0)');
- 
+eventsdetected_trials = cell2mat(cellfun(@(x) x.eventsdetected (:,1) ,pooled_contact_CaTrials,'uniformoutput',0)');
 
-% 
+
+%
 %  intarea_trials(eventsdetected_trials==0) = 0;
 %  peakamp_trials(eventsdetected_trials==0) = 0;
 %  fwhm_trials(eventsdetected_trials==0) = 0;
@@ -305,7 +305,7 @@ meaneffect.eventrate_L_hist=hist(meaneffect.alleventrate_L,meaneffect.eventrate_
 
 
 figure;fnam = [ grp ' Event Prob Histogram '];
-plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_L_hist,'r','linewidth',1.5); hold on; plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_NL_hist,'k','linewidth',1.5);xlabel(' Event Probability');ylabel('Fraction of Dendrites'); title(fnam); 
+plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_L_hist,'r','linewidth',1.5); hold on; plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_NL_hist,'k','linewidth',1.5);xlabel(' Event Probability');ylabel('Fraction of Dendrites'); title(fnam);
 % text(.6,.2,[ 'Shift = ' num2str(meaneffect.eventrate_X_hist(meaneffect.eventrate_L_hist == 0.5) - meaneffect.eventrate_X_hist(meaneffect.eventrate_NL_hist == 0.5))] );
 set(gca,'ticklength',[.025 .025]);
 legend({'L';'NL'});set(findall(gcf,'type','text'),'FontSize',20)
@@ -322,18 +322,18 @@ plot(meaneffect.eventrate_X_hist,meaneffect.eventrate_L_hist,'r','linewidth',1.5
 set(gca,'ticklength',[.025 .025]);
 set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});
 if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
-end  
+    saveas(gcf,[pwd,filesep,fnam],'fig');
+    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+end
 
 if strcmp(sel,'all')
     intarea_trials_L= intarea_trials(lightstim_trials==1);
     intarea_trials_NL= intarea_trials(lightstim_trials==0);
     peakamp_trials_L= peakamp_trials(lightstim_trials==1);
-    peakamp_trials_NL= peakamp_trials(~lightstim_trials==0);
+    peakamp_trials_NL= peakamp_trials(lightstim_trials==0);
 elseif strcmp(sel,'events')
     intarea_trials_L= intarea_trials(eventsdetected_trials&lightstim_trials);
-    intarea_trials_NL= intarea_trials(eventsdetected_trials & ~lightstim_trials);   
+    intarea_trials_NL= intarea_trials(eventsdetected_trials & ~lightstim_trials);
     peakamp_trials_L= peakamp_trials(eventsdetected_trials&lightstim_trials);
     peakamp_trials_NL= peakamp_trials(eventsdetected_trials & ~lightstim_trials);
 end
@@ -364,78 +364,89 @@ meaneffect.event_trials_NL= sum(~lightstim_trials&eventsdetected_trials);
 
 if strcmp(par,'area')
     ia_t_X_hist =[0:25:600];
-ia_t_L_hist = hist(intarea_trials_L,ia_t_X_hist)/sum(lightstim_trials==1);
-ia_t_NL_hist = hist(intarea_trials_NL,ia_t_X_hist)/sum(lightstim_trials==0);
-figure;fnam = [ grp ' Event Size (Integral Area) Histogram'];
-plot(ia_t_X_hist,ia_t_L_hist,'r','linewidth',1.5);hold on; plot(ia_t_X_hist,ia_t_NL_hist,'k','linewidth',1.5);xlabel('Event Size');ylabel('Probabiity of Event Size'); title(fnam); 
-set(gca,'ticklength',[.025 .025]);
-temp = [ 50 100 200 300];
-vline(temp,'k .-.');
-msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ') L \n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials  (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')NL']);
-                   % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
-set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.05,msg); 
-if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
-end 
-ia_t_L_hist = cumsum(hist(intarea_trials_L,ia_t_X_hist)/sum(lightstim_trials==1));
-ia_t_NL_hist = cumsum(hist(intarea_trials_NL,ia_t_X_hist)/sum(lightstim_trials==0));
-figure;fnam = [ grp 'Event Size (Integral Area) Cumulative Histogram'];
-plot(ia_t_X_hist,ia_t_L_hist,'r','linewidth',1.5);hold on; plot(ia_t_X_hist,ia_t_NL_hist,'k','linewidth',1.5);xlabel('Event Size');ylabel('Probability of Event Size'); title(fnam); 
-% text(500,.2,[ 'Shift = ' num2str(sum(ia_t_L_hist - ia_t_NL_hist))]);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
-set(gca,'ticklength',[.025 .025]);
-temp = [ 50 100 200 300];
-vline(temp,'k .-.');
-% hline(ia_t_NL_hist(ismember(ia_t_X_hist,temp)),'k--');
-% hline(ia_t_L_hist(ismember(ia_t_X_hist,temp)),'r--');
-msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials L  (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ')\n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials NL (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')']);
-                % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
-set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.1,msg);    
-if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
-end
-
+    if strcmp(sel,'all')
+        ia_t_L_hist = hist(intarea_trials_L,ia_t_X_hist)/length(intarea_trials_L);
+        ia_t_NL_hist = hist(intarea_trials_NL,ia_t_X_hist)/length(intarea_trials_NL);
+    elseif strcmp(sel,'events')
+        ia_t_L_hist = hist(intarea_trials_L,ia_t_X_hist)/sum(lightstim_trials==1);
+        ia_t_NL_hist = hist(intarea_trials_NL,ia_t_X_hist)/sum(lightstim_trials==0);
+    end
+    figure;fnam = [ grp ' Event Size (Integral Area) Histogram'];
+    plot(ia_t_X_hist,ia_t_L_hist,'r','linewidth',1.5);hold on; plot(ia_t_X_hist,ia_t_NL_hist,'k','linewidth',1.5);xlabel('Event Size');ylabel('Probabiity of Event Size'); title(fnam);
+    set(gca,'ticklength',[.025 .025]);
+    temp = [ 50 100 200 300];
+    vline(temp,'k .-.');
+    msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ') L \n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials  (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')NL']);
+    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+    set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.05,msg);
+    if tosave
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    end
+    ia_t_L_hist = cumsum(hist(intarea_trials_L,ia_t_X_hist)/sum(lightstim_trials==1));
+    ia_t_NL_hist = cumsum(hist(intarea_trials_NL,ia_t_X_hist)/sum(lightstim_trials==0));
+    figure;fnam = [ grp 'Event Size (Integral Area) Cumulative Histogram'];
+    plot(ia_t_X_hist,ia_t_L_hist,'r','linewidth',1.5);hold on; plot(ia_t_X_hist,ia_t_NL_hist,'k','linewidth',1.5);xlabel('Event Size');ylabel('Probability of Event Size'); title(fnam);
+    % text(500,.2,[ 'Shift = ' num2str(sum(ia_t_L_hist - ia_t_NL_hist))]);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+    set(gca,'ticklength',[.025 .025]);
+    temp = [ 50 100 200 300];
+    vline(temp,'k .-.');
+    % hline(ia_t_NL_hist(ismember(ia_t_X_hist,temp)),'k--');
+    % hline(ia_t_L_hist(ismember(ia_t_X_hist,temp)),'r--');
+    msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials L  (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ')\n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials NL (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')']);
+    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+    set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.1,msg);
+    if tosave
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    end
+    
 elseif strcmp(par,'peak')
     pa_t_X_hist =[0:25:600];
-pa_t_L_hist = hist(peakamp_trials_L,pa_t_X_hist)/sum(lightstim_trials==1);
-pa_t_NL_hist = hist(peakamp_trials_NL,pa_t_X_hist)/sum(lightstim_trials==0);
-figure;fnam = [ grp ' Event Amp (Peak) Histogram'];
-plot(pa_t_X_hist,pa_t_L_hist,'r','linewidth',1.5);hold on; plot(pa_t_X_hist,pa_t_NL_hist,'k','linewidth',1.5);xlabel('Event Amp');ylabel('Probabiity of Event Size'); title(fnam); 
-set(gca,'ticklength',[.025 .025]);
-temp = [ 50 100 200 300];
-vline(temp,'k .-.');
-msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ') L \n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials  (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')NL']);
-                   % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
-set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.05,msg); 
-if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
-end 
-pa_t_L_hist = cumsum(hist(peakamp_trials_L,pa_t_X_hist)/sum(lightstim_trials==1));
-pa_t_NL_hist = cumsum(hist(peakamp_trials_NL,pa_t_X_hist)/sum(lightstim_trials==0));
-figure;fnam = [ grp 'Event Amplitude (Peak) Cumulative Histogram'];
-plot(pa_t_X_hist,pa_t_L_hist,'r','linewidth',1.5);hold on; plot(pa_t_X_hist,pa_t_NL_hist,'k','linewidth',1.5);xlabel('Event Amp');ylabel('Probability of Event Size'); title(fnam); 
-% text(500,.2,[ 'Shift = ' num2str(sum(ia_t_L_hist - ia_t_NL_hist))]);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
-set(gca,'ticklength',[.025 .025]);
-temp = [ 50 100 200 300];
-vline(temp,'k .-.');
-% hline(ia_t_NL_hist(ismember(ia_t_X_hist,temp)),'k--');
-% hline(ia_t_L_hist(ismember(ia_t_X_hist,temp)),'r--');
-msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials L  (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ')\n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials NL (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')']);
-                % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
-set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.1,msg);    
-if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
-end   
+    if strcmp(sel,'all')
+        pa_t_L_hist = hist(peakamp_trials_L,pa_t_X_hist)/length(peakamp_trials_L);
+        pa_t_NL_hist = hist(peakamp_trials_NL,pa_t_X_hist)/length(peakamp_trials_NL);
+    elseif strcmp(sel,'events')
+        pa_t_L_hist = hist(peakamp_trials_L,pa_t_X_hist)/sum(lightstim_trials==1);
+        pa_t_NL_hist = hist(peakamp_trials_NL,pa_t_X_hist)/sum(lightstim_trials==0);
+    end
+    
+    figure;fnam = [ grp ' Event Amp (Peak) Histogram'];
+    plot(pa_t_X_hist,pa_t_L_hist,'r','linewidth',1.5);hold on; plot(pa_t_X_hist,pa_t_NL_hist,'k','linewidth',1.5);xlabel('Event Amp');ylabel('Probabiity of Event Size'); title(fnam);
+    set(gca,'ticklength',[.025 .025]);
+    temp = [ 50 100 200 300];
+    vline(temp,'k .-.');
+    msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ') L \n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials  (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')NL']);
+    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+    set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.05,msg);
+    if tosave
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    end
+    pa_t_L_hist = cumsum(hist(peakamp_trials_L,pa_t_X_hist)/sum(lightstim_trials==1));
+    pa_t_NL_hist = cumsum(hist(peakamp_trials_NL,pa_t_X_hist)/sum(lightstim_trials==0));
+    figure;fnam = [ grp 'Event Amplitude (Peak) Cumulative Histogram'];
+    plot(pa_t_X_hist,pa_t_L_hist,'r','linewidth',1.5);hold on; plot(pa_t_X_hist,pa_t_NL_hist,'k','linewidth',1.5);xlabel('Event Amp');ylabel('Probability of Event Size'); title(fnam);
+    % text(500,.2,[ 'Shift = ' num2str(sum(ia_t_L_hist - ia_t_NL_hist))]);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+    set(gca,'ticklength',[.025 .025]);
+    temp = [ 50 100 200 300];
+    vline(temp,'k .-.');
+    % hline(ia_t_NL_hist(ismember(ia_t_X_hist,temp)),'k--');
+    % hline(ia_t_L_hist(ismember(ia_t_X_hist,temp)),'r--');
+    msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials L  (' num2str(sum(eventsdetected_trials&lightstim_trials)/sum(lightstim_trials==1)) ')\n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials NL (' num2str(sum(eventsdetected_trials&~lightstim_trials)/sum(lightstim_trials==0)) ')']);
+    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
+    set(findall(gcf,'type','text'),'FontSize',20); legend({'L';'NL'});text(350,.1,msg);
+    if tosave
+        saveas(gcf,[pwd,filesep,fnam],'fig');
+        print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    end
     
     
 end
 
 
 
-%NORM 
+%NORM
 % intarea_trials_L= intarea_trials(eventsdetected_trials&lightstim_trials);
 % intarea_trials_NL= intarea_trials(eventsdetected_trials & ~lightstim_trials);
 % ia_t_X_hist =[0:50:800];
@@ -454,7 +465,7 @@ end
 % saveas(gcf,[pwd,filesep,fnam],'jpg');
 % print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
- 
+
 peakamp_trials_L= peakamp_trials(eventsdetected_trials&lightstim_trials);
 peakamp_trials_NL= peakamp_trials(eventsdetected_trials & ~lightstim_trials);
 
@@ -472,9 +483,9 @@ elseif strcmp(par,'peak')
     Lt = meaneffect.peakamp_trials_L;
     NLt = meaneffect.peakamp_trials_NL;
     bins=[0:25:600];
-     parname = 'Peak Amp'
+    parname = 'Peak Amp'
 end
-    hL=hist(Lt,bins);
+hL=hist(Lt,bins);
 hNL=hist(NLt,bins);
 
 fhNL = (hNL./meaneffect.trials_NL);
@@ -499,7 +510,7 @@ axis([0 600 0 1])
 xlabel(['Event ' par]);
 ylabel('Fr. change in freq');
 title([grp 'Fractional change with Light']);
-set(findall(gcf,'type','text'),'FontSize',20); 
+set(findall(gcf,'type','text'),'FontSize',20);
 
 
 meaneffect.(['frch_cfreq' par]) = frch_cfreq;
@@ -516,8 +527,8 @@ ind = temp(posi);
 hold on; plot(x,polyval(param ,x),'-','color','k','linewidth',1);
 
 if tosave
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+    saveas(gcf,[pwd,filesep,fnam],'fig');
+    print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 end
 
 
@@ -526,16 +537,16 @@ name  = grp;
 fname = [name ' Trial Count.txt'];
 fid = fopen(fname,'w');
 if fid ~=-1
-fprintf(fid,'%s \n Trial count: \n Light Events %d \n Light Trials %d \n No Light Events %d \n No Light Trials %d',name, meaneffect.event_trials_L,meaneffect.trials_L,meaneffect.event_trials_NL,meaneffect.trials_NL);
-fclose(fid)
+    fprintf(fid,'%s \n Trial count: \n Light Events %d \n Light Trials %d \n No Light Events %d \n No Light Trials %d',name, meaneffect.event_trials_L,meaneffect.trials_L,meaneffect.event_trials_NL,meaneffect.trials_NL);
+    fclose(fid)
 end
 
 if strcmp(par,'area')
-dlmwrite([name '_EventArea_trials_NL.txt'],meaneffect.intarea_trials_NL,'delimiter',',');
-dlmwrite([name '_EventArea_trials_L.txt'],meaneffect.intarea_trials_L,'delimiter',',');
+    dlmwrite([name '_EventArea_trials_NL.txt'],meaneffect.intarea_trials_NL,'delimiter',',');
+    dlmwrite([name '_EventArea_trials_L.txt'],meaneffect.intarea_trials_L,'delimiter',',');
 elseif strcmp(par,'peak')
-dlmwrite([name '_EventPeakAmp_trials_NL.txt'],meaneffect.peakamp_trials_NL,'delimiter',',');
-dlmwrite([name '_EventPeakAmp_trials_L.txt'],meaneffect.peakamp_trials_L,'delimiter',',');
+    dlmwrite([name '_EventPeakAmp_trials_NL.txt'],meaneffect.peakamp_trials_NL,'delimiter',',');
+    dlmwrite([name '_EventPeakAmp_trials_L.txt'],meaneffect.peakamp_trials_L,'delimiter',',');
 end
 %% cummulative event mag prob analaysis cell wise
 
@@ -577,7 +588,7 @@ end
 % % % % text(300,.2,msg);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
 % % % % set(findall(gcf,'type','text'),'FontSize',20)
 % % % % saveas(gcf,[pwd,filesep,fnam],'jpg');
-% % % % 
+% % % %
 % % % % pa_t_X_hist = [0:50:600];
 % % % % pa_t_L_hist = cumsum(hist(peakamp_trials_L,pa_t_X_hist)/sum(hist(peakamp_trials_L,pa_t_X_hist)));
 % % % % pa_t_NL_hist = cumsum(hist(peakamp_trials_NL,pa_t_X_hist)/sum(hist(peakamp_trials_NL,pa_t_X_hist)));
@@ -588,10 +599,10 @@ end
 % % % % text(300,.2,msg);                    % num2str(ia_t_X_hist(ia_t_L_hist = 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
 % % % % set(findall(gcf,'type','text'),'FontSize',20)
 % % % % saveas(gcf,[pwd,filesep,fnam],'jpg');
-% % % % 
+% % % %
 % % % % fwhm_trials_L= fwhm_trials(eventsdetected_trials & lightstim_trials);
 % % % % fwhm_trials_NL= fwhm_trials(eventsdetected_trials & ~lightstim_trials);fwhm_trials_NL(fwhm_trials_NL>4.5) = 4.5;
-% % % % 
+% % % %
 % % % % fwhm_t_X_hist = [0:.25:5];
 % % % % fwhm_t_L_hist = cumsum(hist(fwhm_trials_L,fwhm_t_X_hist )/sum(lightstim_trials==1));
 % % % % fwhm_t_NL_hist =cumsum(hist(fwhm_trials_NL,fwhm_t_X_hist)/sum(lightstim_trials==0));
@@ -602,7 +613,7 @@ end
 % % % % text(3,.2,msg);                    % num2str(ia_t_X_hist(ia_t_L_hist == 0.5) - ia_t_X_hist(ia_t_NL_hist == 0.5))] );
 % % % % set(findall(gcf,'type','text'),'FontSize',20)
 % % % % saveas(gcf,[pwd,filesep,fnam],'jpg');
-% % % % 
+% % % %
 % % % % fwhm_t_X_hist = [0:.25:5];
 % % % % fwhm_t_L_hist = cumsum(hist(fwhm_trials_L,fwhm_t_X_hist )/sum(hist(fwhm_trials_L,fwhm_t_X_hist )));
 % % % % fwhm_t_NL_hist =cumsum(hist(fwhm_trials_NL,fwhm_t_X_hist)/sum(hist(fwhm_trials_NL,fwhm_t_X_hist )));
@@ -610,12 +621,12 @@ end
 % % % % plot(fwhm_t_X_hist ,fwhm_t_L_hist,'r');hold on; plot(fwhm_t_X_hist ,fwhm_t_NL_hist,'k');xlabel('FWHM ');ylabel('Counts'); title(fnam);axis([0 5 0 1]);
 % % % % % text(3,.2,[ 'Shift = ' num2str(sum(fwhm_t_L_hist - fwhm_t_NL_hist))]);   % num2str(fwhm_t_X_hist(fwhm_t_L_hist == 0.5) - fwhm_t_X_hist(fwhm_t_NL_hist == 0.5))] );
 % % % % msg = sprintf([num2str(sum(eventsdetected_trials&lightstim_trials)) '/ ' num2str(sum(lightstim_trials==1)) ' trials L \n' num2str(sum(eventsdetected_trials&~lightstim_trials)) ' / '  num2str(sum(lightstim_trials==0)) 'trials NL']);
-% % % % text(3,.2,msg); 
+% % % % text(3,.2,msg);
 % % % % set(findall(gcf,'type','text'),'FontSize',20)
 % % % % saveas(gcf,[pwd,filesep,fnam],'jpg');
-% % % % 
-% % % %  
+% % % %
+% % % %
 % % % %  ID_trials(:,1) = cellfun(@(x) x.mousename ,pooled_contact_CaTrials,'uniformoutput',0)';ID_trials(:,2) = cellfun(@(x) x.sessionname ,pooled_contact_CaTrials,'uniformoutput',0)';
 % % % %  ID_trials(:,3) = cellfun(@(x) x.reg ,pooled_contact_CaTrials,'uniformoutput',0)';ID_trials(:,4) = cellfun(@(x) x.fov ,pooled_contact_CaTrials,'uniformoutput',0)';
 % % % %  ID_trials(:,5) = cellfun(@(x) x.dend ,pooled_contact_CaTrials,'uniformoutput',0)';
-% % %  
+% % %

@@ -1,10 +1,6 @@
 function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos,disc_func)
 %[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
-% cond 'ctrl' or 'ctrl_mani'
-% pos pole positions
-% train_test =1 if mani is to be trained with mani trials, =0 if it is to
-% be trained with ctrl trials
-% disc_func 'linear' or 'diagquadratic'
+% LDA 'lin
 p = pos; %[15 13.5 12 10.5 9 7.5];
 if strcmp(cond,'ctrl' )
    l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
@@ -34,8 +30,8 @@ if strcmp(cond,'ctrl' )
     set(gcf, 'PaperSize', [10,24]);
     set(gcf,'PaperPositionMode','manual');
     pause(.5);
-    suptitle([str ' ' disc_func ' CTRL']);
-    print( gcf ,'-depsc2','-painters','-loose',[str ' ' disc_func ' CTRL']);
+    suptitle([str ' CTRL']);
+    print( gcf ,'-depsc2','-painters','-loose',[str ' CTRL']);
     saveas(gcf,[str ' CTRL'],'fig');
     
     summary.ctrl.hist = hist_all;
@@ -82,9 +78,9 @@ elseif strcmp(cond,'ctrl_mani')
     set(gcf, 'PaperSize', [10,24]);
     set(gcf,'PaperPositionMode','auto');
     pause(.5);
-    suptitle([str ' ' disc_func ' CTRL' tag]);
-    print( gcf ,'-depsc2','-painters','-loose',[str ' ' disc_func ' CTRL' tag]);
-    saveas(gcf,[str ' ' disc_func  ' CTRL' tag ],'fig');
+    suptitle([str ' CTRL' tag]);
+    print( gcf ,'-depsc2','-painters','-loose',[str ' CTRL' tag]);
+    saveas(gcf,[str ' CTRL' tag ],'fig');
     
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
@@ -130,7 +126,7 @@ elseif strcmp(cond,'ctrl_mani')
     pause(.5);
     suptitle([str ' SIL ' tag]);
     print( gcf ,'-depsc2','-painters','-loose',[str ' SIL ' tag]);
-    saveas(gcf,[str ' ' disc_func ' SIL ' tag],'fig');
+    saveas(gcf,[str ' SIL ' tag],'fig');
     
     summary.mani.hist = hist_all;
     summary.mani.dist=dist_all;
@@ -139,7 +135,7 @@ elseif strcmp(cond,'ctrl_mani')
     summary.mani.pvalue=p_all;
     summary.mani.percentoverlap = pOL_all;
     summary.info =  [str ' ' tag];
-    save([str ' ' disc_func ' '  tag ' decoder results'],'summary');
+    save([str ' ' tag ' decoder results'],'summary');
     
 end
 
@@ -163,7 +159,7 @@ end
 
 
 testsetsize = 50;
-uL = 10;
+uL = 4;
 bw=0.1;
 bins = [ 0:bw:uL];
 numbins = size(bins,2);
@@ -187,7 +183,7 @@ for s = 1:num_tests
     
     S = test_resp(test,:);
     Y = train_resp(train,:);
-    class = classify(S,Y,train_pos(train),disc_func);
+    class = classify(S,Y,train_pos(train));
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
@@ -209,7 +205,7 @@ for s = 1:num_tests
     shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
     S = test_resp(test,:);
     Y = train_resp(train(shuff1),:);
-    class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
+    class = classify(S,Y,train_pos(train(shuff2),1));
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_shuff (s ,1) = sum(dist)./testsetsize;
@@ -262,7 +258,7 @@ if ~plotjustcasig
         end
         S = test_tk(test,1);
         Y = train_tk(train,1);
-        class = classify(S,Y,train_pos(train),disc_func);
+        class = classify(S,Y,train_pos(train));
         actual = test_pos(test,1);
         dist = sqrt((actual - class).^2);
         dist_aligned (s,1) = sum(dist)./testsetsize;
@@ -283,7 +279,7 @@ if ~plotjustcasig
         shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
         S = test_tk(test,1);
         Y = train_tk(train(shuff1),1);
-        class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
+        class = classify(S,Y,train_pos(train(shuff2),1));
         actual = test_pos(test,1);
         dist = sqrt((actual - class).^2);
         dist_shuff (s ,1) = sum(dist)./testsetsize;
@@ -329,7 +325,7 @@ if ~plotjustcasig
         end
         S = test_resp(test,:)./test_tk(test,:);
         Y = train_resp(train,:)./train_tk(train,:);
-        class = classify(S,Y,train_pos(train),disc_func);
+        class = classify(S,Y,train_pos(train));
         actual = test_pos(test,1);
         dist = sqrt((actual - class).^2);
         dist_aligned (s ,1) = sum(dist)./testsetsize;
@@ -348,7 +344,7 @@ if ~plotjustcasig
         shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
         S = test_resp(test,:)./test_tk(test,:);
         Y = train_resp(train(shuff1),:)./train_tk(train(shuff1),:);
-        class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
+        class = classify(S,Y,train_pos(train(shuff2),1));
         actual = test_pos(test,1);
         dist = sqrt((actual - class).^2);
         dist_shuffpos (s ,1) = sum(dist)./testsetsize;
@@ -370,7 +366,7 @@ if ~plotjustcasig
         shuff3 = randperm(numtrain,numtrain)';shuff4 = randperm(numtrain,numtrain)';
         S = test_resp(test1,:)./test_tk(test2,:);
         Y = train_resp(train(shuff3),:)./train_tk(train(shuff4),:);
-        class = classify(S,Y,train_pos(train(shuff3),1),disc_func);
+        class = classify(S,Y,train_pos(train(shuff3),1));
         actual = test_pos(test1,1);
         dist = sqrt((actual - class).^2);
         dist_shufftk (s ,1) = sum(dist)./testsetsize;
@@ -422,5 +418,4 @@ if ~plotjustcasig
     
     tb = text(2,.6, num2str(p50_all(1,1,3)),'FontSize',12);set(tb,'color','k');
     tb = text(2,.8, num2str(p50_all(1,2,3)),'FontSize',12);set(tb,'color','r');
-    
 end
