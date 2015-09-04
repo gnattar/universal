@@ -5,12 +5,14 @@ collected_decoder_summary_stats = {};
 count=0;
 def={'149','150515','self'};
 %   data=struct('pOL_ctrl',[],'pOL_mani',[],'p50_ctrl',[],'p50_mani',[],'info',{});
-pOL_ctrl = [];
-pOL_mani=[];
-p50_ctrl=[];
-p50_mani=[];
-pV_ctrl = [];
-pV_mani = [];
+mOL_ctrl = [];
+mOL_mani=[];
+m50_ctrl=[];
+m50_mani=[];
+sOL_ctrl = [];
+sOL_mani=[];
+s50_ctrl=[];
+s50_mani=[];
 info = {};
 filename = '';
 while(count>=0)
@@ -39,26 +41,34 @@ while(count>=0)
     collected_decoder_summary_stats{count}.pOL_ctrl = summary.ctrl.percentoverlap(1,1,1);
     collected_decoder_summary_stats{count}.p50_ctrl = summary.ctrl.p50(1,:,1)';
     
-    pOL_ctrl(count) =summary.ctrl.mpercentoverlap(1,1,1);
-    p50_ctrl(count,:) =summary.ctrl.mp50(1,:,1);
-    pV_ctrl(count) =summary.ctrl.pvalue(1,1,1);
+    mOL_ctrl(count) =summary.ctrl.mpercentoverlap(1,1,1);
+    m50_ctrl(count,:) =summary.ctrl.mp50(1,:,1);
+    sOL_ctrl(count) =summary.ctrl.spercentoverlap(1,1,1);
+    s50_ctrl(count,:) =summary.ctrl.sp50(1,:,1);
+%     pV_ctrl(count) =summary.ctrl.pvalue(1,1,1);
     if lightcond
         collected_decoder_summary_stats{count}.pOL_mani = summary.mani.percentoverlap(1,1,1);
         collected_decoder_summary_stats{count}.p50_mani = summary.mani.p50(1,:,1)';
-        pOL_mani(count) =summary.mani.mpercentoverlap(1,1,1);
-        p50_mani(count,:) =summary.mani.mp50(1,:,1);
-        pV_mani(count) =summary.mani.pvalue(1,1,1);
+        mOL_mani(count) =summary.mani.mpercentoverlap(1,1,1);
+        m50_mani(count,:) =summary.mani.mp50(1,:,1);
+        sOL_mani(count) =summary.mani.spercentoverlap(1,1,1);
+        s50_mani(count,:) =summary.mani.sp50(1,:,1);
+%         pV_mani(count) =summary.mani.pvalue(1,1,1);
     end
     info(count) = {summary.info};
     
 end
-data.pOL_ctrl=pOL_ctrl;
-data.p50_ctrl=p50_ctrl;
-data.pV_ctrl=pV_ctrl;
+data.mOL_ctrl=mOL_ctrl;
+data.m50_ctrl=m50_ctrl;
+data.sOL_ctrl=sOL_ctrl;
+data.s50_ctrl=s50_ctrl;
+% data.pV_ctrl=pV_ctrl;
 if lightcond
-    data.pOL_mani=pOL_mani;    
-    data.p50_mani=p50_mani;
-    data.pV_mani=pV_mani;
+    data.mOL_mani=mOL_mani;    
+    data.m50_mani=m50_mani;
+    data.sOL_mani=sOL_mani;    
+    data.s50_mani=s50_mani;
+%     data.pV_mani=pV_mani;
 end
 data.info=info;
 folder = uigetdir;
@@ -117,23 +127,26 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 % % % set(gca,'Fontsize',16)
 
 
-temp = [data.pOL_ctrl',data.pOL_mani'];
+temp = [data.mOL_ctrl',data.mOL_mani'];
+temps = [data.sOL_ctrl',data.sOL_mani'];
 diff = temp(:,1)-temp(:,2);
 [h,p]=ttest(diff);
-figure; plot(temp','color',[.5 .5 .5]); hold on;
+figure; errorbar(temp',temps','color',[.5 .5 .5]); hold on;
  m=mean(temp);
  sem=std(temp)./sqrt(size(temp,1)+1);
  h=errorbar(m,sem,'ko-');set(h,'linewidth',2)
+axis([0.5 2.5 0 .8]);
  text(1.6,.7,['Ctrl trained p =' num2str(p)]);
  title('Ctrl trained');
 
 
 % to ceck if individual sessions are decoding under ctrl cond
-temp = data.p50_ctrl(:,[1:2]);
+temp = data.m50_ctrl(:,[1:2]);
+temps = data.s50_ctrl(:,[1:2]);
  m=mean(temp);
 s=std(temp)./sqrt(11);
 
-figure; plot(temp','color',[.5 .5 .5]);
+figure; errorbar(temp',temps','color',[.5 .5 .5]);
 hold on;
 errorbar(m,s,'ko-')
 [h,p] = ttest(temp(:,1),temp(:,2));
@@ -141,4 +154,4 @@ text(1.5,2.8,['p=' num2str(p)]);
  title('Decoder mean error Ctrl and shuffled under NL cond');
   set(gca,'ticklength',[.025 .025]);
   set(gca,'XTick',[1 2]);axis([.5 2.5 1 5]);
-  set(gca,'XTicklabel',{'Aligned';'SHuffled'});
+  set(gca,'XTicklabel',{'Aligned';'Shuffled'});

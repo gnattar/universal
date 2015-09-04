@@ -36,9 +36,9 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
     sigpeak2=[sigpeak;sigpeakNLS];
     lightstim2 = [ lightstimNLS;lightstimNLS+1];
     ind = find(l2==1);
-    sigpeak2(ind,1)=[];
-    poleloc2(ind,1) = [];  
-    re_totaldK2(ind,1) = [];
+    sigpeak2(ind)=[];
+    poleloc2(ind) = [];  
+    re_totaldK2(ind) = [];
  
     pooled_contactCaTrials_locdep{d}.decoder.NLS.sigpeak=sigpeak2;
     pooled_contactCaTrials_locdep{d}.decoder.NLS.poleloc=poleloc2;
@@ -47,15 +47,11 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
     
     
     % nochange sanity check
-    sigpeakNC = [ sigpeak ; sigpeak];
-    sigpeakNC(ind,1)=[];
-    polelocNC = poleloc2;
-    lightstimNC = lightstim2;
-    re_totaldKNC = re_totaldK2;  
+    sigpeakNC = [ 
+    pooled_contactCaTrials_locdep{d}.decoder.NLS.sigpeak=sigpeak2;
+    pooled_contactCaTrials_locdep{d}.decoder.NLS.poleloc=poleloc2;
+    pooled_contactCaTrials_locdep{d}.decoder.NLS.re_totaldK=re_totaldK2;
+    pooled_contactCaTrials_locdep{d}.decoder.NLS.lightstim=lightstim2;
     
-    pooled_contactCaTrials_locdep{d}.decoder.NC.sigpeak=sigpeakNC;
-    pooled_contactCaTrials_locdep{d}.decoder.NC.poleloc=polelocNC;
-    pooled_contactCaTrials_locdep{d}.decoder.NC.re_totaldK=re_totaldKNC;
-    pooled_contactCaTrials_locdep{d}.decoder.NC.lightstim=lightstimNC;
-      
+    
 end
