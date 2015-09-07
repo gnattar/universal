@@ -20,6 +20,9 @@ else
         case 'NLS'
             l_trials = cell2mat(cellfun(@(x) x.decoder.NLS.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
             l_trials = l_trials(:,1);
+        case 'NC'
+            l_trials = cell2mat(cellfun(@(x) x.decoder.NC.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            l_trials = l_trials(:,1);
         otherwise
             l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
             l_trials = l_trials(:,1);
@@ -102,6 +105,10 @@ elseif strcmp(cond,'ctrl_mani')
             tk_all = cell2mat(cellfun(@(x) x.decoder.NLS.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.decoder.NLS.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
             resp_all = cell2mat(cellfun(@(x) x.decoder.NLS.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));
+        case 'NC'
+            tk_all = cell2mat(cellfun(@(x) x.decoder.NC.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            pl_all = cell2mat(cellfun(@(x) x.decoder.NC.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            resp_all = cell2mat(cellfun(@(x) x.decoder.NC.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));        
         otherwise
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
