@@ -1,4 +1,4 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos,disc_func,src,plot)
+function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos,disc_func,src,plot_on)
 %[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
 % cond 'ctrl' or 'ctrl_mani'
 % pos pole positions
@@ -6,7 +6,7 @@ function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_co
 % be trained with ctrl trials
 % disc_func 'linear' or 'diagquadratic'
 p = pos; %[15 13.5 12 10.5 9 7.5];
-num_runs = 10;
+num_runs = 5;
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
 else
@@ -58,17 +58,17 @@ if strcmp(cond,'ctrl' )
     
      w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,hist_n,chist_n,p50_n,pOL_n,p_n] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot);
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on);
         dist_all{n} = dist_n;
         hist_all{n} =hist_n;
         chist_all{n} =chist_n;
-        p50_all{n} =p50_n;
+        mEr_all{n} =mEr_n;
         pOL_all{n} =pOL_n;
         p_all{n} =p_n;
         waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
     end
     close (w);
-    if plot
+    if plot_on
         set(gcf,'PaperUnits','inches');
         set(gcf,'PaperPosition',[1 1 24 18]);
         set(gcf, 'PaperSize', [10,24]);
@@ -82,10 +82,10 @@ if strcmp(cond,'ctrl' )
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
     summary.ctrl.chist = chist_all;
-    summary.ctrl.p50 = p50_all;
+    summary.ctrl.mEr = mEr_all;
     summary.ctrl.pvalue=p_all;
     summary.ctrl.percentoverlap = pOL_all;
-    summary.ctrl.mp50 = p50_all;
+    summary.ctrl.mEr = mEr_all;
     summary.ctrl.mpercentoverlap = pOL_all;
     summary.info =  [str];
     save([str ' decoder results'],'summary');
@@ -132,11 +132,11 @@ elseif strcmp(cond,'ctrl_mani')
     
     w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,hist_n,chist_n,p50_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot);
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on);
         dist_all{n} = dist_n;
         hist_all{n} =hist_n;
         chist_all{n} =chist_n;
-        p50_all{n} =p50_n;
+        mEr_all{n} =mEr_n;
         pOL_all{n} =pOL_n;
         p_all{n} =p_n;
         waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
@@ -148,7 +148,7 @@ elseif strcmp(cond,'ctrl_mani')
     else
         tag = 'ctrltrain';
     end
-    if plot
+    if plot_on
         set(gcf,'PaperUnits','inches');
         set(gcf,'PaperPosition',[1 1 24 18]);
         set(gcf, 'PaperSize', [10,24]);
@@ -162,13 +162,13 @@ elseif strcmp(cond,'ctrl_mani')
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
     summary.ctrl.chist = chist_all;
-    summary.ctrl.p50 = p50_all;
+    summary.ctrl.mEr = mEr_all;
     summary.ctrl.pvalue=p_all;
     summary.ctrl.percentoverlap = pOL_all;
-    summary.ctrl.mp50(1,1,1) = mean(cellfun(@(x) x(1,1,1), p50_all)'); % aligned
-    summary.ctrl.sp50(1,1,1) = std(cellfun(@(x) x(1,1,1), p50_all)')./sqrt(num_runs);
-    summary.ctrl.mp50(1,2,1) = mean(cellfun(@(x) x(1,2,1), p50_all)'); % shuffled
-    summary.ctrl.sp50(1,2,1) = std(cellfun(@(x) x(1,2,1), p50_all)')./sqrt(num_runs);
+    summary.ctrl.mmEr(1,1,1) = mean(cellfun(@(x) x(1,1,1), mEr_all)'); % aligned
+    summary.ctrl.smEr(1,1,1) = std(cellfun(@(x) x(1,1,1), mEr_all)')./sqrt(num_runs);
+    summary.ctrl.mmEr(1,2,1) = mean(cellfun(@(x) x(1,2,1), mEr_all)'); % shuffled
+    summary.ctrl.smEr(1,2,1) = std(cellfun(@(x) x(1,2,1), mEr_all)')./sqrt(num_runs);
     summary.ctrl.mpercentoverlap(1,1,1) = mean(cellfun(@(x) x(1,1,1), pOL_all)');
     summary.ctrl.spercentoverlap (1,1,1)= std(cellfun(@(x) x(1,1,1), pOL_all)')./sqrt(num_runs);
     
@@ -189,11 +189,11 @@ elseif strcmp(cond,'ctrl_mani')
         train_pos=pos;test_pos = pos;
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,hist_n,chist_n,p50_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot);
+            [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on);
             dist_all{n} = dist_n;
             hist_all{n} =hist_n;
             chist_all{n} =chist_n;
-            p50_all{n} =p50_n;
+            mEr_all{n} =mEr_n;
             pOL_all{n} =pOL_n;
             p_all{n} =p_n;
             waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
@@ -209,11 +209,11 @@ elseif strcmp(cond,'ctrl_mani')
         test_pos = pos;
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,hist_n,chist_n,p50_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,0,disc_func,plot);
+            [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,0,disc_func,plot_on);
             dist_all{n} = dist_n;
             hist_all{n} =hist_n;
             chist_all{n} =chist_n;
-            p50_all{n} =p50_n;
+            mEr_all{n} =mEr_n;
             pOL_all{n} =pOL_n;
             p_all{n} =p_n;
             waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
@@ -221,7 +221,7 @@ elseif strcmp(cond,'ctrl_mani')
         close(w);
         tag = 'ctrltrain';
     end
-    if plot
+    if plot_on
         set(gcf,'PaperUnits','inches');
         set(gcf,'PaperPosition',[1 1 24 18]);
         set(gcf, 'PaperSize', [10,24]);
@@ -235,13 +235,13 @@ elseif strcmp(cond,'ctrl_mani')
     summary.mani.hist = hist_all;
     summary.mani.dist=dist_all;
     summary.mani.chist = chist_all;
-    summary.mani.p50 = p50_all;
+    summary.mani.mEr = mEr_all;
     summary.mani.pvalue=p_all;
     summary.mani.percentoverlap = pOL_all;
-    summary.mani.mp50(1,1,1) = mean(cellfun(@(x) x(1,1,1), p50_all)'); % aligned
-    summary.mani.sp50(1,1,1) = std(cellfun(@(x) x(1,1,1), p50_all)')./sqrt(num_runs);
-    summary.mani.mp50(1,2,1) = mean(cellfun(@(x) x(1,2,1), p50_all)'); % shuffled
-    summary.mani.sp50(1,2,1) = std(cellfun(@(x) x(1,2,1), p50_all)')./sqrt(num_runs);
+    summary.mani.mmEr(1,1,1) = mean(cellfun(@(x) x(1,1,1), mEr_all)'); % aligned
+    summary.mani.smEr(1,1,1) = std(cellfun(@(x) x(1,1,1), mEr_all)')./sqrt(num_runs);
+    summary.mani.mmEr(1,2,1) = mean(cellfun(@(x) x(1,2,1), mEr_all)'); % shuffled
+    summary.mani.smEr(1,2,1) = std(cellfun(@(x) x(1,2,1), mEr_all)')./sqrt(num_runs);
     summary.mani.mpercentoverlap(1,1,1) = mean(cellfun(@(x) x(1,1,1), pOL_all)');
     summary.mani.spercentoverlap (1,1,1)= std(cellfun(@(x) x(1,1,1), pOL_all)')./sqrt(num_runs);
     summary.info =  [str ' ' tag];
@@ -249,7 +249,7 @@ elseif strcmp(cond,'ctrl_mani')
     
 end
 
-function [dist_all,hist_all,chist_all,p50_all,pOL_all,p_all] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,tt,disc_func,plot)
+function [dist_all,hist_all,chist_all,mEr_all,pOL_all,p_all] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,tt,disc_func,plot_on)
 
 
 num_tests = 1000;
@@ -267,7 +267,7 @@ else
     c=3;
 end
 
-
+% dummy = figure;
 testsetsize = 50;
 uL = 10;
 bw=0.1;
@@ -279,7 +279,7 @@ test_numtrials = size(test_resp,1);
 hist_all = zeros(numbins,3,3);
 chist_all = zeros(numbins,3,3);
 
-p50_all = zeros(1,3,3);
+mEr_all = zeros(1,3,3);
 pOL_all= zeros(1,3,3);
 p_all = zeros(1,3,3);
 %% predicting locations from CaSig alone
@@ -297,10 +297,10 @@ for s = 1:num_tests
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
-    % figure(dummy); plot(actual); hold on; plot(class,'r');hold off;
+%      figure(dummy); plot(actual); hold on; plot(class,'r');hold off;
 end
 % dummy = figure;
-if plot
+if plot_on
     sc = get(0,'ScreenSize');
     h1=figure('position', [1000, sc(4), sc(3)/1.5, sc(4)/4], 'color','w');
 end
@@ -322,7 +322,7 @@ for s = 1:num_tests
     dist_shuff (s ,1) = sum(dist)./testsetsize;
     % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
 end
-if plot
+if plot_on
     plotcount =1;
     figure(h1); subplot(r,c,plotcount); plot(dist_shuff,'r','linewidth',2); hold on; axis([0 num_tests 0 uL]);
     figure(h1); subplot(r,c,plotcount);plot(dist_aligned,'k','linewidth',2); hold on;  title('Position from Ca signal alone'); set(gca,'FontSize',16);plotcount=plotcount+1;
@@ -330,7 +330,7 @@ if plot
 end
 
 hista=hist(dist_aligned,[0:bw:uL])./num_tests;hists=hist(dist_shuff,[0:bw:uL])./num_tests;
-if plot
+if plot_on
     figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],hista,'k','linewidth',2); hold on; plot([0:bw:uL],hists,'r','linewidth',2);  set(gca,'FontSize',16);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('Pr');
 end
@@ -338,12 +338,12 @@ end
 p_all(1,1,1) = p;
 temp = min([hista;hists]);
 pOL_all(1,1,1) = sum(temp);
-if plot
+if plot_on
     tb = text(2,.105, ['pO = ' num2str(sum(temp))],'FontSize',12);set(tb,'color','k');
     tb = text(2,.125, ['p = ' num2str(p)],'FontSize',12);set(tb,'color','k');
 end
 chista = cumsum(hista);chists = cumsum(hists);
-if plot
+if plot_on
     figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],chista,'k','linewidth',2); hold on; plot([0:bw:uL],chists,'r','linewidth',2);  set(gca,'FontSize',16); axis([0 uL 0 1]);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('C.Pr');
 end
@@ -354,13 +354,13 @@ hist_all(:,2,1) = hists;
 chist_all(:,1,1) = chista;
 chist_all(:,2,1) = chists;
 
-p50_all(1,1,1) = prctile(dist_aligned,50);
-p50_all(1,2,1) = prctile(dist_shuff,50);
+mEr_all(1,1,1) = prctile(dist_aligned,50);
+mEr_all(1,2,1) = prctile(dist_shuff,50);
 % pdt=hista.*hists;
 % temp = (hista+hists).*(pdt>1);
-if plot
-    tb = text(2,.6, num2str(p50_all(1,1,1)),'FontSize',12);set(tb,'color','k');
-    tb = text(2,.8, num2str(p50_all(1,2,1)),'FontSize',12);set(tb,'color','r');
+if plot_on
+    tb = text(2,.6, num2str(mEr_all(1,1,1)),'FontSize',12);set(tb,'color','k');
+    tb = text(2,.8, num2str(mEr_all(1,2,1)),'FontSize',12);set(tb,'color','r');
 end
 if ~plotjustcasig
     %% predicting locations from Kappa alone
@@ -404,7 +404,7 @@ if ~plotjustcasig
         dist_shuff (s ,1) = sum(dist)./testsetsize;
         % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
     end
-    if plot
+    if plot_on
         figure(h1); subplot(r,c,plotcount); plot(dist_shuff,'r','linewidth',2); hold on; axis([0 num_tests 0 uL]);
         figure(h1); subplot(r,c,plotcount);plot(dist_aligned,'k','linewidth',2); hold on;  title('Position from Touch mag alone'); axis([0 1000 0 10]); set(gca,'FontSize',16);plotcount=plotcount+1;
         xlabel('run #');ylabel('mean prediction error (mm)');
@@ -416,11 +416,11 @@ if ~plotjustcasig
     p_all(1,1,2) = p;
     temp = min([hista;hists]);
     pOL_all(1,1,2) = sum(temp);
-    if plot
+    if plot_on
         tb = text(2,.175, [ 'p = ' num2str(sum(temp))],'FontSize',12);set(tb,'color','k');
     end
     chista = cumsum(hista);chists = cumsum(hists);
-    if plot
+    if plot_on
         figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],chista,'k','linewidth',2); hold on; plot([0:bw:uL],chists,'r','linewidth',2);  set(gca,'FontSize',16);axis([0 uL 0 1]);plotcount=plotcount+1;
         xlabel('Prediction error (mm)');ylabel('C.Pr');
     end
@@ -431,11 +431,11 @@ if ~plotjustcasig
     chist_all(:,1,2) = chista;
     chist_all(:,2,2) = chists;
     
-    p50_all(1,1,2) = prctile(dist_aligned,50);
-    p50_all(1,2,2) = prctile(dist_shuff,50);
-    if plot
-        tb = text(2,.6, num2str(p50_all(1,1,2)),'FontSize',12);set(tb,'color','k');
-        tb = text(2,.8, num2str(p50_all(1,2,2)),'FontSize',12);set(tb,'color','r');
+    mEr_all(1,1,2) = prctile(dist_aligned,50);
+    mEr_all(1,2,2) = prctile(dist_shuff,50);
+    if plot_on
+        tb = text(2,.6, num2str(mEr_all(1,1,2)),'FontSize',12);set(tb,'color','k');
+        tb = text(2,.8, num2str(mEr_all(1,2,2)),'FontSize',12);set(tb,'color','r');
     end
     %% Predicting locations from Ca/Ka aligned test sets assuming linear relationship
     dist_aligned = zeros(num_tests,1);
@@ -476,7 +476,7 @@ if ~plotjustcasig
         dist_shuffpos (s ,1) = sum(dist)./testsetsize;
         % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
     end
-    if plot
+    if plot_on
         figure(h1); subplot(3,2,5); plot(dist_shuffpos,'r','linewidth',2); hold on;
     end
     
@@ -499,13 +499,13 @@ if ~plotjustcasig
         dist_shufftk (s ,1) = sum(dist)./testsetsize;
         % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
     end
-    if plot
+    if plot_on
         figure(h1);subplot(r,c,plotcount);plot(dist_shufftk,'color',[.85 .5 0 ],'linewidth',2); hold on; axis([0 num_tests 0 uL]);
         figure(h1);subplot(r,c,plotcount); plot(dist_aligned,'k','linewidth',2); hold on;  title('Position from Ca/Touch'); hold on; axis([0 1000 0 10]); set(gca,'FontSize',16);plotcount=plotcount+1;
         xlabel('run #');ylabel('mean prediction error (mm)');
     end
     hista=hist(dist_aligned,[0:bw:uL])./num_tests;hists=hist(dist_shuffpos,[0:bw:uL])./num_tests;histstk=hist(dist_shufftk,[0:bw:uL])./num_tests;
-    if plot
+    if plot_on
         figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],hista,'k','linewidth',2); hold on; plot([0:bw:uL],hists,'r','linewidth',2); hold on; plot([0:bw:uL],histstk,'color',[.85 .5 0 ],'linewidth',2);  set(gca,'FontSize',16);plotcount=plotcount+1;
         xlabel('Prediction error (mm)');ylabel('count');
     end
@@ -513,18 +513,18 @@ if ~plotjustcasig
     p_all(1,1,3) = p;
     temp = min([hista;hists]);
     pOL_all(1,1,3) = sum(temp);
-    if plot
+    if plot_on
         tb = text(2,.175, ['p = ' num2str(sum(temp))],'FontSize',12);set(tb,'color','r');
     end
     [h,p] = kstest2([dist_aligned,dist_shufftk]);
     p_all(1,2,3) = p;
     temp = min([hista;histstk]);
     pOL_all(1,2,3) = sum(temp);
-    if plot
+    if plot_on
         tb = text(2,.15, ['p = ' num2str(sum(temp))],'FontSize',12);set(tb,'color',[.85 .5 0 ]);
     end
     chista = cumsum(hista);chists = cumsum(hists);chisttk = cumsum(histstk);
-    if plot
+    if plot_on
         figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],chista,'k','linewidth',2); hold on; plot([0:bw:uL],chists,'r','linewidth',2);plot([0:bw:uL],chisttk,'color',[.85 .5 0 ],'linewidth',2);  set(gca,'FontSize',16);axis([0 uL 0 1]);
         xlabel('Prediction error (mm)');ylabel('C.Pr');
     end
@@ -538,9 +538,9 @@ if ~plotjustcasig
     chist_all(:,2,3) = chists;
     chist_all(:,3,3) = chisttk;
     
-    p50_all(1,1,3) = prctile(dist_aligned,50);
-    p50_all(1,2,3) = prctile(dist_shuffpos,50);
-    p50_all(1,2,3) = prctile(dist_shufftk,50);
+    mEr_all(1,1,3) = prctile(dist_aligned,50);
+    mEr_all(1,2,3) = prctile(dist_shuffpos,50);
+    mEr_all(1,2,3) = prctile(dist_shufftk,50);
     % [h,p] = kstest([dist_aligned,dist_shuffpos]);
     % p_all(1,1,3) = p;
     % temp = min([hista;hists]);
@@ -550,9 +550,9 @@ if ~plotjustcasig
     % p_all(1,2,3) = p;
     % temp = min([hista;histstk]);
     % pOL_all(1,2,3) = sum(temp);
-    if plot
-        tb = text(2,.6, num2str(p50_all(1,1,3)),'FontSize',12);set(tb,'color','k');
-        tb = text(2,.8, num2str(p50_all(1,2,3)),'FontSize',12);set(tb,'color','r');
+    if plot_on
+        tb = text(2,.6, num2str(mEr_all(1,1,3)),'FontSize',12);set(tb,'color','k');
+        tb = text(2,.8, num2str(mEr_all(1,2,3)),'FontSize',12);set(tb,'color','r');
     end
     
 end
