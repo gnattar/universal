@@ -8,7 +8,7 @@ function [ThKmid,R,T,K,Tk,pooled_contactCaTrials_locdep] = whisk_loc_dependence_
 % protrials_ind = find(cdir==1);
 % rettrials_ind = find(cdir==0);
 pointsize = 40;
-
+load('/Users/ranganathang/Documents/MATLAB/universal/main/helper_funcs/mycmap3.mat');
 ls=pooled_contactCaTrials_locdep{d}.lightstim;
 NLind = find(ls==0);
 Lind = find(ls==1);
@@ -71,7 +71,7 @@ subplot(4,plotcols,1);
 if ptype == 'cf'
     Rtemp = R;
     Rtemp(isnan(R)) = 0;
-    contourf(pos,ThKmid{2},Rtemp');caxis([0 cscale(2)]); % axis([0 400 0.0001 2.5]);
+    contourf(pos,ThKmid{2},Rtemp');caxis([0 cscale(2)]);colormap(mycmap3); % axis([0 400 0.0001 2.5]);
 elseif ptype == 'cs'
     contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;  scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
 end
@@ -79,8 +79,8 @@ set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',1
 % subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
 % subplot(2,2,4); colorbar;
 subplot(4,plotcols,plotcols+1); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');
-subplot(4,plotcols,2*plotcols+1); errorbar(pos,T,Ts,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([100 350 0 cscale(2)]);
-subplot(4,plotcols,3*plotcols+1); errorbar(pos,Tk,Tks,'o-'); xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12);axis([100 350 0 .5]);
+subplot(4,plotcols,2*plotcols+1); errorbar(pos,T,Ts,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([0 400 0 cscale(2)]);
+subplot(4,plotcols,3*plotcols+1); errorbar(pos,Tk,Tks,'o-'); xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12);axis([0 400 0 .5]);
 
 set(gca,'FontSize',12);
 TK = T*K';
