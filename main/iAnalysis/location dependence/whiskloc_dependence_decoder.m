@@ -1,4 +1,4 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos,disc_func,src,plot_on)
+function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,par,cond,str,train_test,pos,disc_func,src,plot_on)
 %[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
 % cond 'ctrl' or 'ctrl_mani'
 % pos pole positions
@@ -44,7 +44,8 @@ end
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
     pl = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-    resp = cell2mat(cellfun(@(x) x.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));
+    
+    resp = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
     numtrials = size(tk,1);
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
@@ -96,23 +97,23 @@ elseif strcmp(cond,'ctrl_mani')
         case 'def'
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
         case 'LAD'
             tk_all = cell2mat(cellfun(@(x) x.decoder.LAD.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.decoder.LAD.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.decoder.LAD.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            resp_all = cell2mat(cellfun(@(x) x.decoder.LAD.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
         case 'NLS'
             tk_all = cell2mat(cellfun(@(x) x.decoder.NLS.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.decoder.NLS.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.decoder.NLS.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            resp_all = cell2mat(cellfun(@(x) x.decoder.NLS.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
         case 'NC'
             tk_all = cell2mat(cellfun(@(x) x.decoder.NC.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.decoder.NC.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.decoder.NC.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));        
+            resp_all = cell2mat(cellfun(@(x) x.decoder.NC.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));        
         otherwise
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.sigpeak, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
     end
     
     %run ctrl

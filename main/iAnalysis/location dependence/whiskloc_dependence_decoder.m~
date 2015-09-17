@@ -16,7 +16,7 @@ else
             l_trials = l_trials(:,1);
         case 'LAD'
             l_trials = cell2mat(cellfun(@(x) x.decoder.LAD.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            l_trials = l_trials(:,1);
+            l_trials = l_trials(:,1);0
         case 'NLS'
             l_trials = cell2mat(cellfun(@(x) x.decoder.NLS.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
             l_trials = l_trials(:,1);
@@ -314,7 +314,7 @@ for s = 1:num_tests
     elseif (strcmp(src,'NC') | strcmp(src,'NLS'))
         train = setxor([1:train_numtrials],test);
     else
-                       train = randperm(train_numtrials,train_numtrials)';
+        train = randperm(train_numtrials,train_numtrials)';
     end
     numtrain = size(train,1);
     shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';

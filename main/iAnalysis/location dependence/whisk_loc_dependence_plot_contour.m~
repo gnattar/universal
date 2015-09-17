@@ -78,10 +78,8 @@ if ptype == 'cf'
     [XLf,XTf]=meshgrid([1:.1:length(pos)],[1:.1:length(ThKmid{2})]);
      VqR = interp2(XL,XT,Rtemp',XLf,XTf,'linear');
 %      contourf(XLf,XTf,VqR);caxis([0 cscale(2)]); colormap(othercolor('RdYlBl4'));%colormap(brewermap([],'OrRd'));
-    maxval = max(max(VqR));
-    imagesc(VqR,[0 maxval+(maxval/10)]);colormap(jet);%colormap(brewermap([],'OrRd'));
-    set(gca,'YDir','normal');
-    set(gca,'YMinorTick','on','YTick',[0.0001,0.001,0.01,.1,1]);
+    imagesc(VqR,[0 cscale(2)]);colormap(othercolor('RdYlBu4'));
+    set(gca,'YTick',logspace(-3,2,6));
 %     contourf(pos,ThKmid{2},Rtemp');caxis([0 cscale(2)]); % axis([0 400 0.0001 2.5]);
 elseif ptype == 'cs'
     contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;  scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
@@ -142,10 +140,8 @@ if ~isempty(Lind)
     [XL,XT]=meshgrid([1:length(pos)],[1:length(ThKmid{2})]);
     [XLf,XTf]=meshgrid([1:.1:length(pos)],[1:.1:length(ThKmid{2})]);
      VqR = interp2(XL,XT,Rtemp',XLf,XTf,'linear');
-     imagesc(VqR,[0 maxval+(maxval/10)]);colormap(jet); %colormap(brewermap,'OrRd');
-     set(gca,'YDir','normal');
-     set(gca,'YMinorTick','on','YTick',[0.0001,0.001,0.01,.1,1]);
-%      set(gca,'YTick',logspace(-3,2,6));
+     imagesc(VqR,[0 cscale(2)]);colormap(othercolor('RdYlBu4'));
+     set(gca,'YTick',logspace(-3,2,6));
 %      contourf(XLf,XTf,VqR);caxis([0 cscale(2)]); colormap(othercolor('OrRd8'));%colormap(brewermap([],'OrRd'));
 %         contourf(pos,ThKmid{2},Rtemp');caxis([0 cscale(2)]);   %axis([0 400 0.0001 2.5]);
     elseif ptype == 'cs'

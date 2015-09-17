@@ -134,7 +134,7 @@ tb = text(1,3,['Ctrl mEr p =' num2str(p)]);
 tb = text(4,3,['Mani mEr p =' num2str(p)]);set(tb,'color',[1 .5 0]);
 
 [h,p]=ttest(tempDSctrl-tempDSmani);
-tb = text(2,4,['Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
+tb = text(2,4,['Self Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
 %%
 
 
@@ -147,8 +147,9 @@ figure; errorbar(temp',temps','color',[.5 .5 .5]); hold on;
  sem=std(temp)./sqrt(size(temp,1)+1);
  h=errorbar(m,sem,'ko-');set(h,'linewidth',2)
 axis([0.5 2.5 0 .8]);
- text(1.6,.7,['Ctrl  trained p =' num2str(p)]);
- title('Ctrl pOL trained');
+ text(1.6,.7,['Self  trained p =' num2str(p)]);
+ 
+ title('Self pOL trained');
 
 
 % % to check if individual sessions are decoding under ctrl cond
