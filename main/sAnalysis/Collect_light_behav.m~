@@ -79,7 +79,7 @@ while(count>=0)
     
     
     num_hittrials(i,1) = length(hit_discrim_nl);
-    num_hittrials(i,2) = length(hit_discrim_l);
+    num_hittrials(i,2) = length(hit_discrim_nl);
     num_misstrials (i,1) = length(miss_discrim_nl);
     num_misstrials (i,2) = length(miss_discrim_l); 
     
@@ -131,7 +131,7 @@ save('Behav data NL L','data');
 %% quick plot
 %% 
 figure;
-[h,p]=ttest(data.dprime(:,1),data.dprime(:,2))
+[h,p]=ttest(data.dprime(:,1)-data.dprime(:,2))
 
 m=mean(data.dprime);
  sd=std(data.dprime)./sqrt(size(data.filename,2)+1);
@@ -141,7 +141,7 @@ subplot(1,3,1); plot(data.dprime','color',[.5 .5 .5]); hold on;
  text(1.5,.8,['p=' num2str(p)]);
  title('dprime')
  
- [h,p]=ttest(data.PC(:,1),data.PC(:,2))
+ [h,p]=ttest(data.PC(:,1)-data.PC(:,2))
  m=mean(data.PC);
  sd=std(data.PC)./sqrt(size(data.filename,2)+1);
  subplot(1,3,2);plot(data.PC','color',[.5 .5 .5]); hold on; 
@@ -150,7 +150,7 @@ subplot(1,3,1); plot(data.dprime','color',[.5 .5 .5]); hold on;
  text(1.5,.75,['p=' num2str(p)]);
  title('PC')
  
- [h,p]=ttest(data.nogo_discrim_rate(:,1),data.nogo_discrim_rate(:,2))
+ [h,p]=ttest(data.nogo_discrim_rate(:,1)-data.nogo_discrim_rate(:,2))
  m=mean(data.nogo_discrim_rate);
  sd=std(data.nogo_discrim_rate)./sqrt(size(data.filename,2)+1);
  subplot(1,3,3);plot(data.nogo_discrim_rate','color',[.5 .5 .5]); hold on; 
