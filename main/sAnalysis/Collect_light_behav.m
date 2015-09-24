@@ -7,7 +7,7 @@ filename = '';
 while(count>=0)
     
     if strcmp(filename, '');
-        [filename,pathName]=uigetfile('sorted_CaTrials*.mat','Load sorted_CaTrials.mat file');
+        [filename,pathName]=uigetfile('*sorted_CaTrials*.mat','Load sorted_CaTrials.mat file');
     else
         [filename,pathName]=uigetfile(filename,'Load sorted_CaTrials.mat file');
     end
@@ -52,13 +52,14 @@ while(count>=0)
     miss_discrim_l = intersect(miss_discrim,l);
     miss_discrim_nl = intersect(miss_discrim,nl);
     
+    go_discrim_l = intersect(go_discrim,l);
+    go_discrim_nl = intersect(go_discrim,nl);
+    
 %     hit_l = intersect(hit,l);
 %     hit_nl = intersect(hit,nl);
 %     miss_l = intersect(miss,l);
 %     miss_nl = intersect(miss,nl);
-    go_discrim_l = intersect(go_discrim,l);
-    go_discrim_nl = intersect(go_discrim,nl);
-    
+
 %     fa_l=intersect(fa,l);
 %     fa_nl=intersect(fa,nl);
 %     cr_l=intersect(cr,l);
@@ -68,6 +69,8 @@ while(count>=0)
     nogo_discrim_l = intersect(nogo_discrim,l);
     nogo_discrim_nl = intersect(nogo_discrim,nl);
     
+    totaltrials_l = length(nogo_discrim_l)+length(go_discrim_l);
+    totaltrials_nl = length(nogo_discrim_nl)+length(go_discrim_nl);
     nogo_discrim_rate (i,1) = length(cr_discrim_nl)./(length(cr_discrim_nl)+length(fa_discrim_nl));
     nogo_discrim_rate (i,2) = length(cr_discrim_l)./(length(cr_discrim_l)+length(fa_discrim_l));
     
@@ -76,7 +79,7 @@ while(count>=0)
     
     hitrate(i,1) = length(hit_discrim_nl)./length(go_discrim_nl);
     hitrate(i,2) = length(hit_discrim_l)./length(go_discrim_l);
-    
+
     
     num_hittrials(i,1) = length(hit_discrim_nl);
     num_hittrials(i,2) = length(hit_discrim_l);
@@ -131,31 +134,31 @@ save('Behav data NL L','data');
 %% quick plot
 %% 
 figure;
-[h,p]=ttest(data.dprime(:,1),data.dprime(:,2))
+[h,p]=ttest(data.dprime(:,1)-data.dprime(:,2))
 
 m=mean(data.dprime);
  sd=std(data.dprime)./sqrt(size(data.filename,2)+1);
-subplot(1,3,1); plot(data.dprime','color',[.5 .5 .5]); hold on; 
+subplot(1,2,1); plot(data.dprime','color',[.5 .5 .5]); hold on; 
  e=errorbar(m,sd,'ko-','markersize',6);
- set(e,'linewidth',1.5);
+ set(e,'linewidth',1.5,'markersize',10);
  text(1.5,.8,['p=' num2str(p)]);
  title('dprime')
  
- [h,p]=ttest(data.PC(:,1),data.PC(:,2))
+ [h,p]=ttest(data.PC(:,1)-data.PC(:,2))
  m=mean(data.PC);
  sd=std(data.PC)./sqrt(size(data.filename,2)+1);
- subplot(1,3,2);plot(data.PC','color',[.5 .5 .5]); hold on; 
+ subplot(1,2,2);plot(data.PC','color',[.5 .5 .5]); hold on; 
  e=errorbar(m,sd,'ko-','markersize',6);
- set(e,'linewidth',1.5);
+ set(e,'linewidth',1.5,'markersize',10);
  text(1.5,.75,['p=' num2str(p)]);
  title('PC')
- 
- [h,p]=ttest(data.nogo_discrim_rate(:,1),data.nogo_discrim_rate(:,2))
- m=mean(data.nogo_discrim_rate);
- sd=std(data.nogo_discrim_rate)./sqrt(size(data.filename,2)+1);
- subplot(1,3,3);plot(data.nogo_discrim_rate','color',[.5 .5 .5]); hold on; 
- e=errorbar(m,sd,'ko-','markersize',6);
- set(e,'linewidth',1.5);
- text(1.5,.65,['p=' num2str(p)]);
- title('Nogo discrim')
+%  
+%  [h,p]=ttest(data.nogo_discrim_rate(:,1),data.nogo_discrim_rate(:,2))
+%  m=mean(data.nogo_discrim_rate);
+%  sd=std(data.nogo_discrim_rate)./sqrt(size(data.filename,2)+1);
+%  subplot(1,3,3);plot(data.nogo_discrim_rate','color',[.5 .5 .5]); hold on; 
+%  e=errorbar(m,sd,'ko-','markersize',6);
+%  set(e,'linewidth',1.5);
+%  text(1.5,.65,['p=' num2str(p)]);
+%  title('Nogo discrim')
  
