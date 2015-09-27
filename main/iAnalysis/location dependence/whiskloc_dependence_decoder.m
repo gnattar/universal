@@ -1,4 +1,4 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,par,cond,str,train_test,pos,disc_func,src,plot_on)
+function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,par,cond,str,train_test,pos,disc_func,src,plot_on,proj_on)
 %[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
 % cond 'ctrl' or 'ctrl_mani'
 % pos pole positions
@@ -51,7 +51,14 @@ if strcmp(cond,'ctrl' )
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
     
-    train_resp = resp; test_resp = resp;
+    if proj_on
+        [coeff,score]=pca(resp,'numcomponents',1);
+        weights=repmat(coeff',size(resp,1),1);
+        proj=resp.*weights;
+        train_resp=proj;test_resp=proj;
+    else        
+        train_resp = resp; test_resp = resp;
+    end
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
     train_pos=pos;test_pos = pos;
@@ -126,7 +133,14 @@ elseif strcmp(cond,'ctrl_mani')
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
     
-    train_resp = resp; test_resp = resp;
+    if proj_on
+        [coeff,score]=pca(resp,'numcomponents',1);
+        weights=repmat(coeff',size(resp,1),1);
+        proj=resp.*weights;
+        train_resp=proj;test_resp=proj;
+    else
+        train_resp = resp; test_resp = resp;
+    end
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
     train_pos=pos;test_pos = pos;
@@ -184,7 +198,14 @@ elseif strcmp(cond,'ctrl_mani')
     pos = p(valsid)';
     
     if train_test == 1
-        train_resp = resp; test_resp = resp;
+        if proj_on
+            [coeff,score]=pca(resp,'numcomponents',1);
+            weights=repmat(coeff',size(resp,1),1);
+            proj=resp.*weights;
+            train_resp=proj;test_resp=proj;
+        else
+            train_resp = resp; test_resp = resp;
+        end
         train_pl = pl; test_pl = pl;
         train_tk = tk; test_tk = tk;
         train_pos=pos;test_pos = pos;
@@ -204,7 +225,15 @@ elseif strcmp(cond,'ctrl_mani')
         
     elseif train_test == 0
         
-        test_resp = resp;
+        if proj_on
+            [coeff,score]=pca(resp,'numcomponents',1);
+            weights=repmat(coeff',size(resp,1),1);
+            proj=resp.*weights;
+            test_resp=proj;
+        else
+            test_resp = resp;
+        end
+       
         test_pl = pl;
         test_tk = tk;
         test_pos = pos;
