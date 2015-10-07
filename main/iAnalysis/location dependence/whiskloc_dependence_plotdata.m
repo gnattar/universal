@@ -5,6 +5,7 @@ sc = get(0,'ScreenSize');
 % h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
 h_fig1 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
 count =1;
+uL=1.5;
 for d=1:length(dends)
     n = dends(d);
     xcol =2;
@@ -344,12 +345,14 @@ for d=1:length(dends)
             
         end
         set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1]);
+        set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         if strcmp(par,'sigmag')
-            axis([10e-4 2 0 5000]);
+            axis([10e-4 uL 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([10e-4 2 0 600]);
+            axis([10e-4 uL 0 800]);
         end
         set(gca,'xscale','log');set(gca,'ticklength',[.05 .05]);
+%         set(gca,'xscale','linear')
     end
     
     theta_at_contact = pooled_contactCaTrials_locdep{n}.Theta_at_contact_Mean; %%% use ths for joint plot

@@ -346,29 +346,29 @@ if lightcond
 % Norm Slope at prefered location
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 tempdata = [LPInCTRL_nl(:,1),LPInCTRL_l(:,1)];
-subplot(1,3,1);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 8]);hold on;
+subplot(1,3,1);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 5]);hold on;
 set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
-[h,p]=kstest2(tempdata(:,1),tempdata(:,2));
+[h,p]=ttest(tempdata(:,1),tempdata(:,2));
 m=mean(tempdata);
 s=std(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');
 set(h,'linewidth',1.5);
 title('Norm Slope at prefered location','Fontsize',16);
 set(gca,'Fontsize',16);
-text(1,7,['p=' num2str(p)]);
+text(1,4,['p=' num2str(p)]);
 
 
 %mean Resp at ctrl Pref Loc
 tempdata = [mRPrefLoc_nl(:,1),mRPrefLoc_l(:,1)];
-subplot(1,3,2);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 350]);hold on;
+subplot(1,3,2);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 300]);hold on;
 set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
-[h,p]=kstest2(tempdata(:,1),tempdata(:,2));
+[h,p]=ttest(tempdata(:,1),tempdata(:,2));
 m=mean(tempdata);
 s=std(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');
 set(h,'linewidth',1.5);
 title('mean Resp Amp at prefered location','Fontsize',16);
-text(1,225,['p=' num2str(p)]);
+text(1,220,['p=' num2str(p)]);
 
 
 %Diff in mean REsp between most and least prefered locations 
@@ -376,7 +376,7 @@ text(1,225,['p=' num2str(p)]);
 tempdata = [diffmR_nl(:,1),diffmR_l(:,1)];
 subplot(1,3,3);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 200]);hold on;
 set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
-[h,p]=kstest2(tempdata(:,1),tempdata(:,2));
+[h,p]=ttest(tempdata(:,1),tempdata(:,2));
 m=mean(tempdata);
 s=std(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');

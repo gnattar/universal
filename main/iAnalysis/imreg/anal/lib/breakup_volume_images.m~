@@ -176,7 +176,7 @@ function breakup_volume_images(fpath, flist, n_planes,chan, mode, reference_imag
   disp('breakup_volume_images::gathering data from files ... this will take time.');
   for f=1:length(flist)
 	  [fov_sequence{f} start_time(f) n_frames(f) frame_dt(f) im_size{f}] = ...
-		  get_file_info(flist{f}, mode, n_planes,chan, fpath, fov_refims, frames_correlated);
+		  get_file_info(flist{f}, mode, n_planes, fpath, fov_refims, frames_correlated);
   end
   
   % remove guys rejected by get_file_info

@@ -9,6 +9,7 @@ if traces
     % h_fig5 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w'); % protract dKa
 end
 count =1;
+uL = 1.5;
 clc
 for d=1:length(dends)
     n = dends(d);
@@ -44,7 +45,8 @@ for d=1:length(dends)
         pooled_contactCaTrials_locdep{n}.fitmean.(['L_fitevals']) = nan(numloc,3,2);
     end
     
-    dKappa_bins=(logspace(-4,0,10));
+    dKappa_bins=(logspace(-4,1.5,10));
+%     dKappa_bins=(logspace(-4,1.0,10));
     theta_at_touch = nan(numloc,2,2);
     for i = 1:numloc
         if fit_separate
@@ -142,7 +144,7 @@ for d=1:length(dends)
             
             [h,edges,mid,l] = histcn(ka,dKappa_bins);
             for cn = 1: length(h)
-                if (h(cn) > 2)
+                if (h(cn) > 1)
                     ca_l_m(cn)  = nanmean(ca(find(l==cn)));
                     ca_l_sd(cn) = nanstd(ca(find(l==cn)))./sqrt(h(cn)+1);
                     ka_l_m(cn)  = nanmean(ka(find(l==cn)));
@@ -204,9 +206,9 @@ for d=1:length(dends)
             pooled_contactCaTrials_locdep{n}.fitmean.([str '_fitevals'])(i,:,1) = fitevals;
             
             if strcmp(str,'NL_P') | strcmp(str,'L_P')
-                plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);set(gca,'ticklength',[.05 .05]);
+                plot([0.0001:.01:max(ka_l_m)],polyval(param ,[0.0001:.01:max(ka_l_m)]),'-','color',col,'linewidth',2);set(gca,'ticklength',[.05 .05]);
             elseif strcmp(str,'NL') | strcmp(str,'L')
-                plot([0.0001:.01:1.5],polyval(param ,[0.0001:.01:1.5]),'-','color',col,'linewidth',2);set(gca,'ticklength',[.05 .05]);
+                plot([0.0001:.01:max(ka_l_m)],polyval(param ,[0.0001:.01:max(ka_l_m)]),'-','color',col,'linewidth',2);set(gca,'ticklength',[.05 .05]);
             end
             hold on;
             % s = nl ; l; or nl_p;nl_r;l_p;l_r; - these are the slopes_columns
@@ -288,13 +290,15 @@ for d=1:length(dends)
         
         count = count+1;
         set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1]);
+        set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         figure(h_fig1);
         if strcmp(capar,'sigpeak')
-        axis([10e-4 1 0 600]);
+        axis([10e-4 uL 0 800]);
         elseif strcmp(capar,'sigmag')
-            axis([10e-4 1 0 6000]);
+            axis([10e-4 uL 0 6000]);
         end
         set(gca,'xscale','log');
+%         set(gca,'xscale','linear');
     end
     
     %%

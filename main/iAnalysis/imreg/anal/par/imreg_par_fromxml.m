@@ -26,7 +26,7 @@ function imreg_par_fromxml(xml_path, skip_breakup)
 	fclose(fid);
  
   % read in file
-	tag = {'rawdata_path', 'par_path', 'base_image_fname','base_image_frames', 'num_fovs', 'volume_id', 'offset', 'prebreakup_image_wildcard', 'postbreakup_image_wildcard', 'do_warp'};
+	tag = {'rawdata_path', 'par_path', 'base_image_fname','base_image_frames', 'num_fovs','chan', 'volume_id', 'offset', 'prebreakup_image_wildcard', 'postbreakup_image_wildcard', 'do_warp'};
 	for t=1:length(tag)
 	  ts = strfind(file_content,['<' tag{t} '>']) + length(tag{t}) + 2;
 	  te = strfind(file_content,['</' tag{t} '>']) - 1;
@@ -43,6 +43,7 @@ function imreg_par_fromxml(xml_path, skip_breakup)
 	bifni = find(strcmp(tag, 'base_image_fname'));
     bifri= find(strcmp(tag, 'base_image_frames'));%%GRchange
 	nfi = find(strcmp(tag, 'num_fovs'));
+    chi = find(strcmp(tag, 'chan')); %%GRadd
 	vidi = find(strcmp(tag, 'volume_id'));
 	oi = find(strcmp(tag, 'offset'));
 	preiwci = find(strcmp(tag, 'prebreakup_image_wildcard'));
@@ -53,6 +54,7 @@ function imreg_par_fromxml(xml_path, skip_breakup)
 	par_path = text{ppi};
 	base_image_fname = text{bifni};
 	num_fovs = str2num(text{nfi});
+    chan = str2num(text{chi});
 	volume_id = str2num(text{vidi});
 	offset = str2num(text{oi});
     baseframes =text{bifri};
@@ -71,7 +73,7 @@ function imreg_par_fromxml(xml_path, skip_breakup)
     
 	% --- now breakup FOVs
 % 	if (~skip_breakup) ; breakup_volume_images(rawdata_path, prebreakup_image_wildcard, num_fovs,1,base_image_fname, offset,[],0,57,[],[],volume_id); end
-	if (~skip_breakup) ; breakup_volume_images(rawdata_path, prebreakup_image_wildcard, num_fovs,1,base_image_fname, offset,base_image_frames,0,0,rawdata_path,1,1,'*main*tif',1); end %%GRchange
+	if (~skip_breakup) ; breakup_volume_images(rawdata_path, prebreakup_image_wildcard, num_fovs,chan,1,base_image_fname, offset,base_image_frames,0,0,rawdata_path,1,1,'*main*tif',1); end %%GRchange
 
 	% --- setup image-registration
 	source_path = sprintf('%s%s%%wc{fov_%02d*}', rawdata_path, filesep, volume_id);

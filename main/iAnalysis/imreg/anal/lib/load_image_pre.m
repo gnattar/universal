@@ -62,8 +62,8 @@ function [im improps] = load_image_pre(fullpath, frames, opt)
 
    % opt check:
     negodds = 0;
-    numchannels = 1; 
-    channel = 1;
+    numchannels = opt(1); 
+    channel = opt(2);
 
 
         %% --- recursive?  check for * in name

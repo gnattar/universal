@@ -140,9 +140,9 @@ tb = text(2,3,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
  figure;plot([tempDSctrl,tempDSmani]','o-','color',[.5 .5 .5],'markersize',10); hold on; 
 e1= errorbar(mean([tempDSctrl,tempDSmani]),std([tempDSctrl,tempDSmani])./sqrt(numsess+1),'ko-'); hold on;
 set(e1,'linewidth',1.5,'markersize',10);
-axis([0 3 -.5 3]);tb = text(1.5,2,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
-set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'Ctrl';'Light'});
- title('Paired diff from shuffled');set(gca,'Fontsize',16)
+axis([0 3 -.5 3]);tb = text(2,4,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
+set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'data';'shuffled'});
+ title('Paired diff from');set(gca,'Fontsize',16)
 
 temp = [data.mOL_ctrl',data.mOL_mani'];
 temps = [data.sOL_ctrl',data.sOL_mani'];
@@ -154,7 +154,7 @@ figure; errorbar(temp',temps','color',[.5 .5 .5]); hold on;
  e=errorbar(m,sem,'ko-');set(e,'linewidth',2,'markersize',10);
 axis([0 3 0 .8]);
  text(1.6,.7,['Ctrl  trained p =' num2str(p)]);
- set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'Ctrl';'Light'});
+ set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'data';'shuffled'});
  title('Ctrl pOL trained');set(gca,'Fontsize',16)
 
 
