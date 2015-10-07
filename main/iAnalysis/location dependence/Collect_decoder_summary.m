@@ -135,7 +135,9 @@ tb = text(1,2.5,['Ctrl mEr p =' num2str(p)]);
 tb = text(4,2.5,['Mani mEr p =' num2str(p)]);set(tb,'color',[1 .5 0]);
 
 [h,p]=ttest(tempDSctrl-tempDSmani);
+
 tb = text(2,3,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
+
 %%
  figure;plot([tempDSctrl,tempDSmani]','o-','color',[.5 .5 .5],'markersize',10); hold on; 
 e1= errorbar(mean([tempDSctrl,tempDSmani]),std([tempDSctrl,tempDSmani])./sqrt(numsess+1),'ko-'); hold on;
@@ -151,6 +153,7 @@ diff = temp(:,1)-temp(:,2);
 figure; errorbar(temp',temps','color',[.5 .5 .5]); hold on;
  m=mean(temp);
  sem=std(temp)./sqrt(size(temp,1)+1);
+
  e=errorbar(m,sem,'ko-');set(e,'linewidth',2,'markersize',10);
 axis([0 3 0 .8]);
  text(1.6,.7,['Ctrl  trained p =' num2str(p)]);
