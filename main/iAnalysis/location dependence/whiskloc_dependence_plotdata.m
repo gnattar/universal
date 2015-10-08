@@ -323,7 +323,7 @@ for d=1:length(dends)
         hline(30,'k:');
         hline(0,'k--');
         
-        plot([0.0001:.01:10],polyval(p_NL1(i,:,1) ,[0.0001:.01:10]),'k-','linewidth',2);hold on;set(gca,'ticklength',[.05 .05]);
+%         plot([0.0001:.01:10],polyval(p_NL1(i,:,1) ,[0.0001:.01:10]),'k-','linewidth',2);hold on;set(gca,'ticklength',[.05 .05]);
         if fit_separate
             %             plot([0.0001:.01:10],polyval(p_NL1(i,:,2) ,[0.0001:.01:10]),'color',[.5 .5 .5 ],'linewidth',2);
         end
@@ -336,7 +336,7 @@ for d=1:length(dends)
         %         end
         if ~isempty(L_ind)
             
-            plot([0.0001:.01:10],polyval(p_L1(i,:,1),[0.0001:.01:10]),'r-','linewidth',2);hold on;
+%             plot([0.0001:.01:10],polyval(p_L1(i,:,1),[0.0001:.01:10]),'r-','linewidth',2);hold on;
             if fit_separate
                 %                 plot([0.0001:.01:10],polyval(p_L1(i,:,2),[0.0001:.01:10]),'color',[.85 .5 .5],'linewidth',2);
             end
@@ -358,9 +358,9 @@ for d=1:length(dends)
     theta_at_contact = pooled_contactCaTrials_locdep{n}.Theta_at_contact_Mean; %%% use ths for joint plot
     
     subplot(length(dends),numloc+xcol,count:count+1);
-    h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
-    plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
-    set(gca,'ticklength',[.05 .05]);
+%     h= plot([1:numloc],p_NL1(:,1,1),'k-o'); set(h,'linewidth',3);hold on;
+%     plot([1:numloc],p_NL1CIU(:,1,1),'k--','linewidth',2); plot([1:numloc],p_NL1CIL(:,1,1),'k--','linewidth',2);
+%     set(gca,'ticklength',[.05 .05]);
     if (lpv == 'v2')
         LPI = (max(abs(p_NL1(1:end,1,1)))-min(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+min(abs(p_NL1(:,1,1))));
         %     LPI_sp = (max(abs(p_NL1(2:end,1,1)))-mean(abs(p_NL1(:,1,1))))/(max(abs(p_NL1(:,1,1)))+mean(abs(p_NL1(:,1,1))));
@@ -378,9 +378,9 @@ for d=1:length(dends)
     end
     
     if ~isempty(L_ind)
-        h= plot([1:numloc],p_L1(:,1,1),'r-o');set(h,'linewidth',1.5);hold on;
-        plot([1:numloc],p_L1CIU(:,1,1),'r--','linewidth',2); plot([1:numloc],p_L1CIL(:,1,1),'r--','linewidth',2);
-        set(gca,'ticklength',[.05 .05]);
+%         h= plot([1:numloc],p_L1(:,1,1),'r-o');set(h,'linewidth',1.5);hold on;
+%         plot([1:numloc],p_L1CIU(:,1,1),'r--','linewidth',2); plot([1:numloc],p_L1CIL(:,1,1),'r--','linewidth',2);
+%         set(gca,'ticklength',[.05 .05]);
         if(lpv == 'v1')
             LPI_l = (max(abs(p_L1(1:end,1,1))))/(mean(abs(p_L1(:,1,1))));
             %           LPI_sp_l = (max(abs(p_L1(2:end,1,1)))-mean(abs(p_L1(:,1,1))))/(max(abs(p_L1(:,1,1)))+mean(abs(p_L1(:,1,1))));

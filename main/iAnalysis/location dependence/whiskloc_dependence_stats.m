@@ -189,7 +189,7 @@ for d=1:length(dends)
             x=ka_l_m;
             y =ca_l_m;
             fittype = 'lin';
-            if length(x(notnan)) >1
+            if length(x(notnan)) >2
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x(notnan),y(notnan),fittype,-1);
                 f_all = nan(size(x));f_all(notnan) = f;
@@ -294,7 +294,7 @@ for d=1:length(dends)
 %         set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         figure(h_fig1);
         if strcmp(capar,'sigpeak')
-        axis([1e-4 uL 0 800]);
+        axis([1e-4 uL 0 300]);
         elseif strcmp(capar,'sigmag')
             axis([1e-4 uL 0 6000]);
         end
@@ -364,7 +364,7 @@ for d=1:length(dends)
         end
         lpinorm=round(lpinorm*100)./100;
         pslpnorm = round(pslnorm*100)./100;
-        tb=text(tp-1,tp-.5,['FS' num2str(lpinorm)],'FontSize',14);set(tb,'color',col);
+        tb=text(tp-1,tp-1.5,['FS' num2str(lpinorm)],'FontSize',14);set(tb,'color',col);
 %         tb=text(tp-1,tp+.5,['PS' num2str(pslpnorm)],'FontSize',14);set(tb,'color',col);
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_LPI']) = LPI;
         pooled_contactCaTrials_locdep{n}.pointslope.([str '_LPI']) = pslpnorm;
