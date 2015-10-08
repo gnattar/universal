@@ -194,17 +194,17 @@ wsArray.sessionName = sessionName;
 cd(results_save_dir);
 save([results_save_dir filesep  sprintf('wsArray_%s', sessionName)], 'wsArray');
 save(sprintf('wSigTrials_%s_%s',animalName,sessionName), 'wSigTrials');
-%% adding this to sessObj
-sessObj_found = dir('sessObj.mat');
-if isempty(sessObj_found)
-    sessObj = {};
-    sessObj.wSigTrials = wSigTrials;
-    save('sessObj','sessObj','-v7.3');
-else
-    load('sessObj.mat');
-    sessObj.wSigTrials = wSigTrials;
-    save('sessObj','sessObj','-v7.3');
-end
+% %% adding this to sessObj
+% sessObj_found = dir('sessObj.mat');
+% if isempty(sessObj_found)
+%     sessObj = {};
+%     sessObj.wSigTrials = wSigTrials;
+%     save('sessObj','sessObj','-v7.3');
+% else
+%     load('sessObj.mat');
+%     sessObj.wSigTrials = wSigTrials;
+%     save('sessObj','sessObj','-v7.3');
+% end
 matlabpool close
 % % % % wsArray.whiskerPadCoords = sessionInfo.whiskerPadOrigin_nx;
 % % % %% Touch detection. 
