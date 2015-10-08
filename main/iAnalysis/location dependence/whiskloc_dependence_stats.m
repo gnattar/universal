@@ -46,7 +46,7 @@ for d=1:length(dends)
         pooled_contactCaTrials_locdep{n}.fitmean.(['L_fitevals']) = nan(numloc,3,2);
     end
     
-    dKappa_bins=(logspace(-4,1.5,10));
+    dKappa_bins=(logspace(-4,2,10));
 %     dKappa_bins=(logspace(-4,1.5,10)); used first
     theta_at_touch = nan(numloc,2,2);
     for i = 1:numloc
@@ -189,7 +189,7 @@ for d=1:length(dends)
             x=ka_l_m;
             y =ca_l_m;
             fittype = 'lin';
-            if length(x(notnan)) >0
+            if length(x(notnan)) >1
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x(notnan),y(notnan),fittype,-1);
                 f_all = nan(size(x));f_all(notnan) = f;

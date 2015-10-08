@@ -62,9 +62,9 @@ if disp
 % figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
 sc = get(0,'ScreenSize');
 if ~isempty(Lind)
-    figure('position', [1000, sc(4)/10-100, sc(3)/2, sc(4)], 'color','w');
+    figure('position', [1000, sc(4)/10-100, sc(3)/2.5, sc(4)], 'color','w');
 else
-    figure('position', [1000, sc(4)/10-100, sc(3)/4, sc(4)], 'color','w');
+    figure('position', [1000, sc(4)/10-100, sc(3)/8, sc(4)], 'color','w');
 end
 
 subplot(4,plotcols,1);
@@ -93,7 +93,7 @@ if ptype == 'cf'
      newticks= [start : newpxldiff : start+(newpxldiff*(length(c)-1))] 
      
      set(gca,'YMinorTick','on','YTick',newticks);
-     set(gca,'YTicklabels',[0.0001,0.001,0.01,.1,1,10]);
+     set(gca,'YTicklabels',[-4,-3,-2,-1,0,1]);
 %     axis([min(min(newticks) max(newticks)]
 %     set(gca,'YMinorTick','on','YTick',[0.001,0.01,.1,1]);
 
@@ -109,12 +109,13 @@ if ptype == 'cf'
 elseif ptype == 'cs'
     contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;  scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
 end
-xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12); title ('Ctrl'); % set(gca,'yscale','log') ;set(gca,'YTick',logspace(-4,1,10));
+% xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12);
+title ('Ctrl'); % set(gca,'yscale','log') ;set(gca,'YTick',logspace(-4,1,10));
 % subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
 % subplot(2,2,4); colorbar;
-subplot(4,plotcols,plotcols+1); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-4,2,10));set(gca,'XTicklabels',logspace(-4,2,10)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');
+subplot(4,plotcols,plotcols+1); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',[0.0001, 0.001,0.01,.1,1,10]);set(gca,'XTicklabels',[0.0001, 0.001,0.01,.1,1,10]); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');
 subplot(4,plotcols,2*plotcols+1); errorbar([1:length(pos)],T,Ts,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([1 length(pos) 0 cscale(2)]);
-subplot(4,plotcols,3*plotcols+1); errorbar([1:length(pos)],Tk,Tks,'o-'); xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12);axis([1 length(pos) 0.001 10]);
+subplot(4,plotcols,3*plotcols+1); errorbar([1:length(pos)],Tk,Tks,'o-'); xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12);axis([1 length(pos) 0.0001 10]);
  set(gca,'yscale','log');
 set(gca,'FontSize',12);
 TK = T*K';
