@@ -10,7 +10,7 @@ if traces
 end
 count =1;
 uL = 10;
-lL=10e-5;
+lL=10e-
 clc
 for d=1:length(dends)
     n = dends(d);
@@ -46,7 +46,7 @@ for d=1:length(dends)
         pooled_contactCaTrials_locdep{n}.fitmean.(['L_fitevals']) = nan(numloc,3,2);
     end
     
-    dKappa_bins=(logspace(-4,1.5,10));
+    dKappa_bins=(logspace(-4,2,10));
 %     dKappa_bins=(logspace(-4,1.5,10)); used first
     theta_at_touch = nan(numloc,2,2);
     for i = 1:numloc
@@ -189,7 +189,7 @@ for d=1:length(dends)
             x=ka_l_m;
             y =ca_l_m;
             fittype = 'lin';
-            if length(x(notnan)) >0
+            if length(x(notnan)) >1
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x(notnan),y(notnan),fittype,-1);
                 f_all = nan(size(x));f_all(notnan) = f;
@@ -290,13 +290,13 @@ for d=1:length(dends)
         end
         
         count = count+1;
-        set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1,10]);
-%         set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
+        set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1]);
+        set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         figure(h_fig1);
         if strcmp(capar,'sigpeak')
-        axis([1e-4 uL 0 800]);
+        axis([10e-4 uL 0 800]);
         elseif strcmp(capar,'sigmag')
-            axis([1e-4 uL 0 6000]);
+            axis([10e-4 uL 0 6000]);
         end
         set(gca,'xscale','log');
 %         set(gca,'xscale','linear');
@@ -388,7 +388,7 @@ for d=1:length(dends)
     end
     
     %     axis([0  numloc+1 -100  max(slopes(:,2))+200]);
-    axis([1  numloc 0 3]);set(gca,'ticklength',[.05 .05]);
+    axis([1  numloc 0 8]);set(gca,'ticklength',[.05 .05]);
     hline(0,'k:'); hline(1,'b:');
     title( ' slopes');
     

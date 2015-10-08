@@ -345,11 +345,11 @@ for d=1:length(dends)
             
         end
         set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1]);
-        set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
+%         set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         if strcmp(par,'sigmag')
-            axis([10e-4 uL 0 5000]);
+            axis([1e-4 uL 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([10e-4 uL 0 800]);
+            axis([1e-4 uL 0 800]);
         end
         set(gca,'xscale','log');set(gca,'ticklength',[.05 .05]);
 %         set(gca,'xscale','linear')

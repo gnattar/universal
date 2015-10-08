@@ -82,7 +82,7 @@ if ptype == 'cf'
     imagesc(VqR,[0 maxval+(maxval/10)]);colormap(jet);%colormap(brewermap([],'OrRd'));
     set(gca,'YDir','normal');
      b=ThKmid{2};
-     c = [0.0001, 0.001,0.01,.1,1,10];
+     c = [0.001,0.01,.1,1,10];
      strdiff = log(min(c)) - log(min(b));
      diffc=diff(log(c));
      diffb=diff(log(b));
@@ -93,7 +93,7 @@ if ptype == 'cf'
      newticks= [start : newpxldiff : start+(newpxldiff*(length(c)-1))] 
      
      set(gca,'YMinorTick','on','YTick',newticks);
-     set(gca,'YTicklabels',[0.0001,0.001,0.01,.1,1,10]);
+     set(gca,'YTicklabels',[0.0001,0.001,0.01,.1,1,10,100]);
 %     axis([min(min(newticks) max(newticks)]
 %     set(gca,'YMinorTick','on','YTick',[0.001,0.01,.1,1]);
 
@@ -109,10 +109,10 @@ if ptype == 'cf'
 elseif ptype == 'cs'
     contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;  scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
 end
-xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12); title ('Ctrl'); % set(gca,'yscale','log') ;set(gca,'YTick',logspace(-4,1,10));
+set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12); title ('Ctrl');  set(gca,'YTick',logspace(-3,2,6));
 % subplot(4,2,3);surf(ThKmid{2},ThKmid{1},R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
 % subplot(2,2,4); colorbar;
-subplot(4,plotcols,plotcols+1); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-4,2,10));set(gca,'XTicklabels',logspace(-4,2,10)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');
+subplot(4,plotcols,plotcols+1); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-3,2,6)); xlabel('Touch Mag'); ylabel('CaSig'); axis([0.0001 100 -10 cscale(2)]); set(gca,'xscale','log');
 subplot(4,plotcols,2*plotcols+1); errorbar([1:length(pos)],T,Ts,'o-'); xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12);axis([1 length(pos) 0 cscale(2)]);
 subplot(4,plotcols,3*plotcols+1); errorbar([1:length(pos)],Tk,Tks,'o-'); xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12);axis([1 length(pos) 0.001 10]);
  set(gca,'yscale','log');
@@ -186,10 +186,10 @@ if ~isempty(Lind)
     elseif ptype == 'cs'
         contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;   scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
     end
-    set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12); title ('Silenced');set(gca,'YTick',logspace(-4,2,10));
+    set(gca,'yscale','log'); xlabel('Loc'); ylabel('TouchMag'); set(gca,'FontSize',12); title ('Silenced');set(gca,'YTick',logspace(-4,2,6));
     % subplot(4,2,4);surf(ThKmid{2},pos,R);caxis(cscale); %subplot(2,3,3);surf(ThKmid{2},ThKmid{1},T*K');caxis([0 800]);
     % subplot(2,2,4); colorbar;
-    subplot(4,plotcols,2*plotcols); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-4,2,10)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.001 10 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',12);
+    subplot(4,plotcols,2*plotcols); errorbar(ThKmid{2},K,Ks,'o-'); set(gca,'XTick',logspace(-4,2,6)); xlabel('Touch Mag'); ylabel('CaSig');  axis([0.0001 10 -10 cscale(2)]); set(gca,'xscale','log');set(gca,'FontSize',12);
     subplot(4,plotcols,3*plotcols); errorbar(pos,T,Ts,'o-');  xlabel('Loc');ylabel('CaSig');set(gca,'FontSize',12); axis([100 350 0 cscale(2)]);
     subplot(4,plotcols,4*plotcols); errorbar(pos,Tk,Tks,'o-');  xlabel('Loc');ylabel('Touch Mag');set(gca,'FontSize',12); axis([100 350 0 .5]);
     
@@ -253,7 +253,7 @@ vals(:,1) = l;vals(:,2) = k;vals(:,3) = r;
 
 % bins(1) = {[40 210 250 280 310 350 ]};
 bins(1) = {locbins};
-bins(2) ={logspace(-4,2,10)}; % dKappa bins
+bins(2) ={logspace(-4,2,6)}; % dKappa bins
 bins(3) = {[0:100:800]}; % Resp peak bins
 
 [count edges mid loc] = histcn(vals,bins{1},bins{2},bins{3}); %% joint dist Theta Kappa Capeak
