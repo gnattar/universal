@@ -1,7 +1,7 @@
 
 cd ('/Volumes/GR_Ext_Analysis/Analysis/Location preference silencing/Analysis v2/Decoder/Linear DCsub Data')
 
-dec='linear';src='NLS';train_test=0;proj =0;
+dec='linear';src='def';train_test=0;proj =0;
 load([ d '/145_150430_pooled_contactCaTrials_locdep_smth.mat'])
 [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,'sigpeak','ctrl_mani','145 150430',train_test,[18.0  10.5 9.0 7.5 6.0],dec,src,1,proj)
 clear pooled_contactCaTrials_locdep; close all;
@@ -38,7 +38,7 @@ clear pooled_contactCaTrials_locdep;close all;
 
 cd ('/Volumes/GR_Ext_Analysis/Analysis/Location preference silencing/Analysis v2/Decoder/Linear DCsub PC1')
 
-dec='linear';src='NLS';train_test=0;proj =1;
+dec='linear';src='def';train_test=0;proj =1;
 load([ d '/145_150430_pooled_contactCaTrials_locdep_smth.mat'])
 [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,'sigpeak','ctrl_mani','145 150430',train_test,[18.0  10.5 9.0 7.5 6.0],dec,src,1,proj)
 clear pooled_contactCaTrials_locdep; close all;

@@ -1,7 +1,7 @@
 %script_to_generate_LAddback_NLsubtract_datasets_for_decoder
 
 % load('145_150430_Thr25_pooled_contact_CaTrials_smth.mat')
-function generate_dataarrays_for_decoder_ctrl(pooled_contactCaTrials_locdep)
+function [pooled_contactCaTrials_locdep]= generate_dataarrays_for_decoder_ctrl(pooled_contactCaTrials_locdep,pooled_contact_CaTrials)
 
 l=pooled_contact_CaTrials{1}.lightstim;
 for d = 4: size(pooled_contactCaTrials_locdep,2)
