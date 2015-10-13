@@ -444,9 +444,27 @@ elseif strcmp(par,'peak')
     
 end
 
+for d = 1:length(pooled_contact_CaTrials)
+ls = pooled_contact_CaTrials{d}.lightstim;
+if strcmp(par,'peak')
+    pa = pooled_contact_CaTrials{d}.peakamp;
+elseif strcmp(par,'area')
+ pa = pooled_contact_CaTrials{d}.intarea;
+end
+avgresp(d,1) = nanmean(pa(ls==0));
+avgresp(d,2) = nanmean(pa(ls==1));
+end
+m=nanmean(avgresp);
+s=nanstd(avgresp)./sqrt(size(avgresp,1)+1);
+figure;plot(avgresp','color',[.5 .5 .5]);hold on
+e=errorbar(m,s,'ko-');
+set(e,'markersize',10,'linewidth',1.5)
+axis([0 3 0 140]);
+set(gca,'Xtick',[1 2],'Xticklabel',{'NL','L'});
+[h,p]=ttest(avgresp(:,1),avgresp(:,2))
+text(1.75,100,['p=' num2str(p)]);
+title('Average Resp' )
 
-
-%NORM
 % intarea_trials_L= intarea_trials(eventsdetected_trials&lightstim_trials);
 % intarea_trials_NL= intarea_trials(eventsdetected_trials & ~lightstim_trials);
 % ia_t_X_hist =[0:50:800];

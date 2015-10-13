@@ -91,88 +91,119 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 % suptitle('Control data decoder results')
 % set(gca,'Fontsize',16)
 
-%% plotting percent overlap
-% temp = ones(1,6);
-% figure;plot(temp,data.pOL_ctrl,'o','color',[.5 .5 .5])
-% m=mean(data.pOL_ctrl);
-% s=std(data.pOL_ctrl)./sqrt(7);
-% hold on;errorbar(1,m,s,'ko')
-% axis([.5 1.5 0 .15]);
-% suptitle('Percent overlap')
-
-
-
-% for ctrl_mani
+%%  for ctrl only
 numsess = size(data.mEr_ctrl,1);
  figure;plot(data.mEr_ctrl(:,[1:2])','color',[.5 .5 .5],'markersize',10); hold on;
  m=mean(data.mEr_ctrl(:,[1:2]));
  s=std(data.mEr_ctrl(:,[1:2]))./sqrt(numsess+1);
  h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25);
   set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'shuffled'});
-axis([0 5 1 4.0])
+axis([0 3 1 4.5])
 ylabel('Mean error (mm)','fontsize',16)
 suptitle('Control data decoder mean error results')
 set(gca,'Fontsize',16);
 
-hold on;
-x = repmat([3 4],size(data.mEr_mani(:,1),1),1)';
-plot(x,data.mEr_mani(:,[1:2])','color',[.85 .5 0],'markersize',10); hold on;
- m=mean(data.mEr_mani(:,[1:2]));
- s=std(data.mEr_mani(:,[1:2]))./sqrt(numsess+1);
- h=errorbar(x(:,1),m,s,'o-'); set(h,'linewidth',1.25,'color',[1 .5 0]);
- set(gca,'XTick',[1 2 3 4]);set(gca,'XTicklabel',{'data';'shuffled';'data';'shuffled'});
-axis([0 5 1 4.0])
-ylabel('Mean error (mm)','fontsize',16)
-suptitle('Mani data decoder mean error results')
-set(gca,'Fontsize',16)
 
 tempDSctrl(:,1) = data.mEr_ctrl(:,2)-data.mEr_ctrl(:,1); %shuffled  - data
-tempDSmani(:,1) = data.mEr_mani(:,2)-data.mEr_mani(:,1);
-
 [h,p]=ttest(tempDSctrl);
 tb = text(1,2.5,['Ctrl mEr p =' num2str(p)]);
-[h,p]=ttest(tempDSmani);
-tb = text(4,2.5,['Mani mEr p =' num2str(p)]);set(tb,'color',[1 .5 0]);
-
-[h,p]=ttest(tempDSctrl-tempDSmani);
-
-tb = text(2,3,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
-
-%%
- figure;plot([tempDSctrl,tempDSmani]','o-','color',[.5 .5 .5],'markersize',10); hold on; 
-e1= errorbar(mean([tempDSctrl,tempDSmani]),std([tempDSctrl,tempDSmani])./sqrt(numsess+1),'ko-'); hold on;
-set(e1,'linewidth',1.5,'markersize',10);
-axis([0 3 -.5 3]);tb = text(1.5,2,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
-set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'Ctrl';'Light'});
- title('Paired diff from shuffled');set(gca,'Fontsize',16)
-
-temp = [data.mOL_ctrl',data.mOL_mani'];
-temps = [data.sOL_ctrl',data.sOL_mani'];
-diff = temp(:,1)-temp(:,2);
-[h,p]=ttest(diff);
-figure; errorbar(temp',temps','color',[.5 .5 .5]); hold on;
- m=mean(temp);
- sem=std(temp)./sqrt(size(temp,1)+1);
-
- e=errorbar(m,sem,'ko-');set(e,'linewidth',2,'markersize',10);
-axis([0 3 0 .8]);
- text(1.6,.7,['Ctrl  trained p =' num2str(p)]);
- set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'Ctrl';'Light'});
- title('Ctrl pOL trained');set(gca,'Fontsize',16)
+temp = ones(1,6);
 
 
-% % to check if individual sessions are decoding under ctrl cond
-% temp = data.mEr_ctrl(:,[1:2]);
-% temps = data.sEr_ctrl(:,[1:2]);
-%  m=mean(temp);
-% s=std(temp)./sqrt(size(temp,1)+1);
+
+
+temp = ones(1,6);
+figure;plot(temp,data.mOL_ctrl,'o','color',[.5 .5 .5])
+m=mean(data.mOL_ctrl);
+s=std(data.mOL_ctrl)./sqrt(7);
+hold on;errorbar(1,m,s,'ko')
+axis([.5 1.5 0 .15]);
+suptitle('Percent overlap')
+axis([.5 1.5 0 .2]);
+temp = ones(1,6);
+figure;plot(temp,tempDSctrl(:,1),'o','color',[.5 .5 .5])
+axis([.5 1.5 0 2.5]);
+axis([.5 1.5 0.5 2.5]);
+m = mean(tempDSctrl(:,1))
+hold on;
+s = std(tempDSctrl(:,1))./sqrt(7);
+e1=errorbar(m,s,'ko');
+set(e1,'markersize',10)
+
+
+
+
+% % for ctrl_mani
+% numsess = size(data.mEr_ctrl,1);
+%  figure;plot(data.mEr_ctrl(:,[1:2])','color',[.5 .5 .5],'markersize',10); hold on;
+%  m=mean(data.mEr_ctrl(:,[1:2]));
+%  s=std(data.mEr_ctrl(:,[1:2]))./sqrt(numsess+1);
+%  h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25);
+%   set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'shuffled'});
+% axis([0 5 1 4.0])
+% ylabel('Mean error (mm)','fontsize',16)
+% suptitle('Control data decoder mean error results')
+% set(gca,'Fontsize',16);
 % 
-% figure; errorbar(temp',temps','color',[.5 .5 .5]);
 % hold on;
-% errorbar(m,s,'ko-')
-% [h,p] = ttest(temp(:,1),temp(:,2));
-% text(1.5,2.8,['p=' num2str(p)]);
-%  title('Decoder mean error Ctrl and shuffled under NL cond');
-%   set(gca,'ticklength',[.025 .025]);
-%   set(gca,'XTick',[1 2]);axis([.5 2.5 1 5]);
-%   set(gca,'XTicklabel',{'Aligned';'Shuffled'});
+% x = repmat([3 4],size(data.mEr_mani(:,1),1),1)';
+% plot(x,data.mEr_mani(:,[1:2])','color',[.85 .5 0],'markersize',10); hold on;
+%  m=mean(data.mEr_mani(:,[1:2]));
+%  s=std(data.mEr_mani(:,[1:2]))./sqrt(numsess+1);
+%  h=errorbar(x(:,1),m,s,'o-'); set(h,'linewidth',1.25,'color',[1 .5 0]);
+%  set(gca,'XTick',[1 2 3 4]);set(gca,'XTicklabel',{'data';'shuffled';'data';'shuffled'});
+% axis([0 5 1 4.0])
+% ylabel('Mean error (mm)','fontsize',16)
+% suptitle('Mani data decoder mean error results')
+% set(gca,'Fontsize',16)
+% 
+% tempDSctrl(:,1) = data.mEr_ctrl(:,2)-data.mEr_ctrl(:,1); %shuffled  - data
+% tempDSmani(:,1) = data.mEr_mani(:,2)-data.mEr_mani(:,1);
+% 
+% [h,p]=ttest(tempDSctrl);
+% tb = text(1,2.5,['Ctrl mEr p =' num2str(p)]);
+% [h,p]=ttest(tempDSmani);
+% tb = text(4,2.5,['Mani mEr p =' num2str(p)]);set(tb,'color',[1 .5 0]);
+% 
+% [h,p]=ttest(tempDSctrl-tempDSmani);
+% 
+% tb = text(2,3,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
+% 
+% %%
+%  figure;plot([tempDSctrl,tempDSmani]','o-','color',[.5 .5 .5],'markersize',10); hold on; 
+% e1= errorbar(mean([tempDSctrl,tempDSmani]),std([tempDSctrl,tempDSmani])./sqrt(numsess+1),'ko-'); hold on;
+% set(e1,'linewidth',1.5,'markersize',10);
+% axis([0 3 -.5 3]);tb = text(1.5,2,['Ctrl Diff mEr p =' num2str(p)]);set(tb,'color',[1 0 1]);
+% set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'Ctrl';'Light'});
+%  title('Paired diff from shuffled');set(gca,'Fontsize',16)
+% 
+% temp = [data.mOL_ctrl',data.mOL_mani'];
+% temps = [data.sOL_ctrl',data.sOL_mani'];
+% diff = temp(:,1)-temp(:,2);
+% [h,p]=ttest(diff);
+% figure; errorbar(temp',temps','color',[.5 .5 .5]); hold on;
+%  m=mean(temp);
+%  sem=std(temp)./sqrt(size(temp,1)+1);
+% 
+%  e=errorbar(m,sem,'ko-');set(e,'linewidth',2,'markersize',10);
+% axis([0 3 0 .8]);
+%  text(1.6,.7,['Ctrl  trained p =' num2str(p)]);
+%  set(gca,'XTick',[1 2 ]);set(gca,'XTicklabel',{'Ctrl';'Light'});
+%  title('Ctrl pOL trained');set(gca,'Fontsize',16)
+
+
+% % % % to check if individual sessions are decoding under ctrl cond
+% % % temp = data.mEr_ctrl(:,[1:2]);
+% % % temps = data.sEr_ctrl(:,[1:2]);
+% % %  m=mean(temp);
+% % % s=std(temp)./sqrt(size(temp,1)+1);
+% % % 
+% % % figure; errorbar(temp',temps','color',[.5 .5 .5]);
+% % % hold on;
+% % % errorbar(m,s,'ko-')
+% % % [h,p] = ttest(temp(:,1),temp(:,2));
+% % % text(1.5,2.8,['p=' num2str(p)]);
+% % %  title('Decoder mean error Ctrl and shuffled under NL cond');
+% % %   set(gca,'ticklength',[.025 .025]);
+% % %   set(gca,'XTick',[1 2]);axis([.5 2.5 1 5]);
+% % %   set(gca,'XTicklabel',{'Aligned';'Shuffled'});

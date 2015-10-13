@@ -94,7 +94,14 @@ if strcmp(cond,'ctrl' )
     summary.ctrl.pvalue=p_all;
     summary.ctrl.percentoverlap = pOL_all;
     summary.ctrl.mEr = mEr_all;
-    summary.ctrl.mpercentoverlap = pOL_all;
+    summary.ctrl.percentoverlap = pOL_all;
+        
+    summary.ctrl.mmEr(1,1,1) = mean(cellfun(@(x) x(1,1,1), mEr_all)'); % aligned
+    summary.ctrl.smEr(1,1,1) = std(cellfun(@(x) x(1,1,1), mEr_all)')./sqrt(num_runs);
+    summary.ctrl.mmEr(1,2,1) = mean(cellfun(@(x) x(1,2,1), mEr_all)'); % shuffled
+    summary.ctrl.smEr(1,2,1) = std(cellfun(@(x) x(1,2,1), mEr_all)')./sqrt(num_runs);
+    summary.ctrl.mpercentoverlap(1,1,1) = mean(cellfun(@(x) x(1,1,1), pOL_all)');
+    summary.ctrl.spercentoverlap (1,1,1)= std(cellfun(@(x) x(1,1,1), pOL_all)')./sqrt(num_runs);
     summary.info =  [str];
     save([str ' decoder results'],'summary');
     

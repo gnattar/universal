@@ -7,7 +7,11 @@ function [Sil_sameLP,Sil_diffLP,Inc_sameLP,Inc_diffLP]= Analyze_meanResp_summary
 %     [ThKmid,R,T,K,Tk,pooled_contactCaTrials_locdep] = whisk_loc_dependence_plot_contour(pooled_contactCaTrials_locdep,d,'re_totaldK','PR',[0 400],'cf',0,[180 210 230 250 270 300]);
 % end
 
-
+if lightcond
+    num=2;
+else 
+    num=1;
+end
 LPI_nl=arrayfun(@(x) x.LPI_ctrl(1,:)', data,'uni',0)';LPI_nl = cell2mat(LPI_nl{1});
 LPInCTRL_nl=arrayfun(@(x) x.LPInCTRL_ctrl(1,:)', data,'uni',0)';LPInCTRL_nl = cell2mat(LPInCTRL_nl{1}); 
 LPId_nl=arrayfun(@(x) x.LPId_ctrl(1,:)', data,'uni',0)';LPId_nl = cell2mat(LPId_nl{1});% this has max - mean
@@ -30,6 +34,7 @@ PLoc_l= arrayfun(@(x) x.PLoc_mani(1,:)', data,'uni',0)';PLoc_l=cell2mat(PLoc_l{1
 effect = (LPInCTRL_nl(:,1)>LPInCTRL_l(:,1));
 if lightcond & ~group
     effect(:,1) = 1;
+    
 end
 sil = find(effect==1);
 inc= find(effect==0);
@@ -113,7 +118,7 @@ for sess = 1: size(data.NormSlopesnCTRL_ctrl,2)
         else
             figure(hinc);ind =2;
         end               
-        subplot(1,2,1);plot(x,y,'o-','color',[.5 .5 .5],'MarkerEdgeColor',[.5 .5 .5],'MarkerFaceColor',[.5 .5 .5],'linewidth',.05); hold on;
+        subplot(1,num,1);plot(x,y,'o-','color',[.5 .5 .5],'MarkerEdgeColor',[.5 .5 .5],'MarkerFaceColor',[.5 .5 .5],'linewidth',.05); hold on;
         for t = 1:length(x)
             tempdata (count,find(thetabins==x(t)),ind) = y(t);
         end
@@ -121,8 +126,8 @@ for sess = 1: size(data.NormSlopesnCTRL_ctrl,2)
     end
 end
 figure(hsil);
-subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ko-');
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ko-');
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 0 6]);
 title('Theta preference ctrl');
@@ -133,8 +138,8 @@ set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
 
 if lightcond
 figure(hinc);
-subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 0 6]);
 title('Theta preference ctrl');
@@ -169,8 +174,8 @@ for sess = 1: size(data.NormSlopes_mani,2)
     end
 end
 figure(hsil);
-subplot(1,2,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ro-')
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ro-')
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 0 6]);
 title('Theta preference mani');
@@ -182,8 +187,8 @@ set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
 figure(hinc);
-subplot(1,2,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ro-')
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ro-')
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 0 6]);
 title('Theta preference mani');
@@ -218,7 +223,7 @@ for sess = 1: size(data.meanResp_ctrl,2)
         else
             figure(hinc);ind =2;
         end               
-        subplot(1,2,1);plot(x,y,'o-','color',[.5 .5 .5],'MarkerEdgeColor',[.5 .5 .5],'MarkerFaceColor',[.5 .5 .5],'linewidth',.05); hold on;
+        subplot(1,num,1);plot(x,y,'o-','color',[.5 .5 .5],'MarkerEdgeColor',[.5 .5 .5],'MarkerFaceColor',[.5 .5 .5],'linewidth',.05); hold on;
         for t = 1:length(x)
             tempdata (count,find(thetabins==x(t)),ind) = y(t);
         end
@@ -226,8 +231,8 @@ for sess = 1: size(data.meanResp_ctrl,2)
     end
 end
 figure(hsil);
-subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ko-');
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ko-');
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 30 300]);
 title('Theta preference ctrl');
@@ -237,8 +242,8 @@ set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
 
 if lightcond
 figure(hinc);
-subplot(1,2,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 30 300]);
 title('Theta preference ctrl');
@@ -267,7 +272,7 @@ for sess = 1: size(data.NormSlopes_mani,2)
         else
             figure(hinc);ind = 2;
         end           
-        subplot(1,2,2);plot(x,y,'o-','color',[.85 .5 .5],'MarkerEdgeColor',[.85 .5 .5],'MarkerFaceColor',[.85 .5 .5],'linewidth',.05); hold on;
+        subplot(1,num,2);plot(x,y,'o-','color',[.85 .5 .5],'MarkerEdgeColor',[.85 .5 .5],'MarkerFaceColor',[.85 .5 .5],'linewidth',.05); hold on;
         for t = 1:length(x)
             tempdata (count,find(thetabins==x(t)),ind) = y(t);
         end
@@ -275,8 +280,8 @@ for sess = 1: size(data.NormSlopes_mani,2)
     end
 end
 figure(hsil);
-subplot(1,2,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ro-')
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ro-')
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 30 300]);
 title('Theta preference mani');
@@ -288,8 +293,8 @@ set(gca,'Fontsize',16,'Xtick',[-50:10:50]);
         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
 figure(hinc);
-subplot(1,2,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ro-')
-set(h,'linewidth',2,'markersize',6);
+subplot(1,num,2);hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ro-')
+set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
 axis([-20 20 30 300]);
 title('Theta preference mani');
@@ -374,7 +379,7 @@ set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
 m=nanmean(tempdata);
 s=nanstd(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');
-set(h,'linewidth',1.5);
+set(h,'linewidth',1.5,'markersize',15);
 title('Norm Slope at prefered location','Fontsize',16);
 set(gca,'Fontsize',16);
 text(1,4,['p=' num2str(p)]);
@@ -388,7 +393,7 @@ set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
 m=mean(tempdata);
 s=std(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');
-set(h,'linewidth',1.5);
+set(h,'linewidth',1.5,'markersize',15);
 title('mean Resp Amp at prefered location','Fontsize',16);
 text(1,220,['p=' num2str(p)]);
 
@@ -402,7 +407,7 @@ set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
 m=mean(tempdata);
 s=std(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');
-set(h,'linewidth',1.5);
+set(h,'linewidth',1.5,'markersize',15);
 title('Diff in mean Resp Most-least prefered location','Fontsize',16);
 text(1,180,['p=' num2str(p)]);
         fnam = 'Diff plots';

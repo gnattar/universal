@@ -194,8 +194,6 @@ if ~isempty(Lind)
     end
     set(gca,'XMinorTick','on','XTick',locticks);
     set(gca,'XTicklabel',locs);
-        axis([min(locticks) max(locticks) min(newticks) max(newticks)]);
-
     elseif ptype == 'cs'
         contour(pos,ThKmid{2},R');caxis([0 cscale(2)]); hold on;   scatter(l,k,pointsize,r,'filled');axis([0 400 0.0001 10]);
     end
