@@ -6,7 +6,7 @@ function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_co
 % be trained with ctrl trials
 % disc_func 'linear' or 'diagquadratic'
 p = pos; %[15 13.5 12 10.5 9 7.5];
-num_runs = 5;
+num_runs = 2;
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
 else
@@ -66,10 +66,12 @@ if strcmp(cond,'ctrl' )
     
      w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
         dist_all{n} = dist_n;
+        dist_err{n} = dist_err_n;
         hist_all{n} =hist_n;
         chist_all{n} =chist_n;
+        fr_correct{n}=fr_correct_n;
         mEr_all{n} =mEr_n;
         pOL_all{n} =pOL_n;
         p_all{n} =p_n;
@@ -89,8 +91,10 @@ if strcmp(cond,'ctrl' )
     end
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
+    summary.ctrl.dist_err=dist_err;
     summary.ctrl.chist = chist_all;
     summary.ctrl.mEr = mEr_all;
+    summary.ctrl.fr_correct = fr_correct;
     summary.ctrl.pvalue=p_all;
     summary.ctrl.percentoverlap = pOL_all;
     summary.ctrl.mEr = mEr_all;
@@ -102,6 +106,10 @@ if strcmp(cond,'ctrl' )
     summary.ctrl.smEr(1,2,1) = std(cellfun(@(x) x(1,2,1), mEr_all)')./sqrt(num_runs);
     summary.ctrl.mpercentoverlap(1,1,1) = mean(cellfun(@(x) x(1,1,1), pOL_all)');
     summary.ctrl.spercentoverlap (1,1,1)= std(cellfun(@(x) x(1,1,1), pOL_all)')./sqrt(num_runs);
+    summary.ctrl.mFrCor(1,1,1) = mean(cellfun(@(x) x(1,1,1), fr_correct)');
+    summary.ctrl.sFrCor(1,1,1) = std(cellfun(@(x) x(1,1,1), fr_correct)');
+    summary.ctrl.mFrCor(1,2,1) = mean(cellfun(@(x) x(1,2,1), fr_correct)');
+    summary.ctrl.sFrCor(1,2,1) = std(cellfun(@(x) x(1,2,1), fr_correct)');
     summary.info =  [str];
     save([str ' decoder results'],'summary');
     
@@ -154,11 +162,13 @@ elseif strcmp(cond,'ctrl_mani')
     
     w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on,src);
+        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on,src);
         dist_all{n} = dist_n;
+        dist_err{n} = dist_err_n;
         hist_all{n} =hist_n;
         chist_all{n} =chist_n;
         mEr_all{n} =mEr_n;
+        fr_correct{n} = fr_correct_n;
         pOL_all{n} =pOL_n;
         p_all{n} =p_n;
         waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
@@ -185,6 +195,7 @@ elseif strcmp(cond,'ctrl_mani')
     summary.ctrl.dist=dist_all;
     summary.ctrl.chist = chist_all;
     summary.ctrl.mEr = mEr_all;
+    summary.ctrl.fr_correct = fr_correct;
     summary.ctrl.pvalue=p_all;
     summary.ctrl.percentoverlap = pOL_all;
     summary.ctrl.mmEr(1,1,1) = mean(cellfun(@(x) x(1,1,1), mEr_all)'); % aligned
@@ -193,6 +204,10 @@ elseif strcmp(cond,'ctrl_mani')
     summary.ctrl.smEr(1,2,1) = std(cellfun(@(x) x(1,2,1), mEr_all)')./sqrt(num_runs);
     summary.ctrl.mpercentoverlap(1,1,1) = mean(cellfun(@(x) x(1,1,1), pOL_all)');
     summary.ctrl.spercentoverlap (1,1,1)= std(cellfun(@(x) x(1,1,1), pOL_all)')./sqrt(num_runs);
+    summary.ctrl.mFrCor(1,1,1) = mean(cellfun(@(x) x(1,1,1), fr_correct)');
+    summary.ctrl.sFrCor(1,1,1) = std(cellfun(@(x) x(1,1,1), fr_correct)')./sqrt(num_runs);
+    summary.ctrl.mFrCor(1,2,1) = mean(cellfun(@(x) x(1,2,1), fr_correct)');
+    summary.ctrl.sFrCor(1,2,1) = std(cellfun(@(x) x(1,2,1), fr_correct)')./sqrt(num_runs);
     
     %run mani
     
@@ -218,11 +233,13 @@ elseif strcmp(cond,'ctrl_mani')
         train_pos=pos;test_pos = pos;
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
             dist_all{n} = dist_n;
+            dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
             chist_all{n} =chist_n;
             mEr_all{n} =mEr_n;
+            fr_correct{n} = fr_correct_n;
             pOL_all{n} =pOL_n;
             p_all{n} =p_n;
             waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
@@ -246,11 +263,13 @@ elseif strcmp(cond,'ctrl_mani')
         test_pos = pos;
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
             dist_all{n} = dist_n;
+            dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
             chist_all{n} =chist_n;
             mEr_all{n} =mEr_n;
+            fr_correct{n} = fr_correct_n;
             pOL_all{n} =pOL_n;
             p_all{n} =p_n;
             waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
@@ -271,8 +290,10 @@ elseif strcmp(cond,'ctrl_mani')
     end
     summary.mani.hist = hist_all;
     summary.mani.dist=dist_all;
+    summary.mani.dist_err=dist_err;
     summary.mani.chist = chist_all;
     summary.mani.mEr = mEr_all;
+    summary.mani.fr_correct = fr_correct;
     summary.mani.pvalue=p_all;
     summary.mani.percentoverlap = pOL_all;
     summary.mani.mmEr(1,1,1) = mean(cellfun(@(x) x(1,1,1), mEr_all)'); % aligned
@@ -281,12 +302,16 @@ elseif strcmp(cond,'ctrl_mani')
     summary.mani.smEr(1,2,1) = std(cellfun(@(x) x(1,2,1), mEr_all)')./sqrt(num_runs);
     summary.mani.mpercentoverlap(1,1,1) = mean(cellfun(@(x) x(1,1,1), pOL_all)');
     summary.mani.spercentoverlap (1,1,1)= std(cellfun(@(x) x(1,1,1), pOL_all)')./sqrt(num_runs);
+    summary.mani.mFrCor(1,1,1) = mean(cellfun(@(x) x(1,1,1), fr_correct)');
+    summary.mani.sFrCor(1,1,1) = std(cellfun(@(x) x(1,1,1), fr_correct)')./sqrt(num_runs);
+    summary.mani.mFrCor(1,2,1) = mean(cellfun(@(x) x(1,2,1), fr_correct)');
+    summary.mani.sFrCor(1,2,1) = std(cellfun(@(x) x(1,2,1), fr_correct)')./sqrt(num_runs);
     summary.info =  [str ' ' tag];
     save([str ' ' disc_func ' '  tag ' decoder results'],'summary');
     
 end
 
-function [dist_all,hist_all,chist_all,mEr_all,pOL_all,p_all] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,tt,disc_func,plot_on,src)
+function [dist_all,dist_err,hist_all,chist_all,mEr_all,fr_correct,pOL_all,p_all] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,tt,disc_func,plot_on,src)
 
 
 num_tests = 1000;
@@ -298,10 +323,10 @@ plotjustcasig =1;
 
 if plotjustcasig
     r= 1;
-    c=3;
+    c=4;
 else
     r=3;
-    c=3;
+    c=4;
 end
 
 % dummy = figure;
@@ -336,6 +361,7 @@ for s = 1:num_tests
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
+    dist_aligned_err{s} =  (actual-class);
 %      figure(dummy); plot(actual); hold on; plot(class,'r');hold off;
 end
 % dummy = figure;
@@ -361,6 +387,7 @@ for s = 1:num_tests
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_shuff (s ,1) = sum(dist)./testsetsize;
+    dist_shuff_err{s} = (actual-class);
     % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
 end
 if plot_on
@@ -388,8 +415,12 @@ if plot_on
     figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],chista,'k','linewidth',2); hold on; plot([0:bw:uL],chists,'r','linewidth',2);  set(gca,'FontSize',16); axis([0 uL 0 1]);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('C.Pr');
 end
+
+
 dist_all(:,1,1) = dist_aligned;
 dist_all(:,2,1) = dist_shuff;
+dist_err (:,1,1) = cell2mat(dist_aligned_err');
+dist_err (:,2,1) = cell2mat(dist_shuff_err');
 hist_all(:,1,1) = hista;
 hist_all(:,2,1) = hists;
 chist_all(:,1,1) = chista;
@@ -397,11 +428,31 @@ chist_all(:,2,1) = chists;
 
 mEr_all(1,1,1) = prctile(dist_aligned,50);
 mEr_all(1,2,1) = prctile(dist_shuff,50);
-% pdt=hista.*hists;
-% temp = (hista+hists).*(pdt>1);
 if plot_on
     tb = text(2,.6, num2str(mEr_all(1,1,1)),'FontSize',12);set(tb,'color','k');
     tb = text(2,.8, num2str(mEr_all(1,2,1)),'FontSize',12);set(tb,'color','r');
+end
+
+if plot_on
+    numtotal(1,1) = length(dist_err(:,1,1));numtotal(1,2) = length(dist_err(:,2,1));
+    tw = abs(dist_err(find(dist_err(:,1,1)~=0),1,1));
+    binw = min(tw);binm=max(dist_err(:,1,1));
+    histal = hist(dist_err(:,1,1),[-binm:binw:binm])./numtotal(1,1);
+    histsh=hist(dist_err(:,2,1),[-binm:binw:binm])./numtotal(1,2)
+    figure(h1); subplot(r,c,plotcount);plot([-binm:binw:binm],histal,'k','linewidth',2); hold on; plot([-binm:binw:binm],histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
+    xlabel('Prediction error (mm)');ylabel('C.Pr');
+end
+binnew = [-binm:binw:binm];
+zerobin = find(binnew ==0);
+fr_correct(1,1,1) = histal(zerobin);
+fr_correct(1,2,1) = histsh(zerobin);
+
+
+% pdt=hista.*hists;
+% temp = (hista+hists).*(pdt>1);
+if plot_on
+    tb = text(2,.6, num2str(fr_correct(1,1,1)),'FontSize',12);set(tb,'color','k');
+    tb = text(2,.8, num2str(fr_correct(1,2,1)),'FontSize',12);set(tb,'color','r');
 end
 if ~plotjustcasig
     %% predicting locations from Kappa alone

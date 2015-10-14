@@ -349,7 +349,7 @@ for d=1:length(dends)
         if strcmp(par,'sigmag')
             axis([1e-4 uL 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([1e-4 uL 0 800]);
+            axis([1e-4 uL 0 400]);
         end
         set(gca,'xscale','log');set(gca,'ticklength',[.05 .05]);
 %         set(gca,'xscale','linear')
@@ -569,7 +569,7 @@ if disp
             
             if traces
                 figure(h_fig2);
-                axis([0 1.5 0 600]);
+                 ([0 1.5 0 600]);
                 hline(30,'k.');
                 hline(0,'k--');
                 figure(h_fig3);
@@ -579,12 +579,12 @@ if disp
             end
             
             figure(h_fig4);
-            axis([0 1.5 0 250]);
+            axis([0 1.5 0 150]);
             hline(30,'k.');
             hline(0,'k--');
             if fit_separate
                 figure(h_fig5);
-                axis([0 1.5 0 250]);
+                axis([0 1.5 0 150]);
                 hline(30,'k.');
                 hline(0,'k--');
             end
