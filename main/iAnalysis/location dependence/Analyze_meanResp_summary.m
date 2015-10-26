@@ -217,7 +217,7 @@ for sess = 1: size(data.meanResp_ctrl,2)
         Pref_touch_th = touch_th(LP);
         temp = touch_th-Pref_touch_th;
         x = 5.*round(temp/5); % rounding to nearest 5
-%         y=y./nanmin(data.meanResp_ctrl{sess}(d,:,1)); % if you want to normalize
+         y=y./nanmean(data.meanResp_ctrl{sess}(d,:,1)); % if you want to normalize
         if effect(count)==1
             figure(hsil);ind = 1;
         else
@@ -266,7 +266,7 @@ for sess = 1: size(data.NormSlopes_mani,2)
         Pref_touch_th = touch_th(LP);
         temp = touch_th-Pref_touch_th;
         x = 5.*round(temp/5); % rounding to nearest 5
-%         y = y./nanmin(data.meanResp_ctrl{sess}(d,:,1)); % to normalize9
+         y = y./nanmean(data.meanResp_ctrl{sess}(d,:,1)); % to normalize9
         if effect(count)==1
             figure(hsil);ind = 1;
         else

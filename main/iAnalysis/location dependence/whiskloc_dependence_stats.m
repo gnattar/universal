@@ -294,7 +294,7 @@ for d=1:length(dends)
 %         set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         figure(h_fig1);
         if strcmp(capar,'sigpeak')
-        axis([1e-4 uL 0 300]);
+        axis([1e-4 uL 0 150]);
         elseif strcmp(capar,'sigmag')
             axis([1e-4 uL 0 6000]);
         end

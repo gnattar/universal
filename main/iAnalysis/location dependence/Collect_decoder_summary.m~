@@ -100,6 +100,11 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 % set(gca,'Fontsize',16)
 
 %%  for ctrl only
+ C = data.mFrCo_ctrl(:,:); L = data.mFrCo_mani(:,:);
+temp(:,1) = C(:,1)-C(:,2);
+temp(:,2) = L(:,1)-L(:,2)
+ 
+ 
 numsess = size(data.mEr_ctrl,1);
  figure;plot(data.mEr_ctrl(:,[1:2])','color',[.5 .5 .5],'markersize',10); hold on;
  m=mean(data.mEr_ctrl(:,[1:2]));
