@@ -50,8 +50,8 @@ if strcmp(cond,'ctrl' )
           
     train_resp = resp; test_resp = resp;
     train_pos=pos;test_pos = pos;
-
-        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,train_test,plot_on,src);
+ tt =1;
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
         dist_all{n} = dist_n;
         hist_all{n} =hist_n;
         p_all{n} =p_n;
@@ -105,8 +105,8 @@ elseif strcmp(cond,'ctrl_mani')
     
     train_resp = resp; test_resp = resp;
     train_pos=pos;test_pos = pos;
-
-    [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,train_test,plot_on,src);
+ tt=1;
+    [dist_n,hist_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
     dist_all{1} = dist_n;
     hist_all{1} =hist_n;
     p_all{1} =p_n;
@@ -145,7 +145,8 @@ elseif strcmp(cond,'ctrl_mani')
 
         train_resp = resp; test_resp = resp;
         train_pos=pos;test_pos = pos;
-        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,train_test,plot_on,src);
+        tt =1;
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
         dist_all{n} = dist_n;
         hist_all{n} =hist_n;
         p_all{n} =p_n;
@@ -155,7 +156,8 @@ elseif strcmp(cond,'ctrl_mani')
 
         test_resp = resp;
         test_pos = pos;
-        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,train_test,plot_on,src);
+        tt=0;
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
         dist_all{n} = dist_n;
         hist_all{n} =hist_n;
         p_all{n} =p_n;
@@ -189,7 +191,7 @@ dist=zeros(num_tests,1);
 dist_all = zeros(num_tests,3,3);
 
     r= 1;
-    c=3;
+    c=2;
 
 uL = 10;
 bw=0.1;
@@ -234,24 +236,26 @@ for cp = 1:length(p)
             % data aligned
             [d,pv,stats] = manova1(Train,groupVar);
             w_1 = stats.eigenvec(:,1);
-            means = [mean(w_1'*cp_test), mean(w_1'*op_test)];
-            projw_1 = (w_1' *  Test);
-            prediction = min(repmat(projw_1,1,2)-repmat(means,length(projw_1),1));
-            
-            percent_correct = actual - prediction  ;
-            dist_aligned (cp,s,1) = percent_correct;
+            means = [mean(w_1'*cp_train'), mean(w_1'*op_train')];
+            crit =  means(1) - (means(1)-means(2))/2;
+            projw_1 = (w_1' *  Test')';
+            [y,prediction] = min(abs(repmat(projw_1,1,2)-repmat(means,length(projw_1),1)),[],2);            
+            percent_correct = sum(actual == prediction)./size(actual,1) ;
+            dist_aligned (s,cp,1) = percent_correct;
             
             % data shuffled
             shuff1 = randperm(size(Train,1),size(Train,1))';shuff2 = randperm(size(Train,1),size(Train,1))';
-            x_shuff = x(shuff1,:); groupVar_shuff = groupVar(shuff2,:);
+            x_shuff = Train(shuff1,:); groupVar_shuff = groupVar(shuff2,:);
             [d,pv,stats] = manova1(x_shuff,groupVar_shuff);
             w_1shuff = stats.eigenvec(:,1);
-            means = [mean(w_1shuff'*cp_test), mean(w_1shuff'*op_test)];
-            projw_1shuff = (w_1shuff' *  Test);
-            prediction = min(repmat(projw_1shuff,1,2)-repmat(means,length(projw_1shuff),1));
+            means = [mean(w_1shuff'*cp_train'), mean(w_1shuff'*op_train')];
+            crit =  means(1) - (means(1)-means(2))/2;
+            shuff3 = randperm(size(Test,1),size(Test,1))';
+            projw_1shuff = (w_1shuff' *  Test(shuff3,:)')';
+           [y, prediction] = min(abs(repmat(projw_1shuff,1,2)-repmat(means,length(projw_1shuff),1)),[],2);
             
-            percent_correct_shuff = actual - prediction  ;
-            dist_shuff (cp,s,1) = percent_correct_shuff;            
+            percent_correct_shuff = sum(actual == prediction)./size(actual,1) ;
+            dist_shuff (s,cp,1) = percent_correct_shuff;            
             
     end
     

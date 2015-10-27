@@ -6,7 +6,6 @@ function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder_manova1(p
 % be trained with ctrl trials
 % disc_func 'linear' or 'diagquadratic'
 p = pos; %[15 13.5 12 10.5 9 7.5];
-num_runs = 5;
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
 else
@@ -51,8 +50,8 @@ if strcmp(cond,'ctrl' )
           
     train_resp = resp; test_resp = resp;
     train_pos=pos;test_pos = pos;
-
-        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,train_test,plot_on,src);
+ tt =1;
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
         dist_all{n} = dist_n;
         hist_all{n} =hist_n;
         p_all{n} =p_n;
@@ -106,11 +105,11 @@ elseif strcmp(cond,'ctrl_mani')
     
     train_resp = resp; test_resp = resp;
     train_pos=pos;test_pos = pos;
-
-        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,train_test,plot_on,src);
-        dist_all{1} = dist_n;
-        hist_all{1} =hist_n;
-        p_all{1} =p_n;
+ tt=1;
+    [dist_n,hist_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
+    dist_all{1} = dist_n;
+    hist_all{1} =hist_n;
+    p_all{1} =p_n;
 
     
     if train_test == 1
@@ -143,57 +142,25 @@ elseif strcmp(cond,'ctrl_mani')
     pos = p(valsid)';
     
     if train_test == 1
-        if proj_on
-            [coeff,score]=pca(resp,'numcomponents',1);
-            weights=repmat(coeff',size(resp,1),1);
-            proj=resp.*weights;
-            train_resp=proj;test_resp=proj;
-        else
-            train_resp = resp; test_resp = resp;
-        end
-        train_pl = pl; test_pl = pl;
-        train_tk = tk; test_tk = tk;
+
+        train_resp = resp; test_resp = resp;
         train_pos=pos;test_pos = pos;
-         w = waitbar(0, 'Start mani LDA runs  ...');
-        for n = 1:num_runs
-            [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
-            dist_all{n} = dist_n;
-            hist_all{n} =hist_n;
-            chist_all{n} =chist_n;
-            mEr_all{n} =mEr_n;
-            pOL_all{n} =pOL_n;
-            p_all{n} =p_n;
-            waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
-        end
-        close (w);
+        tt =1;
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
+        dist_all{n} = dist_n;
+        hist_all{n} =hist_n;
+        p_all{n} =p_n;
         tag = 'selftrain';
         
     elseif train_test == 0
-        
-        if proj_on
-            [coeff,score]=pca(resp,'numcomponents',1);
-            weights=repmat(coeff',size(resp,1),1);
-            proj=resp.*weights;
-            test_resp=proj;
-        else
-            test_resp = resp;
-        end
-       
-        test_pl = pl;
-        test_tk = tk;
+
+        test_resp = resp;
         test_pos = pos;
-         w = waitbar(0, 'Start mani LDA runs  ...');
-        for n = 1:num_runs
-            [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
-            dist_all{n} = dist_n;
-            hist_all{n} =hist_n;
-            chist_all{n} =chist_n;
-            mEr_all{n} =mEr_n;
-            pOL_all{n} =pOL_n;
-            p_all{n} =p_n;
-            waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
-        end
-        close(w);
+        tt=0;
+        [dist_n,hist_n,chist_n,mEr_n,pOL_n,p_n] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src);
+        dist_all{n} = dist_n;
+        hist_all{n} =hist_n;
+        p_all{n} =p_n;
         tag = 'ctrltrain';
     end
     if plot_on
@@ -209,16 +176,7 @@ elseif strcmp(cond,'ctrl_mani')
     end
     summary.mani.hist = hist_all;
     summary.mani.dist=dist_all;
-    summary.mani.chist = chist_all;
-    summary.mani.mEr = mEr_all;
     summary.mani.pvalue=p_all;
-    summary.mani.percentoverlap = pOL_all;
-    summary.mani.mmEr(1,1,1) = mean(cellfun(@(x) x(1,1,1), mEr_all)'); % aligned
-    summary.mani.smEr(1,1,1) = std(cellfun(@(x) x(1,1,1), mEr_all)')./sqrt(num_runs);
-    summary.mani.mmEr(1,2,1) = mean(cellfun(@(x) x(1,2,1), mEr_all)'); % shuffled
-    summary.mani.smEr(1,2,1) = std(cellfun(@(x) x(1,2,1), mEr_all)')./sqrt(num_runs);
-    summary.mani.mpercentoverlap(1,1,1) = mean(cellfun(@(x) x(1,1,1), pOL_all)');
-    summary.mani.spercentoverlap (1,1,1)= std(cellfun(@(x) x(1,1,1), pOL_all)')./sqrt(num_runs);
     summary.info =  [str ' ' tag];
     save([str ' ' disc_func ' '  tag ' decoder results'],'summary');
     
@@ -233,7 +191,7 @@ dist=zeros(num_tests,1);
 dist_all = zeros(num_tests,3,3);
 
     r= 1;
-    c=3;
+    c=2;
 
 uL = 10;
 bw=0.1;
@@ -278,10 +236,10 @@ for cp = 1:length(p)
             % data aligned
             [d,pv,stats] = manova1(Train,groupVar);
             w_1 = stats.eigenvec(:,1);
-            means = [mean(w_1'*cp_test), mean(w_1'*op_test)];
-            projw_1 = (w_1' *  Test);
-            prediction = min(repmat(projw_1,1,2)-repmat(means,length(projw_1),1));
-            
+            means = [mean(w_1'*cp_train'), mean(w_1'*op_train')];
+            crit =  means(1) - (means(1)-means(2))/2;
+            projw_1 = (w_1' *  Test')';
+[y,prediction] = min(abs(repmat(projw_1,1,2)-repmat(means,length(projw_1),1)),[],2);            
             percent_correct = actual - prediction  ;
             dist_aligned (cp,s,1) = percent_correct;
             
