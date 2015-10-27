@@ -62,7 +62,7 @@ while(count>=0)
         s=pooled_contactCaTrials_locdep{d}.fitmean.NLslopes(:,1,1);
         NormSlopes_ctrl{count}(d,:) = s./mean(s);
         Slopes_ctrl{count}(d,:) = s;
-        meanResp_ctrl{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.NL;
+        meanResp_ctrl{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.NL ./mean(pooled_contactCaTrials_locdep{d}.meanResp.NL ); % div if normalized;;
         if isfield(pooled_contactCaTrials_locdep{d}.fitmean,'L_LPI')
             
             LPI_mani{count}(d,1) = pooled_contactCaTrials_locdep{d}.fitmean.L_LPI;
@@ -94,7 +94,7 @@ while(count>=0)
             s=pooled_contactCaTrials_locdep{d}.fitmean.Lslopes(:,1,1);
             NormSlopes_mani{count}(d,:) = s./mean(s);
             Slopes_mani{count}(d,:) = s;
-            meanResp_mani{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.L;
+            meanResp_mani{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.L ./mean(pooled_contactCaTrials_locdep{d}.meanResp.NL ); % div if normalized;;;
         end
     end
     
@@ -108,7 +108,7 @@ while(count>=0)
     collected_fitmean_summary_stats{count}.LP_ctrl= LP_ctrl{count};
     collected_fitmean_summary_stats{count}.NormSlopes_ctrl= NormSlopes_ctrl{count};
     collected_fitmean_summary_stats{count}.Slopes_ctrl= NormSlopes_ctrl{count};
-    collected_fitmean_summary_stats{count}.meanResp_ctrl= meanResp_ctrl{count};
+    collected_fitmean_summary_stats{count}.meanResp_ctrl= meanResp_ctrl{count}
     if isfield(pooled_contactCaTrials_locdep{d}.fitmean,'L_LPI')
         collected_fitmean_summary_stats{count}.LPI_mani = LPI_mani{count}
         collected_fitmean_summary_stats{count}.PLoc_mani = PLoc_mani{count};

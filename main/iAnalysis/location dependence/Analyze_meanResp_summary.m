@@ -72,7 +72,7 @@ text(5,50,['Inc ' num2str(length(inc))  ' cells']);
         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
 % meanResp at PRef Loc
-bins = [0:25:600];
+bins = [0:.1:4]; %[0:25:600];
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 subplot(1,2,1);hnl=hist(mRPrefLoc_nl(:,1),bins);plot(bins,hnl,'k');hold on ;
@@ -234,7 +234,8 @@ figure(hsil);
 subplot(1,num,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,1)),nanstd(tempdata(:,:,1))./sqrt(nansum(tempdata(:,:,1))),'ko-');
 set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
-axis([-20 20 30 300]);
+% axis([-20 20 30 300]);
+axis([-20 20 0 3]);
 title('Theta preference ctrl');
 xlabel('dTheta (deg from max)','Fontsize',10);
 ylabel('mean Resp Amp','Fontsize',10);
@@ -245,7 +246,8 @@ figure(hinc);
 subplot(1,num,1); hold on;h= errorbar(thetabins,nanmean(tempdata(:,:,2)),nanstd(tempdata(:,:,2))./sqrt(nansum(tempdata(:,:,2))),'ko-');
 set(h,'linewidth',2,'markersize',15);
 set(gca,'yscale','lin');
-axis([-20 20 30 300]);
+% axis([-20 20 30 300]);
+axis([-20 20 0 3]);
 title('Theta preference ctrl');
 xlabel('dTheta (deg from max)','Fontsize',10);
 ylabel('mean Resp Amp','Fontsize',10);
@@ -387,7 +389,7 @@ text(1,4,['p=' num2str(p)]);
 
 %mean Resp at ctrl Pref Loc
 tempdata = [mRPrefLoc_nl(:,1),mRPrefLoc_l(:,1)];
-subplot(1,3,2);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 300]);hold on;
+subplot(1,3,2);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 3]);hold on;
 set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
 [h,p]=ttest(tempdata(:,1),tempdata(:,2));
 m=mean(tempdata);
@@ -395,13 +397,13 @@ s=std(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');
 set(h,'linewidth',1.5,'markersize',15);
 title('mean Resp Amp at prefered location','Fontsize',16);
-text(1,220,['p=' num2str(p)]);
+text(1,2,['p=' num2str(p)]);
 
 
 %Diff in mean REsp between most and least prefered locations 
 % use diffmR_nl(:,1) for max - min LPId_nl(:,2) for Max-mean
 tempdata = [diffmR_nl(:,1),diffmR_l(:,1)];
-subplot(1,3,3);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 200]);hold on;
+subplot(1,3,3);plot(tempdata','color',[.5 .5 .5]); axis([0.5 2.5 0 3]);hold on;
 set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'NL';'L'});
 [h,p]=ttest(tempdata(:,1),tempdata(:,2));
 m=mean(tempdata);
@@ -409,7 +411,7 @@ s=std(tempdata)./sqrt(size(tempdata,1));
 h=errorbar(m,s,'ko-');
 set(h,'linewidth',1.5,'markersize',15);
 title('Diff in mean Resp Most-least prefered location','Fontsize',16);
-text(1,180,['p=' num2str(p)]);
+text(1,2,['p=' num2str(p)]);
         fnam = 'Diff plots';
         saveas(gcf,[pwd,filesep,fnam],'fig');
         print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);

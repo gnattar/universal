@@ -46,7 +46,7 @@ for d=1:length(dends)
         pooled_contactCaTrials_locdep{n}.fitmean.(['L_fitevals']) = nan(numloc,3,2);
     end
     
-    dKappa_bins=(logspace(-4,2,10));
+    dKappa_bins=(logspace(-3,0,4));
 %     dKappa_bins=(logspace(-4,1.5,10)); used first
     theta_at_touch = nan(numloc,2,2);
     for i = 1:numloc
@@ -168,7 +168,15 @@ for d=1:length(dends)
             end
             hold on;
 %             if i ==2 tatt = abs(tatt); end % for sess 157_150723
+
             pooled_contactCaTrials_locdep{n}.fitmean.([str '_theta_at_touch'])(i,tattind(1),tattind(2)) = tatt;
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar]) =[];
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])= [];
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar]) = [];
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar]) = [];
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' 'mid'])= {};
+            pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' 'npts']) = [];
+            
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,i,1) = ca_l_m;
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,i,2) = ca_l_sd;
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar])(:,i,1) = ka_l_m;
@@ -294,7 +302,7 @@ for d=1:length(dends)
 %         set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         figure(h_fig1);
         if strcmp(capar,'sigpeak')
-        axis([1e-4 uL 0 150]);
+        axis([1e-4 uL 0 300]);
         elseif strcmp(capar,'sigmag')
             axis([1e-4 uL 0 6000]);
         end
@@ -320,10 +328,12 @@ for d=1:length(dends)
                 slopes_column = 1;
                 col = [0 0 0 ];
                 tp = 3;
+                 mR = pooled_contactCaTrials_locdep{n}.meanResp.NL;
             case 'L'
                 slopes_column = 2;
                 col = [.85 0 0 ];
                 tp = 4;
+                 mR = pooled_contactCaTrials_locdep{n}.meanResp.L;
                 
             case 'NL_P'
                 slopes_column = 1;
@@ -339,6 +349,9 @@ for d=1:length(dends)
         
         %     h= plot([1:numloc],slopes(:,1),'--o','color',[.5 .5 .5]); set(h,'linewidth',3);hold on; % Ret
         h= plot([1:numloc],slopes(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col,'linewidth',2); hold on;set(gca,'ticklength',[.05 .05]); % Prot
+        hold on;
+        mR_n= mR./mean(pooled_contactCaTrials_locdep{n}.meanResp.NL);
+         h= plot([1:numloc],mR_n,'-o','color',col,'linewidth',2); hold on;set(gca,'ticklength',[.05 .05]); % Prot
          pntslp = pooled_contactCaTrials_locdep{n}.pointslope.([ str '_meanB'])(:,1); 
          pntslpctrl=  pooled_contactCaTrials_locdep{n}.pointslope.(['NL_meanB'])(:,1); 
 %          plot([1:numloc],pntslp(:,1)./mean(pntslpctrl(:,1)),'-o','color',col,'linewidth',2);
@@ -354,17 +367,20 @@ for d=1:length(dends)
 %         tb=text(tp,LPI+1,['LPI_d ' num2str(LPI_diff)],'FontSize',18);set(tb,'color',col);
         if strcmp(str,'NL')
            lpinorm = max(slopes(:,slopes_column,1)./mean(slopes(:,1,1)));
-           pslnorm = max(pntslp(:,1))./mean(pntslp(:,1));
+           pslnorm = max(pntslp(:,1))./mean(pntslp(:,1));           
+            LPI_mR = max(mR_n);
         elseif strcmp(str,'L')
             [ctrlnormslope,ctrllp] = max( slopes(:,1,1)./mean(slopes(:,1,1)));
             tempw=slopes(:,slopes_column,1)./mean(slopes(:,1,1));
             lpinorm = max(tempw);
 %             lpinorm = tempw(ctrllp); %at lp of ctrl
             pslnorm = max(pntslp(:,1))./mean(pntslpctrl(:,1));
+            LPI_mR = max(mR_n);
         end
         lpinorm=round(lpinorm*100)./100;
         pslpnorm = round(pslnorm*100)./100;
         tb=text(tp-1,tp-1.5,['FS' num2str(lpinorm)],'FontSize',14);set(tb,'color',col);
+        tb=text(tp-1,tp-1.2,['mRS' num2str(LPI_mR)],'FontSize',14);set(tb,'color',col);
 %         tb=text(tp-1,tp+.5,['PS' num2str(pslpnorm)],'FontSize',14);set(tb,'color',col);
         pooled_contactCaTrials_locdep{n}.fitmean.([str '_LPI']) = LPI;
         pooled_contactCaTrials_locdep{n}.pointslope.([str '_LPI']) = pslpnorm;

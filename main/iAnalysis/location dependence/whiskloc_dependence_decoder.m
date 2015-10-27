@@ -193,6 +193,7 @@ elseif strcmp(cond,'ctrl_mani')
     end
     summary.ctrl.hist = hist_all;
     summary.ctrl.dist=dist_all;
+    summary.ctrl.dist_err=dist_err;
     summary.ctrl.chist = chist_all;
     summary.ctrl.mEr = mEr_all;
     summary.ctrl.fr_correct = fr_correct;

@@ -99,44 +99,82 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 % suptitle('Control data decoder results')
 % set(gca,'Fontsize',16)
 
-%%  for ctrl only
-numsess = size(data.mEr_ctrl,1);
- figure;plot(data.mEr_ctrl(:,[1:2])','color',[.5 .5 .5],'markersize',10); hold on;
- m=mean(data.mEr_ctrl(:,[1:2]));
- s=std(data.mEr_ctrl(:,[1:2]))./sqrt(numsess+1);
- h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25);
-  set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'shuffled'});
-axis([0 3 1 4.5])
-ylabel('Mean error (mm)','fontsize',16)
-suptitle('Control data decoder mean error results')
+% %%  for ctrl only
+%  C = data.mFrCo_ctrl(:,:); L = data.mFrCo_mani(:,:);
+% temp(:,1) = C(:,1)-C(:,2);
+% temp(:,2) = L(:,1)-L(:,2)
+%  
+
+
+ C = data.mFrCo_ctrl(:,:); L = data.mFrCo_mani(:,:);
+temp(:,1) = C(:,1)-C(:,2);
+temp(:,2) = L(:,1)-L(:,2)
+
+ numsess = size(C,1);
+ figure;plot(C','color',[.5 .5 .5],'markersize',10); hold on;plot(repmat([3,4],numsess,1)',L','color',[.85 .5 .5],'markersize',10); hold on;
+ m=mean(C);
+ s=std(C)./sqrt(numsess+1);
+ h=errorbar([1,2],m,s,'ko-'); set(h,'linewidth',1.25,'markersize',20);hold on;
+  m=mean(L);
+ s=std(L)./sqrt(numsess+1);
+ h=errorbar([3,4],m,s,'ro-'); set(h,'linewidth',1.25,'markersize',20);
+  set(gca,'XTick',[1 2 3 4 ]);set(gca,'XTicklabel',{'data';'shuff';'light';'light shuff'});
+axis([0 4.5 .2 .4])
+ylabel('Fraction Correct ','fontsize',16)
+suptitle('Fraction Correct')
+set(gca,'Fontsize',16);
+
+numsess = size(C,1);
+ figure;plot(temp','color',[.5 .5 .5],'markersize',10); hold on;
+ m=mean(temp);
+ s=std(temp)./sqrt(numsess+1);
+ h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25,'markersize',20);
+  set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'light'});
+axis([0 3 0 .5])
+ylabel('Fraction Correct difference','fontsize',16)
+suptitle('Fraction Correct')
 set(gca,'Fontsize',16);
 
 
-tempDSctrl(:,1) = data.mEr_ctrl(:,2)-data.mEr_ctrl(:,1); %shuffled  - data
-[h,p]=ttest(tempDSctrl);
-tb = text(1,2.5,['Ctrl mEr p =' num2str(p)]);
-temp = ones(1,6);
 
-
-
-
-temp = ones(1,6);
-figure;plot(temp,data.mOL_ctrl,'o','color',[.5 .5 .5])
-m=mean(data.mOL_ctrl);
-s=std(data.mOL_ctrl)./sqrt(7);
-hold on;errorbar(1,m,s,'ko')
-axis([.5 1.5 0 .15]);
-suptitle('Percent overlap')
-axis([.5 1.5 0 .2]);
-temp = ones(1,6);
-figure;plot(temp,tempDSctrl(:,1),'o','color',[.5 .5 .5])
-axis([.5 1.5 0 2.5]);
-axis([.5 1.5 0.5 2.5]);
-m = mean(tempDSctrl(:,1))
-hold on;
-s = std(tempDSctrl(:,1))./sqrt(7);
-e1=errorbar(m,s,'ko');
-set(e1,'markersize',10)
+%  
+% numsess = size(data.mEr_ctrl,1);
+%  figure;plot(data.mEr_ctrl(:,[1:2])','color',[.5 .5 .5],'markersize',10); hold on;
+%  m=mean(data.mEr_ctrl(:,[1:2]));
+%  s=std(data.mEr_ctrl(:,[1:2]))./sqrt(numsess+1);
+%  h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25);
+%   set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'shuffled'});
+% axis([0 3 1 4.5])
+% ylabel('Mean error (mm)','fontsize',16)
+% suptitle('Control data decoder mean error results')
+% set(gca,'Fontsize',16);
+% 
+% 
+% tempDSctrl(:,1) = data.mEr_ctrl(:,2)-data.mEr_ctrl(:,1); %shuffled  - data
+% [h,p]=ttest(tempDSctrl);
+% tb = text(1,2.5,['Ctrl mEr p =' num2str(p)]);
+% temp = ones(1,6);
+% 
+% 
+% 
+% 
+% temp = ones(1,6);
+% figure;plot(temp,data.mOL_ctrl,'o','color',[.5 .5 .5])
+% m=mean(data.mOL_ctrl);
+% s=std(data.mOL_ctrl)./sqrt(7);
+% hold on;errorbar(1,m,s,'ko')
+% axis([.5 1.5 0 .15]);
+% suptitle('Percent overlap')
+% axis([.5 1.5 0 .2]);
+% temp = ones(1,6);
+% figure;plot(temp,tempDSctrl(:,1),'o','color',[.5 .5 .5])
+% axis([.5 1.5 0 2.5]);
+% axis([.5 1.5 0.5 2.5]);
+% m = mean(tempDSctrl(:,1))
+% hold on;
+% s = std(tempDSctrl(:,1))./sqrt(7);
+% e1=errorbar(m,s,'ko');
+% set(e1,'markersize',10)
 
 
 
