@@ -200,13 +200,13 @@ elseif strcmp(cond,'ctrl_mani')
     summary.mani.pvalue=p_all;
     summary.mani.meanFrCo=means_all;
     summary.info =  [str ' ' tag];
-    save([str ' ' disc_func ' '  tag ' decoder results'],'summary');
+    save([str ' ' disc_func ' '  tag ' manova1 results'],'summary');
     
 end
 
 function [dist_aligned,dist_shuff,hista,hists,p_val,dist_aligned2,dist_shuff2,hista2,hists2,p_val2] = run_manova1(train_resp,train_pos,test_resp,test_pos,tt,plot_on,src)
 
-num_tests = 1000;
+num_tests = 5000;
 dist_aligned = zeros(num_tests,1);
 dist_shuff = zeros(num_tests,1);
 dist_aligned2 = zeros(num_tests,1);
@@ -226,7 +226,7 @@ numbins = size(bins,2);
 p = unique(train_pos);
 for cp = 1:length(p)
     current_pos = p(cp);
-    testsetfr = 0.5;
+    testsetfr = 0.25;
     
     for s = 1:num_tests
         cptrials = find(train_pos == current_pos); %
@@ -348,3 +348,4 @@ for cp = 1:length(p)
 %     end
     
 end
+'end'
