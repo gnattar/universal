@@ -2254,7 +2254,7 @@ V = CaSignal.ica_data.V;
 S = CaSignal.ica_data.S;
 ICnum = str2num(get(handles.IC_num_edit,'String'));
 % CaSignal.ICnum = str2num(get(handles.IC_num_edit,'String'));
-CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 50, ICnum});
+CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 100, ICnum});
 CaSignal.rois_by_IC = cell(1,ICnum);
 % CaSignal.ICnum_prev = ICnum;
 

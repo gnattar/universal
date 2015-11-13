@@ -4,6 +4,8 @@
 % breakup_volume_images(pwd,'*main*tif',4,1, 'anm174708_2012_07_10_7_main_119.tif', 0,[1:40], 2, 0,strrep(pwd,'/Volumes/', '/groups/magee/'),1,1,'*main*tif',1);
 % breakup_volume_images(pwd,'*main*tif',5,1, 'anm174708_2012_08_30_13_main_406.tif', 0,[11:200], 2, 0,strrep(pwd,'/Volumes/GR_Data_02/Data/', '/groups/magee/mageelab/GR_dm11/imreg/'),1,1,'*main*tif',1);
 breakup_volume_images(pwd,'*main*tif',1,1, 'anm181053_2012_11_14_08_main_332.tif', 0,[11:225], 2, 0,strrep(pwd,'/Volumes/', '/groups/magee/'),1,1,'*main*tif',1);
+% for red channel
+breakup_volume_images(pwd,'*main*tif',1,2,1, 'gr313865_2015_10_31_08_main_065.tif', 0,[11:150], 2, 0,strrep(pwd,'/Volumes/', '/groups/magee/'),1,1,'*main*tif',1);
 imreg_par_fromxml([pwd '/imreg-01.xml'], 0);
 par_execute(pwd, 0);
 

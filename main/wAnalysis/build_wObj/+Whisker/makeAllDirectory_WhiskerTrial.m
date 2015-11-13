@@ -201,10 +201,11 @@ if ~isempty(fnall)
             outfn = [fn '_WT.mat'];
             save(outfn,'w');
         end
-%     end
+        %     end
+    end
+    
+    cd(currentDir)
 end
-
-cd(currentDir)
 end
 
 function pctsave(outfn,w)
