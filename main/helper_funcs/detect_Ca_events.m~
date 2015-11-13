@@ -39,8 +39,8 @@ for i = 1:size(src_data,1)
                     offset = (leading_blank <0);
                     event_detected_data (i, (offset*leading_blank*-1)+1 :length(temp)+(offset*leading_blank*-1)) = temp;
                     inds = thrcrossing(startind(1):endind(1));
-                        ct_2 = ct(inds);
-                        ct_nonnan = ct_2(~isnan(ct_2));
+                        ct = current_trace(inds:j);
+                        ct_nonnan = ct(~isnan(ct));
                         temp_events_amp {i,eventscount} = prctile(ct_nonnan,99);
                         temp_events_dur {i,eventscount}  = (events_septs (i,2) -  events_septs (i,1)).*sampling_time;
                         found = 0;inds = j;
