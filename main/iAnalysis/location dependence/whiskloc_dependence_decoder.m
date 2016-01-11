@@ -7,6 +7,8 @@ function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_co
 % disc_func 'linear' or 'diagquadratic'
 p = pos; %[15 13.5 12 10.5 9 7.5];
 num_runs = 2;
+% ol = [.01,1.5];
+ol = [.0005,2.5];
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
 else
@@ -44,8 +46,15 @@ end
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
     pl = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-    
     resp = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+    temp_wave =abs(tk(:,1));
+    outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
+    
+    tk(outlier_touches,:) = [];
+    pl(outlier_touches,:) = [];
+    resp(outlier_touches,:) = [];   
+    
+    
     numtrials = size(tk,1);
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
@@ -139,9 +148,18 @@ elseif strcmp(cond,'ctrl_mani')
     end
     
     %run ctrl
+    
     tk = tk_all(l_trials == 0,:);
     pl = pl_all(l_trials == 0,:);
     resp = resp_all(l_trials == 0,:);
+    
+    temp_wave =abs(tk(:,1));
+    outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
+    
+    tk(outlier_touches,:) = [];
+    pl(outlier_touches,:) = [];
+    resp(outlier_touches,:) = []; 
+    
     numtrials = size(tk,1);
     
     pl = pl(:,1);
@@ -215,6 +233,14 @@ elseif strcmp(cond,'ctrl_mani')
     tk = tk_all(l_trials == 1,:);
     pl = pl_all(l_trials == 1,:);
     resp = resp_all(l_trials == 1,:);
+    
+    temp_wave =abs(tk(:,1));
+    outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
+    
+    tk(outlier_touches,:) = [];
+    pl(outlier_touches,:) = [];
+    resp(outlier_touches,:) = []; 
+    
     numtrials = size(tk,1);
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
@@ -434,12 +460,13 @@ if plot_on
     tb = text(2,.8, num2str(mEr_all(1,2,1)),'FontSize',12);set(tb,'color','r');
 end
 
-if plot_on
+
     numtotal(1,1) = length(dist_err(:,1,1));numtotal(1,2) = length(dist_err(:,2,1));
     tw = abs(dist_err(find(dist_err(:,1,1)~=0),1,1));
-    binw = min(tw);binm=max(dist_err(:,1,1));
+    binw = min(tw);binm=max(dist_err(:,2,1))+1;
     histal = hist(dist_err(:,1,1),[-binm:binw:binm])./numtotal(1,1);
     histsh=hist(dist_err(:,2,1),[-binm:binw:binm])./numtotal(1,2)
+if plot_on
     figure(h1); subplot(r,c,plotcount);plot([-binm:binw:binm],histal,'k','linewidth',2); hold on; plot([-binm:binw:binm],histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('C.Pr');
 end

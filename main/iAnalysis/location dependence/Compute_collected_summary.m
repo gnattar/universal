@@ -16,11 +16,13 @@ for i = 1: size(collected_summary,2)
        [event_detected_data,events_septs,events_amp,events_dur,events,detected] = detect_Ca_events(src_data,sampling_time,event_detection_threshold(j));
 
         lightstim=cell2mat(arrayfun(@(x) x.lightstim, collected_data{1,i},'uniformoutput',0))';
-
         numtrials = size(temp_data,1);
         intarea = nan(numtrials,1);
         peakamp = nan(numtrials,1);
         fwhm = nan(numtrials,1);
+         if isempty(lightstim) 
+             lightstim = zeros(numtrials,1);
+         end
         for k = 1:numtrials
             
             if (detected(k))
@@ -58,33 +60,62 @@ for i = 1: size(collected_summary,2)
         pooled_contact_CaTrials{count}.peakamp= peakamp;
         pooled_contact_CaTrials{count}.fwhm= fwhm;
        
-        pooled_contact_CaTrials{count}.eventrate_L= sum(detected(lightstim==1))/length(detected(lightstim==1));        
-        pooled_contact_CaTrials{count}.eventrate_NL= sum(detected(lightstim==0))/length(detected(lightstim==0));
-        pooled_contact_CaTrials{count}.eventrate_diff= pooled_contact_CaTrials{count}.eventrate_L - pooled_contact_CaTrials{count}.eventrate_NL;     
         
-        pooled_contact_CaTrials{count}.intarea_L= [nanmean(intarea((lightstim==1)& (detected==1))); nanstd(intarea((lightstim==1)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==1)))];        
-        pooled_contact_CaTrials{count}.intarea_NL=[nanmean(intarea((lightstim==0)& (detected==1)));nanstd(intarea((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];        
-        cs_X = [0:50:800];
-        cs_L = cumsum(hist(intarea(lightstim&detected), cs_X)/ sum(hist(intarea(lightstim&detected), cs_X)));
-        cs_NL = cumsum(hist(intarea(~lightstim&detected), cs_X)/ sum(hist(intarea(~lightstim&detected), cs_X)));
-%         pooled_contact_CaTrials{count}.intarea_diff=cs_X(cs_L == .5) - cs_X(cs_NL == .5);
-        pooled_contact_CaTrials{count}.intarea_diff=sum(cs_L - cs_NL) ;
-        
-        pooled_contact_CaTrials{count}.peakamp_L= [nanmean(peakamp((lightstim==1)& (detected==1)));nanstd(peakamp((lightstim==1)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==1)))];        
-        pooled_contact_CaTrials{count}.peakamp_NL= [nanmean(peakamp((lightstim==0)& (detected==1)));nanstd(peakamp((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];        
-        cs_X = [0:50:600];
-        cs_L = cumsum(hist(peakamp(lightstim&detected), cs_X)/ sum(hist(peakamp(lightstim&detected), cs_X)));
-        cs_NL = cumsum(hist(peakamp(~lightstim&detected), cs_X)/ sum(hist(peakamp(~lightstim&detected), cs_X)));
-%         pooled_contact_CaTrials{count}.peakamp_diff=cs_X(cs_L == .5) - cs_X(cs_NL == .5);
-        pooled_contact_CaTrials{count}.peakamp_diff=sum(cs_L - cs_NL);
-        
-        pooled_contact_CaTrials{count}.fwhm_L= [nanmean(fwhm((lightstim==1)& (detected==1)));nanstd(fwhm((lightstim==1)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==1)))];        
-        pooled_contact_CaTrials{count}.fwhm_NL= [nanmean(fwhm((lightstim==0)& (detected==1)));nanstd(fwhm((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))]; 
-        cs_X = [0:.25:5];
-        cs_L = cumsum(hist(fwhm(lightstim&detected), cs_X)/ sum(hist(fwhm(lightstim&detected), cs_X)));
-        cs_NL = cumsum(hist(fwhm(~lightstim&detected), cs_X)/ sum(hist(fwhm(~lightstim&detected), cs_X)));
-%         pooled_contact_CaTrials{count}.fwhm_diff=cs_X(cs_L == .5) - cs_X(cs_NL == .5);
-        pooled_contact_CaTrials{count}.fwhm_diff= sum(cs_L - cs_NL);
+        if isempty(lightstim) || (~isempty(lightstim)&& max(lightstim)==0)
+            pooled_contact_CaTrials{count}.eventrate_NL= sum(detected(lightstim==0))/length(detected(lightstim==0));
+            pooled_contact_CaTrials{count}.eventrate_L = [];
+            pooled_contact_CaTrials{count}.eventrate_diff= nan;
+            
+            pooled_contact_CaTrials{count}.intarea_L= [];
+            pooled_contact_CaTrials{count}.intarea_NL=[nanmean(intarea((lightstim==0)& (detected==1)));nanstd(intarea((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];
+            cs_X = [0:50:800];
+            cs_L = [];
+            cs_NL = cumsum(hist(intarea(~lightstim&detected), cs_X)/ sum(hist(intarea(~lightstim&detected), cs_X)));
+            pooled_contact_CaTrials{count}.intarea_diff=nan;
+            
+            pooled_contact_CaTrials{count}.peakamp_L= [];
+            pooled_contact_CaTrials{count}.peakamp_NL= [nanmean(peakamp((lightstim==0)& (detected==1)));nanstd(peakamp((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];
+            cs_X = [0:50:600];
+            cs_L = [];
+            cs_NL = cumsum(hist(peakamp(~lightstim&detected), cs_X)/ sum(hist(peakamp(~lightstim&detected), cs_X)));
+            pooled_contact_CaTrials{count}.peakamp_diff=nan;
+            
+            pooled_contact_CaTrials{count}.fwhm_L= [];
+            pooled_contact_CaTrials{count}.fwhm_NL= [nanmean(fwhm((lightstim==0)& (detected==1)));nanstd(fwhm((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];
+            cs_X = [0:.25:5];
+            cs_L = [];
+            cs_NL = cumsum(hist(fwhm(~lightstim&detected), cs_X)/ sum(hist(fwhm(~lightstim&detected), cs_X)));
+            %         pooled_contact_CaTrials{count}.fwhm_diff=cs_X(cs_L == .5) - cs_X(cs_NL == .5);
+            pooled_contact_CaTrials{count}.fwhm_diff= nan;
+        else
+            pooled_contact_CaTrials{count}.eventrate_L= sum(detected(lightstim==1))/length(detected(lightstim==1));
+            pooled_contact_CaTrials{count}.eventrate_NL= sum(detected(lightstim==0))/length(detected(lightstim==0));
+            pooled_contact_CaTrials{count}.eventrate_diff= pooled_contact_CaTrials{count}.eventrate_L - pooled_contact_CaTrials{count}.eventrate_NL;
+            
+            pooled_contact_CaTrials{count}.intarea_L= [nanmean(intarea((lightstim==1)& (detected==1))); nanstd(intarea((lightstim==1)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==1)))];
+            pooled_contact_CaTrials{count}.intarea_NL=[nanmean(intarea((lightstim==0)& (detected==1)));nanstd(intarea((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];
+            cs_X = [0:50:800];
+            cs_L = cumsum(hist(intarea(lightstim&detected), cs_X)/ sum(hist(intarea(lightstim&detected), cs_X)));
+            cs_NL = cumsum(hist(intarea(~lightstim&detected), cs_X)/ sum(hist(intarea(~lightstim&detected), cs_X)));
+            %         pooled_contact_CaTrials{count}.intarea_diff=cs_X(cs_L == .5) - cs_X(cs_NL == .5);
+            pooled_contact_CaTrials{count}.intarea_diff=sum(cs_L - cs_NL) ;
+            
+            pooled_contact_CaTrials{count}.peakamp_L= [nanmean(peakamp((lightstim==1)& (detected==1)));nanstd(peakamp((lightstim==1)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==1)))];
+            pooled_contact_CaTrials{count}.peakamp_NL= [nanmean(peakamp((lightstim==0)& (detected==1)));nanstd(peakamp((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];
+            cs_X = [0:50:600];
+            cs_L = cumsum(hist(peakamp(lightstim&detected), cs_X)/ sum(hist(peakamp(lightstim&detected), cs_X)));
+            cs_NL = cumsum(hist(peakamp(~lightstim&detected), cs_X)/ sum(hist(peakamp(~lightstim&detected), cs_X)));
+            %         pooled_contact_CaTrials{count}.peakamp_diff=cs_X(cs_L == .5) - cs_X(cs_NL == .5);
+            pooled_contact_CaTrials{count}.peakamp_diff=sum(cs_L - cs_NL);
+            
+            pooled_contact_CaTrials{count}.fwhm_L= [nanmean(fwhm((lightstim==1)& (detected==1)));nanstd(fwhm((lightstim==1)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==1)))];
+            pooled_contact_CaTrials{count}.fwhm_NL= [nanmean(fwhm((lightstim==0)& (detected==1)));nanstd(fwhm((lightstim==0)& (detected==1)),[],1)/sqrt(sum(detected(lightstim==0)))];
+            cs_X = [0:.25:5];
+            cs_L = cumsum(hist(fwhm(lightstim&detected), cs_X)/ sum(hist(fwhm(lightstim&detected), cs_X)));
+            cs_NL = cumsum(hist(fwhm(~lightstim&detected), cs_X)/ sum(hist(fwhm(~lightstim&detected), cs_X)));
+            %         pooled_contact_CaTrials{count}.fwhm_diff=cs_X(cs_L == .5) - cs_X(cs_NL == .5);
+            pooled_contact_CaTrials{count}.fwhm_diff= sum(cs_L - cs_NL);
+        end
 
         pooled_contact_CaTrials{count}.mousename= collected_summary{i}.mousename;
         pooled_contact_CaTrials{count}.sessionname= collected_summary{i}.sessionname;

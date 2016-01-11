@@ -1,36 +1,35 @@
-function [meaneffect] = plotlighteffect_final(pooled_contact_CaTrials,grp,par,sel)
+function [meaneffect] = plotlighteffect_final(pooled_contact_CaTrials,grp,par,sel,light)
 % [meaneffect] = plotlighteffect_final(pooled_contact_CaTrials,grp,par,sel)
 % par can be 'peak' or 'area'
 % sel can be 'all' or 'events'
 save([grp 'pooled_contact_CaTrials'],'pooled_contact_CaTrials');
 tosave =1;
 %% script to plot Light Nl Light conditions
-meaneffect.alleventrate_NL= cell2mat(cellfun(@(x) x.eventrate_NL, pooled_contact_CaTrials,'uniformoutput',0))';
-meaneffect.alleventrate_L = cell2mat(cellfun(@(x) x.eventrate_L, pooled_contact_CaTrials,'uniformoutput',0))';
-
+meaneffect.alleventrate_NL= cell2mat(cellfun(@(x) x.eventrate_NL(1), pooled_contact_CaTrials,'uniformoutput',0))';
 meaneffect.allintarea_NL(:,1) = cell2mat(cellfun(@(x) x.intarea_NL(1,1), pooled_contact_CaTrials,'uniformoutput',0));
-meaneffect.allintarea_L(:,1) = cell2mat(cellfun(@(x) x.intarea_L(1,1), pooled_contact_CaTrials,'uniformoutput',0));
 meaneffect.allintarea_NL(:,2) = cell2mat(cellfun(@(x) x.intarea_NL(2,1), pooled_contact_CaTrials,'uniformoutput',0));
-meaneffect.allintarea_L(:,2)= cell2mat(cellfun(@(x) x.intarea_L(2,1), pooled_contact_CaTrials,'uniformoutput',0));
-
-
 meaneffect.allfwhm_NL (:,1)= cell2mat(cellfun(@(x) x.fwhm_NL(1,1), pooled_contact_CaTrials,'uniformoutput',0));
-meaneffect.allfwhm_L (:,1) = cell2mat(cellfun(@(x) x.fwhm_L(1,1), pooled_contact_CaTrials,'uniformoutput',0));
 meaneffect.allfwhm_NL (:,2)= cell2mat(cellfun(@(x) x.fwhm_NL(2,1), pooled_contact_CaTrials,'uniformoutput',0));
-meaneffect.allfwhm_L (:,2) = cell2mat(cellfun(@(x) x.fwhm_L(2,1), pooled_contact_CaTrials,'uniformoutput',0));
-
 meaneffect.allpeakamp_NL(:,1) = cell2mat(cellfun(@(x) x.peakamp_NL(1,1), pooled_contact_CaTrials,'uniformoutput',0));
-meaneffect.allpeakamp_L(:,1) = cell2mat(cellfun(@(x) x.peakamp_L(1,1), pooled_contact_CaTrials,'uniformoutput',0));
 meaneffect.allpeakamp_NL(:,2) = cell2mat(cellfun(@(x) x.peakamp_NL(2,1), pooled_contact_CaTrials,'uniformoutput',0));
+
+if light
+meaneffect.alleventrate_L = cell2mat(cellfun(@(x) x.eventrate_L(1), pooled_contact_CaTrials,'uniformoutput',0))';
+meaneffect.allintarea_L(:,1) = cell2mat(cellfun(@(x) x.intarea_L(1,1), pooled_contact_CaTrials,'uniformoutput',0));
+meaneffect.allintarea_L(:,2)= cell2mat(cellfun(@(x) x.intarea_L(2,1), pooled_contact_CaTrials,'uniformoutput',0));
+meaneffect.allfwhm_L (:,1) = cell2mat(cellfun(@(x) x.fwhm_L(1,1), pooled_contact_CaTrials,'uniformoutput',0));
+meaneffect.allfwhm_L (:,2) = cell2mat(cellfun(@(x) x.fwhm_L(2,1), pooled_contact_CaTrials,'uniformoutput',0));
+meaneffect.allpeakamp_L(:,1) = cell2mat(cellfun(@(x) x.peakamp_L(1,1), pooled_contact_CaTrials,'uniformoutput',0));
 meaneffect.allpeakamp_L(:,2)= cell2mat(cellfun(@(x) x.peakamp_L(2,1), pooled_contact_CaTrials,'uniformoutput',0));
 
 meaneffect.eventrate = mean(meaneffect.alleventrate_NL)-mean(meaneffect.alleventrate_L)/mean(meaneffect.alleventrate_NL);
 meaneffect.intarea = nanmean(meaneffect.allintarea_L) - nanmean(meaneffect.allintarea_NL);
 meaneffect.fwhm = nanmean(meaneffect.allfwhm_L)/nanmean(meaneffect.allfwhm_NL);
 meaneffect.peakamp = nanmean(meaneffect.allpeakamp_L) - nanmean(meaneffect.allpeakamp_NL);
-
+end
 save([grp 'meaneffect'],'meaneffect');
 
+if light
 figure;fnam = [ grp ' Event Probability Bar '];
 % plot(meaneffect.alleventrate_L(:,1),meaneffect.alleventrate_NL(:,1),'bo','Markersize',10,'Markerfacecolor','b');hold on; plot([0:1],[0:1],'k--')
 hold on; h= bar([1],[nanmean(meaneffect.alleventrate_NL(:,1))],0.25,'k');
@@ -570,7 +569,7 @@ end
 
 
 
-
+end
 
 
 

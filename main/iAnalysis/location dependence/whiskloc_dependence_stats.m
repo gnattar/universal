@@ -10,7 +10,7 @@ if traces
 end
 count =1;
 uL = 10;
-lL=10e-5;
+lL=10e-3;
 clc
 for d=1:length(dends)
     n = dends(d);
@@ -46,7 +46,7 @@ for d=1:length(dends)
         pooled_contactCaTrials_locdep{n}.fitmean.(['L_fitevals']) = nan(numloc,3,2);
     end
     
-    dKappa_bins=(logspace(-3,0,4));
+    dKappa_bins=(logspace(-3,0,5));
 %     dKappa_bins=(logspace(-4,1.5,10)); used first
     theta_at_touch = nan(numloc,2,2);
     for i = 1:numloc
@@ -348,7 +348,7 @@ for d=1:length(dends)
         
         
         %     h= plot([1:numloc],slopes(:,1),'--o','color',[.5 .5 .5]); set(h,'linewidth',3);hold on; % Ret
-        h= plot([1:numloc],slopes(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col,'linewidth',2); hold on;set(gca,'ticklength',[.05 .05]); % Prot
+        h= plot([1:numloc],slopes(:,slopes_column,1)./nanmean(slopes(:,1,1)),'--o','color',col,'linewidth',2); hold on;set(gca,'ticklength',[.05 .05]); % Prot
         hold on;
         mR_n= mR./mean(pooled_contactCaTrials_locdep{n}.meanResp.NL);
          h= plot([1:numloc],mR_n,'-o','color',col,'linewidth',2); hold on;set(gca,'ticklength',[.05 .05]); % Prot
@@ -357,25 +357,25 @@ for d=1:length(dends)
 %          plot([1:numloc],pntslp(:,1)./mean(pntslpctrl(:,1)),'-o','color',col,'linewidth',2);
 %         plot([1:numloc],slopesCI(:,slopes_column,1)./mean(slopes(:,1,1)),'--o','color',col);  plot([1:numloc],slopesCI(:,slopes_column,2)./mean(slopes(:,1,1)),'k--o','color',col); %(normalizing wrt ctrl)
         %     LPI = (max(abs(e(:,2)))-min(abs(slopes(:,2))))/(max(abs(slopes(:,2)))+min(abs(slopes(:,2))));
-        LPI = max(abs(slopes(:,slopes_column,1)))/(mean(abs(slopes(:,slopes_column,1))));
-        LPI_diff = max(abs(slopes(:,slopes_column,1)))-(min(abs(slopes(:,slopes_column,1))));
-        [v,LP] = max(abs(slopes(:,slopes_column,1)));
+        LPI = nanmax(abs(slopes(:,slopes_column,1)))/(nanmean(abs(slopes(:,slopes_column,1))));
+        LPI_diff = nanmax(abs(slopes(:,slopes_column,1)))-(nanmin(abs(slopes(:,slopes_column,1))));
+        [v,LP] = nanmax(abs(slopes(:,slopes_column,1)));
 %         LPI2 = max(abs(slopes(:,slopes_column,1)))/(mean(abs(slopes(:,slopes_column,1))));
         
         
         LPI = round(LPI*100)./100; LPI_diff = round(LPI_diff*100)./100;
 %         tb=text(tp,LPI+1,['LPI_d ' num2str(LPI_diff)],'FontSize',18);set(tb,'color',col);
         if strcmp(str,'NL')
-           lpinorm = max(slopes(:,slopes_column,1)./mean(slopes(:,1,1)));
-           pslnorm = max(pntslp(:,1))./mean(pntslp(:,1));           
-            LPI_mR = max(mR_n);
+           lpinorm = nanmax(slopes(:,slopes_column,1)./nanmean(slopes(:,1,1)));
+           pslnorm = nanmax(pntslp(:,1))./nanmean(pntslp(:,1));           
+            LPI_mR = nanmax(mR_n);
         elseif strcmp(str,'L')
-            [ctrlnormslope,ctrllp] = max( slopes(:,1,1)./mean(slopes(:,1,1)));
-            tempw=slopes(:,slopes_column,1)./mean(slopes(:,1,1));
-            lpinorm = max(tempw);
+            [ctrlnormslope,ctrllp] = nanmax( slopes(:,1,1)./nanmean(slopes(:,1,1)));
+            tempw=slopes(:,slopes_column,1)./nanmean(slopes(:,1,1));
+            lpinorm = nanmax(tempw);
 %             lpinorm = tempw(ctrllp); %at lp of ctrl
-            pslnorm = max(pntslp(:,1))./mean(pntslpctrl(:,1));
-            LPI_mR = max(mR_n);
+            pslnorm = nanmax(pntslp(:,1))./nanmean(pntslpctrl(:,1));
+            LPI_mR = nanmax(mR_n);
         end
         lpinorm=round(lpinorm*100)./100;
         pslpnorm = round(pslnorm*100)./100;

@@ -515,8 +515,8 @@ if disp
             
             if ~fit_separate
                 figure(h_fig4); subplot(length(dends),numloc+xcol,count);
-                plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(NL_ind,:)),'color',[0 0 0 ],'linewidth',1.5); hold on;
-                set(gca,'ticklength',[.05 .05]);
+                plot(ts,mean(pooled_contactCaTrials_locdep{n}.rawdata(NL_ind,:)),'color',[0 0 0 ],'linewidth',1.5); hold on;
+                set(gca,'ticklength',[.05 .05],'tickdir','out');
             end
             retract = find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind) >0);
             protract =  find(pooled_contactCaTrials_locdep{n}.(wpar)(L_ind)<0);
@@ -563,8 +563,8 @@ if disp
             
             if ~fit_separate
                 figure(h_fig4); subplot(length(dends),numloc+xcol,count);
-                plot(ts,mean(pooled_contactCaTrials_locdep{n}.filtdata(L_ind,:)),'color',[1 0 0],'linewidth',1.5); hold on;
-                set(gca,'ticklength',[.05 .05]);
+                plot(ts,mean(pooled_contactCaTrials_locdep{n}.rawdata(L_ind,:)),'color',[1 0 0],'linewidth',1.5); hold on;
+                set(gca,'ticklength',[.05 .05],'tickdir','out');
             end
             
             if traces
@@ -579,7 +579,7 @@ if disp
             end
             
             figure(h_fig4);
-            axis([0 2.5 0 220]);
+            axis([0 2.5 0 300]);
             hline(30,'k.');
             hline(0,'k--');
             if fit_separate

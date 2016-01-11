@@ -106,7 +106,7 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 %  
 
 
- C = data.mFrCo_ctrl(:,:); L = data.mFrCo_mani(:,:);
+C = data.mFrCo_ctrl(:,:); L = data.mFrCo_mani(:,:);
 temp(:,1) = C(:,1)-C(:,2);
 temp(:,2) = L(:,1)-L(:,2)
 
@@ -130,7 +130,7 @@ numsess = size(C,1);
  s=std(temp)./sqrt(numsess+1);
  h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25,'markersize',20);
   set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'light'});
-axis([0 3 0 .5])
+axis([0 3 -.1 .25])
 ylabel('Fraction Correct difference','fontsize',16)
 suptitle('Fraction Correct')
 set(gca,'Fontsize',16);
