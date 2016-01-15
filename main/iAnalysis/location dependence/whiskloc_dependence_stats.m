@@ -253,7 +253,7 @@ for d=1:length(dends)
             imdata = pooled_contactCaTrials_locdep{n}.rawdata(inds_all,:);
             im_data_t = [1:size(imdata,2)].* pooled_contactCaTrials_locdep{n}.FrameTime;
             trials = [1:length(inds_all)];
-            imagesc(im_data_t,trials,imdata); caxis([0,500]);colormap(mycmap3);%colormap([1-gray]);
+            imagesc(im_data_t,trials,imdata); caxis([0,350]);colormap(mycmap3);%colormap([1-gray]);
 %             axis([0.25 2.0 0 length(NL_ind)])
             hline(length(NL_ind),'w-');
             t=[1,length(inds_all)];

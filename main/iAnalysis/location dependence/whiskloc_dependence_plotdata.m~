@@ -344,12 +344,12 @@ for d=1:length(dends)
             %             plot([0.0001:.01:1.5],fsigm(pSig_L(i,:,2),[0.0001:.01:1.5]),'color',[.85 .5 .85],'linewidth',2);
             
         end
-        set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1],'Tickdir','out');
+        set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1]);
 %         set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         if strcmp(par,'sigmag')
             axis([1e-4 uL 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([1e-4 uL 0 800]);
+            axis([1e-4 uL 0 500]);
         end
         set(gca,'xscale','log');set(gca,'ticklength',[.05 .05]);
 %         set(gca,'xscale','linear')
@@ -569,17 +569,17 @@ if disp
             
             if traces
                 figure(h_fig2);
-                 ([0 2.5 0 300]);
+                 ([0 2.5 0 600]);
                 hline(30,'k.');
                 hline(0,'k--');
                 figure(h_fig3);
-                axis([0 2.5 0 300]);
+                axis([0 2.5 0 600]);
                 hline(30,'k.');
                 hline(0,'k--');
             end
             
             figure(h_fig4);
-            axis([0 2.5 -50 300]);
+            axis([0 2.5 0 200]);
             hline(30,'k.');
             hline(0,'k--');
             if fit_separate
@@ -588,7 +588,7 @@ if disp
                 hline(30,'k.');
                 hline(0,'k--');
             end
-            set(gca,'ticklength',[.05 .05],'tickdir','out');
+            set(gca,'ticklength',[.05 .05]);
             count = count+1;
             
             if(size(pooled_contactCaTrials_locdep{n}.num_trials(i,:),2) >1)
