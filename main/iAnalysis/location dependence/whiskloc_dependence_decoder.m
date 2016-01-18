@@ -6,7 +6,7 @@ function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_co
 % be trained with ctrl trials
 % disc_func 'linear' or 'diagquadratic'
 p = pos; %[15 13.5 12 10.5 9 7.5];
-num_runs = 2;
+num_runs = 50;
 % ol = [.01,1.5];
 ol = [.0005,2.5];
 if strcmp(cond,'ctrl' )
@@ -410,8 +410,13 @@ for s = 1:num_tests
     shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
     S = test_resp(test,:);
     Y = train_resp(train(shuff1),:);
-    class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
-    actual = test_pos(test,1);
+    all_pos = unique(train_pos);
+    shuff_pos_train = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(shuff1),1));
+    shuff_pos_test = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(test),1));
+%     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
+    class = classify(S,Y,shuff_pos_train,disc_func);
+%     actual = test_pos(test,1);
+    actual = shuff_pos_test;
     dist = sqrt((actual - class).^2);
     dist_shuff (s ,1) = sum(dist)./testsetsize;
     dist_shuff_err{s} = (actual-class);
