@@ -66,6 +66,8 @@ collected_mani(count:end,:) = [];
  text(2,2,['n=' num2str(count-1) ' cells'])
 
 
+ t = m_C-m_M;
+ figure;plot([-5:5],t,'o-','markersize',10,'color',[.8 1 .8]);
 
 %%
 % figure;

@@ -3,7 +3,7 @@
 % load('145_150430_Thr25_pooled_contact_CaTrials_smth.mat')
 function [pooled_contactCaTrials_locdep]= generate_dataarrays_for_decoder_ctrl(pooled_contactCaTrials_locdep,pooled_contact_CaTrials)
 
-l=pooled_contact_CaTrials{1}.lightstim;
+l=pooled_contactCaTrials_locdep{1}.lightstim;
 for d = 4: size(pooled_contactCaTrials_locdep,2)
 
     sigpeak = pooled_contactCaTrials_locdep{d}.sigpeak;

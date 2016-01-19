@@ -1,9 +1,9 @@
 %script_to_generate_LAddback_NLsubtract_datasets_for_decoder
 
 % load('145_150430_Thr25_pooled_contact_CaTrials_smth.mat')
-function [pooled_contactCaTrials_locdep]= generate_dataarrays_for_decoder_ctrl(pooled_contactCaTrials_locdep)
+function [pooled_contactCaTrials_locdep]= generate_dataarrays_for_decoder_ctrl_avgabs(pooled_contactCaTrials_locdep)
 
-l=pooled_contact_CaTrials{1}.lightstim;
+l=pooled_contactCaTrials_locdep{1}.lightstim;
 for d = 1: size(pooled_contactCaTrials_locdep,2)
 
     sigpeak = pooled_contactCaTrials_locdep{d}.sigpeak;
@@ -11,20 +11,21 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
     poleloc =pooled_contactCaTrials_locdep{d}.poleloc;
     lightstim = pooled_contactCaTrials_locdep{d}.lightstim;
     re_totaldK = pooled_contactCaTrials_locdep{d}.re_totaldK;
-    r=pooled_contact_CaTrials{d}.peakamp;
-    paNL = r(l==0);
-    paL = r(l==1);
+%     r=pooled_contact_CaTrials{d}.peakamp;
+%     paNL = r(l==0);
+%     paL = r(l==1);
 %     diffPeak=nanmean(paNL)-nanmean(paL);
-    percentchange = 34.6;
-    diffPeak = sigpeak.* percentchange;
-    diffMag = sigmag .* percentchange;
+
+%     abschange = 35.9 %(pref pos);
+    abschange = 21.8 %( all pos);
+    diffPeak = abschange;
     pooled_contactCaTrials_locdep{d}.decoder.diff=diffPeak;
-    
 %     sigpeakLAD = sigpeak;
-%     ind = find(l==1);
+ 
+     diffMag = nanmean(sigmag(l==0,1))-nanmean(sigmag(l==1,1));
 %     sigpeakLAD(ind,1) = sigpeak(ind,1) + diffPeak;
 %     pooled_contactCaTrials_locdep{d}.decoder.LAD.sigpeak=sigpeakLAD;
-%     
+    
 %     r=pooled_contact_CaTrials{d}.intarea;
 %     iaNL = r(l==0);
 %     iaL = r(l==1);
@@ -39,13 +40,12 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
 %     pooled_contactCaTrials_locdep{d}.decoder.LAD.re_totaldK=re_totaldK;
 %     pooled_contactCaTrials_locdep{d}.decoder.LAD.lightstim=lightstim;
     
-
-    
     ind = [];
     polelocNLS=poleloc;
     re_totaldKNLS = re_totaldK;
     sigpeakNLS = sigpeak;
     sigpeakNLS(l==0,1) =  sigpeakNLS(l==0,1) - diffPeak;
+    sigpeakNLS (sigpeakNLS <0) = 0; % flooring sub at 0
     sigmagNLS = sigmag;
     sigmagNLS(l==0,1) =  sigmagNLS(l==0,1) - diffMag;
     
@@ -84,6 +84,6 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
 %     pooled_contactCaTrials_locdep{d}.decoder.NC.poleloc=polelocNC;
 %     pooled_contactCaTrials_locdep{d}.decoder.NC.re_totaldK=re_totaldKNC;
 %     pooled_contactCaTrials_locdep{d}.decoder.NC.lightstim=lightstimNC;
-      
+%       
 end
 end
