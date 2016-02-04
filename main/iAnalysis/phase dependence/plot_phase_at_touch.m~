@@ -1,11 +1,11 @@
 %% plot_phase_at_touch
 function [pooled_contactCaTrials_locdep]=  plot_phase_at_touch(pooled_contactCaTrials_locdep,d)
-ls = pooled_contactCaTrials_locdep{d(1)}.lightstim;
+ls = pooled_contactCaTrials_locdep{d(1)}.touchPhase;
 
     NL_ind = find(ls == 0);
     light =0;
 if max(ls)>0
-    L_ind = find(ls == 1);
+    L_in = find(ls == 1);
     light = 1;
 end
 
@@ -23,7 +23,7 @@ end
 %     figure('position', [1000, sc(4)/10-100, sc(3)/2.5, sc(4)], 'color','w');
     h_fig1 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
     count = 1;
-    numcols = length(unique(id_NL))+1;
+    numcols = length(unique(id))+1;
 for i = 1:length(d)
 
 sigpeak_NL = pooled_contactCaTrials_locdep{d(i)}.sigpeak(NL_ind);
@@ -37,14 +37,12 @@ end
 
 for ph =1:length(unique(id_NL))
     inds_NL = find(id_NL==ph);
-    if light
     inds_L = find(id_L==ph);
-    end
     subplot(length(d),numcols,count);
-    plot(touchmag_NL(inds_NL),sigpeak_NL(inds_NL),'ko','markerfacecolor',[.5 .5 .5]); 
+    plot(touchmag_NL(inds_NL),sigpeak_NL(inds_NL),'ko'); 
     if light 
         hold on;
-       plot(touchmag_L(inds_L),sigpeak_L(inds_L),'ro','markerfacecolor',[.85 0 0]); 
+       plot(touchmag_L(inds_L),sigpeak_L(inds_L),'ro'); 
        hold off;
        title(['D' num2str(d(i)) ' ph ' num2str(mid{1}(ph)) ' T ' num2str(length(NL_ind)) ' ' num2str(length(L_ind))]);
     else
@@ -55,7 +53,7 @@ for ph =1:length(unique(id_NL))
     axis ([.001 2.5 0 800]);
     count= count+1;
     if light
-        contact_phase_binned([inds_NL;inds_L]) = mid{1}(ph);
+    contact_phase_binned([inds_NL,ind_L]) = mid{1}(ph);
     else
         contact_phase_binned([inds_NL]) = mid{1}(ph);
     end
@@ -66,11 +64,11 @@ for ph =1:length(unique(id_NL))
     sddK_NL(ph) = std(touchmag_NL(inds_NL));
    
     if light
-    mResp_L(ph) = mean(sigpeak_L(inds_L));
-    sdResp_L(ph) = std(sigpeak_L(inds_L));
-    numResp_L(ph) = length(sigpeak_L(inds_L));
-    mdK_L(ph) = mean(touchmag_L(inds_L));
-    sddK_L(ph) = std(touchmag_L(inds_L));
+    mResp_L(ph) = mean(sigpeak_NL(inds_L));
+    sdResp_L(ph) = std(sigpeak_NL(inds_L));
+    numResp_L(ph) = length(sigpeak_NL(inds_L));
+    mdK_L(ph) = mean(touchmag_NL(inds_L));
+    sddK_L(ph) = std(touchmag_NL(inds_L));
     end
 end
 
@@ -100,17 +98,17 @@ end
  end
  
  subplot(length(d),numcols,count);
- plot( mid{1},pooled_contactCaTrials_locdep{d(i)}.phase.normResp_NL ,'ko-','markerfacecolor','k','linewidth',2,'markersize',10);
+ plot( mid{1},pooled_contactCaTrials_locdep{d(i)}.phase.normResp_NL ,'ko-','linewidth',2,'markersize',10);
  if light
    hold on; 
-    plot( mid{1},pooled_contactCaTrials_locdep{d(i)}.phase.normResp_L ,'ro-','markerfacecolor','r','linewidth',2,'markersize',10);
+    plot( mid{1},pooled_contactCaTrials_locdep{d(i)}.phase.normResp_L ,'ro-','linewidth',2,'markersize',10);
     hold off;
-     tb_L = text(0.9,1.35,[ num2str( pooled_contactCaTrials_locdep{d(i)}.phase.PPI_L )]);set(tb_L,'color','r');
- end
+     tb_L = text(0.8,1.4,['PPI ' num2str( pooled_contactCaTrials_locdep{d(i)}.phase.PPI_L )]);
+ else
      
-tb_NL= text(0,1.6,['PPI ' num2str( pooled_contactCaTrials_locdep{d(i)}.phase.PPI_NL )]);set(tb_NL,'color','k');
-
- axis([-4 4 0.5 2])
+ text(0,1.4,['PPI ' num2str( pooled_contactCaTrials_locdep{d(i)}.phase.PPI )]);
+ end
+ axis([-4 4 0.8 1.8])
  count = count+1;
  end
 % print(h,'-dtiff','-painters','-loose',['D ' num2str(d)])

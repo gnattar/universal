@@ -29,8 +29,8 @@ contactSetpoint = contactSetpoint';
 contactPhase = contactPhase';
 numcells = size(pooled_contactCaTrials_locdep,2);
 for i = 1:numcells
-    pooled_contactCaTrials_locdep{i}.touchSetpoint = contactSetpoint;
-    pooled_contactCaTrials_locdep{i}.touchPhase = contactPhase;
+    pooled_contactCaTrials_locdep{i}.contactSetpoint = contactSetpoint;
+    pooled_contactCaTrials_locdep{i}.contactPhase = contactPhase;
 end
 
 
