@@ -1,13 +1,8 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,par,cond,str,train_test,pos,disc_func,src,plot_on,proj_on)
-%[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
-% cond 'ctrl' or 'ctrl_mani'
-% pos pole positions
-% train_test =1 if mani is to be trained with mani trials, =0 if it is to
-% be trained with ctrl trials
-% disc_func 'linear' or 'diagquadratic'
-p = pos; %[15 13.5 12 10.5 9 7.5];
+function [pooled_contactCaTrials_locdep] = whiskphase_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,phasebins,disc_func,src,plot_on)
+p = phasebins; 
+par = 'sigpeak'
 num_runs = 2;
-% ol = [.01,1.5];
+
 ol = [.0005,2.5];
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
@@ -16,18 +11,18 @@ else
         case 'def'
             l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
             l_trials = l_trials(:,1);
-        case 'LAD'
-            l_trials = cell2mat(cellfun(@(x) x.decoder.LAD.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            l_trials = l_trials(:,1);
-        case 'NLS'
-            l_trials = cell2mat(cellfun(@(x) x.decoder.NLS.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            l_trials = l_trials(:,1);
-        case 'NC'
-            l_trials = cell2mat(cellfun(@(x) x.decoder.NC.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            l_trials = l_trials(:,1);
-        otherwise
-            l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            l_trials = l_trials(:,1);
+%         case 'LAD'
+%             l_trials = cell2mat(cellfun(@(x) x.decoder.LAD.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             l_trials = l_trials(:,1);
+%         case 'NLS'
+%             l_trials = cell2mat(cellfun(@(x) x.decoder.NLS.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             l_trials = l_trials(:,1);
+%         case 'NC'
+%             l_trials = cell2mat(cellfun(@(x) x.decoder.NC.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             l_trials = l_trials(:,1);
+%         otherwise
+%             l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             l_trials = l_trials(:,1);
     end
     
 end
@@ -45,29 +40,22 @@ end
 
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-    pl = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+    pl = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
     resp = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-    temp_wave =abs(tk(:,1));
-    outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
-    
-    tk(outlier_touches,:) = [];
-    pl(outlier_touches,:) = [];
-    resp(outlier_touches,:) = [];   
-    
-    
+%     temp_wave =abs(tk(:,1));
+%     outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
+%     
+%     tk(outlier_touches,:) = [];
+%     pl(outlier_touches,:) = [];
+%     resp(outlier_touches,:) = [];   
+        
     numtrials = size(tk,1);
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
-    
-    if proj_on
-        [coeff,score]=pca(resp,'numcomponents',1);
-        weights=repmat(coeff',size(resp,1),1);
-        proj=resp.*weights;
-        train_resp=proj;test_resp=proj;
-    else        
+     
         train_resp = resp; test_resp = resp;
-    end
+
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
     train_pos=pos;test_pos = pos;
@@ -127,24 +115,25 @@ elseif strcmp(cond,'ctrl_mani')
     switch src
         case 'def'
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
+                pl_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-        case 'LAD'
-            tk_all = cell2mat(cellfun(@(x) x.decoder.LAD.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            pl_all = cell2mat(cellfun(@(x) x.decoder.LAD.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.decoder.LAD.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-        case 'NLS'
-            tk_all = cell2mat(cellfun(@(x) x.decoder.NLS.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            pl_all = cell2mat(cellfun(@(x) x.decoder.NLS.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.decoder.NLS.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-        case 'NC'
-            tk_all = cell2mat(cellfun(@(x) x.decoder.NC.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            pl_all = cell2mat(cellfun(@(x) x.decoder.NC.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.decoder.NC.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));        
-        otherwise
-            tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+%         case 'LAD'
+%             tk_all = cell2mat(cellfun(@(x) x.decoder.LAD.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             pl_all = cell2mat(cellfun(@(x) x.decoder.LAD.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             resp_all = cell2mat(cellfun(@(x) x.decoder.LAD.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+%         case 'NLS'
+%             tk_all = cell2mat(cellfun(@(x) x.decoder.NLS.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             pl_all = cell2mat(cellfun(@(x) x.decoder.NLS.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             resp_all = cell2mat(cellfun(@(x) x.decoder.NLS.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+%         case 'NC'
+%             tk_all = cell2mat(cellfun(@(x) x.decoder.NC.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             pl_all = cell2mat(cellfun(@(x) x.decoder.NC.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             resp_all = cell2mat(cellfun(@(x) x.decoder.NC.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));        
+%         otherwise
+%             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
     end
     
     %run ctrl
@@ -153,27 +142,24 @@ elseif strcmp(cond,'ctrl_mani')
     pl = pl_all(l_trials == 0,:);
     resp = resp_all(l_trials == 0,:);
     
-    temp_wave =abs(tk(:,1));
-    outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
-    
-    tk(outlier_touches,:) = [];
-    pl(outlier_touches,:) = [];
-    resp(outlier_touches,:) = []; 
+%     temp_wave =abs(tk(:,1));
+%     outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
+%     
+%     tk(outlier_touches,:) = [];
+%     pl(outlier_touches,:) = [];
+%     resp(outlier_touches,:) = []; 
     
     numtrials = size(tk,1);
     
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
-    
-    if proj_on
-        [coeff,score]=pca(resp,'numcomponents',1);
-        weights=repmat(coeff',size(resp,1),1);
-        proj=resp.*weights;
-        train_resp=proj;test_resp=proj;
-    else
-        train_resp = resp; test_resp = resp;
+    if (size(pos,2)>size(pos,1))
+        pos = pos';
     end
+
+        train_resp = resp; test_resp = resp;
+
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
     train_pos=pos;test_pos = pos;
@@ -234,27 +220,24 @@ elseif strcmp(cond,'ctrl_mani')
     pl = pl_all(l_trials == 1,:);
     resp = resp_all(l_trials == 1,:);
     
-    temp_wave =abs(tk(:,1));
-    outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
-    
-    tk(outlier_touches,:) = [];
-    pl(outlier_touches,:) = [];
-    resp(outlier_touches,:) = []; 
+%     temp_wave =abs(tk(:,1));
+%     outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
+%     
+%     tk(outlier_touches,:) = [];
+%     pl(outlier_touches,:) = [];
+%     resp(outlier_touches,:) = []; 
     
     numtrials = size(tk,1);
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
-    
+   if (size(pos,2)>size(pos,1))
+        pos = pos';
+    end
     if train_test == 1
-        if proj_on
-            [coeff,score]=pca(resp,'numcomponents',1);
-            weights=repmat(coeff',size(resp,1),1);
-            proj=resp.*weights;
-            train_resp=proj;test_resp=proj;
-        else
+
             train_resp = resp; test_resp = resp;
-        end
+
         train_pl = pl; test_pl = pl;
         train_tk = tk; test_tk = tk;
         train_pos=pos;test_pos = pos;
@@ -276,15 +259,9 @@ elseif strcmp(cond,'ctrl_mani')
         
     elseif train_test == 0
         
-        if proj_on
-            [coeff,score]=pca(resp,'numcomponents',1);
-            weights=repmat(coeff',size(resp,1),1);
-            proj=resp.*weights;
-            test_resp=proj;
-        else
+
             test_resp = resp;
-        end
-       
+
         test_pl = pl;
         test_tk = tk;
         test_pos = pos;
@@ -411,8 +388,11 @@ for s = 1:num_tests
     S = test_resp(test,:);
     Y = train_resp(train(shuff1),:);
     all_pos = unique(train_pos);
-    shuff_pos_train = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(shuff1),1));
-    shuff_pos_test = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(test),1));
+    all_pos_ind = 1:length(all_pos);
+    shuff_pos_train = round(min(all_pos_ind) + (max(all_pos_ind)-min(all_pos_ind)).*rand(length(shuff1),1));
+    shuff_pos_test = round(min(all_pos_ind) + (max(all_pos_ind)-min(all_pos_ind)).*rand(length(test),1));
+    shuff_pos_train = all_pos(shuff_pos_train);
+    shuff_pos_test = all_pos(shuff_pos_test);
 %     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
     class = classify(S,Y,shuff_pos_train,disc_func);
 %     actual = test_pos(test,1);
@@ -469,13 +449,16 @@ end
     numtotal(1,1) = length(dist_err(:,1,1));numtotal(1,2) = length(dist_err(:,2,1));
     tw = abs(dist_err(find(dist_err(:,1,1)~=0),1,1));
     binw = min(tw);binm=max(dist_err(:,2,1))+1;
-    histal = hist(dist_err(:,1,1),[-binm:binw:binm])./numtotal(1,1);
-    histsh=hist(dist_err(:,2,1),[-binm:binw:binm])./numtotal(1,2)
+%     histal = hist(dist_err(:,1,1),[-binm:binw:binm])./numtotal(1,1);
+%     histsh=hist(dist_err(:,2,1),[-binm:binw:binm])./numtotal(1,2)
+    histal = hist(dist_err(:,1,1),unique(dist_err))./numtotal(1,1);
+    histsh=hist(dist_err(:,2,1),unique(dist_err))./numtotal(1,2)
 if plot_on
-    figure(h1); subplot(r,c,plotcount);plot([-binm:binw:binm],histal,'k','linewidth',2); hold on; plot([-binm:binw:binm],histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
+    figure(h1); subplot(r,c,plotcount);plot(unique(dist_err),histal,'k','linewidth',2); hold on; plot(unique(dist_err),histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('C.Pr');
 end
-binnew = [-binm:binw:binm];
+% binnew = [-binm:binw:binm];
+binnew = unique(dist_err);
 zerobin = find(binnew ==0);
 fr_correct(1,1,1) = histal(zerobin);
 fr_correct(1,2,1) = histsh(zerobin);
