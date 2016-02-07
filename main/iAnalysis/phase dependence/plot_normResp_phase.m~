@@ -77,13 +77,22 @@ frCh=cell2mat(temp{1});
 temp = arrayfun(@(x) x.NormCh, data,'uni',0);
 NormCh=cell2mat(temp{1});
 
-for i = 1:length(frCh)
-    PCh(i,1) = frCh(i,PPid(i));
-    NPCh(i,1) = mean(frCh(i,NPid(i,:)));
+for i = 1:123
+    PCh(i,1) = NormCh(i,PPid(i));
+    NPCh(i,1) = mean(NormCh(i,NPid(i,:)));
 end
 
-m_PCh = round([nanmean(PCh), nanstd(PCh)].*10000)./100;
-m_NPCh = round([nanmean(NPCh),nanstd(NPCh)].*10000)./100;
+
+
+
+
+
+
+
+
+
+
+
 
 
      subplot(1,2,1);title('Phase tuning ctrl')
@@ -95,8 +104,7 @@ set(gca,'Xticklabel',phaxis);
      if light
     subplot(1,2,2);title('Phase tuning mani')
      e2=errorbar(template,m_M,s_M,'ro-'); axis([-5 5 0 3])
-     tb= text(0,2.8,['FrCh P' num2str(m_PCh(1)) '+/-' num2str(m_PCh(2))]);
-     tb= text(0,2.5,['FrCh NP' num2str(m_NPCh(1)) '+/-' num2str(m_NPCh(2))]);
+     tb= text(1,2,['FrCh P' num2str(count-1) ' cells'])
      end
 
 phaxis = [-5:5].*72;
