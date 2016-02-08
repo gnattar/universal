@@ -21,7 +21,7 @@ while(count>=0)
         meanResp_loc_ctrl{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.NL;
         mR_NL = pooled_contactCaTrials_locdep{d}.meanResp.NL;
 %         normResp_loc_ctrl{count}(d,:) = meanResp_loc_ctrl{count}(d,:)./mean(meanResp_loc_ctrl{count}(d,:));
-        norm= (mR_NL-mean(mR_NL))./mR_NL;
+        norm= (mR_NL-min(mR_NL))./mR_NL;
         normResp_loc_ctrl{count}(d,:) =norm;
         [v,i] = max(norm);
 %         LPI_ctrl{count}(d,1) = pooled_contactCaTrials_locdep{d}.meanResp.NL_locPI;
@@ -35,7 +35,7 @@ while(count>=0)
         
         if isfield( pooled_contactCaTrials_locdep{d}.meanResp,'L_locPI')
         meanResp_loc_mani{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.L;
-        mR_L = pooled_contactCaTrials_locdep{d}.meanResp.NL;
+        mR_L = pooled_contactCaTrials_locdep{d}.meanResp.L;
 %         normResp_loc_mani{count}(d,:) = meanResp_loc_mani{count}(d,:)./mean(meanResp_loc_mani{count}(d,:));
         norm= (mR_L-mean(mR_L))./mR_L;
         normResp_loc_mani{count}(d,:) =norm;

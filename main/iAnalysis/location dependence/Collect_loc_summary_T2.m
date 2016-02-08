@@ -21,7 +21,7 @@ while(count>=0)
         meanResp_loc_ctrl{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.NL;
         mR_NL = pooled_contactCaTrials_locdep{d}.meanResp.NL;
 %         normResp_loc_ctrl{count}(d,:) = meanResp_loc_ctrl{count}(d,:)./mean(meanResp_loc_ctrl{count}(d,:));
-        norm= (mR_NL-mean(mR_NL))./mR_NL;
+        norm= (mR_NL-min(mR_NL))./min(mR_NL);
         normResp_loc_ctrl{count}(d,:) =norm;
         [v,i] = max(norm);
 %         LPI_ctrl{count}(d,1) = pooled_contactCaTrials_locdep{d}.meanResp.NL_locPI;
@@ -37,7 +37,7 @@ while(count>=0)
         meanResp_loc_mani{count}(d,:) = pooled_contactCaTrials_locdep{d}.meanResp.L;
         mR_L = pooled_contactCaTrials_locdep{d}.meanResp.L;
 %         normResp_loc_mani{count}(d,:) = meanResp_loc_mani{count}(d,:)./mean(meanResp_loc_mani{count}(d,:));
-        norm= (mR_L-mean(mR_L))./mR_L;
+        norm= (mR_L-min(mR_L))./min(mR_L);
         normResp_loc_mani{count}(d,:) =norm;
         [v,i] = max(norm);
 %         LPI_ctrl{count}(d,1) = pooled_contactCaTrials_locdep{d}.meanResp.NL_locPI;
@@ -48,7 +48,9 @@ while(count>=0)
         PLid_mani{count}(d,1) = i;
         NPLid_mani{count}(d,:) =  NPid;
         
-        FrCh{count}(d,:) = (mR_L-mR_NL)./mR_NL;
+%         FrCh{count}(d,:) = (mR_L-mR_NL)./mR_NL;
+        FrCh{count}(d,:) = (LPI_mani{count}(d,1)-LPI_ctrl{count}(d,1))./LPI_ctrl{count}(d,1);
+
         PrefCh{count}(d,:) = PLid_mani{count}(d,1) - PLid_ctrl{count}(d,1);
         end
         
