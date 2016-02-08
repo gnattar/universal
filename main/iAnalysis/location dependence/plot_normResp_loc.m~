@@ -64,20 +64,47 @@ collected_mani(count:end,:) = [];
  s_M= nanstd(temp)./temp2;
  
  temp = arrayfun(@(x) x.PLid_ctrl, data,'uni',0);
-PPid=cell2mat(temp{1});
-for i = 1:123
-NPid(i,:)=setxor([1:5],PLid(i));
+ if size(temp{1},2>1)
+%      PPid=cell2mat(temp{1}');
+PPid=temp{1}';
+ else
+    PPid=cell2mat(temp{1});
+ end
+for i = 1:size(PPid,1)
+    for d = 1:size(PPid{i},1)
+        NPid{i}(d,:)= setxor([1:max(PPid{i})],PPid{i}(d,1));
+    end
 end
+
 temp = arrayfun(@(x) x.FrCh, data,'uni',0);
-frCh=cell2mat(temp{1});
+ if size(temp{1},2>1)
+%      frCh=cell2mat(temp{1}');
+    frCh=temp{1}';
+ else
+    frCh=cell2mat(temp{1});
+ end
 
 temp = arrayfun(@(x) x.NormCh, data,'uni',0);
-NormCh=cell2mat(temp{1});
+ if size(temp{1},2>1)
+     NormCh=temp{1}';
+ else
+ NormCh=cell2mat(temp{1});
+ end
 
-for i = 1:length(frCh)
-    PCh(i,1) = frCh(i,PPid(i));
-    NPCh(i,1) = mean(frCh(i,NPid(i,:)));
+% 
+% for i = 1:size(frCh,1)
+%     PCh(i,1) = frCh(i,PPid(i));
+%     NPCh(i,1) = mean(frCh(i,NPid(i,:)));
+% end
+count = 1;
+for i = 1:size(frCh,1)
+    n = size(frCh{i},1);
+    for d = 1:n
+    PCh(d,1) = frCh{i}(d,PPid{i}(d));
+    NPCh(d,1) = mean(frCh({i}(i:n,NPid(i,:)));
 end
+
+
 
 m_PCh = round([nanmean(PCh), nanstd(PCh)].*10000)./100;
 m_NPCh = round([nanmean(NPCh),nanstd(NPCh)].*10000)./100;
@@ -92,7 +119,6 @@ m_NPCh = round([nanmean(NPCh),nanstd(NPCh)].*10000)./100;
      tb= text(0,2.5,['FrCh NP' num2str(m_NPCh(1)) '+/-' num2str(m_NPCh(2))]);
 
 set(gca,'Xtick',[-5 : 5]);
-set(gca,'Xticklabel',phaxis);
 
 set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
@@ -103,8 +129,40 @@ saveas(gcf,[pwd,filesep,fnam],'fig');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
 
- t = m_C-m_M;
- figure;plot([-5:5],t,'o-','markersize',10,'color',[.8 1 .8]);
+%  t = m_C-m_M;
+%  figure;plot([-5:5],t,'o-','markersize',10,'color',[.8 1 .8]);
+%%%% hist of LPIs
+temp=arrayfun(@(x) x.LPI_ctrl, data,'uni',0)';
+temp=temp{1}';
+LPI_NL_list = cell2mat(temp);
+
+    temp=arrayfun(@(x) x.LPI_mani, data,'uni',0)';
+    temp=temp{1}';
+    LPI_L_list = cell2mat(temp);
+
+
+bins = [0:.1:4];
+sc = get(0,'ScreenSize');
+figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
+subplot(1,2,1);hnl=hist(LPI_NL_list(:,1),bins);plot(bins,hnl,'k');hold on ;
+if light
+    hl=hist(LPI_L_list(:,1),bins); plot(bins,hl,'r');
+end
+set(gca,'yscale','lin');
+xlabel('norm Resp Amp at Pref Loc','Fontsize',16);title('Hist norm Resp Amp at Pref Loc','Fontsize',16);
+set(gca,'Fontsize',16);
+
+
+set(gcf,'PaperUnits','inches');
+set(gcf,'PaperPosition',[1 1 24 18]);
+set(gcf, 'PaperSize', [10,24]);
+set(gcf,'PaperPositionMode','manual');
+
+
+fnam = 'normRespLoc Hist';
+saveas(gcf,[pwd,filesep,fnam],'fig');
+print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+
 
 %%
 % figure;

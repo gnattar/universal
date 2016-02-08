@@ -64,20 +64,48 @@ collected_mani(count:end,:) = [];
  s_M= nanstd(temp)./temp2;
  
  temp = arrayfun(@(x) x.PLid_ctrl, data,'uni',0);
-PPid=cell2mat(temp{1});
-for i = 1:123
-NPid(i,:)=setxor([1:4],PPid(i));
+ if size(temp{1},2>1)
+%      PPid=cell2mat(temp{1}');
+PPid=temp{1}';
+ else
+    PPid=cell2mat(temp{1});
+ end
+for i = 1:size(PPid,1)
+    for d = 1:size(PPid{i},1)
+        NPid{i}(d,:)= setxor([1:max(PPid{i})],PPid{i}(d,1));
+    end
 end
+
 temp = arrayfun(@(x) x.FrCh, data,'uni',0);
-frCh=cell2mat(temp{1});
+ if size(temp{1},2>1)
+%      frCh=cell2mat(temp{1}');
+    frCh=temp{1}';
+ else
+    frCh=cell2mat(temp{1});
+ end
 
 temp = arrayfun(@(x) x.NormCh, data,'uni',0);
-NormCh=cell2mat(temp{1});
+ if size(temp{1},2>1)
+     NormCh=temp{1}';
+ else
+ NormCh=cell2mat(temp{1});
+ end
 
+% 
+% for i = 1:size(frCh,1)
+%     PCh(i,1) = frCh(i,PPid(i));
+%     NPCh(i,1) = mean(frCh(i,NPid(i,:)));
+% end
+count = 1;
 for i = 1:size(frCh,1)
-    PCh(i,1) = frCh(i,PPid(i));
-    NPCh(i,1) = mean(frCh(i,NPid(i,:)));
+    n = size(frCh{i},1);
+    for d = 1:n
+    PCh(d,1) = frCh{i}(d,PPid{i}(d));
+    NPCh(d,1) = mean(frCh{i}(d,NPid{i}(d,:)));
+    end
 end
+
+
 
 m_PCh = round([nanmean(PCh), nanstd(PCh)].*10000)./100;
 m_NPCh = round([nanmean(NPCh),nanstd(NPCh)].*10000)./100;
