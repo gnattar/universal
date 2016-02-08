@@ -22,8 +22,10 @@ for s = 1:size(data.meanResp_phase_ctrl,2)
     prefphid = repmat(PrefPhid,1,size(xphid,2));
     xphid = xphid - prefphid;
 
-    if light
+    if light %% mean for each condition within that set
         mR_m = data.meanResp_phase_mani{s};
+        m_2_n = mean(mR_m,2);
+        m_2_n = repmat(m_2_n,1,size(mR_c,2));
         norm_mR_m = mR_m./m_2_n;
     end
     
@@ -77,7 +79,7 @@ frCh=cell2mat(temp{1});
 temp = arrayfun(@(x) x.NormCh, data,'uni',0);
 NormCh=cell2mat(temp{1});
 
-for i = 1:length(frCh)
+for i = 1:size(frCh,1)
     PCh(i,1) = frCh(i,PPid(i));
     NPCh(i,1) = mean(frCh(i,NPid(i,:)));
 end
@@ -111,23 +113,23 @@ fnam = 'normRespPhase Tuning';
 saveas(gcf,[pwd,filesep,fnam],'fig');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
-if light
- t = m_C-m_M;
- figure;
- plot([-5:5],t,'o-','markersize',10,'color',[.85 0 .2]);title('Diff in phase tuning')
- phaxis = [-5:5].*72;
-set(gca,'Xtick',[-5 : 5]);
-set(gca,'Xticklabel',phaxis);
-end
-
-set(gcf,'PaperUnits','inches');
-set(gcf,'PaperPosition',[1 1 24 18]);
-set(gcf, 'PaperSize', [10,24]);
-set(gcf,'PaperPositionMode','manual');
-
-fnam = 'normRespPhase Tuning Diff';
-saveas(gcf,[pwd,filesep,fnam],'fig');
-print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+% if light
+%  t = m_C-m_M;
+%  figure;
+%  plot([-5:5],t,'o-','markersize',10,'color',[.85 0 .2]);title('Diff in phase tuning')
+%  phaxis = [-5:5].*72;
+% set(gca,'Xtick',[-5 : 5]);
+% set(gca,'Xticklabel',phaxis);
+% end
+% 
+% set(gcf,'PaperUnits','inches');
+% set(gcf,'PaperPosition',[1 1 24 18]);
+% set(gcf, 'PaperSize', [10,24]);
+% set(gcf,'PaperPositionMode','manual');
+% 
+% fnam = 'normRespPhase Tuning Diff';
+% saveas(gcf,[pwd,filesep,fnam],'fig');
+% print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
 %% hist of PPIs
 temp=arrayfun(@(x) x.PPI_ctrl, data,'uni',0)';
