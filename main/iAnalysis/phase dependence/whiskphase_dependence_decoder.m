@@ -163,7 +163,16 @@ elseif strcmp(cond,'ctrl_mani')
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
     train_pos=pos;test_pos = pos;
-    
+    nin = find(isnan(train_resp));
+    if ~isempty(nin)
+        nin
+        error('error: there are nans in train resp')
+    end
+    nin = find(isnan(test_resp));
+    if ~isempty(nin)
+        nin
+        error('error: there are nans in test resp')
+    end
     w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
         [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on,src);
@@ -265,6 +274,19 @@ elseif strcmp(cond,'ctrl_mani')
         test_pl = pl;
         test_tk = tk;
         test_pos = pos;
+        
+        nin = find(isnan(train_resp));
+        if ~isempty(nin)
+             nin
+             train_resp(nin) = 0;
+%             error('error: there are nans in train resp')
+        end
+        nin = find(isnan(test_resp));
+        if ~isempty(nin)
+            nin
+            test_resp(nin) = 0;
+%             error('error: there are nans in test resp')
+        end
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
             [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);

@@ -270,13 +270,13 @@ elseif strcmp(cond,'ctrl_mani')
         nin = find(isnan(train_resp));
         if ~isempty(nin)
              nin
-             train_resp(nin) = 0;
+             
 %             error('error: there are nans in train resp')
         end
         nin = find(isnan(test_resp));
         if ~isempty(nin)
             nin
-            test_resp(nin) = 0;
+            
 %             error('error: there are nans in test resp')
         end
     
