@@ -246,22 +246,14 @@ elseif strcmp(cond,'ctrl_mani')
     if train_test == 1
 
             train_resp = resp; test_resp = resp;
-
-            nin = find(isnan(train_resp));
-            if ~isempty(nin)
-                nin
-                train_resp(nin) = 0;
-                %             error('error: there are nans in train resp')
-            end
-            nin = find(isnan(test_resp));
-            if ~isempty(nin)
-                nin
-                test_resp(nin) = 0;
-                %             error('error: there are nans in test resp')
-            end
-            
-            
-            
+    if ~isempty(nin)
+        nin
+    end
+    nin = find(isnan(test_resp));
+    if ~isempty(nin)
+        nin
+        error('error: there are nans in test resp')
+    end
         train_pl = pl; test_pl = pl;
         train_tk = tk; test_tk = tk;
         train_pos=pos;test_pos = pos;
@@ -286,12 +278,6 @@ elseif strcmp(cond,'ctrl_mani')
         
 
             test_resp = resp;
-            nin = find(isnan(test_resp));
-            if ~isempty(nin)
-                nin
-                test_resp(nin) = 0;
-                %             error('error: there are nans in test resp')
-            end
 
         test_pl = pl;
         test_tk = tk;
