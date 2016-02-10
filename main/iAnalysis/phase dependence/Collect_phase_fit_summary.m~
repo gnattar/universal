@@ -50,7 +50,6 @@ data.PPh_ctrl=PPh_ctrl;
 if isfield( pooled_contactCaTrials_locdep{1}.phase,'PPI_L')
     data.PPI_mani=PPI_mani;
     data.slopes_mani=slopes_mani;
-    data.intercept_mani=intercept_mani;
     data.normSlopes_mani=normSlopes_mani;
     data.PPid_mani=PPid_mani;
     data.PPh_mani=PPh_mani;

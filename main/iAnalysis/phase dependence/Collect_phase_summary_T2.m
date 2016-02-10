@@ -6,7 +6,7 @@ count=0;
 filename = '';
 while(count>=0)
     if strcmp(filename, '');
-        [filename,pathName]=uigetfile('*_pooled_contactCaTrials_phasedep.mat','Load .mat file');
+        [filename,pathName]=uigetfile('*_pooled_contactCaTrials_phasedep*.mat','Load .mat file');
     else
         [filename,pathName]=uigetfile( filename,'Load phasedep.mat file');
     end
@@ -21,7 +21,7 @@ while(count>=0)
         meanResp_phase_ctrl{count}(d,:) = pooled_contactCaTrials_locdep{d}.phase.mResp_NL;
         mR_NL = pooled_contactCaTrials_locdep{d}.phase.mResp_NL;
 %          normResp_phase_ctrl{count}(d,:) = pooled_contactCaTrials_locdep{d}.phase.normResp_NL;
-        norm =(mR_NL-mean(mR_NL))./mR_NL;
+        norm =(mR_NL-min(mR_NL))./min(mR_NL);
         normResp_phase_ctrl{count}(d,:) = norm;
         [v,i] = max(norm);
 %         PPI_ctrl{count}(d,1) = pooled_contactCaTrials_locdep{d}.phase.PPI_NL;
@@ -36,8 +36,8 @@ while(count>=0)
         meanResp_phase_mani{count}(d,:) = pooled_contactCaTrials_locdep{d}.phase.mResp_L;
         mR_L = pooled_contactCaTrials_locdep{d}.phase.mResp_L;
 %                 normResp_phase_mani{count}(d,:) = pooled_contactCaTrials_locdep{d}.phase.normResp_L;
-        norm= (mR_L-mean(mR_L))./mR_L;
-        normResp_loc_mani{count}(d,:) =norm;
+        norm= (mR_L-min(mR_L))./min(mR_L);
+        normResp_phase_mani{count}(d,:) =norm;
         [v,i] = max(norm);
 %                 PPI_mani{count}(d,1) = pooled_contactCaTrials_locdep{d}.phase.PPI_L;
         PPI_mani{count}(d,1) = norm(i);
@@ -52,6 +52,8 @@ while(count>=0)
         NPPh_mani{count}(d,:) = pooled_contactCaTrials_locdep{1}.phase.touchPhase_mid(NPid);
 
         FrCh{count}(d,:) = (mR_L-mR_NL)./mR_NL;
+%         FrCh{count}(d,:) = (PPI_mani{count}(d,1)-PPI_ctrl{count}(d,1))./PPI_ctrl{count}(d,1);
+
         PrefCh{count}(d,:) = PPid_mani{count}(d,1) - PPid_ctrl{count}(d,1);
  
         end

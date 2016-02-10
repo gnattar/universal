@@ -55,9 +55,9 @@ for ph =1:length(unique(id_NL))
     axis ([.001 2.5 0 800]);
     count= count+1;
     if light
-        contact_phase_binned([inds_NL;inds_L]) = mid{1}(ph);
+        contact_phase_binned([NL_ind(inds_NL);L_ind(inds_L)]) = mid{1}(ph);
     else
-        contact_phase_binned([inds_NL]) = mid{1}(ph);
+        contact_phase_binned([NL_ind(inds_NL)]) = mid{1}(ph);
     end
     mResp_NL(ph) = mean(sigpeak_NL(inds_NL));
     sdResp_NL(ph) = std(sigpeak_NL(inds_NL));
@@ -76,7 +76,7 @@ end
 
  pooled_contactCaTrials_locdep{d(i)}.phase.touchPhase_mid = mid{1};
  pooled_contactCaTrials_locdep{d(i)}.phase.touchPhase_id_NL = id_NL;
- pooled_contactCaTrials_locdep{d(i)}.phase.touchPhase_binned = contact_phase_binned;
+ pooled_contactCaTrials_locdep{d(i)}.phase.touchPhase_binned = contact_phase_binned';
 
  pooled_contactCaTrials_locdep{d(i)}.phase.mResp_NL = mResp_NL;
  pooled_contactCaTrials_locdep{d(i)}.phase.sdResp_NL = sdResp_NL;

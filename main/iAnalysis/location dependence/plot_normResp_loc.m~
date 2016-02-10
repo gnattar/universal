@@ -1,9 +1,11 @@
-function plot_normResp_loc(data)
-figure;
+function [data]=plot_normResp_loc(data)
+sc = get(0,'ScreenSize');
+figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 collected_ctrl = nan(200,11);
 collected_mani = nan(200,11);
 template = [-5:1:5];
-numpts  = zeros(1,11);count =1;inccount = 0;
+numpts  = zeros(1,11);count =1;inccount = 0;n=0;
+siginds=[];
 for s = 1:size(data.meanResp_loc_ctrl,2)
     signals_ctrl = data.meanResp_loc_ctrl{s};
     signals_mani = data.meanResp_loc_mani{s};
@@ -33,32 +35,46 @@ for s = 1:size(data.meanResp_loc_ctrl,2)
 %     norm_mR_m(inc,:) = [];
 %     xpos(inc,:) = [];
     inccount = inccount+length(inc);
+    selneurons = max(norm_mR_c')'>.4;
+    tempinds = find(selneurons); %% just the cells with selectivity > 0.4    
+    siginds(n+1:n+size(selneurons,1))=selneurons; n = n+size(selneurons,1);
     subplot(1,2,1);
-    plot(xpos',norm_mR_c','color',[.5 .5 .5],'linewidth',.5);hold on;
+    plot(xpos(tempinds,:)',norm_mR_c(tempinds,:)','color',[.5 .5 .5],'linewidth',.5);hold on;
     subplot(1,2,2);
-    plot(xpos',norm_mR_m','color',[.85 .5 .5],'linewidth',.5);hold on;
+    plot(xpos(tempinds,:)',norm_mR_m(tempinds,:)','color',[.85 .5 .5],'linewidth',.5);hold on;
 
-    for c= 1:size(xpos,1)
-        for t = 1:length(xpos(c,:))
-            collected_ctrl (count,find(template==xpos(c,t))) = norm_mR_c(c,t);
-            collected_mani (count,find(template==xpos(c,t))) = norm_mR_m(c,t);
-            numpts(count,find(template==xpos(c,t))) = 1;
-        end  
-    count = count+1;
-    end
+%     for c= 1:size(xpos,1)
+%         for t = 1:length(xpos(c,:))
+%             collected_ctrl (count,find(template==xpos(c,t))) = norm_mR_c(c,t);
+%             collected_mani (count,find(template==xpos(c,t))) = norm_mR_m(c,t);
+%             numpts(count,find(template==xpos(c,t))) = 1;
+%         end
+%     end
+    
+     for c= 1:size(tempinds,1)
+        for t = 1:length(xpos(tempinds(c),:))
+            collected_ctrl (count,find(template==xpos(tempinds(c),t))) = norm_mR_c(tempinds(c),t);
+            collected_mani (count,find(template==xpos(tempinds(c),t))) = norm_mR_m(tempinds(c),t);
+            numpts(count,find(template==xpos(tempinds(c),t))) = 1;
+        end
+         count = count+1;
+    end   
+
+
+
 end
  
 collected_ctrl(count:end,:) = [];
 collected_mani(count:end,:) = [];
 
  temp = collected_ctrl;
- temp (find(temp==0)) = nan;
+%  temp (find(temp==0)) = nan;
  temp2 = sqrt(sum(numpts));
  m_C = nanmean(temp);
  s_C = nanstd(temp)./temp2;
  
  temp = collected_mani;
- temp (find(temp==0)) = nan;
+%  temp (find(temp==0)) = nan;
  temp2 = sqrt(sum(numpts));
  m_M = nanmean(temp);
  s_M = nanstd(temp);
@@ -97,14 +113,32 @@ temp = arrayfun(@(x) x.PrefCh, data,'uni',0);
 %     PCh(i,1) = frCh(i,PPid(i));
 %     NPCh(i,1) = mean(frCh(i,NPid(i,:)));
 % end
+% count = 1;
+% for i = 1:size(frCh,1)
+%     n = size(frCh{i},1);
+%     for d = 1:n
+% %     PCh(d,1) = frCh{i}(d,PPid{i}(d));
+% %     NPCh(d,1) = mean(frCh{i}(d,NPid{i}(d,:)));
+%     
+%     PCh(count,1) = frCh{i}(d);
+%     count = count+1;
+% %     temp =frCh{i}(d,NPid{i}(d,:));
+% %     temp(temp==0) = nan;
+% %     NPCh(d,1) = 
+%     end
+% end
+
+
+ 
 count = 1;
 for i = 1:size(frCh,1)
     n = size(frCh{i},1);
     for d = 1:n
-%     PCh(d,1) = frCh{i}(d,PPid{i}(d));
-%     NPCh(d,1) = mean(frCh{i}(d,NPid{i}(d,:)));
+    PCh(count,1) = frCh{i}(d,PPid{i}(d));
+    NPCh(count,1) = mean(frCh{i}(d,NPid{i}(d,:)));
     
-    PCh(d,1) = frCh{i}(d);
+%     PCh(count,1) = frCh{i}(d);
+    count = count+1;
 %     temp =frCh{i}(d,NPid{i}(d,:));
 %     temp(temp==0) = nan;
 %     NPCh(d,1) = 
@@ -112,9 +146,8 @@ for i = 1:size(frCh,1)
 end
 
 
-
-m_PCh = round([nanmean(PCh), nanstd(PCh)].*10000)./100;
-% m_NPCh = round([nanmean(NPCh),nanstd(NPCh)].*10000)./100;
+m_PCh = round([nanmean(PCh(siginds==1)), nanstd(PCh(siginds==1))].*10000)./100;
+ m_NPCh = round([nanmean(NPCh(siginds==1)),nanstd(NPCh(siginds==1))].*10000)./100;
  
      subplot(1,2,1);title('Loc tuning ctrl')
      e1=errorbar(template,m_C,s_C,'ko-'); set(e1,'linewidth',2);axis([-5 5 0 3])
@@ -123,7 +156,7 @@ m_PCh = round([nanmean(PCh), nanstd(PCh)].*10000)./100;
     subplot(1,2,2);title('Loc tuning mani')
      e2=errorbar(template,m_M,s_M,'ro-');  set(e2,'linewidth',2);axis([-5 5 0 3])
      tb= text(0,2.8,['FrCh P' num2str(m_PCh(1)) '+/-' num2str(m_PCh(2))]);
-%      tb= text(0,2.5,['FrCh NP' num2str(m_NPCh(1)) '+/-' num2str(m_NPCh(2))]);
+     tb= text(0,2.5,['FrCh NP' num2str(m_NPCh(1)) '+/-' num2str(m_NPCh(2))]);
 
 set(gca,'Xtick',[-5 : 5]);
 
@@ -166,17 +199,18 @@ count = count+n;
 end
     
 
+inds = find(LPI_NL_list>0.4);
 bins = [0:.1:4];
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
-subplot(1,2,1);hnl=hist(LPI_NL_list(:,1),bins);plot(bins,hnl,'k');hold on ;
+subplot(1,2,1);hnl=hist(LPI_NL_list(inds,1),bins);plot(bins,hnl,'k');hold on ;
 if light
-    hl=hist(LPI_L_list(:,1),bins); plot(bins,hl,'r');
+    hl=hist(LPI_L_list(inds,1),bins); plot(bins,hl,'r');
 end
-ms_nl = round([mean(LPI_NL_list) std(LPI_L_list)]*100)./100;
-ms_l=round([mean(LPI_L_list) std(LPI_L_list)]*100)./100;
-tb = text(2,5,[num2str(ms_nl(1)) '+/-' num2str(ms_nl(2))]);
-tb = text(2,5,[num2str(ms_nl(1)) '+/-' num2str(ms_nl(2))]);
+ms_nl = round([mean(LPI_NL_list(inds,:)) std(LPI_L_list(inds,:))]*100)./100;
+ms_l=round([mean(LPI_L_list(inds,:)) std(LPI_L_list(inds,:))]*100)./100;
+tb = text(2,10,[num2str(ms_nl(1)) '+/-' num2str(ms_nl(2))]);
+tb = text(2,5,[num2str(ms_l(1)) '+/-' num2str(ms_l(2))]);set(tb,'color','r');
 set(gca,'yscale','lin');
 xlabel('norm Resp Amp at Pref Loc','Fontsize',16);title('Hist norm Resp Amp at Pref Loc','Fontsize',16);
 set(gca,'Fontsize',16);
@@ -185,14 +219,17 @@ set(gca,'Fontsize',16);
 templ = LNPI_L_list;
 tempnl(tempnl==0) = nan;
 templ(templ==0) = nan;
-subplot(1,2,2);hnl=hist(tempnl(:,1),bins);plot(bins,hnl,'k');hold on ;
+subplot(1,2,2);hnl=hist(tempnl(inds,1),bins);plot(bins,hnl,'k');hold on ;
 if light
-    hl=hist(templ(:,1),bins); plot(bins,hl,'r');
+    hl=hist(templ(inds,1),bins); plot(bins,hl,'r');
 end
 set(gca,'yscale','lin');
 xlabel('norm Resp Amp at NonPref Loc','Fontsize',16);title('Hist norm Resp Amp at NonPref Loc','Fontsize',16);
 set(gca,'Fontsize',16);
-
+ms_nl = round([nanmean(LNPI_NL_list(inds,:)) nanstd(LNPI_L_list(inds,:))]*100)./100;
+ms_l=round([nanmean(LNPI_L_list(inds,:)) nanstd(LNPI_L_list(inds,:))]*100)./100;
+tb = text(2,10,[num2str(ms_nl(1)) '+/-' num2str(ms_nl(2))]);
+tb = text(2,5,[num2str(ms_l(1)) '+/-' num2str(ms_l(2))]);set(tb,'color','r');
 
 set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
@@ -204,6 +241,10 @@ fnam = 'normRespLoc Hist';
 saveas(gcf,[pwd,filesep,fnam],'fig');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
+data.LPI_NL_list=LPI_NL_list;
+data.LPI_L_list=LPI_L_list;
+data.LNPI_NL_list=LNPI_NL_list;
+data.LNPI_L_list=LNPI_L_list;
 
 %%
 % figure;

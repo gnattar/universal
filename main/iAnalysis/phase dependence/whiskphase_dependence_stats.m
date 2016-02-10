@@ -72,7 +72,7 @@ for d=1:length(dends)
             
             [h,edges,mid,l] = histcn(ka,dKappa_bins);
             for cn = 1: length(h)
-                if (h(cn) > 1)
+                if (h(cn) > 0)
                     ca_l_m(cn)  = nanmean(ca(find(l==cn)));
                     ca_l_sd(cn) = nanstd(ca(find(l==cn)))./sqrt(h(cn)+1);
                     ka_l_m(cn)  = nanmean(ka(find(l==cn)));

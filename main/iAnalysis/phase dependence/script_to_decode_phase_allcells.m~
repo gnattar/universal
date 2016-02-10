@@ -49,9 +49,7 @@ save('pooled_contactCaTrials_locdep_allcells','pooled_contactCaTrials_locdep');
 % tempp =cellfun(@(x) x.loc,all_copy,'uni',0);
 
 all_copy = all_cells;
-rem=[74:88, 102:115];
- pooled_contactCaTrials_locdep (rem) = [];
- save('pooled_contactCaTrials_locdep_133cells','pooled_contactCaTrials_locdep');
+
 templ =cellfun(@(x) x.lightstim,pooled_contactCaTrials_locdep,'uni',0);
 tempp =cellfun(@(x) x.loc,pooled_contactCaTrials_locdep,'uni',0);
 
@@ -72,7 +70,9 @@ end
 % to find min
 % tempwave = cellfun(@(x) x(1,2),trials)';min(tempwave)
 minlist = [ 10,14;64,45;25,35;11,13;17 13];
-minlist = [ 15,12;60,49;34,35;19,17;21 16]; %% shuffled
+% minlist = [ 25,24;38,41;50,50;19,34];
+% 
+% minlist = [ 0 21;0 91;0 34;0 35;0 33];
 %%
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)

@@ -48,8 +48,8 @@ while(count>=0)
         PLid_mani{count}(d,1) = i;
         NPLid_mani{count}(d,:) =  NPid;
         
-%         FrCh{count}(d,:) = (mR_L-mR_NL)./mR_NL;
-        FrCh{count}(d,:) = (LPI_mani{count}(d,1)-LPI_ctrl{count}(d,1))./LPI_ctrl{count}(d,1);
+         FrCh{count}(d,:) = (mR_L-mR_NL)./mR_NL;
+%         FrCh{count}(d,:) = (LPI_mani{count}(d,1)-LPI_ctrl{count}(d,1))./LPI_ctrl{count}(d,1);
 
         PrefCh{count}(d,:) = PLid_mani{count}(d,1) - PLid_ctrl{count}(d,1);
         end
