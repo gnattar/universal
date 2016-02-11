@@ -1,8 +1,16 @@
-function [pooled_contactCaTrials_locdep] = whiskphase_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,phasebins,disc_func,src,plot_on)
-p = phasebins; 
-par = 'sigpeak'
-num_runs = 2;
+function [pooled_contactCaTrials_locdep] = whiskloc_fromphase_decoder(pooled_contactCaTrials_locdep,par,cond,str,train_test,pos,disc_func,src,plot_on)
 
+%% all cells
+% [pcopy] = whiskloc_fromphase_decoder(pcopy,'phase','ctrl_mani','LfromP',0,[1 2 3 4],'diaglinear','def',1)
+%[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
+% cond 'ctrl' or 'ctrl_mani'
+% pos pole positions
+% train_test =1 if mani is to be trained with mani trials, =0 if it is to
+% be trained with ctrl trials
+% disc_func 'linear' or 'diagquadratic'
+p = pos; %[15 13.5 12 10.5 9 7.5];
+num_runs = 2;
+% ol = [.01,1.5];
 ol = [.0005,2.5];
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
@@ -11,51 +19,36 @@ else
         case 'def'
             l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
             l_trials = l_trials(:,1);
-%         case 'LAD'
-%             l_trials = cell2mat(cellfun(@(x) x.decoder.LAD.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             l_trials = l_trials(:,1);
-%         case 'NLS'
-%             l_trials = cell2mat(cellfun(@(x) x.decoder.NLS.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             l_trials = l_trials(:,1);
-%         case 'NC'
-%             l_trials = cell2mat(cellfun(@(x) x.decoder.NC.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             l_trials = l_trials(:,1);
-%         otherwise
-%             l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             l_trials = l_trials(:,1);
+
+        otherwise
+            l_trials = cell2mat(cellfun(@(x) x.lightstim, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            l_trials = l_trials(:,1);
     end
     
 end
 
-% R=cell2mat(cellfun(@(x) x.sigpeak',pooled_contactCaTrials_locdep,'uni',0)')';
-% [r,pval]=corrcoef(R);
-% temp=tril(r,-1);
-% r_collect=r(find(temp~=0));
-% map = brewermap(100,'YlOrRd');
-% figure; subplot(1,2,1); imagesc(r,[0 1.2]);colormap(map);subplot(1,2,2); plot([0:.1:1],hist(r_collect,[0:.1:1])); suptitle([str]);
-% saveas(gcf,[str ' Corrcoef'],'fig');
-% saveas(gcf,[str ' Corrcoef'],'jpg');
-% save([str ' Corrcoef'],'r');
-% save([ str ' PValues'],'pval');
 
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-    pl = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
+    pl = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+    ph = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+
+%     resp = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+    temp_wave =abs(tk(:,1));
+    outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
+    outlier_touches = [];
+    tk(outlier_touches,:) = [];
+    pl(outlier_touches,:) = [];
+    resp(outlier_touches,:) = [];   
     
-    resp = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-%     temp_wave =abs(tk(:,1));
-%     outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
-%     outlier_touches=[];
-%     tk(outlier_touches,:) = [];
-%     pl(outlier_touches,:) = [];
-%     resp(outlier_touches,:) = [];   
-        
+    
     numtrials = size(tk,1);
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
-     
-        train_resp = resp; test_resp = resp;
+    
+
+        train_ph = ph; test_ph = ph;
 
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
@@ -64,7 +57,7 @@ if strcmp(cond,'ctrl' )
     
      w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n] = run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,train_test,disc_func,plot_on,src);
         dist_all{n} = dist_n;
         dist_err{n} = dist_err_n;
         hist_all{n} =hist_n;
@@ -116,67 +109,55 @@ elseif strcmp(cond,'ctrl_mani')
     switch src
         case 'def'
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
-                pl_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-%         case 'LAD'
-%             tk_all = cell2mat(cellfun(@(x) x.decoder.LAD.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             pl_all = cell2mat(cellfun(@(x) x.decoder.LAD.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             resp_all = cell2mat(cellfun(@(x) x.decoder.LAD.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-%         case 'NLS'
-%             tk_all = cell2mat(cellfun(@(x) x.decoder.NLS.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             pl_all = cell2mat(cellfun(@(x) x.decoder.NLS.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             resp_all = cell2mat(cellfun(@(x) x.decoder.NLS.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-%         case 'NC'
-%             tk_all = cell2mat(cellfun(@(x) x.decoder.NC.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             pl_all = cell2mat(cellfun(@(x) x.decoder.NC.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             resp_all = cell2mat(cellfun(@(x) x.decoder.NC.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));        
-%         otherwise
-%             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%             pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
 %             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+            ph_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+
+        otherwise
+            tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
+            pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+            ph_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
     end
     
     %run ctrl
     
     tk = tk_all(l_trials == 0,:);
     pl = pl_all(l_trials == 0,:);
-    resp = resp_all(l_trials == 0,:);
+%     resp = resp_all(l_trials == 0,:);
+    ph = ph_all(l_trials == 0,:);
     
-%     temp_wave =abs(tk(:,1));
+    temp_wave =abs(tk(:,1));
 %     outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
-%     
-%     tk(outlier_touches,:) = [];
-%     pl(outlier_touches,:) = [];
-%     resp(outlier_touches,:) = []; 
+    outlier_touches=[];
+    tk(outlier_touches,:) = [];
+    pl(outlier_touches,:) = [];
+    resp(outlier_touches,:) = []; 
     
     numtrials = size(tk,1);
     
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
-    if (size(pos,2)>size(pos,1))
-        pos = pos';
-    end
+    
 
-        train_resp = resp; test_resp = resp;
+   train_ph = ph; test_ph = ph;
 
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
     train_pos=pos;test_pos = pos;
-    nin = find(isnan(train_resp));
+    
+    nin = find(isnan(train_ph));
     if ~isempty(nin)
-        nin
         error('error: there are nans in train resp')
     end
-    nin = find(isnan(test_resp));
+    nin = find(isnan(test_ph));
     if ~isempty(nin)
-        nin
         error('error: there are nans in test resp')
     end
     w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on,src);
+        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,1,disc_func,plot_on,src);
         dist_all{n} = dist_n;
         dist_err{n} = dist_err_n;
         hist_all{n} =hist_n;
@@ -228,48 +209,45 @@ elseif strcmp(cond,'ctrl_mani')
     
     tk = tk_all(l_trials == 1,:);
     pl = pl_all(l_trials == 1,:);
-    resp = resp_all(l_trials == 1,:);
+%     resp = resp_all(l_trials == 1,:);
+    ph = ph_all(l_trials == 1,:);
     
-%     temp_wave =abs(tk(:,1));
+    temp_wave =abs(tk(:,1));
 %     outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
-%     
-%     tk(outlier_touches,:) = [];
-%     pl(outlier_touches,:) = [];
-%     resp(outlier_touches,:) = []; 
+    outlier_touches=[];
+    tk(outlier_touches,:) = [];
+    pl(outlier_touches,:) = [];
+    resp(outlier_touches,:) = []; 
     
     numtrials = size(tk,1);
     pl = pl(:,1);
     [vals,plid,valsid] = unique(pl);
     pos = p(valsid)';
-   if (size(pos,2)>size(pos,1))
-        pos = pos';
-    end
+    
     if train_test == 1
 
-            train_resp = resp; test_resp = resp;
+            train_ph = ph; test_ph = ph;
 
-            nin = find(isnan(train_resp));
-            if ~isempty(nin)
-                nin
-                train_resp(nin) = 0;
-                %             error('error: there are nans in train resp')
-            end
-            nin = find(isnan(test_resp));
-            if ~isempty(nin)
-                nin
-                test_resp(nin) = 0;
-                %             error('error: there are nans in test resp')
-            end
-            
-            
-            
         train_pl = pl; test_pl = pl;
         train_tk = tk; test_tk = tk;
         train_pos=pos;test_pos = pos;
         
+        nin = find(isnan(train_ph));
+        if ~isempty(nin)
+             nin
+             train_resp(nin) = 0;
+%             error('error: there are nans in train resp')
+        end
+        nin = find(isnan(test_ph));
+        if ~isempty(nin)
+            nin
+            test_resp(nin) = 0;
+%             error('error: there are nans in test resp')
+        end
+    
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,train_test,disc_func,plot_on,src);
             dist_all{n} = dist_n;
             dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
@@ -285,34 +263,15 @@ elseif strcmp(cond,'ctrl_mani')
         
     elseif train_test == 0
         
+            test_ph = ph;
 
-            test_resp = resp;
-            nin = find(isnan(test_resp));
-            if ~isempty(nin)
-                nin
-                test_resp(nin) = 0;
-                %             error('error: there are nans in test resp')
-            end
-
+       
         test_pl = pl;
         test_tk = tk;
         test_pos = pos;
-        
-        nin = find(isnan(train_resp));
-        if ~isempty(nin)
-             nin
-             train_resp(nin) = 0;
-%             error('error: there are nans in train resp')
-        end
-        nin = find(isnan(test_resp));
-        if ~isempty(nin)
-            nin
-            test_resp(nin) = 0;
-%             error('error: there are nans in test resp')
-        end
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,train_test,disc_func,plot_on,src);
             dist_all{n} = dist_n;
             dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
@@ -360,7 +319,7 @@ elseif strcmp(cond,'ctrl_mani')
     
 end
 
-function [dist_all,dist_err,hist_all,chist_all,mEr_all,fr_correct,pOL_all,p_all] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,tt,disc_func,plot_on,src)
+function [dist_all,dist_err,hist_all,chist_all,mEr_all,fr_correct,pOL_all,p_all] = run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,tt,disc_func,plot_on,src)
 
 
 num_tests = 1000;
@@ -384,8 +343,8 @@ uL = 10;
 bw=0.1;
 bins = [ 0:bw:uL];
 numbins = size(bins,2);
-train_numtrials = size(train_resp,1);
-test_numtrials = size(test_resp,1);
+train_numtrials = size(train_ph,1);
+test_numtrials = size(test_ph,1);
 
 hist_all = zeros(numbins,3,3);
 chist_all = zeros(numbins,3,3);
@@ -404,8 +363,8 @@ for s = 1:num_tests
         train = randperm(train_numtrials,train_numtrials)';
     end
     
-    S = test_resp(test,:);
-    Y = train_resp(train,:);
+    S = test_ph(test,:);
+    Y = train_ph(train,:);
     class = classify(S,Y,train_pos(train),disc_func);
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
@@ -430,14 +389,11 @@ for s = 1:num_tests
     end
     numtrain = size(train,1);
     shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
-    S = test_resp(test,:);
-    Y = train_resp(train(shuff1),:);
+    S = test_ph(test,:);
+    Y = train_ph(train(shuff1),:);
     all_pos = unique(train_pos);
-    all_pos_ind = 1:length(all_pos);
-    shuff_pos_train = round(min(all_pos_ind) + (max(all_pos_ind)-min(all_pos_ind)).*rand(length(shuff1),1));
-    shuff_pos_test = round(min(all_pos_ind) + (max(all_pos_ind)-min(all_pos_ind)).*rand(length(test),1));
-    shuff_pos_train = all_pos(shuff_pos_train);
-    shuff_pos_test = all_pos(shuff_pos_test);
+    shuff_pos_train = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(shuff1),1));
+    shuff_pos_test = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(test),1));
 %     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
     class = classify(S,Y,shuff_pos_train,disc_func);
 %     actual = test_pos(test,1);
@@ -494,16 +450,13 @@ end
     numtotal(1,1) = length(dist_err(:,1,1));numtotal(1,2) = length(dist_err(:,2,1));
     tw = abs(dist_err(find(dist_err(:,1,1)~=0),1,1));
     binw = min(tw);binm=max(dist_err(:,2,1))+1;
-%     histal = hist(dist_err(:,1,1),[-binm:binw:binm])./numtotal(1,1);
-%     histsh=hist(dist_err(:,2,1),[-binm:binw:binm])./numtotal(1,2)
-    histal = hist(dist_err(:,1,1),unique(dist_err))./numtotal(1,1);
-    histsh=hist(dist_err(:,2,1),unique(dist_err))./numtotal(1,2)
+    histal = hist(dist_err(:,1,1),[-binm:binw:binm])./numtotal(1,1);
+    histsh=hist(dist_err(:,2,1),[-binm:binw:binm])./numtotal(1,2)
 if plot_on
-    figure(h1); subplot(r,c,plotcount);plot(unique(dist_err),histal,'k','linewidth',2); hold on; plot(unique(dist_err),histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
+    figure(h1); subplot(r,c,plotcount);plot([-binm:binw:binm],histal,'k','linewidth',2); hold on; plot([-binm:binw:binm],histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('C.Pr');
 end
-% binnew = [-binm:binw:binm];
-binnew = unique(dist_err);
+binnew = [-binm:binw:binm];
 zerobin = find(binnew ==0);
 fr_correct(1,1,1) = histal(zerobin);
 fr_correct(1,2,1) = histsh(zerobin);
