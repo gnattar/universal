@@ -6,6 +6,7 @@ all_cells{n+i}.sigpeak = pooled_contactCaTrials_locdep{i}.sigpeak;
 all_cells{n+i}.phase = pooled_contactCaTrials_locdep{i}.phase.touchPhase_binned;
 all_cells{n+i}.lightstim = pooled_contactCaTrials_locdep{i}.lightstim;
 all_cells{n+i}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK;
+all_cells{n+i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc;
 % all_cells{n+i}.decoder.NLS = pooled_contactCaTrials_locdep{i}.decoder.NLS;
 end
 n=n+size(pooled_contactCaTrials_locdep,2);
@@ -51,7 +52,20 @@ save('pooled_contactCaTrials_locdep_allcells','pooled_contactCaTrials_locdep');
 all_copy = all_cells;
 rem=[74:88, 102:115];
  pooled_contactCaTrials_locdep (rem) = [];
- save('pooled_contactCaTrials_locdep_133cells','pooled_contactCaTrials_locdep');
+ 
+ for i = 1:size(pooled_contactCaTrials_locdep,2)
+temp = pooled_contactCaTrials_locdep{i}.poleloc;
+pl = unique(temp);
+temp2 =[];
+for p = 1:length(pl)
+ind = find(temp == pl(p));
+temp2(ind) = p;
+end
+pooled_contactCaTrials_locdep{i}.poleloc = temp2';
+% all_cells{i}.decoder.loc = temp2';
+end
+
+ save('pooled_contactCaTrials_locdep_123cells','pooled_contactCaTrials_locdep');
 templ =cellfun(@(x) x.lightstim,pooled_contactCaTrials_locdep,'uni',0);
 tempp =cellfun(@(x) x.loc,pooled_contactCaTrials_locdep,'uni',0);
 
@@ -73,6 +87,8 @@ end
 % tempwave = cellfun(@(x) x(1,2),trials)';min(tempwave)
 minlist = [ 10,14;64,45;25,35;11,13;17 13];
 minlist = [ 15,12;60,49;34,35;19,17;21 16]; %% shuffled
+minlist = [ 18,14;64,45;26,43;19,13;18 17]; %% phase from loc
+
 %%
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)
@@ -91,6 +107,7 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
     pcopy{i}.lightstim = pooled_contactCaTrials_locdep{i}.lightstim(ind_all');
     pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all');
      pcopy{i}.loc = pooled_contactCaTrials_locdep{i}.loc(ind_all'); 
+      pcopy{i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc(ind_all'); 
     pcopy{i}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK(ind_all');
 end
 cells = size(pcopy,2);

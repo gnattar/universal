@@ -406,7 +406,21 @@ for s = 1:num_tests
     
     S = test_resp(test,:);
     Y = train_resp(train,:);
-    class = classify(S,Y,train_pos(train),disc_func);
+%     class = classify(S,Y,train_pos(train),disc_func);
+     Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
+     %regularization
+     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+    minerr = min(min(err))
+    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+    numel(p)
+    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+    [gamma(p) delta(idx)]
+%     Mdl.Gamma = gamma(p);
+%     Mdl.Delta = delta(idx);
+    label = predict(Mdl,S);
+    class = label;
+
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
@@ -438,9 +452,24 @@ for s = 1:num_tests
     shuff_pos_test = round(min(all_pos_ind) + (max(all_pos_ind)-min(all_pos_ind)).*rand(length(test),1));
     shuff_pos_train = all_pos(shuff_pos_train);
     shuff_pos_test = all_pos(shuff_pos_test);
-%     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
-    class = classify(S,Y,shuff_pos_train,disc_func);
-%     actual = test_pos(test,1);
+% % %     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
+% % %     actual = test_pos(test,1);
+%     class = classify(S,Y,shuff_pos_train,disc_func);
+    Mdl = fitcdiscr(Y,shuff_pos_train,'DiscrimType',disc_func);
+     %regularization
+     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+    minerr = min(min(err))
+    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+    numel(p)
+    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+    [gamma(p) delta(idx)]
+%     Mdl.Gamma = gamma(p);
+%     Mdl.Delta = delta(idx);
+    label = predict(Mdl,S);
+    class = label;
+    
+    
     actual = shuff_pos_test;
     dist = sqrt((actual - class).^2);
     dist_shuff (s ,1) = sum(dist)./testsetsize;
@@ -450,7 +479,7 @@ end
 if plot_on
     plotcount =1;
     figure(h1); subplot(r,c,plotcount); plot(dist_shuff,'r','linewidth',2); hold on; axis([0 num_tests 0 uL]);
-    figure(h1); subplot(r,c,plotcount);plot(dist_aligned,'k','linewidth',2); hold on;  title('Position from Ca signal alone'); set(gca,'FontSize',16);plotcount=plotcount+1;
+    figure(h1); subplot(r,c,plotcount);plot(dist_aligned,'k','linewidth',2); hold on;  title('Phase from Ca signal alone'); set(gca,'FontSize',16);plotcount=plotcount+1;
     xlabel('run #');ylabel('mean prediction error (mm)');
 end
 

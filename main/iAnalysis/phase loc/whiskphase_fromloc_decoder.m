@@ -1,14 +1,16 @@
-function [pooled_contactCaTrials_locdep] = whiskloc_fromphase_decoder(pooled_contactCaTrials_locdep,par,cond,str,train_test,pos,disc_func,src,plot_on)
+function [pooled_contactCaTrials_locdep] = whiskphase_fromloc_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos,disc_func,src,plot_on)
 
 %% all cells
-
+% ph=unique(pcopy{1}.phase);
+% [pcopy] = whiskphase_fromloc_decoder(pcopy,cond,str,train_test,pos,disc_func,src,plot_on)
+% [pcopy] = whiskphase_fromloc_decoder(pcopy,'ctrl_mani','PfromL',0,ph,'diaglinear','def',1)
 %[pooled_contactCaTrials_locdep] = whiskloc_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,pos)
 % cond 'ctrl' or 'ctrl_mani'
 % pos pole positions
 % train_test =1 if mani is to be trained with mani trials, =0 if it is to
 % be trained with ctrl trials
 % disc_func 'linear' or 'diagquadratic'
-p = phasebins; 
+p = pos; %[15 13.5 12 10.5 9 7.5];
 num_runs = 2;
 % ol = [.01,1.5];
 ol = [.0005,2.5];
@@ -31,7 +33,7 @@ end
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
     pl = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
-    ph = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+    ph = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
 
 %     resp = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
     temp_wave =abs(tk(:,1));
@@ -111,13 +113,13 @@ elseif strcmp(cond,'ctrl_mani')
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
 %             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-            ph_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+            ph_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
 
         otherwise
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
             pl_all = cell2mat(cellfun(@(x) x.poleloc, pooled_contactCaTrials_locdep,'uniformoutput',0));
 %             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
-            ph_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
+            ph_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
     end
     
     %run ctrl
@@ -136,16 +138,18 @@ elseif strcmp(cond,'ctrl_mani')
     
     numtrials = size(tk,1);
     
-    pl = pl(:,1);
-    [vals,plid,valsid] = unique(pl);
-    pos = p(valsid)';
-    
+    pl = pl(:,:);
+%     [vals,plid,valsid] = unique(pl);
+%     pos = p(valsid)';
+%     if(size(pos,1)==1)
+%         pos = pos';
+%     end
 
-   train_ph = ph; test_ph = ph;
+   train_ph = ph(:,1); test_ph = ph(:,1);
 
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
-    train_pos=pos;test_pos = pos;
+%     train_pos=pos;test_pos = pos;
     
     nin = find(isnan(train_ph));
     if ~isempty(nin)
@@ -157,7 +161,7 @@ elseif strcmp(cond,'ctrl_mani')
     end
     w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,1,disc_func,plot_on,src);
+        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pl,train_tk,test_ph,test_pl,test_tk,1,disc_func,plot_on,src);
         dist_all{n} = dist_n;
         dist_err{n} = dist_err_n;
         hist_all{n} =hist_n;
@@ -217,37 +221,36 @@ elseif strcmp(cond,'ctrl_mani')
     outlier_touches=[];
     tk(outlier_touches,:) = [];
     pl(outlier_touches,:) = [];
-    resp(outlier_touches,:) = []; 
+%     resp(outlier_touches,:) = []; 
     
     numtrials = size(tk,1);
-    pl = pl(:,1);
-    [vals,plid,valsid] = unique(pl);
-    pos = p(valsid)';
+%     [vals,plid,valsid] = unique(pl);
+%     pos = p(valsid)';
     
     if train_test == 1
 
-            train_ph = ph; test_ph = ph;
+            train_ph = ph(:,1); test_ph = ph(:,1);
 
         train_pl = pl; test_pl = pl;
         train_tk = tk; test_tk = tk;
-        train_pos=pos;test_pos = pos;
+%         train_pos=pos;test_pos = pos;
         
         nin = find(isnan(train_ph));
         if ~isempty(nin)
              nin
-             train_resp(nin) = 0;
+             train_pl(nin) = 0;
 %             error('error: there are nans in train resp')
         end
         nin = find(isnan(test_ph));
         if ~isempty(nin)
             nin
-            test_resp(nin) = 0;
+            test_pl(nin) = 0;
 %             error('error: there are nans in test resp')
         end
     
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pl,train_tk,test_ph,test_pl,test_tk,train_test,disc_func,plot_on,src);
             dist_all{n} = dist_n;
             dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
@@ -271,7 +274,7 @@ elseif strcmp(cond,'ctrl_mani')
         test_pos = pos;
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_ph,train_pl,train_tk,test_ph,test_pl,test_tk,train_test,disc_func,plot_on,src);
             dist_all{n} = dist_n;
             dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
@@ -319,7 +322,7 @@ elseif strcmp(cond,'ctrl_mani')
     
 end
 
-function [dist_all,dist_err,hist_all,chist_all,mEr_all,fr_correct,pOL_all,p_all] = run_classify(train_ph,train_pos,train_tk,test_ph,test_pos,test_tk,tt,disc_func,plot_on,src)
+function [dist_all,dist_err,hist_all,chist_all,mEr_all,fr_correct,pOL_all,p_all] = run_classify(train_ph,train_pl,train_tk,test_ph,test_pl,test_tk,tt,disc_func,plot_on,src)
 
 
 num_tests = 1000;
@@ -363,23 +366,24 @@ for s = 1:num_tests
         train = randperm(train_numtrials,train_numtrials)';
     end
     
-    S = test_ph(test,:);
-    Y = train_ph(train,:);
+    S = test_pl(test,:);
+    Y = train_pl(train,:);
 %     class = classify(S,Y,train_pos(train),disc_func);
-     Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
+     Mdl = fitcdiscr(Y,train_ph(train),'DiscrimType',disc_func);
      %regularization
-     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
-    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
-    minerr = min(min(err))
-    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
-    numel(p)
-    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
-    [gamma(p) delta(idx)]
-    Mdl.Gamma = gamma(p);
-    Mdl.Delta = delta(idx);
+%      [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+%     figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+%     minerr = min(min(err))
+%     [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+%     numel(p)
+%     idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+%     [gamma(p) delta(idx)]
+%     numpred(idx)
+%     Mdl.Gamma = gamma(p);
+%     Mdl.Delta = delta(idx);
     label = predict(Mdl,S);
     class = label;
-    actual = test_pos(test,1);
+    actual = test_ph(test,1);
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
     dist_aligned_err{s} =  (actual-class);
@@ -402,29 +406,31 @@ for s = 1:num_tests
     end
     numtrain = size(train,1);
     shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
-    S = test_ph(test,:);
-    Y = train_ph(train(shuff1),:);
-    all_pos = unique(train_pos);
-    shuff_pos_train = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(shuff1),1));
-    shuff_pos_test = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(test),1));
+    S = test_pl(test,:);
+    Y = train_pl(train(shuff1),:);
+    all_ph = unique(train_ph);
+    shuff_ph_train = round(1 + (length(all_ph)-1).*rand(length(shuff1),1));
+    shuff_ph_test = round(1 + (length(all_ph)-1).*rand(length(test),1));
+        shuff_ph_train = all_ph(shuff_ph_train);
+    shuff_ph_test = all_ph(shuff_ph_test);
 % % %     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
 %     class = classify(S,Y,shuff_pos_train,disc_func);
-    Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
+    Mdl = fitcdiscr(Y,train_ph(train),'DiscrimType',disc_func);
     %regularization
-    [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
-    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
-    minerr = min(min(err))
-    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
-    numel(p)
-    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
-    [gamma(p) delta(idx)]
-    Mdl.Gamma = gamma(p);
-    Mdl.Delta = delta(idx);
+%     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+%     figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+%     minerr = min(min(err))
+%     [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+%     numel(p)
+%     idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+%     [gamma(p) delta(idx)]
+%     Mdl.Gamma = gamma(p);
+%     Mdl.Delta = delta(idx);
     
     label = predict(Mdl,S);
     class = label;
 % % %     actual = test_pos(test,1);
-    actual = shuff_pos_test;
+    actual = shuff_ph_test;
     dist = sqrt((actual - class).^2);
     dist_shuff (s ,1) = sum(dist)./testsetsize;
     dist_shuff_err{s} = (actual-class);
@@ -433,7 +439,7 @@ end
 if plot_on
     plotcount =1;
     figure(h1); subplot(r,c,plotcount); plot(dist_shuff,'r','linewidth',2); hold on; axis([0 num_tests 0 uL]);
-    figure(h1); subplot(r,c,plotcount);plot(dist_aligned,'k','linewidth',2); hold on;  title('Position from Ca signal alone'); set(gca,'FontSize',16);plotcount=plotcount+1;
+    figure(h1); subplot(r,c,plotcount);plot(dist_aligned,'k','linewidth',2); hold on;  title('Phase from Location '); set(gca,'FontSize',16);plotcount=plotcount+1;
     xlabel('run #');ylabel('mean prediction error (mm)');
 end
 
@@ -477,13 +483,13 @@ end
     numtotal(1,1) = length(dist_err(:,1,1));numtotal(1,2) = length(dist_err(:,2,1));
     tw = abs(dist_err(find(dist_err(:,1,1)~=0),1,1));
     binw = min(tw);binm=max(dist_err(:,2,1))+1;
-    histal = hist(dist_err(:,1,1),[-binm:binw:binm])./numtotal(1,1);
-    histsh=hist(dist_err(:,2,1),[-binm:binw:binm])./numtotal(1,2)
+    histal = hist(dist_err(:,1,1),unique(dist_err))./numtotal(1,1);
+    histsh=hist(dist_err(:,2,1),unique(dist_err))./numtotal(1,2)
 if plot_on
-    figure(h1); subplot(r,c,plotcount);plot([-binm:binw:binm],histal,'k','linewidth',2); hold on; plot([-binm:binw:binm],histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
+    figure(h1); subplot(r,c,plotcount);plot(unique(dist_err),histal,'k','linewidth',2); hold on; plot(unique(dist_err),histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('C.Pr');
 end
-binnew = [-binm:binw:binm];
+binnew = unique(dist_err);
 zerobin = find(binnew ==0);
 fr_correct(1,1,1) = histal(zerobin);
 fr_correct(1,2,1) = histsh(zerobin);
@@ -496,5 +502,5 @@ if plot_on
     tb = text(2,.8, num2str(fr_correct(1,2,1)),'FontSize',12);set(tb,'color','r');
 end
 if ~plotjustcasig
-  
+
 end

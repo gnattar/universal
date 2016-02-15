@@ -406,7 +406,22 @@ for s = 1:num_tests
     
     S = test_resp(test,:);
     Y = train_resp(train,:);
-    class = classify(S,Y,train_pos(train),disc_func);
+%     class = classify(S,Y,train_pos(train),disc_func);
+    
+     Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
+     %regularization
+     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+    minerr = min(min(err))
+    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+    numel(p)
+    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+    [gamma(p) delta(idx)]
+%     Mdl.Gamma = gamma(p);
+%     Mdl.Delta = delta(idx);
+    label = predict(Mdl,S);
+    class = label;
+    
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
@@ -435,9 +450,25 @@ for s = 1:num_tests
     all_pos = unique(train_pos);
     shuff_pos_train = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(shuff1),1));
     shuff_pos_test = round(min(all_pos) + (max(all_pos)-min(all_pos)).*rand(length(test),1));
-%     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
-    class = classify(S,Y,shuff_pos_train,disc_func);
-%     actual = test_pos(test,1);
+% % %     class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
+% % %     actual = test_pos(test,1);
+%     class = classify(S,Y,shuff_pos_train,disc_func);
+
+   Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
+     %regularization
+     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+    minerr = min(min(err))
+    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+    numel(p)
+    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+    [gamma(p) delta(idx)]
+%     Mdl.Gamma = gamma(p);
+%     Mdl.Delta = delta(idx);
+    label = predict(Mdl,S);
+    class = label;
+    
+
     actual = shuff_pos_test;
     dist = sqrt((actual - class).^2);
     dist_shuff (s ,1) = sum(dist)./testsetsize;

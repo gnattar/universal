@@ -41,10 +41,11 @@ end
 if strcmp(cond,'ctrl' )
     tk = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
     pl = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
+    
     resp = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
 %     temp_wave =abs(tk(:,1));
 %     outlier_touches = find((temp_wave>ol(2))|(temp_wave<ol(1)));
-%     
+%     outlier_touches=[];
 %     tk(outlier_touches,:) = [];
 %     pl(outlier_touches,:) = [];
 %     resp(outlier_touches,:) = [];   
@@ -246,14 +247,22 @@ elseif strcmp(cond,'ctrl_mani')
     if train_test == 1
 
             train_resp = resp; test_resp = resp;
-    if ~isempty(nin)
-        nin
-    end
-    nin = find(isnan(test_resp));
-    if ~isempty(nin)
-        nin
-        error('error: there are nans in test resp')
-    end
+
+            nin = find(isnan(train_resp));
+            if ~isempty(nin)
+                nin
+                train_resp(nin) = 0;
+                %             error('error: there are nans in train resp')
+            end
+            nin = find(isnan(test_resp));
+            if ~isempty(nin)
+                nin
+                test_resp(nin) = 0;
+                %             error('error: there are nans in test resp')
+            end
+            
+            
+            
         train_pl = pl; test_pl = pl;
         train_tk = tk; test_tk = tk;
         train_pos=pos;test_pos = pos;
@@ -278,6 +287,12 @@ elseif strcmp(cond,'ctrl_mani')
         
 
             test_resp = resp;
+            nin = find(isnan(test_resp));
+            if ~isempty(nin)
+                nin
+                test_resp(nin) = 0;
+                %             error('error: there are nans in test resp')
+            end
 
         test_pl = pl;
         test_tk = tk;
@@ -391,7 +406,21 @@ for s = 1:num_tests
     
     S = test_resp(test,:);
     Y = train_resp(train,:);
-    class = classify(S,Y,train_pos(train),disc_func);
+%     class = classify(S,Y,train_pos(train),disc_func);
+     Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType','diagLinear');
+     %regularization
+     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+    minerr = min(min(err))
+    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+    numel(p)
+    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+    [gamma(p) delta(idx)]
+%     Mdl.Gamma = gamma(p);
+%     Mdl.Delta = delta(idx);
+    label = predict(Mdl,S);
+    class = label;
+
     actual = test_pos(test,1);
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
