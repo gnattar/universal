@@ -484,7 +484,7 @@ end
     tw = abs(dist_err(find(dist_err(:,1,1)~=0),1,1));
     binw = min(tw);binm=max(dist_err(:,2,1))+1;
     histal = hist(dist_err(:,1,1),unique(dist_err))./numtotal(1,1);
-    histsh=hist(dist_err(:,2,1),unique(dist_err))./numtotal(1,2)
+    histsh=hist(dist_err(:,2,1),unique(dist_err))./numtotal(1,2);
 if plot_on
     figure(h1); subplot(r,c,plotcount);plot(unique(dist_err),histal,'k','linewidth',2); hold on; plot(unique(dist_err),histsh,'r','linewidth',2); set(gca,'FontSize',16); axis([-binm binm 0 1]);plotcount=plotcount+1;
     xlabel('Prediction error (mm)');ylabel('C.Pr');

@@ -1,8 +1,8 @@
 function [pooled_contactCaTrials_locdep] = whiskphase_dependence_decoder(pooled_contactCaTrials_locdep,cond,str,train_test,phasebins,disc_func,src,plot_on)
 p = phasebins; 
 par = 'sigpeak'
-num_runs = 2;
-
+num_runs = 1;
+num_tests = 100;
 ol = [.0005,2.5];
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
@@ -60,11 +60,11 @@ if strcmp(cond,'ctrl' )
     train_pl = pl; test_pl = pl;
     train_tk = tk; test_tk = tk;
     train_pos=pos;test_pos = pos;
-    
+    mdl_list = cell(num_tests,1);
     
      w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src,mdl_list,num_tests);
         dist_all{n} = dist_n;
         dist_err{n} = dist_err_n;
         hist_all{n} =hist_n;
@@ -174,9 +174,10 @@ elseif strcmp(cond,'ctrl_mani')
         nin
         error('error: there are nans in test resp')
     end
+    mdl_list = cell(num_tests,1);
     w = waitbar(0, 'Start ctrl LDA runs  ...');
     for n = 1:num_runs
-        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on,src);
+        [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n,numpred,mdl_list]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,1,disc_func,plot_on,src,mdl_list, num_tests);
         dist_all{n} = dist_n;
         dist_err{n} = dist_err_n;
         hist_all{n} =hist_n;
@@ -185,6 +186,8 @@ elseif strcmp(cond,'ctrl_mani')
         fr_correct{n} = fr_correct_n;
         pOL_all{n} =pOL_n;
         p_all{n} =p_n;
+         num_predictors{n} = numpred;
+        mdls{n} = mdl_list;
         waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
     end
     close (w);
@@ -223,7 +226,8 @@ elseif strcmp(cond,'ctrl_mani')
     summary.ctrl.sFrCor(1,1,1) = std(cellfun(@(x) x(1,1,1), fr_correct)')./sqrt(num_runs);
     summary.ctrl.mFrCor(1,2,1) = mean(cellfun(@(x) x(1,2,1), fr_correct)');
     summary.ctrl.sFrCor(1,2,1) = std(cellfun(@(x) x(1,2,1), fr_correct)')./sqrt(num_runs);
-    
+    summary.ctrl.num_predictors = num_predictors;
+    summary.ctrl.mdl_list = mdls;
     %run mani
     
     tk = tk_all(l_trials == 1,:);
@@ -247,7 +251,7 @@ elseif strcmp(cond,'ctrl_mani')
     if train_test == 1
 
             train_resp = resp; test_resp = resp;
-
+             mdl_list = cell(num_tests,1);
             nin = find(isnan(train_resp));
             if ~isempty(nin)
                 nin
@@ -269,7 +273,7 @@ elseif strcmp(cond,'ctrl_mani')
         
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n,numpred,mdl_list]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src,mdl_list, num_tests);
             dist_all{n} = dist_n;
             dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
@@ -278,6 +282,8 @@ elseif strcmp(cond,'ctrl_mani')
             fr_correct{n} = fr_correct_n;
             pOL_all{n} =pOL_n;
             p_all{n} =p_n;
+            num_predictors{n} = numpred;
+            mdls{n} = mdl_list;
             waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
         end
         close (w);
@@ -312,7 +318,7 @@ elseif strcmp(cond,'ctrl_mani')
         end
          w = waitbar(0, 'Start mani LDA runs  ...');
         for n = 1:num_runs
-            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src);
+            [dist_n,dist_err_n,hist_n,chist_n,mEr_n,fr_correct_n,pOL_n,p_n,numpred,mdl_list]=run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,train_test,disc_func,plot_on,src,mdl_list, num_tests);
             dist_all{n} = dist_n;
             dist_err{n} = dist_err_n;
             hist_all{n} =hist_n;
@@ -321,6 +327,8 @@ elseif strcmp(cond,'ctrl_mani')
             fr_correct{n} = fr_correct_n;
             pOL_all{n} =pOL_n;
             p_all{n} =p_n;
+            num_predictors{n} = numpred;
+            mdls{n} = mdl_list;
             waitbar((n+1)/(num_runs), w,[num2str(n) '/' num2str(num_runs)]);
         end
         close(w);
@@ -355,15 +363,17 @@ elseif strcmp(cond,'ctrl_mani')
     summary.mani.sFrCor(1,1,1) = std(cellfun(@(x) x(1,1,1), fr_correct)')./sqrt(num_runs);
     summary.mani.mFrCor(1,2,1) = mean(cellfun(@(x) x(1,2,1), fr_correct)');
     summary.mani.sFrCor(1,2,1) = std(cellfun(@(x) x(1,2,1), fr_correct)')./sqrt(num_runs);
+    summary.mani.num_predictors = num_predictors;
+    summary.mani.mdl_list = mdls;
     summary.info =  [str ' ' tag];
     save([str ' ' disc_func ' '  tag ' decoder results'],'summary');
     
 end
 
-function [dist_all,dist_err,hist_all,chist_all,mEr_all,fr_correct,pOL_all,p_all] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,tt,disc_func,plot_on,src)
+function [dist_all,dist_err,hist_all,chist_all,mEr_all,fr_correct,pOL_all,p_all,numpred,mdl_list] = run_classify(train_resp,train_pos,train_tk,test_resp,test_pos,test_tk,tt,disc_func,plot_on,src,mdl_list, num_tests)
 
 
-num_tests = 1000;
+% num_tests = 1000;
 dist_aligned = zeros(num_tests,1);
 dist_shuff = zeros(num_tests,1);
 dist=zeros(num_tests,1);
@@ -394,7 +404,8 @@ mEr_all = zeros(1,3,3);
 pOL_all= zeros(1,3,3);
 p_all = zeros(1,3,3);
 %% predicting locations from CaSig alone
-for s = 1:num_tests
+parfor s = 1:num_tests
+     ['--test run aligned--' num2str(s)]
     test = randperm(test_numtrials,testsetsize)';
     if tt
         train = setxor([1:test_numtrials],test);
@@ -406,18 +417,23 @@ for s = 1:num_tests
     
     S = test_resp(test,:);
     Y = train_resp(train,:);
+    if tt
 %     class = classify(S,Y,train_pos(train),disc_func);
      Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
      %regularization
-     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',0);
     figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
-    minerr = min(min(err))
+    minerr = min(min(err));
     [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
-    numel(p)
+    numel(p);
     idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
-    [gamma(p) delta(idx)]
-%     Mdl.Gamma = gamma(p);
-%     Mdl.Delta = delta(idx);
+        [va,tempid] = min(numpred(idx));
+        [gamma(p) delta(idx)];
+        Mdl.Gamma = gamma(p(tempid));
+        Mdl.Delta = delta(idx(tempid));  
+    else
+         Mdl = mdl_list{s};
+    end
     label = predict(Mdl,S);
     class = label;
 
@@ -425,6 +441,12 @@ for s = 1:num_tests
     dist = sqrt((actual - class).^2);
     dist_aligned (s,1,1) = sum(dist)./testsetsize;
     dist_aligned_err{s} =  (actual-class);
+    if tt
+        dist_aligned_numpred {s} = va;
+    else
+        dist_aligned_numpred {s} = size(S,2);
+    end
+    mdl_list{s} = Mdl;
 %      figure(dummy); plot(actual); hold on; plot(class,'r');hold off;
 end
 % dummy = figure;
@@ -433,7 +455,8 @@ if plot_on
     h1=figure('position', [1000, sc(4), sc(3)/1.5, sc(4)/4], 'color','w');
 end
 %% shuffled control for CaSig alone
-for s = 1:num_tests
+parfor s = 1:num_tests
+        ['--test run shuff --' num2str(s)]
     test = randperm(test_numtrials,testsetsize)';
     if tt
         train = setxor([1:test_numtrials],test);
@@ -457,13 +480,13 @@ for s = 1:num_tests
 %     class = classify(S,Y,shuff_pos_train,disc_func);
     Mdl = fitcdiscr(Y,shuff_pos_train,'DiscrimType',disc_func);
      %regularization
-     [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
-    figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
-    minerr = min(min(err))
-    [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
-    numel(p)
-    idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
-    [gamma(p) delta(idx)]
+%      [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',24,'NumDelta',24,'Verbose',1);
+%     figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+%     minerr = min(min(err))
+%     [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+%     numel(p)
+%     idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
+%     [gamma(p) delta(idx)]
 %     Mdl.Gamma = gamma(p);
 %     Mdl.Delta = delta(idx);
     label = predict(Mdl,S);
@@ -511,7 +534,7 @@ hist_all(:,1,1) = hista;
 hist_all(:,2,1) = hists;
 chist_all(:,1,1) = chista;
 chist_all(:,2,1) = chists;
-
+numpred(:,1) = dist_aligned_numpred;
 mEr_all(1,1,1) = prctile(dist_aligned,50);
 mEr_all(1,2,1) = prctile(dist_shuff,50);
 if plot_on
@@ -545,196 +568,5 @@ if plot_on
     tb = text(2,.8, num2str(fr_correct(1,2,1)),'FontSize',12);set(tb,'color','r');
 end
 if ~plotjustcasig
-    %% predicting locations from Kappa alone
-    dist_aligned = zeros(num_tests,1);
-    dist_shuff = zeros(num_tests,1);
-    dist=zeros(num_tests,1);
-    
-    for s = 1:num_tests
-        test = randperm(test_numtrials,testsetsize)';
-        if tt
-            train = setxor([1:test_numtrials],test);
-        else
-            train = randperm(train_numtrials,train_numtrials)';
-        end
-        S = test_tk(test,1);
-        Y = train_tk(train,1);
-        class = classify(S,Y,train_pos(train),disc_func);
-        actual = test_pos(test,1);
-        dist = sqrt((actual - class).^2);
-        dist_aligned (s,1) = sum(dist)./testsetsize;
-        % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
-    end
-    
-    
-    %% shuffled control for Kappa alone
-    for s = 1:num_tests
-        test = randperm(test_numtrials,testsetsize)';
-        if tt
-            train = setxor([1:test_numtrials],test);
-        else
-            train = randperm(train_numtrials,train_numtrials)';
-        end
-        
-        numtrain = size(train,1);
-        shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
-        S = test_tk(test,1);
-        Y = train_tk(train(shuff1),1);
-        class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
-        actual = test_pos(test,1);
-        dist = sqrt((actual - class).^2);
-        dist_shuff (s ,1) = sum(dist)./testsetsize;
-        % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
-    end
-    if plot_on
-        figure(h1); subplot(r,c,plotcount); plot(dist_shuff,'r','linewidth',2); hold on; axis([0 num_tests 0 uL]);
-        figure(h1); subplot(r,c,plotcount);plot(dist_aligned,'k','linewidth',2); hold on;  title('Position from Touch mag alone'); axis([0 1000 0 10]); set(gca,'FontSize',16);plotcount=plotcount+1;
-        xlabel('run #');ylabel('mean prediction error (mm)');
-        hista=hist(dist_aligned,[0:bw:uL])./num_tests;hists=hist(dist_shuff,[0:bw:uL])./num_tests;
-        figure(h1); subplot(3,3,5);plot([0:bw:uL],hista,'k','linewidth',2); hold on; plot([0:bw:uL],hists,'r','linewidth',2);  set(gca,'FontSize',16);
-        xlabel('Prediction error (mm)');ylabel('Pr');
-    end
-    [h,p] = kstest2([dist_aligned,dist_shuff]);
-    p_all(1,1,2) = p;
-    temp = min([hista;hists]);
-    pOL_all(1,1,2) = sum(temp);
-    if plot_on
-        tb = text(2,.175, [ 'p = ' num2str(sum(temp))],'FontSize',12);set(tb,'color','k');
-    end
-    chista = cumsum(hista);chists = cumsum(hists);
-    if plot_on
-        figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],chista,'k','linewidth',2); hold on; plot([0:bw:uL],chists,'r','linewidth',2);  set(gca,'FontSize',16);axis([0 uL 0 1]);plotcount=plotcount+1;
-        xlabel('Prediction error (mm)');ylabel('C.Pr');
-    end
-    dist_all(:,1,2) = dist_aligned;
-    dist_all(:,2,2) = dist_shuff;
-    hist_all(:,1,2) = hista;
-    hist_all(:,2,2) = hists;
-    chist_all(:,1,2) = chista;
-    chist_all(:,2,2) = chists;
-    
-    mEr_all(1,1,2) = prctile(dist_aligned,50);
-    mEr_all(1,2,2) = prctile(dist_shuff,50);
-    if plot_on
-        tb = text(2,.6, num2str(mEr_all(1,1,2)),'FontSize',12);set(tb,'color','k');
-        tb = text(2,.8, num2str(mEr_all(1,2,2)),'FontSize',12);set(tb,'color','r');
-    end
-    %% Predicting locations from Ca/Ka aligned test sets assuming linear relationship
-    dist_aligned = zeros(num_tests,1);
-    dist_shuff = zeros(num_tests,1);
-    dist=zeros(num_tests,1);
-    
-    for s = 1:num_tests
-        test = randperm(test_numtrials,testsetsize)';
-        if tt
-            train = setxor([1:test_numtrials],test);
-        else
-            train = randperm(train_numtrials,train_numtrials)';
-        end
-        S = test_resp(test,:)./test_tk(test,:);
-        Y = train_resp(train,:)./train_tk(train,:);
-        class = classify(S,Y,train_pos(train),disc_func);
-        actual = test_pos(test,1);
-        dist = sqrt((actual - class).^2);
-        dist_aligned (s ,1) = sum(dist)./testsetsize;
-        % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
-    end
-    
-    %% shuffled control location from Ca/Ka , locations are shuffled
-    for s = 1:num_tests
-        test = randperm(test_numtrials,testsetsize)';
-        if tt
-            train = setxor([1:test_numtrials],test);
-        else
-            train = randperm(train_numtrials,train_numtrials)';
-        end
-        numtrain = size(train,1);
-        shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
-        S = test_resp(test,:)./test_tk(test,:);
-        Y = train_resp(train(shuff1),:)./train_tk(train(shuff1),:);
-        class = classify(S,Y,train_pos(train(shuff2),1),disc_func);
-        actual = test_pos(test,1);
-        dist = sqrt((actual - class).^2);
-        dist_shuffpos (s ,1) = sum(dist)./testsetsize;
-        % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
-    end
-    if plot_on
-        figure(h1); subplot(3,2,5); plot(dist_shuffpos,'r','linewidth',2); hold on;
-    end
-    
-    %% shuffled control location from Ca/Ka , Ka are shuffled
-    for s = 1:num_tests
-        test1 = randperm(test_numtrials,testsetsize)';
-        test2 = randperm(test_numtrials,testsetsize)';
-        if tt
-            train = setxor([1:test_numtrials],test);
-        else
-            train = randperm(train_numtrials,train_numtrials)';
-        end
-        numtrain = size(train,1);
-        shuff3 = randperm(numtrain,numtrain)';shuff4 = randperm(numtrain,numtrain)';
-        S = test_resp(test1,:)./test_tk(test2,:);
-        Y = train_resp(train(shuff3),:)./train_tk(train(shuff4),:);
-        class = classify(S,Y,train_pos(train(shuff3),1),disc_func);
-        actual = test_pos(test1,1);
-        dist = sqrt((actual - class).^2);
-        dist_shufftk (s ,1) = sum(dist)./testsetsize;
-        % figure(dummy);plot(actual); hold on; plot(class,'r');hold off;
-    end
-    if plot_on
-        figure(h1);subplot(r,c,plotcount);plot(dist_shufftk,'color',[.85 .5 0 ],'linewidth',2); hold on; axis([0 num_tests 0 uL]);
-        figure(h1);subplot(r,c,plotcount); plot(dist_aligned,'k','linewidth',2); hold on;  title('Position from Ca/Touch'); hold on; axis([0 1000 0 10]); set(gca,'FontSize',16);plotcount=plotcount+1;
-        xlabel('run #');ylabel('mean prediction error (mm)');
-    end
-    hista=hist(dist_aligned,[0:bw:uL])./num_tests;hists=hist(dist_shuffpos,[0:bw:uL])./num_tests;histstk=hist(dist_shufftk,[0:bw:uL])./num_tests;
-    if plot_on
-        figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],hista,'k','linewidth',2); hold on; plot([0:bw:uL],hists,'r','linewidth',2); hold on; plot([0:bw:uL],histstk,'color',[.85 .5 0 ],'linewidth',2);  set(gca,'FontSize',16);plotcount=plotcount+1;
-        xlabel('Prediction error (mm)');ylabel('count');
-    end
-    [h,p] = kstest2([dist_aligned,dist_shuffpos]);
-    p_all(1,1,3) = p;
-    temp = min([hista;hists]);
-    pOL_all(1,1,3) = sum(temp);
-    if plot_on
-        tb = text(2,.175, ['p = ' num2str(sum(temp))],'FontSize',12);set(tb,'color','r');
-    end
-    [h,p] = kstest2([dist_aligned,dist_shufftk]);
-    p_all(1,2,3) = p;
-    temp = min([hista;histstk]);
-    pOL_all(1,2,3) = sum(temp);
-    if plot_on
-        tb = text(2,.15, ['p = ' num2str(sum(temp))],'FontSize',12);set(tb,'color',[.85 .5 0 ]);
-    end
-    chista = cumsum(hista);chists = cumsum(hists);chisttk = cumsum(histstk);
-    if plot_on
-        figure(h1); subplot(r,c,plotcount);plot([0:bw:uL],chista,'k','linewidth',2); hold on; plot([0:bw:uL],chists,'r','linewidth',2);plot([0:bw:uL],chisttk,'color',[.85 .5 0 ],'linewidth',2);  set(gca,'FontSize',16);axis([0 uL 0 1]);
-        xlabel('Prediction error (mm)');ylabel('C.Pr');
-    end
-    dist_all(:,1,3) = dist_aligned;
-    dist_all(:,2,3) = dist_shuffpos;
-    dist_all(:,3,3) = dist_shufftk;
-    hist_all(:,1,3) = hista;
-    hist_all(:,2,3) = hists;
-    hist_all(:,3,3) = histstk;
-    chist_all(:,1,3) = chista;
-    chist_all(:,2,3) = chists;
-    chist_all(:,3,3) = chisttk;
-    
-    mEr_all(1,1,3) = prctile(dist_aligned,50);
-    mEr_all(1,2,3) = prctile(dist_shuffpos,50);
-    mEr_all(1,2,3) = prctile(dist_shufftk,50);
-    % [h,p] = kstest([dist_aligned,dist_shuffpos]);
-    % p_all(1,1,3) = p;
-    % temp = min([hista;hists]);
-    % pOL_all(1,1,3) = sum(temp);
-    %
-    % [h,p] = kstest([dist_aligned,dist_shufftk]);
-    % p_all(1,2,3) = p;
-    % temp = min([hista;histstk]);
-    % pOL_all(1,2,3) = sum(temp);
-    if plot_on
-        tb = text(2,.6, num2str(mEr_all(1,1,3)),'FontSize',12);set(tb,'color','k');
-        tb = text(2,.8, num2str(mEr_all(1,2,3)),'FontSize',12);set(tb,'color','r');
-    end
-    
+ 
 end
