@@ -1,4 +1,4 @@
-function [fr_correct] = run_fitcdiscr(train_X,train_Y,test_X,test_Y,tt,disc_func,plot_on,mdl_list, num_tests,txt)
+function [fr_correct] = run_whiskparams_decoder(train_X,train_Y,test_X,test_Y,tt,disc_func,plot_on,mdl_list, num_tests,txt)
 
 
 dist_aligned = zeros(num_tests,1);
@@ -36,13 +36,13 @@ for s = 1:num_tests
     S = test_X(test,:);
     Y = train_X(train,:);
 %     if tt
-%          Mdl = fitcdiscr(Y,train_Y(train),'DiscrimType',disc_func);
-        class = classify(S,Y,train_Y(train),disc_func);
+         Mdl = fitcdiscr(Y,train_Y(train),'DiscrimType',disc_func);
+%         class = classify(S,Y,train_Y(train),disc_func);
 %     else
 %          Mdl = mdl_list{s};
 %     end
-%     label = predict(Mdl,S);
-%     class = label;
+    label = predict(Mdl,S);
+    class = label;
 
     actual = test_Y(test,1);
     dist = sqrt((actual - class).^2);
@@ -75,12 +75,13 @@ for s = 1:num_tests
     shuff_Y_train = all_Y(shuff_Y_train);
     shuff_Y_test = all_Y(shuff_Y_test);
 
-%     Mdl = fitcdiscr(Y,shuff_Y_train,'DiscrimType',disc_func);
-%     label = predict(Mdl,S);
-%     class = label;  
-        class = classify(S,Y,train_Y(train),disc_func);
+    Mdl = fitcdiscr(Y,shuff_Y_train,'DiscrimType',disc_func);
+    label = predict(Mdl,S);
+    class = label;  
+%         class = classify(S,Y,train_Y(train),disc_func);
 
-    actual = shuff_Y_test;
+%     actual = shuff_Y_test;
+   actual = test_Y(test,1);
     dist = sqrt((actual - class).^2);
     dist_shuff (s ,1) = sum(dist)./testsetsize;
     dist_shuff_err{s} = (actual-class);

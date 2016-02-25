@@ -151,13 +151,13 @@ set(gca,'Fontsize',16);
 
 
 %% if regularized 
-temp = cell2mat(summary.ctrl.num_predictors{1});
-minpred= zeros(length(temp),1);
-runid= zeros(length(temp),1);
+temp = cell2mat(summary.ctrl.num_predictors{1})
+minpred= zeros(length(temp),1)
+runid= zeros(length(temp),1)
 for n = 1: length(temp)
 [v,i] = (min(temp));
 minpred(n) = v;
-runid(n) = i;
+runid(n) = i
 temp(i) = nan;
 end
 
@@ -174,10 +174,10 @@ frCor=err_coll./50;
 frCor_sorted = frCor(runid);
 frCor_sorted = (frCor(runid))';
 
-figure;plot(minpred,frCor_sorted,'o');
-[P,S] = polyfit(minpred,frCor_sorted,1);
-Y=polyval(P,[1:123]);
-hold on ; plot([1:123],Y,'b');
+figure;plot(minpred,frCor_sorted,'o')
+[P,S] = polyfit(minpred,frCor_sorted,1)
+Y=polyval(P,[1:123])
+hold on ; plot([1:123],Y,'b')
 
 inds = [(1:50:5000)]';
 inds(:,2) = inds(:,1)+49;
@@ -192,8 +192,8 @@ frCor_sorted = frCor(runid);
 frCor_sorted = (frCor(runid))';
 
 
-summary.ctrl.avg_numpred = mean(cell2mat(summary.ctrl.num_predictors{1,1}));
-mean(cell2mat(summary.ctrl.num_predictors{1,1}))
+summary.ctrl.avg_numpred = mean(cell2mat(summary.ctrl.num_predictors{1,1}))
+
 plot(minpred,frCor_sorted,'ro');
 [P,S] = polyfit(minpred,frCor_sorted,1);
 Y=polyval(P,[1:123]);
@@ -205,11 +205,11 @@ saveas(gca,'FrCor numpred','fig');
 set(gcf,'PaperPositionMode','manual');
 print( gcf ,'-depsc2','-painters','-loose','FrCor numpred');
 save('All_cells_phase diaglinear ctrltrain decoder results','summary')
-
+clear
 
 save('minpred','minpred');
 save('runid','runid');
 save('frCor_sorted','frCor_sorted');
 
-clear
+
 

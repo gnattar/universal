@@ -1,4 +1,4 @@
-function [data] = plot_normResp_phase(data,light,txt)
+function [data] = plot_normResp_theta(data,light,txt)
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 collected_ctrl = nan(200,11);
@@ -6,9 +6,9 @@ collected_mani = nan(200,11);
 template = [-5:1:5];
 numpts  = zeros(1,11);count =1;inccount = 0;n=0;
 siginds = [];
-for s = 1:size(data.meanResp_phase_ctrl,2)
+for s = 1:size(data.meanResp_theta_ctrl,2)
     
-    mR_c = data.meanResp_phase_ctrl{s};
+    mR_c = data.meanResp_theta_ctrl{s};
     m_2_n = min(mR_c')';
     m_2_n = repmat(m_2_n,1,size(mR_c,2));
     norm_mR_c = (mR_c-m_2_n)./m_2_n;
@@ -24,7 +24,7 @@ for s = 1:size(data.meanResp_phase_ctrl,2)
     xphid = xphid - prefphid;
 
     if light %% mean for each condition within that set
-        mR_m = data.meanResp_phase_mani{s};
+        mR_m = data.meanResp_theta_mani{s};
         m_2_n = min(mR_c')';
         m_2_n = repmat(m_2_n,1,size(mR_c,2));
         norm_mR_m = (mR_m - m_2_n)./m_2_n;
@@ -124,14 +124,14 @@ m_PCh = round([nanmean(PCh(siginds==1)), nanstd(PCh(siginds==1))].*10000)./100;
 m_NPCh = round([nanmean(NPCh(siginds==1)),nanstd(NPCh(siginds==1))].*10000)./100;
 
 
-     subplot(1,2,1);title(['Phase tuning ctrl ' txt],'Fontsize',16)
+     subplot(1,2,1);title(['theta tuning ctrl ' txt],'Fontsize',16)
      e1=errorbar(template,m_C,s_C,'ko-'); set(e1,'linewidth',2); axis([-5 5 -.5 3])
      phaxis = [-5:5].*72;
 set(gca,'Xtick',[-5 : 5]);
 set(gca,'Xticklabel',phaxis);
  text(2,2,['n=' num2str(count-1) ' cells'])
      if light
-    subplot(1,2,2);title(['Phase tuning mani ' txt],'Fontsize',16)
+    subplot(1,2,2);title(['theta tuning mani ' txt],'Fontsize',16)
      e2=errorbar(template,m_M,s_M,'ro-'); set(e2,'linewidth',2); axis([-5 5 -.5 3])
 %      tb= text(0,2.8,['FrCh P' num2str(m_PCh(1)) '+/-' num2str(m_PCh(2))]);
      tb= text(0,2.8,['FrCh P' num2str(m_PCh(1)) '+/-' num2str(m_PCh(2))]);
@@ -146,7 +146,7 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
-fnam = ['normRespPhase Tuning' txt];
+fnam = ['normResptheta Tuning' txt];
 saveas(gcf,[pwd,filesep,fnam],'fig');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
@@ -191,7 +191,7 @@ ms_l=round([mean(PPI_L_list(inds,:)) std(PPI_L_list(inds,:))]*100)./100;
 tb = text(2,10,[num2str(ms_nl(1)) '+/-' num2str(ms_nl(2))]);
 tb = text(2,5,[num2str(ms_l(1)) '+/-' num2str(ms_l(2))]);set(tb,'color','r');
 set(gca,'yscale','lin');
-xlabel('norm Resp Amp at Pref Phase','Fontsize',16);title(['Hist norm Resp Amp at Pref Phase ' txt],'Fontsize',16);
+xlabel('norm Resp Amp at Pref theta','Fontsize',16);title(['Hist norm Resp Amp at Pref theta ' txt],'Fontsize',16);
 set(gca,'Fontsize',16);
 
 tempnl = PNPI_NL_list;
@@ -203,7 +203,7 @@ if light
     hl=hist(templ(inds,1),bins); plot(bins,hl,'r');
 end
 set(gca,'yscale','lin');
-xlabel('norm Resp Amp at NonPref Phase','Fontsize',16);title(['Hist norm Resp Amp at NonPref Phase ' txt],'Fontsize',16);
+xlabel('norm Resp Amp at NonPref theta','Fontsize',16);title(['Hist norm Resp Amp at NonPref theta ' txt],'Fontsize',16);
 set(gca,'Fontsize',16);
 ms_nl = round([nanmean(PNPI_NL_list(inds,:)) nanstd(PNPI_L_list(inds,:))]*100)./100;
 ms_l=round([nanmean(PNPI_L_list(inds,:)) nanstd(PNPI_L_list(inds,:))]*100)./100;
@@ -217,7 +217,7 @@ set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
 
 
-fnam = ['normRespPhase Hist' txt];
+fnam = ['normResptheta Hist' txt];
 saveas(gcf,[pwd,filesep,fnam],'fig');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 

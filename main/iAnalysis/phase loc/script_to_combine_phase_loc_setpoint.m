@@ -1,25 +1,43 @@
+
 % script_to_combine_phase_loc_setpoint
 
 
-% % files = dir('*_pooled_contactCaTrials_phasedep.mat')
-% % for fn = 2:10
-% %     f = files(fn).name;
-% %     load(f)
-% % temp=pooled_contactCaTrials_locdep{1}.touchSetpoint;
-% % Setpoint_bins = linspace(-30,30,6);
-% % [num edges mid id] = histcn(temp,Setpoint_bins);
-% % Setpoint_mid = mid{1};
-% % for s = 1: length(Setpoint_mid)
-% %     tempid = find(id == s);
-% %     setpoint_binned (tempid,1) = Setpoint_mid(s);
-% % end
-% % 
-% % for d= 1:size(pooled_contactCaTrials_locdep,2)
-% % pooled_contactCaTrials_locdep{d}.setpoint_binned = setpoint_binned;
-% % end
-% % 
-% % save(f,'pooled_contactCaTrials_locdep')
-% % 
+files = dir('*_pooled_contactCaTrials_phasedep.mat')
+for fn = 1:10
+    setpoint_binned=[];
+    theta_binned=[];
+    f = files(fn).name
+    load(f)
+    temp=pooled_contactCaTrials_locdep{1}.touchSetpoint;
+    Setpoint_bins = linspace(-30,30,6);
+    
+    [num edges mid id] = histcn(temp,Setpoint_bins);
+    Setpoint_mid = mid{1};
+    for s = 1: length(Setpoint_mid)
+        tempid = find(id == s);
+        setpoint_binned (tempid,1) = Setpoint_mid(s);
+        
+    end
+    
+    temp=pooled_contactCaTrials_locdep{1}.Theta_at_contact_Mean;
+%     Theta_bins = linspace(-30,30,6);
+    Theta_bins = [-30 -20 -10 0 20 40]
+    [num edges mid id] = histcn(temp,Theta_bins);
+    Theta_mid = mid{1};
+    for s = 1: length(Theta_mid)
+        tempid = find(id == s);
+        theta_binned (tempid,1) = Theta_mid(s);
+    end
+    
+    
+    for d= 1:size(pooled_contactCaTrials_locdep,2)
+        pooled_contactCaTrials_locdep{d}.setpoint_binned = setpoint_binned;
+        pooled_contactCaTrials_locdep{d}.theta_binned = theta_binned;
+    end
+    
+    save(f,'pooled_contactCaTrials_locdep')
+    clear pooled_contactCaTrials_locdep
+end
 
 files = dir('*_pooled_contactCaTrials_phasedep.mat')
 
@@ -33,7 +51,7 @@ all_cells{fn}.lightstim = pooled_contactCaTrials_locdep{i}.lightstim;
 all_cells{fn}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK;
 all_cells{fn}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc;
 all_cells{fn}.setpoint = pooled_contactCaTrials_locdep{i}.setpoint_binned;
-
+all_cells{fn}.theta = pooled_contactCaTrials_locdep{i}.theta_binned;
  end
 
 %% make loc into ids [1:4]
@@ -85,9 +103,9 @@ end
 
 % removing  positions to bring to 4
 all_copy = all_cells;
-for i = 10
+for i = [10]
 temp = all_cells{i}.loc;
-rem = find(temp==2)%| temp==5);
+rem = find(temp==2 | temp==5);
 all_copy{i}.sigpeak(rem)=[];
 all_copy{i}.phase(rem)=[];
 all_copy{i}.lightstim(rem)=[];
@@ -95,6 +113,7 @@ all_copy{i}.re_totaldK(rem)=[];
 all_copy{i}.poleloc(rem)=[];
 all_copy{i}.loc(rem)=[];
 all_copy{i}.setpoint(rem)=[];
+all_copy{i}.theta(rem)=[];
 end
 pooled_contactCaTrials_locdep = all_copy;
 save('pooled_contactCaTrials_locdep_allsess','pooled_contactCaTrials_locdep');
@@ -135,6 +154,7 @@ pcopy{1}.re_totaldK=cell2mat(cellfun(@(x) x.re_totaldK,pooled_contactCaTrials_lo
 pcopy{1}.poleloc=cell2mat(cellfun(@(x) x.poleloc,pooled_contactCaTrials_locdep,'uni',0)');
 pcopy{1}.loc=cell2mat(cellfun(@(x) x.loc,pooled_contactCaTrials_locdep,'uni',0)');
 pcopy{1}.setpoint=cell2mat(cellfun(@(x) x.setpoint,pooled_contactCaTrials_locdep,'uni',0)');
+pcopy{1}.theta=cell2mat(cellfun(@(x) x.theta,pooled_contactCaTrials_locdep,'uni',0)');
  save('pcopy','pcopy');
  %%%%%%%%%%%%%%%
  

@@ -1,4 +1,4 @@
-function [data]=plot_normResp_loc(data)
+function [data]=plot_normResp_loc(data,light,txt)
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 collected_ctrl = nan(200,11);
@@ -149,11 +149,11 @@ end
 m_PCh = round([nanmean(PCh(siginds==1)), nanstd(PCh(siginds==1))].*10000)./100;
  m_NPCh = round([nanmean(NPCh(siginds==1)),nanstd(NPCh(siginds==1))].*10000)./100;
  
-     subplot(1,2,1);title('Loc tuning ctrl')
+     subplot(1,2,1);title(['Loc tuning ctrl' txt])
      e1=errorbar(template,m_C,s_C,'ko-'); set(e1,'linewidth',2);axis([-5 5 0 3])
      set(gca,'Xtick',[-5 : 5]);
  text(2,2,['n=' num2str(count-1) ' cells'])
-    subplot(1,2,2);title('Loc tuning mani')
+    subplot(1,2,2);title(['Loc tuning mani' txt])
      e2=errorbar(template,m_M,s_M,'ro-');  set(e2,'linewidth',2);axis([-5 5 0 3])
      tb= text(0,2.8,['FrCh P' num2str(m_PCh(1)) '+/-' num2str(m_PCh(2))]);
      tb= text(0,2.5,['FrCh NP' num2str(m_NPCh(1)) '+/-' num2str(m_NPCh(2))]);
@@ -164,7 +164,7 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperPosition',[1 1 24 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
-fnam = 'normRespLoc Tuning';
+fnam = ['normRespLoc Tuning' txt];
 saveas(gcf,[pwd,filesep,fnam],'fig');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
@@ -212,7 +212,7 @@ ms_l=round([mean(LPI_L_list(inds,:)) std(LPI_L_list(inds,:))]*100)./100;
 tb = text(2,10,[num2str(ms_nl(1)) '+/-' num2str(ms_nl(2))]);
 tb = text(2,5,[num2str(ms_l(1)) '+/-' num2str(ms_l(2))]);set(tb,'color','r');
 set(gca,'yscale','lin');
-xlabel('norm Resp Amp at Pref Loc','Fontsize',16);title('Hist norm Resp Amp at Pref Loc','Fontsize',16);
+xlabel('norm Resp Amp at Pref Loc','Fontsize',16);title(['Hist norm Resp Amp at Pref Loc' txt],'Fontsize',16);
 set(gca,'Fontsize',16);
 
  tempnl = LNPI_NL_list;
@@ -224,7 +224,7 @@ if light
     hl=hist(templ(inds,1),bins); plot(bins,hl,'r');
 end
 set(gca,'yscale','lin');
-xlabel('norm Resp Amp at NonPref Loc','Fontsize',16);title('Hist norm Resp Amp at NonPref Loc','Fontsize',16);
+xlabel('norm Resp Amp at NonPref Loc','Fontsize',16);title(['Hist norm Resp Amp at NonPref Loc' txt],'Fontsize',16);
 set(gca,'Fontsize',16);
 ms_nl = round([nanmean(LNPI_NL_list(inds,:)) nanstd(LNPI_L_list(inds,:))]*100)./100;
 ms_l=round([nanmean(LNPI_L_list(inds,:)) nanstd(LNPI_L_list(inds,:))]*100)./100;
@@ -237,7 +237,7 @@ set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
 
 
-fnam = 'normRespLoc Hist';
+fnam = ['normRespLoc Hist' txt];
 saveas(gcf,[pwd,filesep,fnam],'fig');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
 
