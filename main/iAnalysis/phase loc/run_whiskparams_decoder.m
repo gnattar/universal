@@ -36,12 +36,12 @@ for s = 1:num_tests
     S = test_X(test,:);
     Y = train_X(train,:);
 %     if tt
-         Mdl = fitcdiscr(Y,train_Y(train),'DiscrimType',disc_func);
-%         class = classify(S,Y,train_Y(train),disc_func);
+%          Mdl = fitcdiscr(Y,train_Y(train),'DiscrimType',disc_func);
+        label = classify(S,Y,train_Y(train),disc_func);
 %     else
 %          Mdl = mdl_list{s};
 %     end
-    label = predict(Mdl,S);
+%     label = predict(Mdl,S);
     class = label;
 
     actual = test_Y(test,1);
@@ -68,18 +68,26 @@ for s = 1:num_tests
     shuff1 = randperm(numtrain,numtrain)';shuff2 = randperm(numtrain,numtrain)';
     S = test_X(test,:);
     Y = train_X(train(shuff1),:);
+    all_X = unique(train_X);
+    all_X_ind = 1:length(all_X);
     all_Y = unique(train_Y);
     all_Y_ind = 1:length(all_Y);
     shuff_Y_train = round(min(all_Y_ind) + (max(all_Y_ind)-min(all_Y_ind)).*rand(length(shuff1),1));
     shuff_Y_test = round(min(all_Y_ind) + (max(all_Y_ind)-min(all_Y_ind)).*rand(length(test),1));
     shuff_Y_train = all_Y(shuff_Y_train);
     shuff_Y_test = all_Y(shuff_Y_test);
+    
+    shuff_X_train = round(min(all_X_ind) + (max(all_X_ind)-min(all_X_ind)).*rand(length(shuff1),1));
+    shuff_X_test = round(min(all_X_ind) + (max(all_X_ind)-min(all_X_ind)).*rand(length(test),1));
+    shuff_X_train = all_X(shuff_X_train);
+    shuff_X_test = all_X(shuff_X_test);
 
-    Mdl = fitcdiscr(Y,shuff_Y_train,'DiscrimType',disc_func);
-    label = predict(Mdl,S);
-    class = label;  
+%     Mdl = fitcdiscr(Y,shuff_Y_train,'DiscrimType',disc_func);
+%     Mdl = fitcdiscr(shuff_X_train,shuff_Y_train,'DiscrimType',disc_func);
+%     label = predict(Mdl,shuff_X_test);
+%     class = label;  
 %         class = classify(S,Y,train_Y(train),disc_func);
-
+    class = classify(shuff_X_test,shuff_X_train,shuff_Y_train,disc_func);
 %     actual = shuff_Y_test;
    actual = test_Y(test,1);
     dist = sqrt((actual - class).^2);

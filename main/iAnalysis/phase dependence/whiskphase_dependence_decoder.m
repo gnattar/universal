@@ -2,7 +2,7 @@ function [pooled_contactCaTrials_locdep] = whiskphase_dependence_decoder(pooled_
 p = phasebins; 
 par = 'sigpeak'
 num_runs = 1;
-num_tests = 100;
+num_tests =100;
 ol = [.0005,2.5];
 if strcmp(cond,'ctrl' )
     l_trials= pooled_contactCaTrials_locdep{1}.lightstim;
@@ -116,8 +116,8 @@ elseif strcmp(cond,'ctrl_mani')
     switch src
         case 'def'
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
-%                 pl_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
+                pl_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
 %         case 'LAD'
 %             tk_all = cell2mat(cellfun(@(x) x.decoder.LAD.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));

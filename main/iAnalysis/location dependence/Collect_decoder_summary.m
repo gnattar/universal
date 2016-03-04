@@ -149,67 +149,67 @@ title('Fraction Correct ','Fontsize',16)
 set(gca,'Fontsize',16);
 %  
 
-
-%% if regularized 
-temp = cell2mat(summary.ctrl.num_predictors{1});
-minpred= zeros(length(temp),1);
-runid= zeros(length(temp),1);
-for n = 1: length(temp)
-[v,i] = (min(temp));
-minpred(n) = v;
-runid(n) = i;
-temp(i) = nan;
-end
-
-
-inds = [(1:50:5000)]';
-inds(:,2) = inds(:,1)+49;
-err_all = summary.ctrl.dist_err{1,1}(:,1);
-for i = 1:100
-temp = err_all(inds(i,1):inds(i,2));
-frc= sum(temp==0);
-err_coll(i) = frc;
-end
-frCor=err_coll./50;
-frCor_sorted = frCor(runid);
-frCor_sorted = (frCor(runid))';
-
-figure;plot(minpred,frCor_sorted,'o');
-[P,S] = polyfit(minpred,frCor_sorted,1);
-Y=polyval(P,[1:123]);
-hold on ; plot([1:123],Y,'b');
-
-inds = [(1:50:5000)]';
-inds(:,2) = inds(:,1)+49;
-err_all = summary.mani.dist_err{1,1}(:,1);
-for i = 1:100
-temp = err_all(inds(i,1):inds(i,2));
-frc= sum(temp==0);
-err_coll(i) = frc;
-end
-frCor=err_coll./50;
-frCor_sorted = frCor(runid);
-frCor_sorted = (frCor(runid))';
-
-
-summary.ctrl.avg_numpred = mean(cell2mat(summary.ctrl.num_predictors{1,1}));
-mean(cell2mat(summary.ctrl.num_predictors{1,1}))
-plot(minpred,frCor_sorted,'ro');
-[P,S] = polyfit(minpred,frCor_sorted,1);
-Y=polyval(P,[1:123]);
-hold on ; plot([1:123],Y,'r');
-title('Fraction Correct vs Numpred','fontsize',16);
-text(100,.6, ['No. ' num2str(summary.ctrl.avg_numpred)]);
-
-saveas(gca,'FrCor numpred','fig');
-set(gcf,'PaperPositionMode','manual');
-print( gcf ,'-depsc2','-painters','-loose','FrCor numpred');
-save('All_cells_phase diaglinear ctrltrain decoder results','summary')
-
-
-save('minpred','minpred');
-save('runid','runid');
-save('frCor_sorted','frCor_sorted');
-
-clear
+% 
+% %% if regularized 
+% temp = cell2mat(summary.ctrl.num_predictors{1});
+% minpred= zeros(length(temp),1);
+% runid= zeros(length(temp),1);
+% for n = 1: length(temp)
+% [v,i] = (min(temp));
+% minpred(n) = v;
+% runid(n) = i;
+% temp(i) = nan;
+% end
+% 
+% 
+% inds = [(1:50:5000)]';
+% inds(:,2) = inds(:,1)+49;
+% err_all = summary.ctrl.dist_err{1,1}(:,1);
+% for i = 1:100
+% temp = err_all(inds(i,1):inds(i,2));
+% frc= sum(temp==0);
+% err_coll(i) = frc;
+% end
+% frCor=err_coll./50;
+% frCor_sorted = frCor(runid);
+% frCor_sorted = (frCor(runid))';
+% 
+% figure;plot(minpred,frCor_sorted,'o');
+% [P,S] = polyfit(minpred,frCor_sorted,1);
+% Y=polyval(P,[1:123]);
+% hold on ; plot([1:123],Y,'b');
+% 
+% inds = [(1:50:5000)]';
+% inds(:,2) = inds(:,1)+49;
+% err_all = summary.mani.dist_err{1,1}(:,1);
+% for i = 1:100
+% temp = err_all(inds(i,1):inds(i,2));
+% frc= sum(temp==0);
+% err_coll(i) = frc;
+% end
+% frCor=err_coll./50;
+% frCor_sorted = frCor(runid);
+% frCor_sorted = (frCor(runid))';
+% 
+% 
+% summary.ctrl.avg_numpred = mean(cell2mat(summary.ctrl.num_predictors{1,1}));
+% mean(cell2mat(summary.ctrl.num_predictors{1,1}))
+% plot(minpred,frCor_sorted,'ro');
+% [P,S] = polyfit(minpred,frCor_sorted,1);
+% Y=polyval(P,[1:123]);
+% hold on ; plot([1:123],Y,'r');
+% title('Fraction Correct vs Numpred','fontsize',16);
+% text(100,.6, ['No. ' num2str(summary.ctrl.avg_numpred)]);
+% 
+% saveas(gca,'FrCor numpred','fig');
+% set(gcf,'PaperPositionMode','manual');
+% print( gcf ,'-depsc2','-painters','-loose','FrCor numpred');
+% save('All_cells_phase diaglinear ctrltrain decoder results','summary')
+% 
+% 
+% save('minpred','minpred');
+% save('runid','runid');
+% save('frCor_sorted','frCor_sorted');
+% 
+% clear
 

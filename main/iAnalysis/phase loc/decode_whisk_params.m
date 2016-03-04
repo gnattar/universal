@@ -2,9 +2,9 @@
  % [pcopy] = decode_whisk_params(pcopy,10,'linear',1,0,'LfromTh') 
 num_runs = 1;
 str = cond;
-tk_all = pcopy{1}.re_totaldK;
+% tk_all = pcopy{1}.re_totaldK;
  pl_all = pcopy{1}.loc;
-setpoint_all =pcopy{1}.setpoint;
+% setpoint_all =pcopy{1}.setpoint;
 phase_all =pcopy{1}.phase;
 theta_all = pcopy{1}.theta;
 lightstim_all =pcopy{1}.lightstim;
@@ -12,9 +12,9 @@ lightstim_all =pcopy{1}.lightstim;
 
 l_trials = lightstim_all;
 %% ctrl 
-tk =tk_all(l_trials == 0,:);
+% tk =tk_all(l_trials == 0,:);
  pl = pl_all(l_trials == 0,:);
-setpoint =setpoint_all(l_trials == 0,:);
+% setpoint =setpoint_all(l_trials == 0,:);
 theta =theta_all(l_trials == 0,:);
 phase =phase_all(l_trials == 0,:);
 lightstim =lightstim_all(l_trials == 0,:);
@@ -39,7 +39,7 @@ switch cond
 end
 
  mdl_list = cell(num_tests,1);
- disc_func= 'diagLinear';
+%  disc_func= 'diagLinear';
  tt=1;
 
  for n = 1:num_runs
@@ -65,9 +65,9 @@ end
      end
     close all;
 %% mani
-tk =tk_all(l_trials == 1,:);
+% tk =tk_all(l_trials == 1,:);
  pl = pl_all(l_trials == 1,:);
-setpoint =setpoint_all(l_trials == 1,:);
+% setpoint =setpoint_all(l_trials == 1,:);
 theta =theta_all(l_trials == 1,:);
 phase =phase_all(l_trials == 1,:);
 lightstim =lightstim_all(l_trials == 1,:);
@@ -83,13 +83,13 @@ if train_test == 1
             train_X = phase; test_X = phase;
             train_Y = pl; test_Y = pl;
         case {'LfromTh'}
-            txt='ThfromL';
-            train_X = pl; test_X = pl;
-            train_Y = theta; test_Y = theta;
-        case {'ThfromL'}
-            txt='LfromTh'
+            txt='LfromTh';
             train_X = theta; test_X = theta;
             train_Y = pl; test_Y = pl;
+        case {'ThfromL'}
+            txt='ThfromL'
+            train_X = pl; test_X =pl;
+            train_Y = theta; test_Y = theta;
     end
     
  
@@ -111,13 +111,13 @@ else
             test_X = phase;
             test_Y = pl;
         case {'LfromTh'}
-            txt='ThfromL';
-            test_X = pl;
-            test_Y = theta;
-        case {'ThfromL'}
-            txt='LfromTh'
+            txt='LfromTh';
             test_X = theta;
             test_Y = pl;
+        case {'ThfromL'}
+            txt='ThfromL'
+            test_X = pl;
+            test_Y = theta;
     end
 
  for n = 1:num_runs

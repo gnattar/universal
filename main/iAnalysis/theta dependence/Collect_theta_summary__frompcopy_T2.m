@@ -24,34 +24,34 @@ while(count>=0)
         norm =(mR_NL-min(mR_NL))./min(mR_NL);
         normResp_theta_ctrl{count}(d,:) = norm;
         [v,i] = max(norm);
-        PPI_ctrl{count}(d,1) = norm(i);
+        TPI_ctrl{count}(d,1) = norm(i);
         NPid = setxor([1:length(norm)],i);
-        PNPI_ctrl{count}(d,:) = norm(NPid); 
-        PPid_ctrl{count}(d,1) = i;
-        PPh_ctrl{count}(d,1) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.touchTheta_mid(i);
-        NPPid_ctrl{count}(d,:) =  NPid;
+        TNPI_ctrl{count}(d,:) = norm(NPid); 
+        PTid_ctrl{count}(d,1) = i;
+        PTh_ctrl{count}(d,1) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.touchTheta_mid(i);
+        NPTid_ctrl{count}(d,:) =  NPid;
         
-        if isfield( pooled_contactCaTrials_locdep{dends(d)}.thetadep,'PPI_L')
+        if isfield( pooled_contactCaTrials_locdep{dends(d)}.thetadep,'TPI_L')
         meanResp_theta_mani{count}(d,:) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.mResp_L;
         mR_L = pooled_contactCaTrials_locdep{dends(d)}.thetadep.mResp_L;
         norm= (mR_L-min(mR_L))./min(mR_L);
         normResp_theta_mani{count}(d,:) =norm;
         [v,i] = max(norm);
-        PPI_mani{count}(d,1) = norm(i);
+        TPI_mani{count}(d,1) = norm(i);
         NPid = setxor([1:length(norm)],i);
-        PNPI_mani{count}(d,:) = norm(NPid); 
+        TNPI_mani{count}(d,:) = norm(NPid); 
         
-        PPid_mani{count}(d,1) = i;
-        NPPid_mani{count}(d,:) =  NPid;
+        PTid_mani{count}(d,1) = i;
+        NPTid_mani{count}(d,:) =  NPid;
 %         
 %         [v,i]=max(pooled_contactCaTrials_locdep{d}.theta.normResp_L);
-        PPh_mani{count}(d,1) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.touchTheta_mid(i);
-        NPPh_mani{count}(d,:) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.touchTheta_mid(NPid);
+        PTh_mani{count}(d,1) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.touchTheta_mid(i);
+        NPTh_mani{count}(d,:) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.touchTheta_mid(NPid);
 
         FrCh{count}(d,:) = (mR_L-mR_NL)./mR_NL;
 %         FrCh{count}(d,:) = (PPI_mani{count}(d,1)-PPI_ctrl{count}(d,1))./PPI_ctrl{count}(d,1);
 
-        PrefCh{count}(d,:) = PPid_mani{count}(d,1) - PPid_ctrl{count}(d,1);
+        PrefCh{count}(d,:) = PTid_mani{count}(d,1) - PTid_ctrl{count}(d,1);
         CellID{count}(d,:) = dends(d);
         end
         
@@ -62,20 +62,20 @@ end
 
 data.meanResp_theta_ctrl=meanResp_theta_ctrl;
 data.normResp_theta_ctrl=normResp_theta_ctrl;
-data.PPI_ctrl=PPI_ctrl;
-data.PNPI_ctrl=PNPI_ctrl;
-data.PPid_ctrl=PPid_ctrl;
-data.NPPid_ctrl=NPPid_ctrl;
-data.PPh_ctrl=PPh_ctrl;
-if isfield( pooled_contactCaTrials_locdep{1}.thetadep,'PPI_L')   
+data.TPI_ctrl=TPI_ctrl;
+data.TNPI_ctrl=TNPI_ctrl;
+data.PTid_ctrl=PTid_ctrl;
+data.NPTid_ctrl=NPTid_ctrl;
+data.PTh_ctrl=PTh_ctrl;
+if isfield( pooled_contactCaTrials_locdep{1}.thetadep,'TPI_L')   
     data.meanResp_theta_mani=meanResp_theta_mani;
     data.normResp_theta_mani=normResp_theta_mani;
-    data.PPI_mani=PPI_mani;
-    data.PNPI_mani=PNPI_mani;
-    data.PPid_mani=PPid_mani;
-     data.NPPid_mani=NPPid_mani;
-    data.PPh_mani=PPh_mani;
-    data.NPPh_mani=NPPh_mani;
+    data.TPI_mani=TPI_mani;
+    data.TNPI_mani=TNPI_mani;
+    data.PTid_mani=PTid_mani;
+     data.NPTid_mani=NPTid_mani;
+    data.PTh_mani=PTh_mani;
+    data.NPTh_mani=NPTh_mani;
     
     data.FrCh=FrCh;
     data.PrefCh=PrefCh;

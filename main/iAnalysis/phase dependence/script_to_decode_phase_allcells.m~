@@ -157,13 +157,13 @@ minlist = [ 15,12;60,49;34,35;19,17;21 16]; %% shuffled
 minlist = [ 18,14;64,45;26,43;19,13;18 17]; %% phase from loc
 minlist =  [ 5,7;49,53;18,20;7,5];  %% for theta
 % minlist =  [19,34;50,48;36,24;13,13];  %% for common deltatheta
-minlist =  [ 10,14;48,30;25,31;11,8;17 13]; %% for phase with theta Run4 not used
-minlist = [ 10,14;48,30;25,31;11,6;17 13]; % run 4
+minlist =  [ 10,14;48,30;25,31;11,13;17 13]; %% for phase with theta Run4
+%%
 minlist = [ 10,14;64,45;25,35;11,13;17 13];
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)
     ind_all = []; count =0;
-    for p = 1:5
+    for p = 1:4
     lind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 1);
     sel_lind= randperm(length(lind),minlist(p,1));
     nlind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 0);
@@ -176,9 +176,7 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
     pcopy{i}.sigpeak = pooled_contactCaTrials_locdep{i}.sigpeak(ind_all');
     pcopy{i}.lightstim = pooled_contactCaTrials_locdep{i}.lightstim(ind_all');
     pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all');
-%       pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta(ind_all');
-            pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta_binned_new(ind_all');
-
+      pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta(ind_all');
      pcopy{i}.loc = pooled_contactCaTrials_locdep{i}.loc(ind_all'); 
 %       pcopy{i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc(ind_all'); 
     pcopy{i}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK(ind_all');

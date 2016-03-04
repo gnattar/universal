@@ -1,4 +1,4 @@
-function [data,obj] = calc_whiskingparams(wSigTrials,sorted_CaTrials)
+function [data,obj] = calc_whiskingparams(wSigTrials,sorted_CaTrials,str)
 
 numtrials =size(wSigTrials,2);
 
@@ -143,7 +143,7 @@ obj.theta=temptheta;
 obj.amp=tempamp;
 save ('data','data')
 save('obj','obj')
-%%
+%% Touch Amp
 tA_L=cellfun(@(x) x.touchAmp,data(obj.lT),'uni',0);
 tA_NL=cellfun(@(x) x.touchAmp,data(obj.nlT),'uni',0);
 
@@ -195,7 +195,7 @@ t= temp_l{i};
 trl = ttrl_l{i}+max(trial_nl);
 scatter(trl,t,60,autumn(length(t)),'filled'); hold on;
 end
-title('Touch Amp sorted by time')
+title(['Touch Amp sorted by time' str])
 saveas(gca,'TouchAmp','fig');
 %%%
 
@@ -232,17 +232,23 @@ end
 end
 subplot(1,2,1);
 hold on;
-e1=errorbar(nanmean(tA_nl),nanstd(tA_nl),'bo-')
+e1=errorbar(nanmean(tA_nl),nanstd(tA_nl)./sqrt(sum(~isnan(tA_nl))),'bo-');
+axis([0 20 -5 20]);
 subplot(1,2,2);
 hold on;
-e2=errorbar(nanmean(tA_l),nanstd(tA_l),'ro-')
-suptitle('Touch Amp Evolution')
+e2=errorbar(nanmean(tA_l),nanstd(tA_l)./sqrt(sum(~isnan(tA_l))),'ro-')
+suptitle(['Touch Amp Evolution' str])
+axis([0 20 -5 20]);
 saveas(gca,'TouchAmp Evolution','fig');
 print( gcf ,'-depsc2','-painters','-loose',['TouchAmp Evolution']);
 
 figure;
-e1=errorbar(nanmean(tA_nl),nanstd(tA_nl),'bo-');hold on;
-e2=errorbar(nanmean(tA_l),nanstd(tA_l),'ro-');
+e1=errorbar(nanmean(tA_nl),nanstd(tA_nl)./sqrt(sum(~isnan(tA_nl))),'ko-');hold on;
+e2=errorbar(nanmean(tA_l),nanstd(tA_l)./sqrt(sum(~isnan(tA_l))),'ro-');
+suptitle(['Touch Amp Evolution' str]);
+ axis([0 20 0 10]);
+saveas(gca,'TouchAmp Evolution NL L','fig');
+print( gcf ,'-depsc2','-painters','-loose',['TouchAmp Evolution NL L']);
 
 %%
  temp_l=cellfun(@(x) x.preAmp,data(obj.lT),'uni',0);
