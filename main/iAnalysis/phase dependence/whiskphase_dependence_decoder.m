@@ -204,7 +204,10 @@ elseif strcmp(cond,'ctrl_mani')
         set(gcf, 'PaperSize', [10,24]);
         set(gcf,'PaperPositionMode','auto');
         pause(.5);
+        try
         suptitle([str ' ' disc_func ' CTRL' tag]);
+        catch
+        end
         %     print( gcf ,'-depsc2','-painters','-loose',[str ' ' disc_func ' CTRL' tag]);
         saveas(gcf,[str ' ' disc_func  ' CTRL' tag ],'fig');
         saveas(gcf,[str ' ' disc_func  ' CTRL' tag ],'jpg');
@@ -428,8 +431,8 @@ parfor s = 1:num_tests
         %     class = classify(S,Y,train_pos(train),disc_func);
         Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
         %regularization
-        [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',30,'NumDelta',30,'Verbose',0);
-        
+        [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',25,'NumDelta',30,'Verbose',0);
+
         [msglast, msgidlast] = lastwarn;
         if strcmp(msgidlast,'stats:cvpartition:KFoldMissingGrp')
             warnings{s}=1;
@@ -441,11 +444,20 @@ parfor s = 1:num_tests
         warning(wm) % turn display of all warnings on
         wm = warning('on','all')
         %     figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+        ids = find(numpred <.1 * max(max(numpred))); %% ensures at least 20% of predictors
+        numpred(ids)=nan;delta(ids) = nan; err(ids) = nan;
         minerr = min(min(err));
-        [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+%         [p q] = find(err < minerr + .025); % 1e-4 Subscripts of err producing minimal error
+        [p q]= find(err < prctile(reshape(err,size(err,1)*size(err,2),1),5));
         numel(p);
         idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
-        [va,tempid] = min(numpred(idx));
+        ideal_numpred=round(median(numpred(idx)));
+        [va,tempid] = min(abs(numpred(idx) - ideal_numpred));
+        if ( length(tempid)>1)
+            tempid = tempid(1);
+        end
+        va = numpred(idx(tempid)) ;
+%         [va,tempid] = min(numpred(idx));x
         [gamma(p) delta(idx)];
         Mdl.Gamma = gamma(p(tempid));
         Mdl.Delta = delta(idx(tempid));

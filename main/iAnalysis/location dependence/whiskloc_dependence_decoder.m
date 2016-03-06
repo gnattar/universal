@@ -442,10 +442,16 @@ parfor s = 1:num_tests
         wm = warning('on','all');
         %     figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
         minerr = min(min(err));
-        [p q] = find(err < minerr + 1e-4); % Subscripts of err producing minimal error
+        [p q] = find(err < minerr + 0.025); % 1e-4Subscripts of err producing minimal error
         numel(p);
         idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
-        [va,tempid] = min(numpred(idx));
+                ideal_numpred=round(median(numpred(idx)));
+        [va,tempid] = min(abs(numpred(idx) - ideal_numpred));
+        if ( length(tempid)>1)
+            tempid = tempid(1);
+        end
+        va = numpred(idx(tempid)) ;
+%         [va,tempid] = min(numpred(idx));
         [gamma(p) delta(idx)];
         Mdl.Gamma = gamma(p(tempid));
         Mdl.Delta = delta(idx(tempid));

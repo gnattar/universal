@@ -159,7 +159,7 @@ minlist =  [ 5,7;49,53;18,20;7,5];  %% for theta
 % minlist =  [19,34;50,48;36,24;13,13];  %% for common deltatheta
 minlist =  [ 10,14;48,30;25,31;11,8;17 13]; %% for phase with theta Run4 not used
 minlist = [ 10,14;48,30;25,31;11,6;17 13]; % run 4
-minlist = [ 10,14;64,45;25,35;11,13;17 13];
+minlist = [ 10,14;64,45;25,31;11,8;17 13];
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)
     ind_all = []; count =0;
