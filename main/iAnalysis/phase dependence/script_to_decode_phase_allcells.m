@@ -13,6 +13,11 @@ for fn = 1:10
             all_cells{n+i}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK;
             all_cells{n+i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc;
              all_cells{n+i}.theta = pooled_contactCaTrials_locdep{i}.theta_binned;
+             all_cells{n+i}.mousename = pooled_contactCaTrials_locdep{i}.mousename;
+             all_cells{n+i}.sessionname = pooled_contactCaTrials_locdep{i}.sessionname;
+             all_cells{n+i}.reg_fov = [pooled_contactCaTrials_locdep{i}.reg pooled_contactCaTrials_locdep{i}.fov];
+             all_cells{n+i}.dend = pooled_contactCaTrials_locdep{i}.dend;
+             all_cells{n+i}.CellID = n+i;
 %             all_cells{n+i}.theta = pooled_contactCaTrials_locdep{i}.Theta_at_contact_Mean;
             % all_cells{n+i}.decoder.NLS = pooled_contactCaTrials_locdep{i}.decoder.NLS;
         end
@@ -56,22 +61,22 @@ end
 % % % %% session 8 remove theta 1
 % % % %% session 9 4 theta already
 % % % %% session 10 remove 3
-%% session 1 remove theta 1
-%% sessions 3 :5  4 theta already
-%% session 6 remove theta 4
-%% session 7 remove theta 1
-%% session 8 remove theta 1
-%% session 9 4 theta already
-%% session 10 remove 3
+% % % % %% session 1 remove theta 1
+% % % % %% sessions 3 :5  4 theta already
+% % % % %% session 6 remove theta 4
+% % % % %% session 7 remove theta 1
+% % % % %% session 8 remove theta 1
+% % % % %% session 9 4 theta already
+% % % % %% session 10 remove 3
 
 %% [1:12,89:101,102:115] remove 1
 %% [13:24,74:88] remove 4
 %% [131:152] remove 3
 
 all_copy = all_cells;
-for i = [131:152]
+for i = [1:12]
 temp = all_copy{i}.loc;
-rem = find(temp==2 | temp==5);
+rem = find(temp==1)% | temp==5);
 all_copy{i}.sigpeak(rem)=[];
 all_copy{i}.poleloc(rem)=[];
 all_copy{i}.lightstim(rem)=[];
@@ -82,7 +87,7 @@ all_copy{i}.theta(rem)=[];
 end
 
 for i = 1:size(all_copy,2)
-temp = all_copy{i}.theta;
+temp = all_copy{i}.theta_binned_new;
 pl = unique(temp);
 temp2 =[];
 for p = 1:length(pl)
@@ -157,13 +162,14 @@ minlist = [ 15,12;60,49;34,35;19,17;21 16]; %% shuffled
 minlist = [ 18,14;64,45;26,43;19,13;18 17]; %% phase from loc
 minlist =  [ 5,7;49,53;18,20;7,5];  %% for theta
 % minlist =  [19,34;50,48;36,24;13,13];  %% for common deltatheta
+minlist =  [12,17;23,15;40,30;41,42];  %% for glob deltatheta run2, run3
 minlist =  [ 10,14;48,30;25,31;11,8;17 13]; %% for phase with theta Run4 not used
 minlist = [ 10,14;48,30;25,31;11,6;17 13]; % run 4
-minlist = [ 10,14;64,45;25,31;11,8;17 13];
+minlist = [ 10,14;64,45;25,31;11,8;17 13]; % runs 5 and 6
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)
     ind_all = []; count =0;
-    for p = 1:5
+    for p = 1:size(minlist,1)
     lind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 1);
     sel_lind= randperm(length(lind),minlist(p,1));
     nlind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 0);
@@ -182,6 +188,11 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
      pcopy{i}.loc = pooled_contactCaTrials_locdep{i}.loc(ind_all'); 
 %       pcopy{i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc(ind_all'); 
     pcopy{i}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK(ind_all');
+    pcopy{i}.mousename = pooled_contactCaTrials_locdep{i}.mousename;
+     pcopy{i}.sessionname = pooled_contactCaTrials_locdep{i}.sessionname;
+      pcopy{i}.reg_fov = pooled_contactCaTrials_locdep{i}.reg_fov;
+     pcopy{i}.dend = pooled_contactCaTrials_locdep{i}.dend;   
+         pcopy{i}.CellID = pooled_contactCaTrials_locdep{i}.CellID;   
 end
 cells = size(pcopy,2);
 numrem = cells - 123;

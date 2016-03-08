@@ -392,6 +392,7 @@ parfor s = 1:num_tests
         Mdl = fitcdiscr(Y,train_pos(train),'DiscrimType',disc_func);
         va = size(S,2);
         %regularization
+         wm = warning('off','all'); 
         [err,gamma,delta,numpred] = cvshrink(Mdl,'NumGamma',30,'NumDelta',30,'Verbose',0);
         
         [msglast, msgidlast] = lastwarn;
@@ -405,8 +406,12 @@ parfor s = 1:num_tests
         warning(wm) % turn display of all warnings on
         wm = warning('on','all')
         %     figure; plot(err,numpred,'k.');xlabel('Error rate');ylabel('Number of predictors');
+        ids = find(numpred <.1 * max(max(numpred))); %% ensures at least 10% of predictors
+        numpred(ids)=nan;delta(ids) = nan; err(ids) = nan;
         minerr = min(min(err));
-        [p q] = find(err < minerr + .025); % 1e-4 Subscripts of err producing minimal error
+%         [p q] = find(err < minerr + .025); % 1e-4 Subscripts of err producing minimal error
+        [p q]= find(err<= prctile(reshape(err,size(err,1)*size(err,2),1),5));
+        
         numel(p);
         idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
         ideal_numpred=round(median(numpred(idx)));

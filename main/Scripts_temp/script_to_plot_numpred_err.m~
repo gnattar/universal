@@ -21,6 +21,7 @@ light =1;[data] = plot_normResp_theta(data,1,r,'self_norm');
 load ('All_cells_phase diaglinear ctrltrain decoder results.mat');
 count=zeros(123,1);
 inds={};
+clc
 for m=1:100
 Temp_coeffs = summary.ctrl.mdl_list{1}{m}.DeltaPredictor;
 Delta_crit = summary.ctrl.mdl_list{1}{m}.Delta;
@@ -41,36 +42,37 @@ light =1;[data] = plot_normResp_theta(data,1,r,'ctrl_norm');
 
 r=['contrib cells self norm'];
 dends = [1:123];
-
+% [data] = Collect_phase_summary__frompcopy_T2(dends,r);
+% light =1;[data] = plot_normResp_phase(data,1,r);
 [data] = Collect_theta_summary__frompcopy_T2(dends,r,'self_norm');
 light =1;[data] = plot_normResp_theta(data,1,r,'self_norm');
 
-% 
-% 
-% m=94;
-% mkdir (['R' num2str(m) ' ' num2str(minpred(find(runid==m))) ' cells'])
-%  % runid with desired numpred
-% 
-% dends = find(summary.ctrl.mdl_list{1}{m}.DeltaPredictor > summary.ctrl.mdl_list{1}{m}.Delta)
-% r=[num2str(m) 'high']
-% 
-% [data] = Collect_theta_summary__frompcopy_T2(dends,r,'ctrl_norm')
-% light =1;[data] = plot_normResp_theta(data,1,r,'ctrl_norm') 
-% 
-% [data] = Collect_phase_summary__frompcopy_T2(dends,r)
-% light =1;[data] = plot_normResp_phase(data,1,r) 
-% 
-% dends = setxor([1:123],find(summary.ctrl.mdl_list{1}{m}.DeltaPredictor > summary.ctrl.mdl_list{1}{m}.Delta))
-% r=[num2str(m) 'low']
-% 
-% [data] = Collect_theta_summary__frompcopy_T2(dends,r)
-% light =1;[data] = plot_normResp_theta(data,1,r) 
-% 
-% [data] = Collect_phase_summary__frompcopy_T2(dends,r)
-% light =1;[data] = plot_normResp_phase(data,1,r) 
 
 
-%%
+m=94;
+mkdir (['R' num2str(m) ' ' num2str(minpred(find(runid==m))) ' cells'])
+ % runid with desired numpred
+
+dends = find(summary.ctrl.mdl_list{1}{m}.DeltaPredictor > summary.ctrl.mdl_list{1}{m}.Delta)
+r=[num2str(m) 'high']
+
+[data] = Collect_theta_summary__frompcopy_T2(dends,r,'ctrl_norm')
+light =1;[data] = plot_normResp_theta(data,1,r,'ctrl_norm') 
+
+[data] = Collect_phase_summary__frompcopy_T2(dends,r)
+light =1;[data] = plot_normResp_phase(data,1,r) 
+
+dends = setxor([1:123],find(summary.ctrl.mdl_list{1}{m}.DeltaPredictor > summary.ctrl.mdl_list{1}{m}.Delta))
+r=[num2str(m) 'low']
+
+[data] = Collect_theta_summary__frompcopy_T2(dends,r)
+light =1;[data] = plot_normResp_theta(data,1,r) 
+
+[data] = Collect_phase_summary__frompcopy_T2(dends,r)
+light =1;[data] = plot_normResp_phase(data,1,r) 
+
+
+
 temp = cell2mat(summary.ctrl.num_predictors{1})
 minpred= zeros(length(temp),1)
 runid= zeros(length(temp),1)
@@ -107,6 +109,7 @@ title('Fraction Correct vs. Numpredictors');
 subplot(1,2,2);plot(runid,frCor_sorted,'ko');
 hold on ;
 
+
 title('Fraction Correct vs. Runid');
 xlabel('Run ID');ylabel('Fraction Correct');
 save('frCor_sorted_ctrl','frCor_sorted');
@@ -137,6 +140,8 @@ print( gcf ,'-depsc2','-painters','-loose','FrCor Numpred Runid');
 save('frCor_sorted_mani','frCor_sorted');
 
 %%
+
+%%
 Temp_coeffs = summary.ctrl.mdl_list{1}{m}.DeltaPredictor;
 Delta_crit = summary.ctrl.mdl_list{1}{m}.Delta;
 inds= find(Temp_coeffs>Delta_crit);
@@ -145,10 +150,7 @@ load('Phase Summary Data rall cells.mat');
 PPI_ctrl = data.PPI_ctrl{1};
 PPI_mani = data.PPI_mani{1};
 % load('Theta Summary Data rall cells.mat');
-sc = get(0,'ScreenSize');
-h_fig1 = figure('position', [1000, sc(4), sc(3)/2, sc(4)/2], 'color','w');
-
-plot(Temp_coeffs',PPI_ctrl,'o','color',[.5 .5 .5])
+figure;plot(Temp_coeffs',PPI_ctrl,'o','color',[.5 .5 .5])
 hold on; plot(Temp_coeffs(inds)',PPI_ctrl(inds),'ko')
 vline(Delta_crit,'k--')
 ylabel('Phase Pref Index');xlabel('Delta Predictor')

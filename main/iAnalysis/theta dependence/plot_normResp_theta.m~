@@ -26,14 +26,21 @@ for s = 1:size(data.meanResp_theta_ctrl,2)
     if light %% mean for each condition within that set
         mR_m = data.meanResp_theta_mani{s};
         m_2_n = min(mR_m')';
-        m_2_n = repmat(m_2_n,1,size(mR_m,2)); 
+            
+        
         if strcmp(norm_cond,'ctrl_norm')
-            m_2_n2 = repmat(min(mR_c')',1,size(mR_m,2));
+             m_2_n = repmat(m_2_n,1,size(mR_m,2)); 
+            m_2_n2 = repmat(m_2_n,1,size(mR_m,2));  
+
         elseif strcmp(norm_cond,'self_norm')
-            m_2_n2 = repmat(min(mR_m')',1,size(mR_m,2));
-        end
-        norm_mR_m = (mR_m - m_2_n)./m_2_n2;
+             m_2_n = repmat(m_2_n,1,size(mR_m,2)); 
+            m_2_n2 = repmat(m_2_n,1,size(mR_m,2));  
+
+
+        
     end
+             norm_mR_m = (mR_m - m_2_n)./m_2_n2;   
+    
 %      selneurons = max(norm_mR_c')'>.5;
         selneurons = [1:size(norm_mR_c,1)]';
       tempinds = find(selneurons); %% just the cells with selectivity > 0.5  
