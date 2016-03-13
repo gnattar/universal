@@ -177,7 +177,7 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
     pcopy{i}.lightstim = pooled_contactCaTrials_locdep{i}.lightstim(ind_all');
     pcopy{i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc(ind_all');
     pcopy{i}.loc = pooled_contactCaTrials_locdep{i}.loc(ind_all'); 
-%     pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all'); 
+    pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all'); 
 %     pcopy{i}.phase_binned = pooled_contactCaTrials_locdep{i}.phase_binned(ind_all'); 
     pcopy{i}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK(ind_all');
 end

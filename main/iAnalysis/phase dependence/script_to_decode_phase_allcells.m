@@ -194,10 +194,10 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
      pcopy{i}.dend = pooled_contactCaTrials_locdep{i}.dend;   
          pcopy{i}.CellID = pooled_contactCaTrials_locdep{i}.CellID;   
 end
-cells = size(pcopy,2);
-numrem = cells - 123;
-rem = randperm(cells,numrem);
-pcopy(rem) = [];
+% cells = size(pcopy,2);
+% numrem = cells - 123;
+% rem = randperm(cells,numrem);
+% pcopy(rem) = [];
  save('pcopy','pcopy');
 
 %%

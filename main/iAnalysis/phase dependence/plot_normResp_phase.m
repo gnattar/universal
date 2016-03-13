@@ -1,4 +1,4 @@
-function [data] = plot_normResp_phase(data,light,txt)
+function [data] = plot_normResp_phase(data,light,txt,norm_cond)
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 collected_ctrl = nan(200,11);
@@ -25,9 +25,14 @@ for s = 1:size(data.meanResp_phase_ctrl,2)
 
     if light %% mean for each condition within that set
         mR_m = data.meanResp_phase_mani{s};
-        m_2_n = min(mR_c')';
-        m_2_n = repmat(m_2_n,1,size(mR_c,2));
-        norm_mR_m = (mR_m - m_2_n)./m_2_n;
+        m_2_n = min(mR_m')';
+        m_2_n = repmat(m_2_n,1,size(mR_m,2));
+        if strcmp(norm_cond,'ctrl_norm')
+            m_2_n2 = repmat(min(mR_c')',1,size(mR_m,2));
+        elseif strcmp(norm_cond,'self_norm')
+            m_2_n2 = repmat(min(mR_m')',1,size(mR_m,2));
+        end
+        norm_mR_m = (mR_m - m_2_n)./m_2_n2;
     end
     
     

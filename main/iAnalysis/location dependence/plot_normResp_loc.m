@@ -1,4 +1,4 @@
-function [data]=plot_normResp_loc(data,light,txt)
+function [data]=plot_normResp_loc(data,light,txt,norm_cond)
 sc = get(0,'ScreenSize');
 figure('position', [1000, sc(4), sc(3)/2, sc(4)/3], 'color','w');
 collected_ctrl = nan(200,11);
@@ -16,9 +16,15 @@ for s = 1:size(data.meanResp_loc_ctrl,2)
     m_2_n = min(mR_c')';
     m_2_n = repmat(m_2_n,1,size(mR_c,2));
     norm_mR_c = (mR_c-m_2_n)./m_2_n;
+    
     m_2_n = min(mR_m')';
     m_2_n = repmat(m_2_n,1,size(mR_m,2));  
-    norm_mR_m = (mR_m-m_2_n)./m_2_n;
+        if strcmp(norm_cond,'ctrl_norm')
+            m_2_n2 = repmat(min(mR_c')',1,size(mR_m,2));
+        elseif strcmp(norm_cond,'self_norm')
+            m_2_n2 = repmat(min(mR_m')',1,size(mR_m,2));
+        end
+        norm_mR_m = (mR_m - m_2_n)./m_2_n2;
 %     PrefPos = data.LP_ctrl{s}(:,2);
 %     PrefPos = data.PL_ctrl{s}(:,1); % for pcopy
     PrefPos = data.PLid_ctrl{s}(:,1); 

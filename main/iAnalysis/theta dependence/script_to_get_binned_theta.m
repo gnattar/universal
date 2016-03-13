@@ -1,6 +1,6 @@
 
  files = dir('*pooled_contactCaTrials_phasedep.mat')
- for fn = 6:10
+ for fn = 1:10
      f = files(fn).name
      load(f)
      

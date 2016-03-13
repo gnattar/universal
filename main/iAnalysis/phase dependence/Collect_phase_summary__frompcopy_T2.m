@@ -1,4 +1,4 @@
-function [data] = Collect_phase_summary__frompcopy_T2(dends,r)
+function [data] = Collect_phase_summary__frompcopy_T2(dends,r,norm_cond)
 % [collected_meanRespPref_summary_stats,data] = Collect_meanResp_summary(PrefLocFixed)
 
 count=0;
@@ -34,7 +34,11 @@ while(count>=0)
         if isfield( pooled_contactCaTrials_locdep{dends(d)}.phasedep,'PPI_L')
         meanResp_phase_mani{count}(d,:) = pooled_contactCaTrials_locdep{dends(d)}.phasedep.mResp_L;
         mR_L = pooled_contactCaTrials_locdep{dends(d)}.phasedep.mResp_L;
-        norm= (mR_L-min(mR_L))./min(mR_L);
+        if strcmp(norm_cond,'ctrl_norm')
+            norm= (mR_L-min(mR_L))./min(mR_NL);
+        elseif strcmp(norm_cond,'self_norm')
+            norm= (mR_L-min(mR_L))./min(mR_L);
+        end
         normResp_phase_mani{count}(d,:) =norm;
         [v,i] = max(norm);
         PPI_mani{count}(d,1) = norm(i);
