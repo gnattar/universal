@@ -166,6 +166,8 @@ minlist =  [12,17;23,15;40,30;41,42];  %% for glob deltatheta run2, run3
 minlist =  [ 10,14;48,30;25,31;11,8;17 13]; %% for phase with theta Run4 not used
 minlist = [ 10,14;48,30;25,31;11,6;17 13]; % run 4
 minlist = [ 10,14;64,45;25,31;11,8;17 13]; % runs 5 and 6
+minlist = [ 18,14;64,45;26,43;19,13;18 17]; %% run phase 8 123 cells 
+minlist =  [27,20;29,17;45,43;41,42]; % run theta 8 123 cells
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)
     ind_all = []; count =0;
@@ -183,7 +185,7 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
     pcopy{i}.lightstim = pooled_contactCaTrials_locdep{i}.lightstim(ind_all');
     pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all');
 %       pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta(ind_all');
-            pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta_binned_new(ind_all');
+%             pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta_binned_new(ind_all');
 
      pcopy{i}.loc = pooled_contactCaTrials_locdep{i}.loc(ind_all'); 
 %       pcopy{i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc(ind_all'); 

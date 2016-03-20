@@ -399,7 +399,7 @@ else
 end
 
 % dummy = figure;
-% testsetsize = 30;
+testsetsize = 30;
 uL = 10;
 bw=0.1;
 bins = [ 0:bw:uL];
@@ -415,26 +415,10 @@ pOL_all= zeros(1,3,3);
 p_all = zeros(1,3,3);
 warnings= cell(num_tests,1);
 
-% pre-make testsets outside parfor 
 for s = 1:num_tests
-%     test = randperm(test_numtrials,testsetsize)';
-    numperclass = 5;count =0;
-    [v,ia,ib]= unique(test_pos);
-    for t = 1:length(v)
-        inds = find(ib==t);
-        test(count+1:count+numperclass,1) = inds(randperm(length(inds),numperclass));
-        count = count+numperclass;
-    end
-    testsetsize = length(test);
-    testset{s} = test;
-end
-
-parfor s = 1:num_tests
     %% predicting locations from CaSig alone
     ['--test run aligned--' num2str(s)]
-    test = testset{s};
-    
-    
+    test = randperm(test_numtrials,testsetsize)';
     if tt
         train = setxor([1:test_numtrials],test);
     elseif (strcmp(src,'NC') | strcmp(src,'NLS'))
@@ -451,7 +435,7 @@ parfor s = 1:num_tests
         if reg
             %         regularization
             wm = warning('off','all');
-            [err,gamma,delta,numpred] = cvshrink(Mdl,'Gamma',1,'NumDelta',500,'Verbose',0);
+            [err,gamma,delta,numpred] = cvshrink(Mdl,'Gamma',1,'NumDelta',1000,'Verbose',0);
             
             [msglast, msgidlast] = lastwarn;
             if strcmp(msgidlast,'stats:cvpartition:KFoldMissingGrp')
