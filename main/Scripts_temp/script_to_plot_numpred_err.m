@@ -2,9 +2,10 @@
 if str == 'theta'
     
     %% find the most contributing cells
-    load ('All_cells_phase diaglinear ctrltrain decoder results.mat');
         load('pcopy.mat');
-    numcells  = size(pcopy,2);
+        numcells  = size(pcopy,2);
+        
+    load ('All_cells diaglinear ctrltrain decoder results.mat');
     count=zeros(numcells,1);
     inds={};
     for m=1:100
@@ -14,9 +15,11 @@ if str == 'theta'
         inds{m}(1:length(temp))=temp;
         count=count+(Temp_coeffs>Delta_crit)';
     end
-    [sorted_count,sorted_cells] = sort(count,'descend')
+    [sorted_count,sorted_cells] = sort(count,'descend');
 %     contrib_cells = sorted_cells(1:50);
-    save('cells_sorted_bycontrib','sorted_cells','sorted_count')
+    save('cells_sorted_bycontrib','sorted_cells','sorted_count');
+   
+    
     %%
     load pcopy.mat
     [pooled_contactCaTrials_locdep] = prep_pcopy(pcopy,'theta');

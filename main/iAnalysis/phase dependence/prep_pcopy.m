@@ -97,10 +97,10 @@ numdends = size(pooled_contactCaTrials_locdep,2);
 
 for d = 1:numdends
 lightstim = pooled_contactCaTrials_locdep{d}.lightstim;
-theta = pooled_contactCaTrials_locdep{d}.theta; %% if from pcopy
-thetas = unique(pooled_contactCaTrials_locdep{d}.theta);%% if from pcopy
-% theta = pooled_contactCaTrials_locdep{d}.theta_binned_new; %% if from pooled_contactCaTrials_locdep_allcells
-% thetas = unique(pooled_contactCaTrials_locdep{d}.theta_binned_new); %% if from pooled_contactCaTrials_locdep_allcells
+% theta = pooled_contactCaTrials_locdep{d}.theta; %% if from pcopy
+% thetas = unique(pooled_contactCaTrials_locdep{d}.theta);%% if from pcopy
+theta = pooled_contactCaTrials_locdep{d}.theta_binned_new; %% if from pooled_contactCaTrials_locdep_allcells
+thetas = unique(pooled_contactCaTrials_locdep{d}.theta_binned_new); %% if from pooled_contactCaTrials_locdep_allcells
 NL_ind = find(lightstim == 0);
 L_ind = find(lightstim == 1);
 

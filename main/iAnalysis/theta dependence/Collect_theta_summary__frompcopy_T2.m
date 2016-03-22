@@ -6,7 +6,7 @@ count=0;
 filename = '';
 while(count>=0)
     if strcmp(filename, '');
-        [filename,pathName]=uigetfile('*pooled_contactCaTrials_thetadep.mat','Load .mat file');
+        [filename,pathName]=uigetfile('*pooled_contactCaTrials_thetadep*.mat','Load .mat file');
     else
         [filename,pathName]=uigetfile( filename,'Load thetadep.mat file');
     end
