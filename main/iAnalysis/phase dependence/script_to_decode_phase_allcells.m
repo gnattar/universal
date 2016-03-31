@@ -1,9 +1,9 @@
 script_to_decode_phase_from_all_cells
 
 n=0;
-files = dir('*_pooled_contactCaTrials_phasedep.mat')
+files = dir('*_pooled_contactCaTrials_thetadep.mat')
 
-for fn = 1:10
+for fn = 1:6
     f = files(fn).name
     load(f)
         for i= 1:size(pooled_contactCaTrials_locdep,2)
@@ -41,7 +41,7 @@ end
 %% %% make loc into ids [1:6]  - for theta decoding
 
 for i = 1:size(all_cells,2)
-temp = all_cells{i}.poleloc;
+temp = all_cells{i}.theta;
 pl = unique(temp);
 temp2 =[];
 for p = 1:length(pl)
@@ -185,7 +185,7 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
     pcopy{i}.lightstim = pooled_contactCaTrials_locdep{i}.lightstim(ind_all');
     pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all');
 %       pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta(ind_all');
-%             pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta_binned_new(ind_all');
+            pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta_binned_new(ind_all');
 
      pcopy{i}.loc = pooled_contactCaTrials_locdep{i}.loc(ind_all'); 
 %       pcopy{i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc(ind_all'); 

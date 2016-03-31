@@ -15,7 +15,7 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
     paNL = r(l==0);
     paL = r(l==1);
 %     diffPeak=nanmean(paNL)-nanmean(paL);
-    percentchange = 34.6;
+    percentchange = 50;%34.6;
     diffPeak = sigpeak.* percentchange;
     diffMag = sigmag .* percentchange;
     pooled_contactCaTrials_locdep{d}.decoder.diff=diffPeak;

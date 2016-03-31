@@ -21,7 +21,7 @@ ind = find(temp == pl(p));
 temp2(ind) = p;
 end
 all_cells{i}.loc = temp2';
-all_cells{i}.decoder.loc = temp2';
+% all_cells{i}.decoder.loc = temp2';
 end
 
 %% find how many positions how many trials
@@ -61,22 +61,36 @@ end
 
 % removing  positions to bring to 4
 all_copy = all_cells;
-for i = [89:101]
+for i = [57:73]
 temp = all_cells{i}.loc;
-rem = find(temp==2)%| temp==5);
+rem = find(temp==1)%| temp==5);
 all_copy{i}.sigpeak(rem)=[];
 all_copy{i}.poleloc(rem)=[];
 all_copy{i}.lightstim(rem)=[];
 all_copy{i}.re_totaldK(rem)=[];
+all_copy{i}.phase(rem)=[];
+all_copy{i}.theta(rem)=[];
 all_copy{i}.loc(rem)=[];
-all_copy{i}.decoder.NLS.sigpeak(rem)=[];
-all_copy{i}.decoder.NLS.poleloc(rem)=[];
-all_copy{i}.decoder.NLS.lightstim(rem)=[];
-all_copy{i}.decoder.NLS.re_totaldK(rem)=[];
-all_copy{i}.decoder.loc(rem)=[];
+% all_copy{i}.decoder.NLS.sigpeak(rem)=[];
+% all_copy{i}.decoder.NLS.poleloc(rem)=[];
+% all_copy{i}.decoder.NLS.lightstim(rem)=[];
+% all_copy{i}.decoder.NLS.re_totaldK(rem)=[];
+% all_copy{i}.decoder.loc(rem)=[];
 end
 pooled_contactCaTrials_locdep = all_copy;
 save('pooled_contactCaTrials_locdep_allcells','pooled_contactCaTrials_locdep');
+
+for i = 1:size(pooled_contactCaTrials_locdep,2)
+temp = pooled_contactCaTrials_locdep{i}.poleloc;
+pl = unique(temp);
+temp2 =[];
+for p = 1:length(pl)
+ind = find(temp == pl(p));
+temp2(ind) = p;
+end
+pooled_contactCaTrials_locdep{i}.loc = temp2';
+% all_cells{i}.decoder.loc = temp2';
+end
 
 templ =cellfun(@(x) x.lightstim,all_copy,'uni',0);
 tempp =cellfun(@(x) x.loc,all_copy,'uni',0);
@@ -85,7 +99,7 @@ tempp =cellfun(@(x) x.loc,all_copy,'uni',0);
 templ =cellfun(@(x) x.lightstim,pooled_contactCaTrials_locdep,'uni',0);
 tempp =cellfun(@(x) x.loc,pooled_contactCaTrials_locdep,'uni',0);
 
-for i = 1:size(all_copy,2)
+for i = 1:size(pooled_contactCaTrials_locdep,2)
     trials{i}(1,1) = sum(templ{i}==1 & tempp{i}==1);
     trials{i}(1,2) = sum(templ{i}==0 & tempp{i}==1);
     trials{i}(2,1) = sum(templ{i}==1 & tempp{i}==2);
@@ -109,7 +123,7 @@ minlist = [ 0 21;0 91;0 34;0 35;0 33];
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)
     ind_all = []; count =0;
-    for p = 1:4
+    for p = 1:size(minlist,1)
     lind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 1);
     sel_lind= randperm(length(lind),minlist(p,1));
     nlind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 0);
@@ -124,6 +138,15 @@ for i = 1:size(pooled_contactCaTrials_locdep,2)
     pcopy{i}.poleloc = pooled_contactCaTrials_locdep{i}.poleloc(ind_all');
     pcopy{i}.loc = pooled_contactCaTrials_locdep{i}.loc(ind_all'); 
     pcopy{i}.re_totaldK = pooled_contactCaTrials_locdep{i}.re_totaldK(ind_all');
+    
+%         pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all');
+%       pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta(ind_all');
+%             pcopy{i}.theta = pooled_contactCaTrials_locdep{i}.theta_binned_new(ind_all');
+    pcopy{i}.mousename = pooled_contactCaTrials_locdep{i}.mousename;
+     pcopy{i}.sessionname = pooled_contactCaTrials_locdep{i}.sessionname;
+      pcopy{i}.reg_fov = pooled_contactCaTrials_locdep{i}.reg_fov;
+     pcopy{i}.dend = pooled_contactCaTrials_locdep{i}.dend;   
+         pcopy{i}.CellID = pooled_contactCaTrials_locdep{i}.CellID; 
 end
 for i = 1:size(pcopy,2)
 pcopy{i}.poleloc = pcopy{i}.loc;

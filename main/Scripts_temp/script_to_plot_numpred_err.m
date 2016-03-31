@@ -5,20 +5,20 @@ if str == 'theta'
         load('pcopy.mat');
         numcells  = size(pcopy,2);
         
-    load ('All_cells diaglinear ctrltrain decoder results.mat');
-    count=zeros(numcells,1);
-    inds={};
-    for m=1:100
-        Temp_coeffs = summary.ctrl.mdl_list{1}{m}.DeltaPredictor;
-        Delta_crit = summary.ctrl.mdl_list{1}{m}.Delta;
-        temp = find(Temp_coeffs>Delta_crit);
-        inds{m}(1:length(temp))=temp;
-        count=count+(Temp_coeffs>Delta_crit)';
-    end
-    [sorted_count,sorted_cells] = sort(count,'descend');
-%     contrib_cells = sorted_cells(1:50);
-    save('cells_sorted_bycontrib','sorted_cells','sorted_count');
-   
+        load ('All_cells_phase diaglinear ctrltrain decoder results.mat');
+        count=zeros(numcells,1);
+        inds={};
+        for m=1:100
+            Temp_coeffs = summary.ctrl.mdl_list{1}{m}.DeltaPredictor;
+            Delta_crit = summary.ctrl.mdl_list{1}{m}.Delta;
+            temp = find(Temp_coeffs>Delta_crit);
+            inds{m}(1:length(temp))=temp;
+            count=count+(Temp_coeffs>Delta_crit)';
+        end
+        [sorted_count,sorted_cells] = sort(count,'descend');
+        %     contrib_cells = sorted_cells(1:50);
+        save('cells_sorted_bycontrib','sorted_cells','sorted_count');
+        
     
     %%
     load pcopy.mat

@@ -21,7 +21,8 @@ while(count>=0)
     for d =1:length(dends)
         meanResp_theta_ctrl{count}(d,:) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.mResp_NL;
         mR_NL = pooled_contactCaTrials_locdep{dends(d)}.thetadep.mResp_NL;
-        norm =(mR_NL-min(mR_NL))./min(mR_NL);
+        norm =(mR_NL-min(mR_NL))./mean(mR_NL);
+%         norm =(mR_NL)./mean(mR_NL);
         normResp_theta_ctrl{count}(d,:) = norm;
         [v,i] = max(norm);
         TPI_ctrl{count}(d,1) = norm(i);
@@ -35,14 +36,16 @@ while(count>=0)
         meanResp_theta_mani{count}(d,:) = pooled_contactCaTrials_locdep{dends(d)}.thetadep.mResp_L;
         mR_L = pooled_contactCaTrials_locdep{dends(d)}.thetadep.mResp_L;
         if strcmp(norm_cond,'ctrl_norm')
-            norm= (mR_L-min(mR_L))./min(mR_NL);
+%             norm= (mR_L-min(mR_L))./mean(mR_NL);
+            norm= (mR_L)./mean(mR_NL);
         elseif strcmp(norm_cond,'self_norm')
-            norm= (mR_L-min(mR_L))./min(mR_L);
+%             norm= (mR_L-min(mR_L))./mean(mR_L);
+            norm= (mR_L)./mean(mR_L);
         end
             
         
         normResp_theta_mani{count}(d,:) =norm;
-        [v,i] = max(norm);
+%         [v,i] = max(norm);
         TPI_mani{count}(d,1) = norm(i);
         NPid = setxor([1:length(norm)],i);
         TNPI_mani{count}(d,:) = norm(NPid); 

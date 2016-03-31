@@ -11,8 +11,9 @@ for s = 1:size(data.meanResp_theta_ctrl,2)
     mR_c = data.meanResp_theta_ctrl{s};
     m_2_n = min(mR_c')';
     m_2_n = repmat(m_2_n,1,size(mR_c,2));
-    norm_mR_c = (mR_c-m_2_n)./m_2_n;
-
+    m_2_n2 = repmat(mean(mR_c')',1,size(mR_c,2));
+%     norm_mR_c = (mR_c-m_2_n)./m_2_n2;
+    norm_mR_c = (mR_c)./m_2_n2;
     PrefThid = data.PTid_ctrl{s}(:,1);
     PrefTh = data.PTh_ctrl{s}(:,1);
     xthid = zeros(size(norm_mR_c));
@@ -28,11 +29,12 @@ for s = 1:size(data.meanResp_theta_ctrl,2)
         m_2_n = min(mR_m')';
         m_2_n = repmat(m_2_n,1,size(mR_m,2)); 
         if strcmp(norm_cond,'ctrl_norm')
-            m_2_n2 = repmat(min(mR_c')',1,size(mR_m,2));
+            m_2_n2 = repmat(mean(mR_c')',1,size(mR_m,2));
         elseif strcmp(norm_cond,'self_norm')
-            m_2_n2 = repmat(min(mR_m')',1,size(mR_m,2));
+            m_2_n2 = repmat(mean(mR_m')',1,size(mR_m,2));
         end
-        norm_mR_m = (mR_m - m_2_n)./m_2_n2;
+%         norm_mR_m = (mR_m - m_2_n)./m_2_n2;
+        norm_mR_m = (mR_m )./m_2_n2;
     end
 %      selneurons = max(norm_mR_c')'>.5;
         selneurons = [1:size(norm_mR_c,1)]';
@@ -151,8 +153,15 @@ set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
 fnam = ['normResptheta Tuning' txt];
 saveas(gcf,[pwd,filesep,fnam],'fig');
+set(gcf,'PaperPositionMode','manual');
 print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,fnam]);
+%%
 
+ t = m_C-m_M;
+ figure;plot([-5:5],t,'o-','markersize',10,'color',[.5 1 .5]); axis([-5 5 0 .6]);
+ saveas(gcf,[pwd,filesep,'diff Theta Tuning'],'fig');
+ set(gcf,'PaperPositionMode','manual');
+ print( gcf ,'-depsc2','-painters','-loose',[pwd,filesep,'diff Theta Tuning']);
 %% hist of tPIs
 temp=arrayfun(@(x) x.TPI_ctrl, data,'uni',0)';
 temp=temp{1}';

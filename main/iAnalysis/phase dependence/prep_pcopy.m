@@ -1,4 +1,14 @@
 function [pooled_contactCaTrials_locdep] = prep_pcopy(pcopy,cond)
+%%%%% if for NLS run this first
+% for i = 1:152
+% pooled_contactCaTrials_locdep_NLS{i}.re_totaldK = pooled_contactCaTrials_locdep{i}.decoder.NLS.re_totaldK;
+% pooled_contactCaTrials_locdep_NLS{i}.sigpeak = pooled_contactCaTrials_locdep{i}.decoder.NLS.sigpeak;
+% pooled_contactCaTrials_locdep_NLS{i}.lightstim = pooled_contactCaTrials_locdep{i}.decoder.NLS.lightstim;
+% pooled_contactCaTrials_locdep_NLS{i}.poleloc = pooled_contactCaTrials_locdep{i}.decoder.NLS.poleloc;
+% end
+
+
+
 switch cond 
     
 
@@ -78,10 +88,10 @@ normResp_L = mResp_L(:) ./ nanmean(mResp_L);
 
 pooled_contactCaTrials_locdep{d}.locdep.mResp_NL = mResp_NL  ;
 pooled_contactCaTrials_locdep{d}.locdep.mResp_L = mResp_L;
-pooled_contactCaTrials_locdep{d}.locdep.normResp_NL=normResp_NL;
-pooled_contactCaTrials_locdep{d}.locdep.normResp_L = normResp_L;
-pooled_contactCaTrials_locdep{d}.locdep.LPI_NL = max(normResp_NL);
-pooled_contactCaTrials_locdep{d}.locdep.LPI_L = max(normResp_L);
+% pooled_contactCaTrials_locdep{d}.locdep.normResp_NL=normResp_NL;
+% pooled_contactCaTrials_locdep{d}.locdep.normResp_L = normResp_L;
+% pooled_contactCaTrials_locdep{d}.locdep.LPI_NL = max(normResp_NL);
+% pooled_contactCaTrials_locdep{d}.locdep.LPI_L = max(normResp_L);
 pooled_contactCaTrials_locdep{d}.locdep.locs = locs;
 pooled_contactCaTrials_locdep{d}.locdep.normChange = (mResp_NL-mResp_L)./nanmean((mResp_NL-mResp_L));
 pooled_contactCaTrials_locdep{d}.locdep.frChange = (mResp_L-mResp_NL)./mResp_NL;

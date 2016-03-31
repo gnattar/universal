@@ -177,7 +177,7 @@ minlist = [ 13,13;41,41;48,48;34,34]; %NLS
 % if light 
 for i = 1:size(pooled_contactCaTrials_locdep,2)
     ind_all = []; count =0;
-    for p = 1:4
+    for p = 1:size(minlinst,1)
     lind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 1);
     sel_lind= randperm(length(lind),minlist(p,1));
     nlind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 0);
@@ -201,28 +201,111 @@ end
  save('pcopy','pcopy');
  
  %% for NLS light
+ 
+ 
  for i = 1:size(pooled_contactCaTrials_locdep,2)
+temp = pooled_contactCaTrials_locdep{i}.decoder.NLS.poleloc;
+pl = unique(temp);
+temp2 =[];
+for p = 1:length(pl)
+ind = find(temp == pl(p));
+temp2(ind) = p;
+end
+pooled_contactCaTrials_locdep{i}.decoder.loc = temp2';
+ end
+
+for i = 1:size(pooled_contactCaTrials_locdep,2)
     ind_all = []; count =0;
-    for p = 1:4
-    lind = find(pooled_contactCaTrials_locdep{i}.decoder.loc == p & pooled_contactCaTrials_locdep{i}.decoder.NLS.lightstim == 1);
-    sel_lind= randperm(length(lind),minlist(p,1));
-    nlind = find(pooled_contactCaTrials_locdep{i}.decoder.loc == p & pooled_contactCaTrials_locdep{i}.decoder.NLS.lightstim == 0);
-    sel_nlind= randperm(length(nlind),minlist(p,2));   
-    temp = [lind(sel_lind)',nlind(sel_nlind)'];
+    diff = nanmean(pooled_contactCaTrials_locdep{i}.sigpeak(find(pooled_contactCaTrials_locdep{i}.lightstim == 0)))...
+        -nanmean(pooled_contactCaTrials_locdep{i}.sigpeak(find(pooled_contactCaTrials_locdep{i}.lightstim == 1)));
+    for p = 1:size(minlist,1)
+        temp=[];temp_NL=[];temp_L=[]; nlind=[];sel_nlind=[];lind=[];sel_lind = [];
+%     lind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 1);
+%     sel_lind= randperm(length(lind),minlist(p,1));
+    nlind = find(pooled_contactCaTrials_locdep{i}.loc == p & pooled_contactCaTrials_locdep{i}.lightstim == 0);
+    sel_nlind= randperm(length(nlind),minlist(p,2));  
+    
+    
+    temp_NL = pooled_contactCaTrials_locdep{i}.sigpeak(nlind(sel_nlind)');
+    
+%     temp_L = temp_NL - (temp_NL.*0.30);
+	temp_L = temp_NL - diff;
+    temp = [temp_NL ;temp_L];
     num = length(temp);
-    ind_all(count+1:count+num) = temp;
+    ca_all(count+1:count+num) = temp;
+ 
+    temp_NL = pooled_contactCaTrials_locdep{i}.lightstim(nlind(sel_nlind)');
+    temp_L = temp_NL+1;
+    temp = [temp_NL ;temp_L];
+    num = length(temp);
+    ls_all(count+1:count+num) = temp;
+
+    temp_NL = pooled_contactCaTrials_locdep{i}.poleloc(nlind(sel_nlind)');
+    temp_L = temp_NL;
+    temp = [temp_NL ;temp_L];
+    num = length(temp);
+    pl_all(count+1:count+num) = temp;
+    
+    temp_NL = pooled_contactCaTrials_locdep{i}.loc(nlind(sel_nlind)');
+    temp_L = temp_NL;
+    temp = [temp_NL ;temp_L];
+    num = length(temp);
+    loc_all(count+1:count+num) = temp;
+    
+    temp_NL = pooled_contactCaTrials_locdep{i}.re_totaldK(nlind(sel_nlind)');
+    temp_L = temp_NL;
+    temp = [temp_NL ;temp_L];
+    num = length(temp);
+    dK_all(count+1:count+num) = temp;
+
     count = count+num;
     end    
-    pcopy{i}.decoder.NLS.sigpeak = pooled_contactCaTrials_locdep{i}.decoder.NLS.sigpeak(ind_all');
-    pcopy{i}.decoder.NLS.lightstim = pooled_contactCaTrials_locdep{i}.decoder.NLS.lightstim(ind_all');
-    pcopy{i}.decoder.NLS.poleloc = pooled_contactCaTrials_locdep{i}.decoder.NLS.poleloc(ind_all');
-    pcopy{i}.decoder.loc = pooled_contactCaTrials_locdep{i}.decoder.loc(ind_all'); 
-%     pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all'); 
-%     pcopy{i}.phase_binned = pooled_contactCaTrials_locdep{i}.phase_binned(ind_all'); 
-    pcopy{i}.decoder.NLS.re_totaldK = pooled_contactCaTrials_locdep{i}.decoder.NLS.re_totaldK(ind_all');
+    pcopy{i}.decoder.NLS.sigpeak = ca_all';
+    pcopy{i}.decoder.NLS.lightstim = ls_all';
+    pcopy{i}.decoder.NLS.poleloc = pl_all';
+    pcopy{i}.decoder.NLS.loc =loc_all'; 
+    pcopy{i}.decoder.NLS.re_totaldK =dK_all'; 
 end
-
+% for i = 1:size(pcopy,2)
+% pcopy{i}.poleloc = pcopy{i}.loc;
+% end
  save('pcopy','pcopy');
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+% save('pooled_contactCaTrials_locdep_allcells','pooled_contactCaTrials_locdep');
+
+% % 
+% %  for i = 1:size(pooled_contactCaTrials_locdep,2)
+% %     ind_all = []; count =0;
+% %     for p = 1:size(minlist,1)
+% %     lind = find(pooled_contactCaTrials_locdep{i}.decoder.loc == p & pooled_contactCaTrials_locdep{i}.decoder.NLS.lightstim == 1);
+% %     sel_lind= randperm(length(lind),minlist(p,1));
+% %     nlind = find(pooled_contactCaTrials_locdep{i}.decoder.loc == p & pooled_contactCaTrials_locdep{i}.decoder.NLS.lightstim == 0);
+% %     sel_nlind= randperm(length(nlind),minlist(p,2));   
+% %     temp = [lind(sel_lind)',nlind(sel_nlind)'];
+% %     num = length(temp);
+% %     ind_all(count+1:count+num) = temp;
+% %     count = count+num;
+% %     end    
+% %     pcopy{i}.decoder.NLS.sigpeak = pooled_contactCaTrials_locdep{i}.decoder.NLS.sigpeak(ind_all');
+% %     pcopy{i}.decoder.NLS.lightstim = pooled_contactCaTrials_locdep{i}.decoder.NLS.lightstim(ind_all');
+% %     pcopy{i}.decoder.NLS.poleloc = pooled_contactCaTrials_locdep{i}.decoder.NLS.poleloc(ind_all');
+% %     pcopy{i}.decoder.loc = pooled_contactCaTrials_locdep{i}.decoder.loc(ind_all'); 
+% % %     pcopy{i}.phase = pooled_contactCaTrials_locdep{i}.phase(ind_all'); 
+% % %     pcopy{i}.phase_binned = pooled_contactCaTrials_locdep{i}.phase_binned(ind_all'); 
+% %     pcopy{i}.decoder.NLS.re_totaldK = pooled_contactCaTrials_locdep{i}.decoder.NLS.re_totaldK(ind_all');
+% % end
+% % 
+% %  save('pcopy','pcopy');
 
 
 %%

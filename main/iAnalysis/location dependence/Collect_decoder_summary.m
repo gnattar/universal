@@ -108,37 +108,60 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 %  
 
 
-C = data.mFrCo_ctrl(:,:); L = data.mFrCo_mani(:,:);
-temp(:,1) = C(:,1)./C(:,2);
-temp(:,2) = L(:,1)./L(:,2)
+C = data.mFrCo_ctrl(:,:);  temp(:,1) = C(:,1)./mean(C(:,2));
+if lightcond 
+    L = data.mFrCo_mani(:,:);temp(:,2) = L(:,1)./mean(L(:,2)); end
+
 
  numsess = size(C,1);
- figure;plot(C','color',[.5 .5 .5],'markersize',10); hold on;plot(repmat([3,4],numsess,1)',L','color',[.85 .5 .5],'markersize',10); hold on;
+ figure;plot(C','color',[.5 .5 .5],'markersize',10); hold on;
+ if lightcond 
+ plot(repmat([3,4],numsess,1)',L','color',[.85 .5 .5],'markersize',10);
+ end
+ hold on;
  m=mean(C);
  s=std(C)./sqrt(numsess+1);
  h=errorbar([1,2],m,s,'ko-'); set(h,'linewidth',1.25,'markersize',20);hold on;
-  m=mean(L);
+ if lightcond 
+ m=mean(L);
  s=std(L)./sqrt(numsess+1);
  h=errorbar([3,4],m,s,'ro-'); set(h,'linewidth',1.25,'markersize',20);
   set(gca,'XTick',[1 2 3 4 ]);set(gca,'XTicklabel',{'data';'shuff';'light';'light shuff'});
-axis([0 4.5 .2 .4])
+   axis([0 4.5 .2 .4])
+ else
+   set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'shuff'});
+   axis([0 4.5 .2 .4])
+ end
+
 ylabel('Fraction Correct ','fontsize',16);
 set(gca,'tickdir','out','ticklength',[.02 .02]);
 suptitle('Fraction Correct')
 set(gca,'Fontsize',16);
 
 numsess = size(C,1);
+if lightcond
  figure;plot(temp','color',[.5 .5 .5],'markersize',10); hold on;
- m=mean(temp);
+else
+     figure;plot(ones(length(temp)),temp','o','color',[.5 .5 .5],'markersize',10); hold on;
+end
+     m=mean(temp);
  s=std(temp)./sqrt(numsess+1);
  h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25,'markersize',20);
-  set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'data';'light'});
-axis([0 3 -.1 .25])
+ 
+  set(gca,'XTick',[1 2]);
+   if lightcond
+       set(gca,'XTicklabel',{'data';'light'});
+axis([0 3 0 3])
+   else
+       set(gca,'XTicklabel',{'data'});
+axis([0 3 0 3])
+   end
 ylabel('Fractional accuracy (x chance level)','fontsize',16)
 suptitle('Fraction Accuracy x chance')
 set(gca,'Fontsize',16);
 set(gca,'tickdir','out','ticklength',[.02 .02]);
 
+if lightcond
 temp =[ C(:,1) L(:,1)]
 figure;plot(temp','color',[.5 .5 .5]); hold on;
  m=mean(temp);
@@ -150,6 +173,7 @@ ylabel('Fraction Correct','fontsize',16)
 title('Fraction Correct ','Fontsize',16)
 set(gca,'tickdir','out','ticklength',[.02 .02]);
 set(gca,'Fontsize',16);
+end
 %  
 
 % 

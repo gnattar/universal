@@ -7,17 +7,18 @@ l=pooled_contactCaTrials_locdep{1}.lightstim;
 for d = 1: size(pooled_contactCaTrials_locdep,2)
 
     sigpeak = pooled_contactCaTrials_locdep{d}.sigpeak;
-    sigmag = pooled_contactCaTrials_locdep{d}.sigmag;
+%     sigmag = pooled_contactCaTrials_locdep{d}.sigmag;
     poleloc =pooled_contactCaTrials_locdep{d}.poleloc;
     lightstim = pooled_contactCaTrials_locdep{d}.lightstim;
     re_totaldK = pooled_contactCaTrials_locdep{d}.re_totaldK;
+    l=pooled_contactCaTrials_locdep{d}.lightstim;
 %     r=pooled_contact_CaTrials{d}.peakamp;
 %     paNL = r(l==0);
 %     paL = r(l==1);
 %     diffPeak=nanmean(paNL)-nanmean(paL);
     percentchange = .346;
     diffPeak = sigpeak(l==0,1).* percentchange;
-    diffMag = sigmag(l==0,1) .* percentchange;   
+%     diffMag = sigmag(l==0,1) .* percentchange;   
     pooled_contactCaTrials_locdep{d}.decoder.diff=diffPeak;
 %     sigpeakLAD = sigpeak;
 %     ind = find(l==1);
@@ -43,8 +44,9 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
     re_totaldKNLS = re_totaldK;
     sigpeakNLS = sigpeak;
     sigpeakNLS(l==0,1) =  sigpeakNLS(l==0,1) - diffPeak;
-    sigmagNLS = sigmag;
-    sigmagNLS(l==0,1) =  sigmagNLS(l==0,1) - diffMag;
+    sigpeakNLS (sigpeakNLS <0) = 0; % flooring sub at 0
+%     sigmagNLS = sigmag;
+%     sigmagNLS(l==0,1) =  sigmagNLS(l==0,1) - diffMag;
     
     l2 = [ l;l];
     numtrials = length(find(l==0));
@@ -52,16 +54,16 @@ for d = 1: size(pooled_contactCaTrials_locdep,2)
     poleloc2 = [ poleloc;polelocNLS];
     re_totaldK2 = [re_totaldK;re_totaldKNLS];
     sigpeak2=[sigpeak;sigpeakNLS];
-    sigmag2=[sigmag;sigmagNLS];
+%     sigmag2=[sigmag;sigmagNLS];
     lightstim2 = [ lightstimNLS;lightstimNLS+1];
     ind = find(l2==1);
     sigpeak2(ind)=[];
-    sigmag2(ind)=[];
+%     sigmag2(ind)=[];
     poleloc2(ind) = [];  
     re_totaldK2(ind) = [];
  
     pooled_contactCaTrials_locdep{d}.decoder.NLS.sigpeak=sigpeak2;
-    pooled_contactCaTrials_locdep{d}.decoder.NLS.sigmag=sigmag2;
+%     pooled_contactCaTrials_locdep{d}.decoder.NLS.sigmag=sigmag2;
     pooled_contactCaTrials_locdep{d}.decoder.NLS.poleloc=poleloc2;
     pooled_contactCaTrials_locdep{d}.decoder.NLS.re_totaldK=re_totaldK2;
     pooled_contactCaTrials_locdep{d}.decoder.NLS.lightstim=lightstim2;
