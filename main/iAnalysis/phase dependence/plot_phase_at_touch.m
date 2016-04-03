@@ -52,7 +52,7 @@ for ph =1:length(unique(id_NL))
     end
     
     set(gca,'xscale','log');%set(gca,'ticklength',[.05 .05]);
-    axis ([.001 2.5 0 800]);
+    axis ([.001 2.5 0 600]);
     count= count+1;
     if light
         contact_phase_binned([NL_ind(inds_NL);L_ind(inds_L)]) = mid{1}(ph);
@@ -110,7 +110,7 @@ end
      
 tb_NL= text(0,1.6,['PPI ' num2str( pooled_contactCaTrials_locdep{d(i)}.phase.PPI_NL )]);set(tb_NL,'color','k');
 
- axis([-4 4 0.5 2])
+ axis([-4 4 0 2])
  count = count+1;
  end
 % print(h,'-dtiff','-painters','-loose',['D ' num2str(d)])

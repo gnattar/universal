@@ -19,8 +19,8 @@ if strcmp(cond,'ctrl_mani')
     switch src
         case 'def'
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            th_all = cell2mat(cellfun(@(x) x.theta, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            
+%             th_all = cell2mat(cellfun(@(x) x.theta, pooled_contactCaTrials_locdep,'uniformoutput',0));
+             th_all = cell2mat(cellfun(@(x) x.theta_binned_new, pooled_contactCaTrials_locdep,'uniformoutput',0));
             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
             
     end
@@ -121,7 +121,6 @@ if strcmp(cond,'ctrl_mani')
     
     %run mani
     if ~isempty(find(l_trials == 1))
-        if isempty(find(l_trials == 1))
             tk = tk_all(l_trials == 1,:);
             th = th_all(l_trials == 1,:);
             resp = resp_all(l_trials == 1,:);
@@ -260,7 +259,7 @@ if strcmp(cond,'ctrl_mani')
             summary.mani.num_predictors = num_predictors;
             summary.mani.mdl_list = mdls;
             summary.mani.warnings = warnings;
-        end
+      
     end
             summary.info =  [str ' ' tag];
             save([str ' ' disc_func ' '  tag ' decoder results'],'summary');

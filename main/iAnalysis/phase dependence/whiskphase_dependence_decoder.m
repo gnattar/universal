@@ -117,8 +117,8 @@ elseif strcmp(cond,'ctrl_mani')
     switch src
         case 'def'
             tk_all = cell2mat(cellfun(@(x) x.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            %             pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
-            pl_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
+                        pl_all = cell2mat(cellfun(@(x) x.phase.touchPhase_binned, pooled_contactCaTrials_locdep,'uniformoutput',0));
+%             pl_all = cell2mat(cellfun(@(x) x.phase, pooled_contactCaTrials_locdep,'uniformoutput',0));
             resp_all = cell2mat(cellfun(@(x) x.(par), pooled_contactCaTrials_locdep,'uniformoutput',0));
             %         case 'LAD'
             %             tk_all = cell2mat(cellfun(@(x) x.decoder.LAD.re_totaldK, pooled_contactCaTrials_locdep,'uniformoutput',0));
@@ -472,7 +472,7 @@ parfor s = 1:num_tests
             numpred(ids)=nan;delta(ids) = nan; err(ids) = nan;
             minerr = min(min(err));
             %         [p q] = find(err < minerr + .025); % 1e-4 Subscripts of err producing minimal error
-            [p q]= find(err <= prctile(reshape(err,size(err,1)*size(err,2),1),10));
+            [p q]= find(err <= prctile(reshape(err,size(err,1)*size(err,2),1),15));
             numel(p);
             idx = sub2ind(size(delta),p,q); % Convert from subscripts to linear indices
             ideal_numpred=round(median(numpred(idx)));

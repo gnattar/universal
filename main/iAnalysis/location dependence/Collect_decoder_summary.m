@@ -107,11 +107,16 @@ save('collected_decoder_summary_stats','collected_decoder_summary_stats');
 % temp(:,2) = L(:,1)-L(:,2)
 %  
 
+% 
+% C = data.mFrCo_ctrl(:,:);  temp(:,1) = C(:,1)./(C(:,2));
+% if lightcond 
+%     L = data.mFrCo_mani(:,:);temp(:,2) = L(:,1)./(L(:,2)); end
 
-C = data.mFrCo_ctrl(:,:);  temp(:,1) = C(:,1)./mean(C(:,2));
+
+C = data.mFrCo_ctrl(:,:);  
 if lightcond 
-    L = data.mFrCo_mani(:,:);temp(:,2) = L(:,1)./mean(L(:,2)); end
-
+    L = data.mFrCo_mani(:,:); end
+temp(:,1) = C(:,1)./(mean([C(:,2)';L(:,2)'])');temp(:,2) = L(:,1)./(mean([C(:,2)';L(:,2)'])');
 
  numsess = size(C,1);
  figure;plot(C','color',[.5 .5 .5],'markersize',10); hold on;
@@ -162,17 +167,17 @@ set(gca,'Fontsize',16);
 set(gca,'tickdir','out','ticklength',[.02 .02]);
 
 if lightcond
-temp =[ C(:,1) L(:,1)]
-figure;plot(temp','color',[.5 .5 .5]); hold on;
- m=mean(temp);
- s=std(temp)./sqrt(size(temp,1)+1);
- h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25,'markersize',20);
-  set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'Control';'light'});
-axis([0 3 .35 .65])
-ylabel('Fraction Correct','fontsize',16)
-title('Fraction Correct ','Fontsize',16)
-set(gca,'tickdir','out','ticklength',[.02 .02]);
-set(gca,'Fontsize',16);
+    temp =[ C(:,1) L(:,1)]
+    figure;plot(temp','color',[.5 .5 .5]); hold on;
+    m=mean(temp);
+    s=std(temp)./sqrt(size(temp,1)+1);
+    h=errorbar(m,s,'ko-'); set(h,'linewidth',1.25,'markersize',20);
+    set(gca,'XTick',[1 2]);set(gca,'XTicklabel',{'Control';'light'});
+    axis([0 3 .35 .65])
+    ylabel('Fraction Correct','fontsize',16)
+    title('Fraction Correct ','Fontsize',16)
+    set(gca,'tickdir','out','ticklength',[.02 .02]);
+    set(gca,'Fontsize',16);
 end
 %  
 
