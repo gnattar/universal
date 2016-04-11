@@ -51,9 +51,9 @@ function batch_processing_whisker_file_dir(animalName, sessionName, extrap_dista
 % barOnset = cellfun(@(x) x.pinDescentOnsetTime, imArray.SoloTrials);
 % barOffset = cellfun(@(x) x.pinAscentOnsetTime, imArray.SoloTrials);
 % 
-if matlabpool('size')<1
-    matlabpool open 4
-end
+% if matlabpool('size')<1
+%     matlabpool open 4
+% end
 
 if ~exist(fullfile(results_save_dir, sprintf('wsArray_%s.mat',sessionName)),'file')
     if ~exist(fullfile(results_save_dir,sprintf('wSigTrials_%s_%s.mat',animalName,sessionName)), 'file')
@@ -205,7 +205,7 @@ save(sprintf('wSigTrials_%s_%s',animalName,sessionName), 'wSigTrials');
 %     sessObj.wSigTrials = wSigTrials;
 %     save('sessObj','sessObj','-v7.3');
 % end
-matlabpool close
+% matlabpool close
 % % % % wsArray.whiskerPadCoords = sessionInfo.whiskerPadOrigin_nx;
 % % % %% Touch detection. 
 % % % % For air puff trials, no bar coordinates, and no touch detection.

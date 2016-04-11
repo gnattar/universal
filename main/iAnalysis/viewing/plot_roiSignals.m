@@ -372,23 +372,23 @@ rois_name_tag = '';
         end
         close(h1);
 
-        if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
-            fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx  'dKappa_dFF.jpg'];
-            figure(h2);
-            suptitle(fnam);
-            
-            set(gcf,'PaperUnits','inches');
-            set(gcf,'PaperPosition',[1 1 24 10]);
-            set(gcf, 'PaperSize', [24,10]);
-            set(gcf,'PaperPositionMode','manual');
-            
-            saveas(gcf,[pwd,filesep,fnam],'jpg');
-            [~,foo] = lastwarn;
-            if ~isempty(foo)
-                warning('off',foo);
-            end
-            close(h2);
-        end
+%         if (strcmp(sfx , 'Csort') || strcmp(sfx , 'CSort_barpos'))
+%             fnam=[nam 'FOV' fov 'rois' rois_name_tag sfx  'dKappa_dFF.jpg'];
+%             figure(h2);
+%             suptitle(fnam);
+%             
+%             set(gcf,'PaperUnits','inches');
+%             set(gcf,'PaperPosition',[1 1 24 10]);
+%             set(gcf, 'PaperSize', [24,10]);
+%             set(gcf,'PaperPositionMode','manual');
+%             
+%             saveas(gcf,[pwd,filesep,fnam],'jpg');
+%             [~,foo] = lastwarn;
+%             if ~isempty(foo)
+%                 warning('off',foo);
+%             end
+%             close(h2);
+%         end
         if (roicount<length(rois))
             h1 = figure('position', [1000, sc(4)/10-100, sc(3), sc(4)], 'color','w');
             ah1=axes('Parent',h1); title( 'Ca_Signal traces' );           

@@ -861,6 +861,13 @@ CurrentROINo = str2double(get(handles.CurrentROINoEdit, 'String'));
 str_menu = get(handles.ROITypeMenu,'String');
 ROIType = str_menu{get(handles.ROITypeMenu,'Value')};
 % ROI_updated_flag = 0; % to determine if update the trial No of ROI updating.
+if ishandle(CaSignal.ICA_figs)
+    figure(CaSignal.ICA_figs(1));
+elseif isfield(CaSignal, 'h_maxDelta_fig') || ishandle(CaSignal.h_maxDelta_fig)
+    figure(CaSignal.h_maxDelta_fig);
+else isfield(CaSignal, 'h_mean_fig') || ishandle(CaSignal.h_mean_fig)
+    figure(CaSignal.h_mean_fig)
+end
 %% Draw an ROI after mouse press
 waitforbuttonpress;
 % define the way of drawing, freehand or ploygon
@@ -869,6 +876,7 @@ if get(handles.ROI_draw_freehand, 'Value') == 1
 elseif get(handles.ROI_draw_poly, 'Value') == 1;
     draw = @impoly;
 end
+
 h_roi = feval(draw);
 finish_drawing = 0;
 while finish_drawing == 0
@@ -1076,8 +1084,8 @@ for i = 1: nROI_effective
     lightstim_window = strsplit(get(handles.lightstim_window,'String'),',');
     xt=CaSignal.CaTrials(TrialNo).FrameTime * [1:size(F,2)];
     all_ind = [1:length(BG)];
-    [mi,xt_l]= min(abs(xt-lightstim_window(1)));
-    [ma,xt_h]=min(abs(xt-lightstim_window(2)));
+    [mi,xt_l]= min(abs(xt-str2num(lightstim_window{1})));
+    [ma,xt_h]=min(abs(xt-str2num(lightstim_window{2})));
     %     if get(handles.lightstim_subtract,'Value')
     lighton_ind = (xt<xt(xt_h-3)) & (xt>xt(xt_l+3));
     lightonbl_ind = (xt<1.4) & (xt>xt(xt_l)+.1);
