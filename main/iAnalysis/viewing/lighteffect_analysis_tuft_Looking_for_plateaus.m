@@ -8,31 +8,31 @@ put_plat = find((rois{1}.intarea>20))
 plat = zeros(length(put_plat),2);
 plat(:,1) = put_plat;
 events =0;
-figure;
-for i = 1:length(put_plat)
-    for r = 1:length(rois)
-        subplot(length(rois),1,r)
-        plot([1:size(rois{r}.rawdata_smth,2)].*rois{r}.FrameTime,rois{r}.rawdata_smth(put_plat(i),:),'linewidth',2);
-        title(['trial ' num2str(put_plat(i)) ' Event ' num2str(rois{r}.eventsdetected(put_plat(i))) ' Light '  num2str(rois{r}.lightstim(put_plat(i)))]);
-        axis([0 2 -30 250]);
-        hline(30,'k');
-        events=events + rois{r}.eventsdetected(put_plat(i)); 
-    end
-    if events < length(rois)
-        plat(i,1) = nan;
-    end
-    plat(i,2) = rois{r}.lightstim(put_plat(i));
-    events = 0;
-    
-        set(gcf,'PaperUnits','inches');
-        set(gcf,'PaperPosition',[1 1 5 20]);
-        set(gcf, 'PaperSize', [24,10]);
-        set(gcf,'PaperPositionMode','manual');
-          saveas(gcf,['Corr Dend ' num2str(n) ' Trial ' num2str(put_plat(i))] ,'jpg');
-%         print( gcf ,'-depsc2','-painters','-loose',['Corr Dend ' num2str(n) ' Trial ' num2str(put_plat(i))]);
-        
-
-end
+% figure;
+% for i = 1:length(put_plat)
+%     for r = 1:length(rois)
+%         subplot(length(rois),1,r)
+%         plot([1:size(rois{r}.rawdata_smth,2)].*rois{r}.FrameTime,rois{r}.rawdata_smth(put_plat(i),:),'linewidth',2);
+%         title(['trial ' num2str(put_plat(i)) ' Event ' num2str(rois{r}.eventsdetected(put_plat(i))) ' Light '  num2str(rois{r}.lightstim(put_plat(i)))]);
+%         axis([0 2 -30 250]);
+%         hline(30,'k');
+%         events=events + rois{r}.eventsdetected(put_plat(i)); 
+%     end
+%     if events < length(rois)
+%         plat(i,1) = nan;
+%     end
+%     plat(i,2) = rois{r}.lightstim(put_plat(i));
+%     events = 0;
+%     
+%         set(gcf,'PaperUnits','inches');
+%         set(gcf,'PaperPosition',[1 1 5 20]);
+%         set(gcf, 'PaperSize', [24,10]);
+%         set(gcf,'PaperPositionMode','manual');
+%           saveas(gcf,['Corr Dend ' num2str(n) ' Trial ' num2str(put_plat(i))] ,'jpg');
+% %         print( gcf ,'-depsc2','-painters','-loose',['Corr Dend ' num2str(n) ' Trial ' num2str(put_plat(i))]);
+%         
+% 
+% end
 rejects = find(isnan(plat(:,1)));
 plat(rejects,:) = [];
 
@@ -52,8 +52,8 @@ plat(rejects,:) = [];
      
         all_trials_rois =  cell2mat(cellfun(@(x) x.intarea,pooled_contact_CaTrials,'uni',0));
         
-        cd.avg_resp_L = mean(mean(all_trials_rois((rois{1}.lightstim==1),:)));
-        cd.avg_resp_NL =  mean(mean(all_trials_rois((rois{1}.lightstim==0),:)));
+        cd.avg_resp_L = nanmean(nanmean(all_trials_rois((rois{1}.lightstim==1),corr_dend==n)));
+        cd.avg_resp_NL =  nanmean(nanmean(all_trials_rois((rois{1}.lightstim==0),corr_dend==n)));
         
         cd.corr_dend_ID = n;
         cd.rois = a;
@@ -84,7 +84,7 @@ plat(rejects,:) = [];
         cd.plat_avgmag_L(2,:) = std(intarea_plat_L,1)
         cd.plat_avgmag_NL(2,:) = std(intarea_plat_NL,1)
         
-        save(['cd_' num2str(n)], 'cd');
+        save(['cd_' num2str(n) '_final2'], 'cd');
 
 
 %%        %% plotting raw data
@@ -142,15 +142,15 @@ title([num2str(k)  ' Avg_traces ID ' num2str(n)  ' mean of rois ' num2str(a)]);
 print( gcf ,'-depsc2','-painters','-loose',[num2str(k)  ' Avg  ID ' num2str(n)  ' mean of rois ' num2str(a)]);
 
 %% plot example traces from all rois
-trial = [ 15, 123 ];  % nl nl l l 21 , ,65
-figure;
-for i = 1:length(a)
-    subplot(length(a),2,i*2);
-    plot(xt,rawdata(trial(2),:,i),'b','linewidth',1.5); axis([0 2 -50 250]);
-end
-
-for i = 1:length(a)
-    subplot(length(a),2,i*2-1);
-    plot(xt,rawdata(trial(1),:,i),'b','linewidth',1.5); axis([0 2 -50 250]);
-end
-print( gcf ,'-depsc2','-painters','-loose',[num2str(k)  ' Traces T ' num2str(trial) ' ID ' num2str(n)  ' mean of rois ' num2str(a)]);
+% trial = [ 15, 123 ];  % nl nl l l 21 , ,65
+% figure;
+% for i = 1:length(a)
+%     subplot(length(a),2,i*2);
+%     plot(xt,rawdata(trial(2),:,i),'b','linewidth',1.5); axis([0 2 -50 250]);
+% end
+% 
+% for i = 1:length(a)
+%     subplot(length(a),2,i*2-1);
+%     plot(xt,rawdata(trial(1),:,i),'b','linewidth',1.5); axis([0 2 -50 250]);
+% end
+% print( gcf ,'-depsc2','-painters','-loose',[num2str(k)  ' Traces T ' num2str(trial) ' ID ' num2str(n)  ' mean of rois ' num2str(a)]);

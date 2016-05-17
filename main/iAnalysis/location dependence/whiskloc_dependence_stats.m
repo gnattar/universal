@@ -145,7 +145,7 @@ for d=1:length(dends)
             
             [h,edges,mid,l] = histcn(ka,dKappa_bins);
             for cn = 1: length(h)
-                if (h(cn) > 0)
+                if (h(cn) >0)
                     ca_l_m(cn)  = nanmean(ca(find(l==cn)));
                     ca_l_sd(cn) = nanstd(ca(find(l==cn)))./sqrt(h(cn)+1);
                     ka_l_m(cn)  = nanmean(ka(find(l==cn)));
@@ -170,13 +170,14 @@ for d=1:length(dends)
 %             if i ==2 tatt = abs(tatt); end % for sess 157_150723
 
             pooled_contactCaTrials_locdep{n}.fitmean.([str '_theta_at_touch'])(i,tattind(1),tattind(2)) = tatt;
+            if i ==1
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar]) =[];
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])= [];
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar]) = [];
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar]) = [];
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' 'mid'])= {};
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' 'npts']) = [];
-            
+            end
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,i,1) = ca_l_m;
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' capar])(:,i,2) = ca_l_sd;
             pooled_contactCaTrials_locdep{n}.fitmean.([ str '_' wpar])(:,i,1) = ka_l_m;
@@ -417,6 +418,7 @@ set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
 print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  reg temp D ' num2str(dends)]);
 saveas(gcf,[' Loc Dep  ' capar ' reg  D ' num2str(dends)],'jpg');
+saveas(gcf,[' Loc Dep  ' capar ' reg  D ' num2str(dends)],'fig');
 %
 % figure(h_fig2);
 % set(gcf,'PaperUnits','inches');

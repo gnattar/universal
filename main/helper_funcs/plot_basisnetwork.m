@@ -37,7 +37,7 @@ figure;
 temp = mult{i};
 temp_sub =temp-min(min(temp));
 temp_norm = temp_sub./max(max(temp_sub));
-surf(x,y,temp_norm);
+surf(x,y,temp_norm,'edgecolor','none');colormap(jet);
 count = count+1;
 end
 
@@ -46,7 +46,7 @@ end
 
 ds_sub = ds-min(min(ds));
 ds_norm = ds_sub./max(max(ds_sub));
-figure; surf(ds_norm);
+figure; surf(ds_norm,'edgecolor','none');colormap(jet);
 
 %%OR
 % 

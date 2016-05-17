@@ -56,8 +56,16 @@ t=pooled_contactCaTrials_locdep{d}.Theta_at_contact_Mean(ind);
 k=abs(pooled_contactCaTrials_locdep{d}.(wpar)(ind));
 r=pooled_contactCaTrials_locdep{d}.sigpeak(ind);
 l=pooled_contactCaTrials_locdep{d}.poleloc(ind);
+% 
+p=unique(l);
+for num= 1:5
+inds = find(l==p(num));
+ll(inds) = num;
+end
 
-[ThKmid,R,T,K,Tk,Rs,Ts,Ks,Tks]=calc_p(t,k,r,l,locbins);
+
+
+[ThKmid,R,T,K,Tk,Rs,Ts,Ks,Tks]=calc_p(t,k,r,ll,locbins);
 if disp
 % figure;subplot(2,2,1);contour(ThKmid{2},ThKmid{1},R);caxis([0 cscale(2)]);
 sc = get(0,'ScreenSize');
@@ -274,6 +282,7 @@ vals(:,1) = l;vals(:,2) = k;vals(:,3) = r;
 % bins(1) = {[40 210 250 280 310 350 ]};
 bins(1) = {locbins};
 bins(2) ={logspace(-4,2,10)}; % dKappa bins
+bins(2) ={logspace(-4,2,8)}; % dKappa bins
 bins(3) = {[0:100:800]}; % Resp peak bins
 
 [count edges mid loc] = histcn(vals,bins{1},bins{2},bins{3}); %% joint dist Theta Kappa Capeak
