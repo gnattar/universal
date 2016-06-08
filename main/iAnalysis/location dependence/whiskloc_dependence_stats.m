@@ -145,7 +145,7 @@ for d=1:length(dends)
             
             [h,edges,mid,l] = histcn(ka,dKappa_bins);
             for cn = 1: length(h)
-                if (h(cn) >0)
+                if (h(cn) >1)
                     ca_l_m(cn)  = nanmean(ca(find(l==cn)));
                     ca_l_sd(cn) = nanstd(ca(find(l==cn)))./sqrt(h(cn)+1);
                     ka_l_m(cn)  = nanmean(ka(find(l==cn)));
@@ -198,7 +198,7 @@ for d=1:length(dends)
             x=ka_l_m;
             y =ca_l_m;
             fittype = 'lin';
-            if length(x(notnan)) >2
+            if length(x(notnan)) >1
                 fittype = 'lin';
                 [param,paramCI,fitevals,f] = FitEval(x(notnan),y(notnan),fittype,-1);
                 f_all = nan(size(x));f_all(notnan) = f;

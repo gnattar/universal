@@ -2262,7 +2262,7 @@ V = CaSignal.ica_data.V;
 S = CaSignal.ica_data.S;
 ICnum = str2num(get(handles.IC_num_edit,'String'));
 % CaSignal.ICnum = str2num(get(handles.IC_num_edit,'String'));
-CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 100, ICnum});
+ CaSignal.ICA_components = run_ICA(CaSignal.ica_data.Data, {S, V, 100, ICnum});
 CaSignal.rois_by_IC = cell(1,ICnum);
 % CaSignal.ICnum_prev = ICnum;
 
@@ -3456,10 +3456,10 @@ numblocks = str2num(get(handles.numblocks,'String'));
 trialblocks=strsplit(get(handles.trialswindow,'String'),';');
 tags =strsplit(get(handles.trialswindow_tag,'String'));
 numblocks = size(tags,2);
-if(numblocks==1)
-    tags={tags};
-    trialblocks={trialblocks};
-end
+% if(numblocks==1)
+%     tags={tags};
+%     trialblocks={trialblocks};
+% end
 
 blocks = struct('tag','','gotrialnums',[],'nogotrialnums',[],'gotrialnames',[],'nogotrialnames',[],'hittrialnums',[],'hittrialnames',[],...
                 'misstrialnums',[],'misstrialnames',[],'CRtrialnums',[],'CRtrialnames',[],'FAtrialnums',[],'FAtrialnames',[]);
@@ -5415,7 +5415,7 @@ end
 % mouseName=
 obj = ephusTrialArray_gr(mouseName, sessionID,ephuspath);
 cd ..
-save(['ephusdata_' mouseName '_' sessionID],'obj');
+save(['ephusdata_' mouseName '_' sessionID],'obj','-v7.3');
 ['ephusdata_' mouseName '_' sessionID ':   Saved']
 
 %% adding ephus to sessObj
@@ -5844,7 +5844,7 @@ function [tempobj,propname,sess_count] = sort_SessionData(wSigSum_anm,fieldname,
             curr_data =curr_sess.(fieldname);
             curr_data = cell2mat(curr_data{block});       
             if(strcmpi(curr_sess_type,'b'))
-                mean_baseline =  mean_baseline + mean(curr_data(:,2));   
+                mean_baseline =  mean_baseline + nanmean(curr_data(:,2));   
                 num_bl = num_bl+1;
             end
         end
@@ -5941,10 +5941,8 @@ function calc_meanbartheta_Callback(hObject, eventdata, handles)
 global sessionInfo
 global wSigTrials
 
-
 [filename1,pathName]=uigetfile('SessionInfo*.mat','Load SessionInfo.mat file');
 load( [pathName filesep filename1],'-mat');
-
 
 [filename2,pathName]=uigetfile('wSigTrials*.mat','Load wSigTrials.mat file');
 load( [pathName filesep filename2],'-mat');
