@@ -147,7 +147,7 @@ end
 
 if ~isempty(fnall)
     if exist('parfor','builtin') % Parallel Computing Toolbox is installed
-        parfor k=1:nfiles
+        for k=1:nfiles % removed parfor
             fn = fnall{k};
             disp(['Processing .whiskers file ' fn ', ' int2str(k) ' of ' int2str(nfiles)])
             

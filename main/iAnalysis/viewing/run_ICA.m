@@ -11,6 +11,6 @@ SVDBase = Data*...
 
 %% ICA
 IComponentNum = param{4};
-[A, W]=fastica(SVDBase','numOfIC',IComponentNum);
+[A, W]=fastica(SVDBase', 'lastEig', IComponentNum*2,'numOfIC',IComponentNum);
 ICAComp = W*...
   (V(:,SVDCompVec)*S(SVDCompVec,SVDCompVec))';

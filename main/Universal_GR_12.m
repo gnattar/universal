@@ -4040,8 +4040,8 @@ for i= 1:numtrials
 end
 
 Caframetime = CaTrials.FrameTime;
-baseline = 0.25; %New tg data to .25
-dur = 1.25; % for old data change to 4.0 New tg data to 1.25
+baseline = 0.5;%0.25; %New tg data to .25
+dur = 4.0;%1.25; % for old data change to 4.0 New tg data to 1.25
 wSigframerate = 500;
 numpts=ceil((dur+baseline)*wSigframerate*2);% 1.5 seconds worth of data 5s for old data
 numframes = ceil((dur+baseline)/Caframetime);% 1.5 seconds worth of data
@@ -4133,29 +4133,31 @@ for i = 1:numtrials
             wdata_src_inds = temp_src_inds(ia);
         end
             
-        
         wdata_dest_inds = id;
-
+        
         temp=thetavals{i};
+        
+        filler_nan_inds=find(wdata_src_inds>length(temp));
+        if ~isempty(filler_nan_inds) temp(wdata_src_inds(filler_nan_inds))=nan; end
         extractedTheta (wdata_dest_inds)=  temp(wdata_src_inds);
         Theta_at_contact_mean =  thetavals{i}( find(temp_ts_wsk == timepoint));
         
-        temp=kappavals{i};
+        temp=kappavals{i};  if ~isempty(filler_nan_inds) temp(wdata_src_inds(filler_nan_inds))=nan; end
         extractedKappa(wdata_dest_inds)= temp(wdata_src_inds);
         
-        temp=Velocity{i};
+        temp=Velocity{i};if ~isempty(filler_nan_inds) temp(wdata_src_inds(filler_nan_inds))=nan; end
         extractedVelocity(wdata_dest_inds)= temp(wdata_src_inds);
         
-        temp=Setpoint{i};
+        temp=Setpoint{i};if ~isempty(filler_nan_inds) temp(wdata_src_inds(filler_nan_inds))=nan; end
         extractedSetpoint(wdata_dest_inds)= temp(wdata_src_inds);
         
-        temp=Amplitude{i};
+        temp=Amplitude{i};if ~isempty(filler_nan_inds) temp(wdata_src_inds(filler_nan_inds))=nan; end
         extractedAmplitude(wdata_dest_inds)= temp(wdata_src_inds);
         
-        temp=deltaKappa{i};        
+        temp=deltaKappa{i};  if ~isempty(filler_nan_inds) temp(wdata_src_inds(filler_nan_inds))=nan; end      
         extracteddeltaKappa(wdata_dest_inds)= temp(wdata_src_inds);
         
-        temp=ts_wsk{i};
+        temp=ts_wsk{i};if ~isempty(filler_nan_inds) temp(wdata_src_inds(filler_nan_inds))=nan; end
         extractedts_wsk(wdata_dest_inds)= temp(wdata_src_inds);
                
         if (j < numcontacts)
@@ -4451,8 +4453,8 @@ wSig_trialnums =str2num(char(names));
             wsArray.ws_trials{i}.maxTouchKappaTrial = wsArray.maxTouchKappaTrial{1}(i);
         catch
             ('Error: processing wsArray.totalTouchKappaTrial')
-            ('Did not process TouchKappa data')
-            break
+            (['T' num2str(i) 'Did not process TouchKappa data'])
+%             break
         end 
         inds = (wsArray.ws_trials{i}.distToBar{1} <  contDet_param.threshDistToBarCenter (2));
         wsArray.ws_trials{i}.mThetaNearBar =mean(wsArray.ws_trials{i}.theta{1}(inds));

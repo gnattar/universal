@@ -1,11 +1,12 @@
 function [pooled_contactCaTrials_locdep] = whiskloc_dependence_plotdata(pooled_contactCaTrials_locdep,dends,par,wpar,fit_separate,traces,lpv,disp)
 %% obj, dends, par = 'sigpeak' or 'sigmag', wpar = ' re_totaldK', fit_separate = 1 (prot and ret separately',
-
+%% lpv = v1
 sc = get(0,'ScreenSize');
+stname=[pooled_contactCaTrials_locdep{1}.mousename  ' '  pooled_contactCaTrials_locdep{1}.sessionname];
 % h_fig1 = figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
-h_fig1 = figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
+h_fig1 = figure('position', [1000, sc(4), sc(3)/4, sc(4)], 'color','w');
 count =1;
-uL=1.5;
+uL=2.5;
 for d=1:length(dends)
     n = dends(d);
     xcol =2;
@@ -158,8 +159,11 @@ for d=1:length(dends)
             baselinevals = pooled_contactCaTrials_locdep{n}.filtdata(NL_ind,[1:baselinepts]);
             %             baselinevals = reshape(baselinevals,(size(baselinevals,1)*size(baselinevals,2)),1);
             noisethr = mean(prctile(baselinevals,99));
-            
+            if numel(x) >2
             [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr);
+            else
+                param=[nan nan];paramCI=[nan nan; nan nan];f=nan;
+            end
             temp (:,1) = x;temp(:,2) = y; temp(:,3) = f;
             pooled_contactCaTrials_locdep{n}.fit.(['Fit_' fittype 'waves' str ]){i} = temp;
             pooled_contactCaTrials_locdep{n}.fit.(['Fit_' fittype par str '_fitparam'])(i,:,1) = param;
@@ -347,9 +351,9 @@ for d=1:length(dends)
         set(gca,'XMinorTick','on','XTick',[0.0001,0.001,0.01,.1,1],'Tickdir','out');
 %         set(gca,'XMinorTick','on','XTick',[0.5:.5:2]);
         if strcmp(par,'sigmag')
-            axis([1e-4 uL 0 5000]);
+            axis([1e-2 uL 0 5000]);
         elseif strcmp(par,'sigpeak')
-            axis([1e-4 uL 0 800]);
+            axis([1e-2 uL 0 500]);
         end
         set(gca,'xscale','log');set(gca,'ticklength',[.05 .05]);
 %         set(gca,'xscale','linear')
@@ -419,11 +423,12 @@ for d=1:length(dends)
     count = count+2;
 end
 set(gcf,'PaperUnits','inches');
-set(gcf,'PaperPosition',[1 1 24 18]);
+set(gcf,'PaperPosition',[1 1 12 18]);
 set(gcf, 'PaperSize', [10,24]);
 set(gcf,'PaperPositionMode','manual');
+suptitle(stname);
 print( gcf ,'-depsc2','-painters','-loose',[' Theta Dep  Pnts reg temp D ' num2str(dends)]);
-saveas(gcf,[' Loc Dep Pnts ' par ' reg  D ' num2str(dends)],'jpg');
+saveas(gcf,[stname ' Loc Dep Pnts ' par ' reg  D ' num2str(dends)],'jpg');
 
 if traces
     % h_fig2= figure('position', [1000, sc(4)/10-100, sc(3)*1/2.5, sc(4)*1], 'color','w');
@@ -435,11 +440,11 @@ end
 if disp
     
     if fit_separate
-        h_fig4= figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
+        h_fig4= figure('position', [1000, sc(4), sc(3)/4, sc(4)], 'color','w');
         % set(h_fig2, 'Renderer', 'OpenGL'); % faster drawing
-        h_fig5= figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
+        h_fig5= figure('position', [1000, sc(4), sc(3)/4, sc(4)], 'color','w');
     else
-        h_fig4= figure('position', [1000, sc(4), sc(3), sc(4)], 'color','w');
+        h_fig4= figure('position', [1000, sc(4), sc(3)/4, sc(4)], 'color','w');
     end
     
     count=1;
@@ -569,22 +574,22 @@ if disp
             
             if traces
                 figure(h_fig2);
-                 ([0 2.5 0 300]);
+                 axis([0 1.5 0 500]);
                 hline(30,'k.');
                 hline(0,'k--');
                 figure(h_fig3);
-                axis([0 2.5 0 300]);
+                axis([0 1.5 0 500]);
                 hline(30,'k.');
                 hline(0,'k--');
             end
             
             figure(h_fig4);
-            axis([0 2.5 -50 300]);
+            axis([0 1.5 -50 120]);
             hline(30,'k.');
             hline(0,'k--');
             if fit_separate
                 figure(h_fig5);
-                axis([0 2.5 0 150]);
+                axis([0 1.5 0 150]);
                 hline(30,'k.');
                 hline(0,'k--');
             end
@@ -644,47 +649,47 @@ if disp
 end
 
 if traces
-    figure(h_fig2);
+    figure(h_fig2);suptitle(stname);
     set(gcf,'PaperUnits','inches');
     set(gcf,'PaperPosition',[1 1 24 18]);
     set(gcf, 'PaperSize', [10,24]);
     set(gcf,'PaperPositionMode','manual');
     % print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Traces  D ' num2str(dends) 'Prot']);
-    saveas(gcf,[' Loc Dep Ca Traces  D ' num2str(dends) 'Prot'],'jpg');
-    % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
+    saveas(gcf,[stname ' Loc Dep Ca Traces  D ' num2str(dends) 'Prot'],'jpg');
+%     saveas(gcf,[stname ' Loc Dep Ca Traces  D ' num2str(dends) 'Prot'],'fig');
     
-    figure(h_fig3);
+    figure(h_fig3);suptitle(stname);
     set(gcf,'PaperUnits','inches');
     set(gcf,'PaperPosition',[1 1 24 18]);
     set(gcf, 'PaperSize', [10,24]);
     set(gcf,'PaperPositionMode','manual');
     % print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Traces  D ' num2str(dends) 'Ret']);
-    saveas(gcf,[' Loc Dep Ca Traces  D ' num2str(dends) 'Ret'],'jpg');
+    saveas(gcf,[stname ' Loc Dep Ca Traces  D ' num2str(dends) 'Ret'],'jpg');
     % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
 end
 
 if disp
-    figure(h_fig4);
+    figure(h_fig4);suptitle(stname);
     set(gcf,'PaperUnits','inches');
-    set(gcf,'PaperPosition',[1 1 24 18]);
+    set(gcf,'PaperPosition',[1 1 12 18]);
     set(gcf, 'PaperSize', [10,24]);
     set(gcf,'PaperPositionMode','manual');
     if fit_separate
-        print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Prot']);
-        saveas(gcf,[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Prot'],'jpg');
+%         print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Prot']);
+        saveas(gcf,[stname ' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Prot'],'jpg');
     else
-        print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends)]);
-        saveas(gcf,[' Loc Dep Ca Avg Traces  D ' num2str(dends)],'jpg');
+%         print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends)]);
+        saveas(gcf,[stname ' Loc Dep Ca Avg Traces  D ' num2str(dends)],'jpg');
     end
     % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
     if fit_separate
-        figure(h_fig5);
+        figure(h_fig5);suptitle(stname);
         set(gcf,'PaperUnits','inches');
         set(gcf,'PaperPosition',[1 1 24 18]);
         set(gcf, 'PaperSize', [10,24]);
         set(gcf,'PaperPositionMode','manual');
-        print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Ret']);
-        saveas(gcf,[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Ret'],'jpg');
+%         print( gcf ,'-depsc2','-painters','-loose',[' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Ret']);
+        saveas(gcf,[stname ' Loc Dep Ca Avg Traces  D ' num2str(dends) 'Ret'],'jpg');
         % saveas(gcf,[' Theta Dep D ' num2str(dends)],'fig');
         
     end
