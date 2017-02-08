@@ -53,7 +53,7 @@ function measurements = LoadMeasurements(filename)
 
 [s,attr,id] = fileattrib(filename); % get abs path
 if(s)
-  measurements = mexLoadMeasurements(attr.Name);
+  measurements = Whisker.mexLoadMeasurements(attr.Name);
 else
   error(attr)
 end

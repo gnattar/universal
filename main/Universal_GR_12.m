@@ -2673,13 +2673,13 @@ mp4numind = str2num(names(:,trialno_ind ));
 incomplete =0;
 
 if (length (whisknumind) == length(measnumind))
-    if(length(whisknumind)== length (mp4numind))
-        'OK go ahead with analysis'
-    else
-        
-        err(['incomplete data:' num2str(length(whisknumind)) 'whiskers and' num2str(length(mp4numind)) 'mp4']);
-        incomplete=1;
-    end
+%     if(length(whisknumind)== length (mp4numind))
+%         'OK go ahead with analysis'
+%     else
+%         
+%         err(['incomplete data:' num2str(length(whisknumind)) 'whiskers and' num2str(length(mp4numind)) 'mp4']);
+%         incomplete=1;
+%     end
 else
     lookat = find((~ismember(measnumind, whisknumind)))
     err(['incomplete data:' num2str(length(whisknumind)) 'whiskers and' num2str(length(measnumind)) 'measurements']);

@@ -191,10 +191,14 @@ classdef WhiskerTrial < handle
                 % file, choose that.  If not, choose the .trajectories.  Give a message to alert user
                 % if both are found.
                 if exist([tracker_file_name '.measurements'],'file')
-                    M = Whisker.read_whisker_measurements([tracker_file_name '.measurements']);
-                    trajectory_ids = M(:,1);
-                    frame_nums = M(:,2);
-                    segment_nums = M(:,3);
+% % %                     M = Whisker.read_whisker_measurements([tracker_file_name '.measurements']); % changed for new format GR
+% % %                    trajectory_ids = M(:,1);
+% % %                     frame_nums = M(:,2);
+% % %                     segment_nums = M(:,3);
+                    M = Whisker.LoadMeasurements([tracker_file_name '.measurements']);
+                    trajectory_ids = double(arrayfun(@(x) x.label,M));
+                    frame_nums = double(arrayfun(@(x) x.fid,M));
+                    segment_nums =double(arrayfun(@(x) x.wid,M));
                     if exist([tracker_file_name '.trajectories'],'file')
                         disp(['For ' tracker_file_name 'found both .measurements and .trajectories files---using .measurements.'])
                     end
