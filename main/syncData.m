@@ -1,6 +1,6 @@
-function [syncedData] = syncData(wSigTrials,solo_data,wsdatafolder,fstr)
+function [syncedData] = syncData(wSigTrials,solo_data,wsdatafolder,cellnum)
 cd(wsdatafolder)
-%  fstr = ['cell_' sprintf('%.2d',cellnum) '_2016*.h5'];
+  fstr = ['cell_' sprintf('%.2d',cellnum) '_*.h5'];
 % files=dir('cell_01_2016*.h5');
 files=dir(fstr);
 for f=1:size(files,1)
@@ -51,7 +51,18 @@ for f=1:size(files,1)
        obj(i).trialType = solo_data.trialTypes(find(solo_trialnums==i));
        obj(i).trialCorrects = solo_data.trialCorrects(find(solo_trialnums==i));
        obj(i).polePositions = solo_data.polePositions(find(solo_trialnums==i));
-
+       
+       ephys=obj(i).ephys;
+       ephys_time=[1:length(ephys)].* obj(i).wsTimeScale;
+       bandPassCutOffsInHz = [75 500];
+       sampleRate = 1/ephys_time(1);
+       W1 = bandPassCutOffsInHz(1) / (sampleRate/2);
+       W2 = bandPassCutOffsInHz(2) / (sampleRate/2);
+       [b,a]=butter(2,[W1 W2]);
+       filt_ephys = filtfilt(b,a,ephys);
+       obj(i).filt_ephys  = filt_ephys;
+       obj(i).ephys_time  = ephys_time;
+       
     end
 end
 bitCodeTrialNums = getBitCodes(obj);

@@ -22,7 +22,6 @@ function Batch_process_multi_session_whisker_data_GR4(data_base_dir, varargin)
             load(fullfile(results_save_dir,fn_sessionInfo(ii).name));
             %% Can be excuded independently for individual sessions.
             % uncomment the following, and change the directory
-            % results_save_dir = '/Volumes/DATA_RAID_0_ext/2P-Imaging_Data/anm146969_nx/2011_09_14/';
             extrap_distance_in_pix = 13;
             sessionName = sessionInfo.sessionName;
 %%%            barTimeWindow = [sessionInfo.behavArray.trials{1}.pinDescentOnsetTime sessionInfo.behavArray.trials{1}.pinAscentOnsetTime + 0.4]; %GRchange
@@ -65,7 +64,7 @@ if ~exist(fullfile(results_save_dir, sprintf('wsArray_%s.mat',sessionName)),'fil
 %                 'protractionDirection','leftward','pxPerMm',25.7,'framePeriodInSec',.002,'imagePixelDimsXY',imageDim,...
 %                 'mouseName',animalName,'sessionName',sessionName);
 
-            Whisker.makeAllDirectory_WhiskerTrial(pwd,trajectory_IDs,'barRadius',12,'barPosOffset',[0 0],'faceSideInImage','top',...
+            Whisker.makeAllDirectory_WhiskerTrial(pwd,trajectory_IDs,'barRadius',17,'barPosOffset',[0 0],'faceSideInImage','top',...
                 'protractionDirection','leftward','pxPerMm',24.38,'framePeriodInSec',.002,'imagePixelDimsXY',imageDim,...
                 'mouseName',animalName,'sessionName',sessionName);
             

@@ -250,7 +250,7 @@ for d=1:length(dends)
 %                 inds_all = [NL_ind(sortiNL)];
                 inds_all = [NL_ind]; % if just by order of trial
                 
-            end
+                endy
             imdata = pooled_contactCaTrials_locdep{n}.rawdata(inds_all,:);
             im_data_t = [1:size(imdata,2)].* pooled_contactCaTrials_locdep{n}.FrameTime;
             trials = [1:length(inds_all)];

@@ -11,7 +11,7 @@ function varargout = Universal_GR_12(varargin)
 %
 %      UNIVERSAL_GR_12('Property','Value',...) creates a new UNIVERSAL_GR_12 or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before Universal_GR_12_OpeningFcn gets called.  An
+%      applied to the GUI before Universal_GR_12_Op Batch_process_multi_session_whisker_data_GR4eningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
 %      stop.  All inputs are passed to Universal_GR_12_OpeningFcn via varargin.
 %

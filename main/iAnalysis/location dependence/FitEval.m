@@ -1,5 +1,6 @@
 function [param,paramCI,fitevals,f] = FitEval(x,y,fittype,noisethr)
 f = [];
+
 fitevals =[];
 param =[];
 paramCI = [];
@@ -11,8 +12,9 @@ switch fittype
         else
             [param,S]  = polyfit(x,y,1);
             if (param(1) <0)
-                [param,S]  = polyfitB(x,y,1,min(y));
+                [param,S]  = polyfitB(x,y,1,prctile(y,10));
             end
+%         [param,S]  = polyfitB(x,y,1,prctile(y,10));
                 
         end
         paramCI = polyparci(param,S,0.95); 

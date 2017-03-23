@@ -464,8 +464,8 @@ function sync_data_Callback(hObject, eventdata, handles)
         return
     end
 
-    fstr = ['cell_' sprintf('%.2d',cellnum) '_2016*.h5'];
-    [syncedData] = syncData(wSigTrials,solo_data,pathName,fstr)
+%     fstr = ['cell_' sprintf('%.2d',cellnum) '*.h5'];
+    [syncedData] = syncData(wSigTrials,solo_data,pathName,cellnum)
   
     save([ 'syncedData_cell_' sprintf('%.2d',cellnum)],'syncedData','-v7.3');   
     obj = syncedData;
